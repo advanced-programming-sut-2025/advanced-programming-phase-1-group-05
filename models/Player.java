@@ -17,24 +17,32 @@ public class Player {
     private final Cooking cookingSkill = new Cooking();
     private final Fishing fishingSkill = new Fishing();
     private final Foraging foragingSkill = new Foraging();
-    private final List<Item> inventory = new ArrayList<>();
+    private final HashMap<Item, Integer> inventory = new HashMap<>();
     private final TrashCan trashCan = new TrashCan();
+    private boolean unlimitedEnergy = false;
 
-    public void decreaseEnergy(int amount) {
+    public Player(User user) {
+        this.user = user;
+        this.energy = 200;
+    }
+    public void addEnergy(int amount) {
+        energy += amount;
         if(energy <= 0) faint();
     }
 
     public void faint() {
         //skip the rest of the day
         //set current coordinate
+        //waiting for time functionality
         energy *= 0.75;
     }
 
     public void increaseEnergy(int amount) {
+        if(amount < 0 && unlimitedEnergy) return;
         energy += amount;
         if(energy >= 200) energy = 200;
     }
-
+    public int getEnergy() {return energy;}
     public boolean hasEnoughEnergy(int required) {
         return false;
     }
@@ -52,12 +60,14 @@ public class Player {
         this.y = y;
     }
 
-    public void addToInventory(Item item) {
-        inventory.add(item);
+    public void addToInventory(Item item, int quantity) {
+        inventory.put(item, quantity);
     }
-    public List<Item> getInventory() {return inventory;}
+    public HashMap<Item, Integer> getInventory() {return inventory;}
     public void addGold(int amount) {gold += amount;}
     public int getGold() {return gold;}
-
+    public void setUnlimitedEnergy() {
+        unlimitedEnergy = true;
+    }
 
 }
