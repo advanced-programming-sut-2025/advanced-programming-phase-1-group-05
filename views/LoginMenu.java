@@ -4,7 +4,6 @@ package views;
 import controllers.MenuController;
 import models.Result;
 
-import java.util.Scanner;
 
 public class LoginMenu implements views.AppMenu {
     private final MenuController menuController;

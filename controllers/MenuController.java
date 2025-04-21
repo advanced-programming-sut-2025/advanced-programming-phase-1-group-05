@@ -42,8 +42,11 @@ public class MenuController {
                 (currentMenuName.equals("Register Menu") && target == Menu.LOGIN)) {
             return true;
         }
+        else {
+            return false;
+        }
 
-        return false;
+//        return false;
     }
 
     private AppMenu createMenuInstance(Menu menu) {

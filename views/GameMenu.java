@@ -2,10 +2,6 @@ package views;
 
 import controllers.MenuController;
 import models.Result;
-import views.MainMenu;
-import views.RegisterMenu;
-
-import java.util.Scanner;
 
 public class GameMenu implements views.AppMenu {
     private final MenuController menuController;

@@ -3,9 +3,7 @@ package views;
 
 import controllers.MenuController;
 import models.Result;
-import views.RegisterMenu;
 
-import java.util.Scanner;
 
 public class MainMenu implements views.AppMenu {
     private final MenuController menuController;
