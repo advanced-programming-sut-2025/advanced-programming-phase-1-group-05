@@ -69,24 +69,24 @@ public class RegisterMenuController {
     }
 
     private boolean isValidUsername(String username) {
-        String usernameRegex = "^[a-zA-Z0-9-]+$";
-        return username.matches(usernameRegex);
+        String allowedCharsRegex = "^[a-zA-Z0-9-]+$";
+
+        boolean hasLower = username.matches(".*[a-z].*");
+        boolean hasUpper = username.matches(".*[A-Z].*");
+        boolean hasHyphen = username.contains("-");
+
+        return username.matches(allowedCharsRegex) && hasLower && hasUpper && hasHyphen;
     }
 
     private boolean isValidEmail(String email) {
-        // قسمت قبل از @
         String localPartRegex = "^[a-zA-Z0-9][a-zA-Z0-9-_.]*[a-zA-Z0-9]";
-        // قسمت بعد از @ (دامنه)
         String domainPartRegex = "([a-zA-Z0-9-]+\\.[a-zA-Z]{2,})$";
-        // کل الگوی ایمیل
         String emailRegex = localPartRegex + "@" + domainPartRegex;
 
-        // بررسی وجود فقط یک @
         if (email.split("@").length != 2) {
             return false;
         }
 
-        // بررسی عدم وجود نمادهای غیرمجاز
         String invalidChars = "?><,\"' ;:\\\\/|][}{+=)(*&^%$#!";
         for (char c : email.toCharArray()) {
             if (invalidChars.indexOf(c) != -1) {
@@ -94,12 +94,10 @@ public class RegisterMenuController {
             }
         }
 
-        // بررسی نقطه‌های تکراری
         if (email.contains("..")) {
             return false;
         }
 
-        // نهایی‌ترین بررسی با regex
         return email.matches(emailRegex);
     }
 
