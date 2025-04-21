@@ -15,8 +15,6 @@ public class LoginMenu implements views.AppMenu {
 
     @Override
     public void handleUserInput(String input) {
-        System.out.println("\n=== Login Menu ===");
-//        String input = scanner.nextLine().trim();
 
         if (input.startsWith("menu enter ")) {
             String menuName = input.substring("menu enter ".length()).trim();
@@ -28,6 +26,7 @@ public class LoginMenu implements views.AppMenu {
         } else if (input.equals("menu exit")) {
             Result result = menuController.exitMenu();
             System.out.println(result.getMessage());
+            System.exit(0);
         } else {
             System.out.println("Invalid Command!");
         }

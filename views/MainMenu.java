@@ -16,8 +16,6 @@ public class MainMenu implements views.AppMenu {
 
     @Override
     public void handleUserInput(String input) {
-        System.out.println("\n=== Main Menu ===");
-//        String input = scanner.nextLine();
 
         if (input.equals("show current menu")) {
             Result result = menuController.showCurrentMenu();

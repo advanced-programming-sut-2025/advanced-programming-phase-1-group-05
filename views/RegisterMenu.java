@@ -20,13 +20,13 @@ public class RegisterMenu implements views.AppMenu {
 
     @Override
     public void handleUserInput(String input) {
-        System.out.println("\n=== Register Menu ===");
         if (input.equals("show current menu")) {
             Result result = menuController.showCurrentMenu();
             System.out.println(result.getMessage());
         }else if (input.equals("menu exit")) {
             Result result = menuController.exitMenu();
             System.out.println(result.getMessage());
+            System.exit(0);
         } else if (input.startsWith("menu enter ")) {
             String menuName = input.substring("menu enter ".length()).trim();
             Result result = menuController.enterMenu(menuName);
@@ -53,7 +53,6 @@ public class RegisterMenu implements views.AppMenu {
 
             if (result.getMessage().contains("Password and confirmation do not match")) {
                 System.out.println("Please re-enter your password and confirmation:");
-                System.out.println("Format: register -u <username> -p <password> <confirmPassword> -n <nickname> -e <email> -g <gender>");
                 System.out.println("Or type 'back' to return to registration menu");
 
                 String newInput = scanner.nextLine().trim();

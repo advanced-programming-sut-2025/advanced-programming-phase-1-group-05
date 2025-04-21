@@ -60,8 +60,8 @@ public class MenuController {
     }
 
     public Result exitMenu() {
-        System.out.println("Exiting current menu...");
-        return new Result(true, "Menu exited successfully");
+        System.out.println("Exiting app...");
+        return new Result(true, "App exited successfully");
     }
 
     public Result showCurrentMenu() {

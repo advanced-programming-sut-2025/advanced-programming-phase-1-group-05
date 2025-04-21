@@ -16,9 +16,6 @@ public class GameMenu implements views.AppMenu {
 
     @Override
     public void handleUserInput(String input) {
-        System.out.println("\n=== Game Menu ===");
-//        String input = scanner.nextLine();
-
         if (input.equals("show current menu")) {
             Result result = menuController.showCurrentMenu();
             System.out.println(result.getMessage());
