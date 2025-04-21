@@ -20,6 +20,7 @@ public class Player {
     private final HashMap<Item, Integer> inventory = new HashMap<>();
     private final TrashCan trashCan = new TrashCan();
     private boolean unlimitedEnergy = false;
+    private Item currentItem;
 
     public Player(User user) {
         this.user = user;
@@ -69,5 +70,9 @@ public class Player {
     public void setUnlimitedEnergy() {
         unlimitedEnergy = true;
     }
+    public void setCurrentItem(Item item) {
+        currentItem = item;
+    }
+    public Item getCurrentItem() {return currentItem;}
 
 }
