@@ -7,6 +7,7 @@ import models.UserDatabase;
 
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,10 +33,6 @@ public class RegisterMenuController {
         String email = matcher.group("email");
         String gender = matcher.group("gender");
 
-//        if (!isValidPassword(password)) {
-//            return new Result(false, "Password is invalid!");
-//        }
-
 
         if (!isValidUsername(username)) {
             return new Result(false,
@@ -55,6 +52,11 @@ public class RegisterMenuController {
         if (!password.equals(confirmPassword)) {
             return new Result(false, "Password and confirm password do not match!");
         }
+        if (input.equalsIgnoreCase("random password")) {
+            String randomPassword = generateRandomPassword();
+            return new Result(true, randomPassword);
+        }
+
 
         if (!isValidEmail(email)) {
             return new Result(false, "Invalid email format!");
@@ -66,6 +68,42 @@ public class RegisterMenuController {
         newUser.setGender(gender);
 
         return new Result(true, "User registered successfully!");
+    }
+
+    public String generateRandomPassword() {
+        String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lowerCase = "abcdefghijklmnopqrstuvwxyz";
+        String numbers = "0123456789";
+        String specialChars = "?><,\"' ;:\\\\/|][}{+=)(*&^%$#!";
+        String allChars = upperCase + lowerCase + numbers + specialChars;
+
+        Random random = new Random();
+        StringBuilder password = new StringBuilder();
+
+        password.append(upperCase.charAt(random.nextInt(upperCase.length())));
+        password.append(lowerCase.charAt(random.nextInt(lowerCase.length())));
+        password.append(numbers.charAt(random.nextInt(numbers.length())));
+        password.append(specialChars.charAt(random.nextInt(specialChars.length())));
+
+        for (int i = 0; i < 4; i++) {
+            password.append(allChars.charAt(random.nextInt(allChars.length())));
+        }
+
+        char[] passwordArray = password.toString().toCharArray();
+        for (int i = 0; i < passwordArray.length; i++) {
+            int randomIndex = random.nextInt(passwordArray.length);
+            char temp = passwordArray[i];
+            passwordArray[i] = passwordArray[randomIndex];
+            passwordArray[randomIndex] = temp;
+        }
+
+        return new String(passwordArray);
+    }
+
+    public void saveSecurityQuestion(String questionNumber, String answer) {
+//        currentUser.setSecurityQuestion(questionNumber);
+//        currentUser.setSecurityAnswer(answer);
+//        userRepository.save(currentUser);
     }
 
     private boolean isValidUsername(String username) {

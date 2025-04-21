@@ -2,9 +2,13 @@ package views;
 
 import controllers.MenuController;
 import controllers.RegisterMenuController;
+import models.Enums.RegisterMenuCommand;
 import models.Result;
 
+import java.util.Random;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegisterMenu implements views.AppMenu {
     private final MenuController menuController;
@@ -44,10 +48,48 @@ public class RegisterMenu implements views.AppMenu {
         String currentInput = initialInput;
 
         while (attempts < MAX_PASSWORD_ATTEMPTS) {
+            Matcher randomMatcher = Pattern.compile(RegisterMenuCommand.RANDOM_PASSWORD.getRegexPattern())
+                    .matcher(currentInput);
+
+            if (randomMatcher.matches()) {
+                String randomPassword = registerController.generateRandomPassword();
+                System.out.println("Your random password is: " + randomPassword);
+                System.out.println("Do you want to use this password? (yes/no)");
+
+                String response = scanner.nextLine().trim();
+                if (response.equalsIgnoreCase("yes")) {
+                    currentInput = initialInput.replaceFirst(
+                            "-p\\s+\\S+\\s+\\S+",
+                            "-p " + randomPassword + " " + randomPassword
+                    );
+                } else {
+                    System.out.println("1. Generate another random password");
+                    System.out.println("2. Enter password manually");
+                    System.out.println("3. Back to registration menu");
+
+                    String choice = scanner.nextLine().trim();
+                    switch (choice) {
+                        case "1":
+                            continue;
+                        case "2":
+                            System.out.println("Please enter your password and confirmation:");
+                            currentInput = scanner.nextLine().trim();
+                            break;
+                        case "3":
+                            return;
+                        default:
+                            System.out.println("Invalid choice, returning to registration menu");
+                            return;
+                    }
+                }
+            }
+
+
             Result result = registerController.registerUser(currentInput);
             System.out.println(result.getMessage());
 
             if (result.isSuccess()) {
+                showSecurityQuestions();
                 return;
             }
 
@@ -68,6 +110,39 @@ public class RegisterMenu implements views.AppMenu {
         }
 
         System.out.println("Maximum password attempts reached. Returning to registration menu");
+    }
+
+    private void showSecurityQuestions() {
+        System.out.println("Please select a security question:");
+        System.out.println("1. What was your first pet's name?");
+        System.out.println("2. What city were you born in?");
+        System.out.println("3. What is your mother's maiden name?");
+
+        while (true) {
+            String input = scanner.nextLine().trim();
+            Matcher matcher = Pattern.compile(RegisterMenuCommand.PICK_QUESTION.getRegexPattern())
+                    .matcher(input);
+
+            if (matcher.matches()) {
+                String questionNumber = matcher.group("questionNumber");
+                String answer = matcher.group("answer");
+                String confirmAnswer = matcher.group("confirmAnswer");
+
+                if (!answer.equals(confirmAnswer)) {
+                    System.out.println("Answers do not match! Please try again.");
+                    continue;
+                }
+
+                registerController.saveSecurityQuestion(questionNumber, answer);
+                System.out.println("Security question saved successfully!");
+                break;
+            } else if (input.equalsIgnoreCase("back")) {
+                return;
+            } else {
+                System.out.println("Invalid command format! Please use:");
+                System.out.println("pick question -q <questionNumber> -a <answer> -c <confirmAnswer>");
+            }
+        }
     }
 
     @Override
