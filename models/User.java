@@ -6,6 +6,8 @@ public class User {
     String nickName;
     String gender;
 
+
+
     public void setGender(String gender) {
         this.gender = gender;
     }

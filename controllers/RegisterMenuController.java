@@ -3,6 +3,9 @@ package controllers;
 import models.Enums.RegisterMenuCommand;
 import models.Result;
 import models.User;
+import models.UserDatabase;
+
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,8 +32,19 @@ public class RegisterMenuController {
         String email = matcher.group("email");
         String gender = matcher.group("gender");
 
-        if (!isValidPassword(password)) {
-            return new Result(false, "Password is invalid!");
+//        if (!isValidPassword(password)) {
+//            return new Result(false, "Password is invalid!");
+//        }
+
+
+        if (!isValidUsername(username)) {
+            return new Result(false,
+                    "Invalid username!");
+        }
+
+        if (!isValidEmail(email)) {
+            return new Result(false,
+                    "Invalid email format!");
         }
 
         Result passwordValidation = validatePasswordStrength(password);
@@ -41,13 +55,10 @@ public class RegisterMenuController {
         if (!password.equals(confirmPassword)) {
             return new Result(false, "Password and confirm password do not match!");
         }
-        if (!isValidUsername(username)) {
-            return new Result(false, "Invalid username! Only letters, numbers, and '-' are allowed.");
-        }
+
         if (!isValidEmail(email)) {
             return new Result(false, "Invalid email format!");
         }
-
         User newUser = new User();
         newUser.setUsername(username);
         newUser.setPassword(password);
@@ -57,22 +68,61 @@ public class RegisterMenuController {
         return new Result(true, "User registered successfully!");
     }
 
+    private boolean isValidUsername(String username) {
+        String usernameRegex = "^[a-zA-Z0-9-]+$";
+        return username.matches(usernameRegex);
+    }
+
+    private boolean isValidEmail(String email) {
+        // قسمت قبل از @
+        String localPartRegex = "^[a-zA-Z0-9][a-zA-Z0-9-_.]*[a-zA-Z0-9]";
+        // قسمت بعد از @ (دامنه)
+        String domainPartRegex = "([a-zA-Z0-9-]+\\.[a-zA-Z]{2,})$";
+        // کل الگوی ایمیل
+        String emailRegex = localPartRegex + "@" + domainPartRegex;
+
+        // بررسی وجود فقط یک @
+        if (email.split("@").length != 2) {
+            return false;
+        }
+
+        // بررسی عدم وجود نمادهای غیرمجاز
+        String invalidChars = "?><,\"' ;:\\\\/|][}{+=)(*&^%$#!";
+        for (char c : email.toCharArray()) {
+            if (invalidChars.indexOf(c) != -1) {
+                return false;
+            }
+        }
+
+        // بررسی نقطه‌های تکراری
+        if (email.contains("..")) {
+            return false;
+        }
+
+        // نهایی‌ترین بررسی با regex
+        return email.matches(emailRegex);
+    }
+
     public Result validatePasswordStrength(String password) {
         String specialChars = "?><,\"' ;:\\\\/|][}{+=)(*&^%$#!";
         if (password.length() < 8) {
-            return new Result(false, "Password must be at least 8 characters long.");
+            return new Result(false,
+                    "Password is not Strength, it must be at least 8 characters long.");
         }
 
         if (!password.matches(".*[a-z].*")) {
-            return new Result(false, "Password must contain at least one lowercase letter.");
+            return new Result(false,
+                    "Password is not Strength, it must contain at least one lowercase letter.");
         }
 
         if (!password.matches(".*[A-Z].*")) {
-            return new Result(false, "Password must contain at least one uppercase letter.");
+            return new Result(false,
+                    "Password is not Strength, it must contain at least one uppercase letter.");
         }
 
         if (!password.matches(".*\\d.*")) {
-            return new Result(false, "Password must contain at least one digit.");
+            return new Result(false,
+                    "Password is not Strength, it must contain at least one digit.");
         }
         boolean hasSpecialChar = false;
         for (char c : password.toCharArray()) {
@@ -82,22 +132,28 @@ public class RegisterMenuController {
             }
         }
         if (!hasSpecialChar) {
-            return new Result(false, "Password must contain at least one special character.");
+            return new Result(false,
+                    "Password is not Strength, it must contain at least one special character.");
         }
 
         return new Result(true, "Password is strong.");
     }
 
-    private boolean isValidUsername(String username) {
-        return username.matches("^[a-zA-Z0-9-]+$");
-    }
     private boolean isValidPassword(String password) {
-        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+=\\-\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$";
-        return password.matches(passwordRegex);
+        String allowedSpecialChars = "?><,\"' ;:\\\\/|][}{+=)(*&^%$#!";
+        String allowedCharsRegex = "[a-zA-Z0-9" + Pattern.quote(allowedSpecialChars) + "]+";
+
+
+        if (!password.matches(allowedCharsRegex)) {
+            return false;
+        }
+
+        boolean hasLower = password.matches(".*[a-z].*");
+        boolean hasUpper = password.matches(".*[A-Z].*");
+        boolean hasDigit = password.matches(".*\\d.*");
+        boolean hasSpecial = password.matches(".*[" + Pattern.quote(allowedSpecialChars) + "].*");
+
+        return hasLower && hasUpper && hasDigit && hasSpecial;
     }
 
-    private boolean isValidEmail(String email) {
-        String emailRegex = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z]{2,})+$";
-        return email.matches(emailRegex);
-    }
 }

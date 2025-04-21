@@ -51,7 +51,7 @@ public class RegisterMenu implements views.AppMenu {
                 return;
             }
 
-            if (result.getMessage().contains("Password and confirmation do not match")) {
+            if (result.getMessage().equals("Password and confirm password do not match!")) {
                 System.out.println("Please re-enter your password and confirmation:");
                 System.out.println("Or type 'back' to return to registration menu");
 
