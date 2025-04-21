@@ -4,7 +4,8 @@ import models.GameTile;
 import models.Result;
 
 public class Crafting implements Skill{
-    int level;
+    int level = 0;
+    int capacity = 0;
 
     public Result craftItem(String itemType, Inventory inventory) {}
 
@@ -14,6 +15,19 @@ public class Crafting implements Skill{
     @Override
     public void setLevel(int level) {
         this.level = level;
+    }
+    @Override
+    public void increaseLevel() {
+        if(level < 4) this.level ++;
+    }
+    @Override
+    public boolean canGoToNextLevel() {
+        if((level + 1) * 100 + 50 <= capacity) {
+            capacity -= (level + 1)*100 + 50;
+            increaseLevel();
+            return true;
+        }
+        return false;
     }
 
 }

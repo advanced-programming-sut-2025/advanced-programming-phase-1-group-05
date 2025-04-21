@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public class AnimalCare implements Skill{
-    int level;
-
+    int level = 0;
+    int capacity = 0;
     private Map<String, List<Animal>> enclosures;
 
     public void buildEnclosure(String enclosureName, String type, int capacity) {}
@@ -22,6 +22,19 @@ public class AnimalCare implements Skill{
     @Override
     public void setLevel(int level) {
         this.level = level;
+    }
+    @Override
+    public void increaseLevel() {
+        if(level < 4) this.level ++;
+    }
+    @Override
+    public boolean canGoToNextLevel() {
+        if((level + 1) * 100 + 50 <= capacity) {
+            capacity -= (level + 1)*100 + 50;
+            increaseLevel();
+            return true;
+        }
+        return false;
     }
 
 }
