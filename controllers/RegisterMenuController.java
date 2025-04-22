@@ -6,6 +6,7 @@ import models.User;
 import models.UserDatabase;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -13,6 +14,7 @@ import java.util.regex.Pattern;
 
 public class RegisterMenuController {
     private final Scanner scanner;
+    private User currentUser;
 
     public RegisterMenuController(Scanner scanner) {
         this.scanner = scanner;
@@ -61,11 +63,20 @@ public class RegisterMenuController {
         if (!isValidEmail(email)) {
             return new Result(false, "Invalid email format!");
         }
+
+        if (UserDatabase.usernameExists(username)) {
+            return new Result(false, "Username already exists!");
+        }
+
         User newUser = new User();
         newUser.setUsername(username);
         newUser.setPassword(password);
         newUser.setNickName(nickname);
+        newUser.setEmail(email);
         newUser.setGender(gender);
+
+        UserDatabase.addUser(newUser);
+        this.currentUser = newUser;
 
         return new Result(true, "User registered successfully!");
     }
@@ -101,11 +112,25 @@ public class RegisterMenuController {
     }
 
     public void saveSecurityQuestion(String questionNumber, String answer) {
-//        currentUser.setSecurityQuestion(questionNumber);
-//        currentUser.setSecurityAnswer(answer);
-//        userRepository.save(currentUser);
+        if (this.currentUser == null) {
+            throw new IllegalStateException("No user is currently being registered");
+        }
+
+        String questionText = getQuestionText(questionNumber);
+        this.currentUser.setSecurityQuestion(questionText);
+        this.currentUser.setSecurityAnswer(answer.toLowerCase().trim());
+
+        UserDatabase.addUser(this.currentUser);
     }
 
+    private String getQuestionText(String questionNumber) {
+        switch (questionNumber) {
+            case "1": return "What was your first pet's name?";
+            case "2": return "What city were you born in?";
+            case "3": return "What is your favorite color?";
+            default: return "Custom security question";
+        }
+    }
     private boolean isValidUsername(String username) {
         String allowedCharsRegex = "^[a-zA-Z0-9-]+$";
 
@@ -174,22 +199,4 @@ public class RegisterMenuController {
 
         return new Result(true, "Password is strong.");
     }
-
-    private boolean isValidPassword(String password) {
-        String allowedSpecialChars = "?><,\"' ;:\\\\/|][}{+=)(*&^%$#!";
-        String allowedCharsRegex = "[a-zA-Z0-9" + Pattern.quote(allowedSpecialChars) + "]+";
-
-
-        if (!password.matches(allowedCharsRegex)) {
-            return false;
-        }
-
-        boolean hasLower = password.matches(".*[a-z].*");
-        boolean hasUpper = password.matches(".*[A-Z].*");
-        boolean hasDigit = password.matches(".*\\d.*");
-        boolean hasSpecial = password.matches(".*[" + Pattern.quote(allowedSpecialChars) + "].*");
-
-        return hasLower && hasUpper && hasDigit && hasSpecial;
-    }
-
 }
