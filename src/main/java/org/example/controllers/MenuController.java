@@ -1,19 +1,20 @@
-package org.example.controllers;
+package controllers;
 
-import org.example.models.Enums.Menu;
-import org.example.models.Result;
-import org.example.views.*;
+import models.Result;
+import models.Enums.Menu;
+import views.*;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class MenuController {
-    private org.example.views.AppMenu currentMenu;
+    private views.AppMenu currentMenu;
     private final Scanner scanner;
 
     public MenuController(Scanner scanner) {
         this.scanner = scanner;
         RegisterMenuController registerController = new RegisterMenuController(scanner);
-        this.currentMenu = new RegisterMenu(this, registerController);
+        this.currentMenu = new RegisterMenu(this, registerController, this.getScanner());
     }
 
     public Result enterMenu(String menuName) {
@@ -42,26 +43,31 @@ public class MenuController {
                 (currentMenuName.equals("Register Menu") && target == Menu.LOGIN)) {
             return true;
         }
+        else {
+            return false;
+        }
 
-        return false;
+//        return false;
     }
 
     private AppMenu createMenuInstance(Menu menu) {
         switch (menu) {
-            case LOGIN: return new LoginMenu(this);
+            case LOGIN:
+                LoginMenuController loginController = new LoginMenuController(this.getScanner());
+                return new LoginMenu(this, loginController, this.getScanner());
             case MAIN: return new MainMenu(this);
             case PROFILE: return new ProfileMenu(this);
-            case GAME: return new GameMenu(this, new GameMenuController());
+            case GAME: return new GameMenu(this);
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
-                return new RegisterMenu(this, registerController);
+                return new RegisterMenu(this, registerController, this.getScanner());
             default: throw new IllegalArgumentException("Unknown menu type");
         }
     }
 
     public Result exitMenu() {
-        System.out.println("Exiting current menu...");
-        return new Result(true, "Menu exited successfully");
+        System.out.println("Exiting app...");
+        return new Result(true, "App exited successfully");
     }
 
     public Result showCurrentMenu() {
