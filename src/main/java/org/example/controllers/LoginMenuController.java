@@ -1,6 +1,5 @@
 package org.example.controllers;
 
-
 import org.example.models.Result;
 import org.example.models.User;
 import org.example.models.UserDatabase;

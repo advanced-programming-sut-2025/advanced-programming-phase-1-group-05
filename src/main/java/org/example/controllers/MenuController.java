@@ -1,14 +1,14 @@
-package controllers;
+package org.example.controllers;
 
-import models.Result;
-import models.Enums.Menu;
-import views.*;
+import org.example.models.Result;
+import org.example.models.Enums.Menu;
+import org.example.views.*;
 
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class MenuController {
-    private views.AppMenu currentMenu;
+    private org.example.views.AppMenu currentMenu;
     private final Scanner scanner;
 
     public MenuController(Scanner scanner) {

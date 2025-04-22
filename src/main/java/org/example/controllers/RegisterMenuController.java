@@ -1,9 +1,9 @@
-package controllers;
+package org.example.controllers;
 
-import models.Enums.RegisterMenuCommand;
-import models.Result;
-import models.User;
-import models.UserDatabase;
+import org.example.models.Enums.RegisterMenuCommand;
+import org.example.models.Result;
+import org.example.models.User;
+import org.example.models.UserDatabase;
 
 import java.io.IOException;
 import java.util.Map;

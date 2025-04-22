@@ -3,6 +3,7 @@ package org.example.views;
 import org.example.controllers.MenuController;
 import org.example.models.Result;
 
+
 public class ProfileMenu implements org.example.views.AppMenu {
     private final MenuController menuController;
 
@@ -13,8 +14,6 @@ public class ProfileMenu implements org.example.views.AppMenu {
 
     @Override
     public void handleUserInput(String input) {
-        System.out.println("\n=== Profile Menu ===");
-//        String input = scanner.nextLine();
 
         if (input.equals("show current menu")) {
             Result result = menuController.showCurrentMenu();
