@@ -1,48 +1,65 @@
 package org.example.models;
 
 import org.example.models.Skills.*;
+import org.example.models.Tool.Hoe;
+import org.example.models.Tool.Pickaxe;
+import org.example.models.Tool.TrashCan;
+import org.example.models.Tool.WateringCan;
 
 import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Player {
     private User user;
     private int x, y;
-//    private WateringCan wateringCan;
-//    private Farming farmingSkill;
+    private WateringCan wateringCan = new WateringCan();
+    private Farming farmingSkill;
     private int energy;
     private int gold;
-//    private final Crafting craftingSkill = new Crafting();
-//    private final Cooking cookingSkill = new Cooking();
-//    private final Fishing fishingSkill = new Fishing();
-//    private final Foraging foragingSkill = new Foraging();
-//    private final List<Item> inventory = new ArrayList<>();
-//    private final TrashCan trashCan = new TrashCan();
+    private final Crafting craftingSkill = new Crafting();
+    private final Cooking cookingSkill = new Cooking();
+    private final Fishing fishingSkill = new Fishing();
+    private final Foraging foragingSkill = new Foraging();
+    private final HashMap<Item, Integer> inventory = new HashMap<>();
+    private final TrashCan trashCan = new TrashCan();
+    private boolean unlimitedEnergy = false;
+    private Item currentItem;
 
-    public void decreaseEnergy(int amount) {
+    public Player(User user) {
+        this.user = user;
+        this.energy = 200;
+        //base player tools
+        inventory.put(new Hoe(), 1);
+        inventory.put(new Pickaxe(), 1);
+    }
+    public void addEnergy(int amount) {
+        energy += amount;
         if(energy <= 0) faint();
     }
 
     public void faint() {
         //skip the rest of the day
         //set current coordinate
+        //waiting for time functionality
         energy *= 0.75;
     }
 
     public void increaseEnergy(int amount) {
+        if(amount < 0 && unlimitedEnergy) return;
         energy += amount;
         if(energy >= 200) energy = 200;
     }
-
+    public int getEnergy() {return energy;}
     public boolean hasEnoughEnergy(int required) {
         return false;
     }
-//    public Result waterTile(GameTile tile) {return null;}
-//    public Crafting getCraftingSkill() {return craftingSkill;}
-//    public Cooking getCookingSkill() {return cookingSkill;}
-//    public Farming getFarmingSkill() {return farmingSkill;}
-//    public Foraging getForagingSkill() {return foragingSkill;}
-//    public Fishing getFishingSkill() {return fishingSkill;}
+    public Result waterTile(GameTile tile) {return null;}
+    public Crafting getCraftingSkill() {return craftingSkill;}
+    public Cooking getCookingSkill() {return cookingSkill;}
+    public Farming getFarmingSkill() {return farmingSkill;}
+    public Foraging getForagingSkill() {return foragingSkill;}
+    public Fishing getFishingSkill() {return fishingSkill;}
     public Map.Entry<Integer, Integer> getCoordinate() {
         return new AbstractMap.SimpleEntry<>(x, y);
     }
@@ -51,15 +68,18 @@ public class Player {
         this.y = y;
     }
 
-//    public void addToInventory(Item item) {
-//        inventory.add(item);
-//    }
-//    public List<Item> getInventory() {return inventory;}
+    public void addToInventory(Item item, int quantity) {
+        inventory.put(item, quantity);
+    }
+    public HashMap<Item, Integer> getInventory() {return inventory;}
     public void addGold(int amount) {gold += amount;}
     public int getGold() {return gold;}
-
-
-    public int getEnergy() {
-        return energy;
+    public void setUnlimitedEnergy() {
+        unlimitedEnergy = true;
     }
+    public void setCurrentItem(Item item) {
+        currentItem = item;
+    }
+    public Item getCurrentItem() {return currentItem;}
+
 }
