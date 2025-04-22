@@ -5,7 +5,7 @@ import org.example.models.Building.Building;
 import java.util.*;
 
 public class NPC {
-    private String name;
+    private final String name;
     private Map<Player, Integer> friendshipPoints = new HashMap<>();
     private final List<Item> favorites = new ArrayList<>();
     private Map<Item, Integer> requests = new LinkedHashMap<>();
@@ -27,6 +27,11 @@ public class NPC {
         daysToUnlockThirdQuest = rand.nextInt(10, 29);
         // this.residence = residence
     }
+
+    public String getName() {
+        return name;
+    }
+
     public int getDaysToUnlockThirdQuest() {
         return daysToUnlockThirdQuest;
     }
@@ -71,6 +76,9 @@ public class NPC {
             rewards.remove(rewardItem);
         }
 
+    }
+    public Map<Item, Integer> getRequests() {
+        return requests;
     }
     public void sendGift(Player player){
         Random rand = new Random();

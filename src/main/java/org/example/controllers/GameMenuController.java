@@ -4,6 +4,7 @@ import org.example.models.*;
 import org.example.models.Tool.Tool;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class GameMenuController {
     public Result showCraftInfo(String name){
@@ -140,4 +141,17 @@ public class GameMenuController {
         return new Result(true, "Oh, a " + itemName + " ?Thanks, " + player.getName());
     }
 
+    public void showAllQuests(){
+        Player player = Game.getCurrentPlayer();
+        for (NPC npc : Game.getAllNPCs()) {
+            System.out.println(npc.getName() + " quests for you");
+            int index  = 0;
+            for (Map.Entry<Item, Integer> entry : npc.getRequests().entrySet()) {
+                System.out.println(entry.getValue() + " " + entry.getKey().getName() + "(s)");
+                index++;
+                if (index == npc.getNumOfUnlockedQuests(player)) break;
+            }
+            System.out.println("-------------------------");
+        }
+    }
 }

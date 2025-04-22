@@ -33,6 +33,9 @@ public class GameMenu implements AppMenu {
             String itemName = input.substring(iIndex + 1).trim();
             System.out.println(gameController.giftNPC(npcName, itemName).getMessage());
         }
+        else if (input.matches("quests\\s+list")){
+            gameController.showAllQuests();
+        }
         else if (input.startsWith("menu enter ")) {
             String menuName = input.substring("menu enter ".length()).trim();
             Result result = menuController.enterMenu(menuName);
