@@ -4,7 +4,8 @@ public enum RegisterMenuCommand {
     REGISTER("^register\\s+-u\\s+(?<username>.+?)\\s+-p\\s+(?<password>.+?)\\s+" +
             "(?<confirmPassword>.+?)\\s+-n\\s+(?<nickname>.+?)\\s+-e\\s+(?<email>.+?)\\s+-g\\s+(?<gender>.+?)$"),
     RANDOM_PASSWORD("^\\s*random\\s+password\\s*$"),
-    PICK_QUESTION("^pick question -q (?<questionNumber>\\d+) -a (?<answer>.+) -c (?<confirmAnswer>.+)$"),
+    PICK_QUESTION("^\\s*pick\\s+question\\s+-q\\s+(?<questionNumber>\\d+)\\s+-a\\s+" +
+            "(?<answer>.+)\\s+-c\\s+(?<confirmAnswer>.+)\\s*$"),
     INVALID(".*");
 
     private final String regexPattern;
