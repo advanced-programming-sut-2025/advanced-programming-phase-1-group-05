@@ -10,6 +10,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class RegisterMenu implements views.AppMenu {
     private final MenuController menuController;
     private final RegisterMenuController registerController;
