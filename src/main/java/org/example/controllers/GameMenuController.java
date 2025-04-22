@@ -129,6 +129,15 @@ public class GameMenuController {
         return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().toString()));
     }
 
-
+    public Result giftNPC(String npcName, String itemName){
+        NPC npc = Game.getNPCByName(npcName);
+        if (npc == null) return new Result(false, "NPC not found");
+        Item item = Game.getItemByName(itemName);
+        if (item == null) return new Result(false, "Item not found");
+        Player player = Game.getCurrentPlayer();
+        npc.recieveGift(item, player);
+        if (npc.isFavorite(item)) return new Result(true, "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
+        return new Result(true, "Oh, a " + itemName + " ?Thanks, " + player.getName());
+    }
 
 }

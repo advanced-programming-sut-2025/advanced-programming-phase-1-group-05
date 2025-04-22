@@ -37,6 +37,9 @@ public class NPC {
         // this method will check if the gift is a favorite
         // and will add to friendshipLevel of the player accordingly
     }
+    public boolean isFavorite(Item item) {
+        return favorites.contains(item);
+    }
     public void addFriendShipPoints(Player player, int points) {
         friendshipPoints.merge(player, points, Integer::sum);
         if (getFriendshipLevel(player) == 1){

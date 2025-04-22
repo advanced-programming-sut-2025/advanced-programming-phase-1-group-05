@@ -1,5 +1,6 @@
 package org.example.models.Skills;
 
+import org.example.models.Enums.ItemLevel;
 import org.example.models.GameTile;
 import org.example.models.Result;
 
@@ -7,11 +8,16 @@ public class Crafting implements Skill{
     int level = 0;
     int capacity = 0;
 
-    public Result craftItem(String itemType, Inventory inventory) {}
+//    public Result craftItem(String itemType, Inventory inventory) {}
 
     public void placeItemOnGround(String item, GameTile tile) {}
 
-    public void addItemToInventory(String item, Inventory inventory) {}
+    @Override
+    public ItemLevel getLevel() {
+        return null;
+    }
+
+    //    public void addItemToInventory(String item, Inventory inventory) {}
     @Override
     public void setLevel(int level) {
         this.level = level;

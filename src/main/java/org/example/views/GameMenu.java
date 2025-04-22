@@ -16,6 +16,7 @@ public class GameMenu implements AppMenu {
     @Override
     public void handleUserInput(String input) {
         System.out.println("\n=== Game Menu ===");
+        input = input.trim();
         if (input.equals("show current menu")) {
             Result result = menuController.showCurrentMenu();
             System.out.println(result.getMessage());
@@ -25,11 +26,19 @@ public class GameMenu implements AppMenu {
             input = input.substring(CIndex + 1).trim();
             System.out.println(gameController.meetNPC(input).getMessage());
         }
+        else if (input.matches("gift\\s+NPC\\s+\\S+\\s+-i\\s+.*")){
+            int CIndex = input.indexOf('C');
+            int iIndex = input.indexOf('-');
+            String npcName = input.substring(CIndex + 1, iIndex).trim();
+            String itemName = input.substring(iIndex + 1).trim();
+            System.out.println(gameController.giftNPC(npcName, itemName).getMessage());
+        }
         else if (input.startsWith("menu enter ")) {
             String menuName = input.substring("menu enter ".length()).trim();
             Result result = menuController.enterMenu(menuName);
             System.out.println(result.getMessage());
-        } else {
+        }
+        else {
             System.out.println("Invalid Command!");
         }
     }
