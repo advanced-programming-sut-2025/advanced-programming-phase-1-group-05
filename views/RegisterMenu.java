@@ -104,6 +104,7 @@ public class RegisterMenu implements views.AppMenu {
             }
         }
 
+
         if (newPassword.isEmpty()) {
             return originalCommand;
         }
