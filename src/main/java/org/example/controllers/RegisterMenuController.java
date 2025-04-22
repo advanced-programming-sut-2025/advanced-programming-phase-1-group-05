@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 public class RegisterMenuController {
     private final Scanner scanner;
 
+
     public RegisterMenuController(Scanner scanner) {
         this.scanner = scanner;
     }
