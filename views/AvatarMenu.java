@@ -1,4 +1,4 @@
-//package views;
-//
-//public class AvatarMenu implements AppMenu{
-//}
+package views;
+
+public class AvatarMenu implements AppMenu{
+}
