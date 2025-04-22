@@ -51,7 +51,7 @@ public class MenuController {
             case LOGIN: return new LoginMenu(this);
             case MAIN: return new MainMenu(this);
             case PROFILE: return new ProfileMenu(this);
-            case GAME: return new GameMenu(this);
+            case GAME: return new GameMenu(this, new GameMenuController());
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
                 return new RegisterMenu(this, registerController);

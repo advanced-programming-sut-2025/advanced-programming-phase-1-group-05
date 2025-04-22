@@ -6,11 +6,12 @@ import org.example.models.TimeAndDate;
 import java.util.List;
 
 public enum ArtisianType {
-    BeeHouse("Bee House"),
-    CheesePress(),
-    Keg(),
-    Dehydrator(),
-    CharcoalKiln();
+//    BeeHouse("Bee House"),
+//    CheesePress(),
+//    Keg(),
+//    Dehydrator(),
+//    CharcoalKiln()
+;
 
     private final String name;
     private final List<Item> items;

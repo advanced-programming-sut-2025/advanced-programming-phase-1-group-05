@@ -1,6 +1,7 @@
 package org.example.models.Skills;
 
 import org.example.models.Animal;
+import org.example.models.Enums.ItemLevel;
 import org.example.models.GameTile;
 
 import java.util.List;
@@ -25,6 +26,11 @@ public class AnimalCare implements Skill{
     }
     public void shaveAnimal(GameTile tile) {
         //shave sheep
+    }
+
+    @Override
+    public ItemLevel getLevel() {
+        return null;
     }
 
     @Override

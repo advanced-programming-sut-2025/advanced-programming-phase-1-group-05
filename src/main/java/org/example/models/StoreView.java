@@ -1,7 +1,7 @@
 package org.example.models;//package views;
 
 import org.example.controllers.StoreController;
-import models.Store;
+import org.example.models.Store;
 import org.example.views.AppMenu;
 
 import javax.swing.text.View;
@@ -18,8 +18,13 @@ public class StoreView implements AppMenu {
     }
 
     @Override
-    public void handleUserInput() {
-       Matcher matcher = null;
+    public void handleUserInput(String input) {
+        Matcher matcher = null;
         //match user input and handle the command via store controller
+    }
+
+    @Override
+    public String getMenuName() {
+        return "";
     }
 }

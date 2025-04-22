@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>/Users/parisa/Downloads/new11</OriginalElement>
+  <nodes>
+    <node x="2804.5" y="-17.5">models.Enums.Season</node>
+    <node x="541.0" y="282.5">models.Tool.MilkPail</node>
+    <node x="1332.0" y="822.5">controllers.ArtisianController</node>
+    <node x="825.0" y="1142.5">views.LoginMenu</node>
+    <node x="1253.5" y="942.5">models.Store</node>
+    <node x="1815.5" y="1002.5">controllers.GameMenuController</node>
+    <node x="2515.5" y="342.5">models.Enums.Seed</node>
+    <node x="192.0" y="762.5">controllers.TradingController</node>
+    <node x="2323.5" y="282.5">models.Skills.Fishing</node>
+    <node x="1605.5" y="762.5">controllers.TimeController</node>
+    <node x="2454.5" y="762.5">controllers.FishingController</node>
+    <node x="3175.0" y="582.5">Main</node>
+    <node x="185.0" y="582.5">models.OffersAndRequests</node>
+    <node x="2921.0" y="822.5">models.Enums.AnimalType</node>
+    <node x="2408.5" y="522.5">models.FruitAndVegetable</node>
+    <node x="2017.0" y="522.5">models.Tool.Tool</node>
+    <node x="2888.5" y="522.5">models.Enums.CoopAndBarnType</node>
+    <node x="2656.5" y="282.5">models.Enums.GrowthStage</node>
+    <node x="600.5" y="1142.5">views.AvatarMenu</node>
+    <node x="161.0" y="1142.5">views.ProfileMenu</node>
+    <node x="1429.5" y="582.5">models.Player</node>
+    <node x="2050.0" y="762.5">models.Enums.StoreType</node>
+    <node x="-3.5" y="282.5">models.User</node>
+    <node x="1004.5" y="1002.5">controllers.StoreController</node>
+    <node x="2896.5" y="342.5">models.Item</node>
+    <node x="2416.0" y="1142.5">controllers.LoginMenuController</node>
+    <node x="719.5" y="342.5">models.Tool.Axe</node>
+    <node x="39.0" y="522.5">models.App</node>
+    <node x="2701.0" y="582.5">models.Product</node>
+    <node x="162.5" y="942.5">models.Enums.RegisterMenuCommand</node>
+    <node x="1854.0" y="822.5">models.Tool.BackPack</node>
+    <node x="3113.0" y="1142.5">models.GameTile</node>
+    <node x="692.0" y="942.5">controllers.AvatarMenuController</node>
+    <node x="841.5" y="822.5">controllers.GameMapController</node>
+    <node x="2917.0" y="1002.5">models.Enums.TileType</node>
+    <node x="470.5" y="822.5">models.Game</node>
+    <node x="532.0" y="162.5">models.Enums.ItemLevel</node>
+    <node x="2092.0" y="1142.5">controllers.ProfileMenuController</node>
+    <node x="2718.5" y="822.5">models.NPC</node>
+    <node x="1799.5" y="1142.5">controllers.MainMenuController</node>
+    <node x="1958.0" y="282.5">models.Skills.Cooking</node>
+    <node x="3095.5" y="942.5">models.Enums.BuildingType</node>
+    <node x="-51.5" y="1142.5">views.MainMenu</node>
+    <node x="384.0" y="1142.5">views.GameMenu</node>
+    <node x="367.0" y="342.5">models.Tool.Scythe</node>
+    <node x="2123.0" y="942.5">controllers.MenuController</node>
+    <node x="1268.5" y="522.5">models.Result</node>
+    <node x="1012.5" y="342.5">models.Tool.TrashCan</node>
+    <node x="2584.0" y="942.5">models.Building</node>
+    <node x="-141.0" y="342.5">models.Tool.Hoe</node>
+    <node x="1555.5" y="282.5">models.Skills.Foraging</node>
+    <node x="3135.5" y="162.5">models.Enums.FishType</node>
+    <node x="-148.0" y="1002.5">models.Enums.StoreMenuCommands</node>
+    <node x="1841.0" y="582.5">models.Artisian</node>
+    <node x="492.0" y="1002.5">views.AppMenu</node>
+    <node x="1742.5" y="342.5">models.Skills.AnimalCare</node>
+    <node x="2177.5" y="582.5">models.Enums.ArtisianType</node>
+    <node x="1270.5" y="1142.5">views.StoreView</node>
+    <node x="2733.0" y="1142.5">models.Coop</node>
+    <node x="623.0" y="762.5">models.Tool.FishingPole</node>
+    <node x="2139.0" y="342.5">models.Skills.Crafting</node>
+    <node x="-141.0" y="582.5">models.Enums.Weather</node>
+    <node x="2404.5" y="1002.5">models.Animal</node>
+    <node x="2892.5" y="162.5">models.TimeAndDate</node>
+    <node x="851.5" y="282.5">models.Tool.Shear</node>
+    <node x="1378.5" y="342.5">models.Skills.Farming</node>
+    <node x="2338.5" y="102.5">models.Skills.Skill</node>
+    <node x="1201.5" y="282.5">models.Tool.Pickaxe</node>
+    <node x="1134.5" y="762.5">models.Enums.MapType</node>
+    <node x="1032.0" y="1142.5">views.RegisterMenu</node>
+    <node x="137.0" y="342.5">models.Tool.WateringCan</node>
+    <node x="2248.0" y="822.5">views.GameView</node>
+    <node x="-10.0" y="822.5">models.GameMap</node>
+    <node x="1463.5" y="1142.5">controllers.RegisterMenuController</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="controllers.TradingController" target="models.OffersAndRequests" relationship="TO_MANY">
+      <point x="0.0" y="-17.5" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="views.StoreView" target="controllers.StoreController" relationship="TO_ONE">
+      <point x="39.75" y="-17.5" />
+      <point x="1389.75" y="1120.0" />
+      <point x="1390.0" y="1120.0" />
+      <point x="1390.0" y="1100.0" />
+      <point x="1110.0" y="1100.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Enums.AnimalType" target="models.Product" relationship="TO_MANY">
+      <point x="44.5" y="-17.5" />
+      <point x="3054.5" y="800.0" />
+      <point x="3010.0" y="800.0" />
+      <point x="3010.0" y="660.0" />
+      <point x="2710.0" y="660.0" />
+      <point x="2710.0" y="640.0" />
+      <point x="2735.5" y="640.0" />
+      <point x="-34.5" y="17.5" />
+    </edge>
+    <edge source="models.Store" target="models.NPC" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="1310.0" y="900.0" />
+      <point x="2850.0" y="900.0" />
+      <point x="2850.0" y="800.0" />
+      <point x="2770.0" y="800.0" />
+      <point x="0.0" y="-17.5" />
+    </edge>
+    <edge source="models.Skills.Foraging" target="models.Skills.Skill" relationship="REALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="1630.0" y="260.0" />
+      <point x="2390.0" y="260.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="views.GameMenu" target="views.AppMenu" relationship="REALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="470.0" y="1120.0" />
+      <point x="570.0" y="1120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Enums.StoreType" target="models.Product" relationship="TO_MANY">
+      <point x="-40.0" y="-17.5" />
+      <point x="2090.0" y="680.0" />
+      <point x="2710.0" y="680.0" />
+      <point x="2710.0" y="640.0" />
+      <point x="2735.5" y="640.0" />
+      <point x="-34.5" y="17.5" />
+    </edge>
+    <edge source="controllers.TradingController" target="models.Player" relationship="TO_MANY">
+      <point x="0.0" y="-17.5" />
+      <point x="310.0" y="640.0" />
+      <point x="1570.0" y="640.0" />
+      <point x="1570.0" y="480.0" />
+      <point x="1459.75" y="480.0" />
+      <point x="-30.25" y="-17.5" />
+    </edge>
+    <edge source="models.Product" target="models.Item" relationship="GENERALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="2770.0" y="460.0" />
+      <point x="2910.0" y="460.0" />
+      <point x="2910.0" y="400.0" />
+      <point x="2950.0" y="400.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Skills.Foraging" relationship="TO_ONE">
+      <point x="-30.25" y="-17.5" />
+      <point x="1459.75" y="560.0" />
+      <point x="1450.0" y="560.0" />
+      <point x="1450.0" y="400.0" />
+      <point x="1592.75" y="400.0" />
+      <point x="-37.25" y="17.5" />
+    </edge>
+    <edge source="models.App" target="models.User" relationship="TO_MANY">
+      <point x="0.0" y="-17.5" />
+      <point x="90.0" y="340.0" />
+      <point x="50.0" y="340.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Skills.Fishing" relationship="TO_ONE">
+      <point x="-30.25" y="-17.5" />
+      <point x="1459.75" y="560.0" />
+      <point x="1450.0" y="560.0" />
+      <point x="1450.0" y="400.0" />
+      <point x="2356.75" y="400.0" />
+      <point x="-33.25" y="17.5" />
+    </edge>
+    <edge source="models.Coop" target="models.Animal" relationship="TO_MANY">
+      <point x="0.0" y="-17.5" />
+      <point x="2790.0" y="1100.0" />
+      <point x="2370.0" y="1100.0" />
+      <point x="2370.0" y="980.0" />
+      <point x="2470.0" y="980.0" />
+      <point x="0.0" y="-17.5" />
+    </edge>
+    <edge source="models.Game" target="models.Player" relationship="TO_MANY">
+      <point x="0.0" y="-17.5" />
+      <point x="530.0" y="660.0" />
+      <point x="1570.0" y="660.0" />
+      <point x="1570.0" y="480.0" />
+      <point x="1459.75" y="480.0" />
+      <point x="-30.25" y="-17.5" />
+    </edge>
+    <edge source="models.FruitAndVegetable" target="models.Enums.GrowthStage" relationship="TO_ONE">
+      <point x="-60.75" y="-17.5" />
+      <point x="2469.25" y="500.0" />
+      <point x="2570.0" y="500.0" />
+      <point x="2570.0" y="400.0" />
+      <point x="2750.0" y="400.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.FruitAndVegetable" target="models.Item" relationship="GENERALIZATION">
+      <point x="60.75" y="-17.5" />
+      <point x="2590.75" y="460.0" />
+      <point x="2910.0" y="460.0" />
+      <point x="2910.0" y="400.0" />
+      <point x="2950.0" y="400.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.NPC" target="models.FruitAndVegetable" relationship="TO_MANY">
+      <point x="0.0" y="-17.5" />
+      <point x="2770.0" y="740.0" />
+      <point x="2050.0" y="740.0" />
+      <point x="2050.0" y="700.0" />
+      <point x="2670.0" y="700.0" />
+      <point x="2670.0" y="480.0" />
+      <point x="2469.25" y="480.0" />
+      <point x="-60.75" y="-17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Skills.Crafting" relationship="TO_ONE">
+      <point x="-30.25" y="-17.5" />
+      <point x="1459.75" y="560.0" />
+      <point x="1450.0" y="560.0" />
+      <point x="1450.0" y="400.0" />
+      <point x="2174.5" y="400.0" />
+      <point x="-35.5" y="17.5" />
+    </edge>
+    <edge source="models.Tool.Pickaxe" target="models.Enums.ItemLevel" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="1270.0" y="260.0" />
+      <point x="610.0" y="260.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Skills.Crafting" relationship="CREATE">
+      <point x="30.25" y="-17.5" />
+      <point x="1520.25" y="500.0" />
+      <point x="2070.0" y="500.0" />
+      <point x="2070.0" y="420.0" />
+      <point x="2245.5" y="420.0" />
+      <point x="35.5" y="17.5" />
+    </edge>
+    <edge source="models.Store" target="models.Product" relationship="TO_MANY">
+      <point x="0.0" y="-17.5" />
+      <point x="1310.0" y="680.0" />
+      <point x="2710.0" y="680.0" />
+      <point x="2710.0" y="640.0" />
+      <point x="2735.5" y="640.0" />
+      <point x="-34.5" y="17.5" />
+    </edge>
+    <edge source="views.LoginMenu" target="views.AppMenu" relationship="REALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="910.0" y="1120.0" />
+      <point x="570.0" y="1120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="controllers.LoginMenuController" target="controllers.MenuController" relationship="GENERALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="2550.0" y="1120.0" />
+      <point x="2230.0" y="1120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Enums.AnimalType" target="models.Product" relationship="CREATE">
+      <point x="-44.5" y="-17.5" />
+      <point x="2965.5" y="720.0" />
+      <point x="2810.0" y="720.0" />
+      <point x="2810.0" y="640.0" />
+      <point x="2804.5" y="640.0" />
+      <point x="34.5" y="17.5" />
+    </edge>
+    <edge source="models.Skills.Fishing" target="models.Skills.Skill" relationship="REALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="views.AvatarMenu" target="views.AppMenu" relationship="REALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="690.0" y="1120.0" />
+      <point x="570.0" y="1120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Skills.Crafting" target="models.Skills.Skill" relationship="REALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="2210.0" y="260.0" />
+      <point x="2390.0" y="260.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Tool.Shear" target="models.Enums.ItemLevel" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="910.0" y="260.0" />
+      <point x="610.0" y="260.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.GameTile" target="models.Enums.TileType" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="3190.0" y="1120.0" />
+      <point x="2990.0" y="1120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Skills.Cooking" relationship="CREATE">
+      <point x="30.25" y="-17.5" />
+      <point x="1520.25" y="500.0" />
+      <point x="2070.0" y="500.0" />
+      <point x="2070.0" y="420.0" />
+      <point x="2066.0" y="420.0" />
+      <point x="36.0" y="17.5" />
+    </edge>
+    <edge source="models.Artisian" target="models.Item" relationship="TO_MANY">
+      <point x="0.0" y="-17.5" />
+      <point x="1910.0" y="480.0" />
+      <point x="2330.0" y="480.0" />
+      <point x="2330.0" y="440.0" />
+      <point x="2490.0" y="440.0" />
+      <point x="2490.0" y="260.0" />
+      <point x="2950.0" y="260.0" />
+      <point x="0.0" y="-17.5" />
+    </edge>
+    <edge source="models.Player" target="models.User" relationship="TO_ONE">
+      <point x="-30.25" y="-17.5" />
+      <point x="1459.75" y="560.0" />
+      <point x="1450.0" y="560.0" />
+      <point x="1450.0" y="500.0" />
+      <point x="90.0" y="500.0" />
+      <point x="90.0" y="340.0" />
+      <point x="50.0" y="340.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.FruitAndVegetable" target="models.Enums.Seed" relationship="TO_ONE">
+      <point x="-60.75" y="-17.5" />
+      <point x="2469.25" y="500.0" />
+      <point x="2570.0" y="500.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.NPC" target="models.Player" relationship="TO_MANY">
+      <point x="0.0" y="-17.5" />
+      <point x="2770.0" y="740.0" />
+      <point x="2050.0" y="740.0" />
+      <point x="2050.0" y="720.0" />
+      <point x="1570.0" y="720.0" />
+      <point x="1570.0" y="480.0" />
+      <point x="1459.75" y="480.0" />
+      <point x="-30.25" y="-17.5" />
+    </edge>
+    <edge source="views.RegisterMenu" target="views.AppMenu" relationship="REALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="1130.0" y="1120.0" />
+      <point x="570.0" y="1120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Tool.TrashCan" relationship="TO_ONE">
+      <point x="-30.25" y="-17.5" />
+      <point x="1459.75" y="560.0" />
+      <point x="1450.0" y="560.0" />
+      <point x="1450.0" y="400.0" />
+      <point x="990.0" y="400.0" />
+      <point x="990.0" y="320.0" />
+      <point x="1090.0" y="320.0" />
+      <point x="0.0" y="-17.5" />
+    </edge>
+    <edge source="models.Tool.WateringCan" target="models.Enums.ItemLevel" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="230.0" y="260.0" />
+      <point x="610.0" y="260.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Skills.Cooking" target="models.Skills.Skill" relationship="REALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="2030.0" y="260.0" />
+      <point x="2390.0" y="260.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Skills.Cooking" relationship="TO_ONE">
+      <point x="-30.25" y="-17.5" />
+      <point x="1459.75" y="560.0" />
+      <point x="1450.0" y="560.0" />
+      <point x="1450.0" y="400.0" />
+      <point x="1994.0" y="400.0" />
+      <point x="-36.0" y="17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Tool.WateringCan" relationship="TO_ONE">
+      <point x="-30.25" y="-17.5" />
+      <point x="1459.75" y="560.0" />
+      <point x="1450.0" y="560.0" />
+      <point x="1450.0" y="400.0" />
+      <point x="350.0" y="400.0" />
+      <point x="350.0" y="320.0" />
+      <point x="230.0" y="320.0" />
+      <point x="0.0" y="-17.5" />
+    </edge>
+    <edge source="models.Tool.MilkPail" target="models.Enums.ItemLevel" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Tool.Axe" target="models.Enums.ItemLevel" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="770.0" y="260.0" />
+      <point x="610.0" y="260.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Tool.TrashCan" relationship="CREATE">
+      <point x="30.25" y="-17.5" />
+      <point x="1520.25" y="500.0" />
+      <point x="2070.0" y="500.0" />
+      <point x="2070.0" y="420.0" />
+      <point x="1090.0" y="420.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Skills.AnimalCare" target="models.Skills.Skill" relationship="REALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="1830.0" y="260.0" />
+      <point x="2390.0" y="260.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Enums.ArtisianType" target="models.Item" relationship="TO_MANY">
+      <point x="0.0" y="-17.5" />
+      <point x="2270.0" y="480.0" />
+      <point x="2330.0" y="480.0" />
+      <point x="2330.0" y="440.0" />
+      <point x="2490.0" y="440.0" />
+      <point x="2490.0" y="260.0" />
+      <point x="2950.0" y="260.0" />
+      <point x="0.0" y="-17.5" />
+    </edge>
+    <edge source="views.MainMenu" target="views.AppMenu" relationship="REALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="30.0" y="1120.0" />
+      <point x="570.0" y="1120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.FruitAndVegetable" target="models.Enums.Season" relationship="TO_ONE">
+      <point x="-60.75" y="-17.5" />
+      <point x="2469.25" y="500.0" />
+      <point x="2570.0" y="500.0" />
+      <point x="2570.0" y="400.0" />
+      <point x="2870.0" y="400.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Skills.Foraging" relationship="CREATE">
+      <point x="30.25" y="-17.5" />
+      <point x="1520.25" y="500.0" />
+      <point x="2070.0" y="500.0" />
+      <point x="2070.0" y="420.0" />
+      <point x="1667.25" y="420.0" />
+      <point x="37.25" y="17.5" />
+    </edge>
+    <edge source="models.Enums.AnimalType" target="models.Enums.CoopAndBarnType" relationship="TO_ONE">
+      <point x="44.5" y="-17.5" />
+      <point x="3054.5" y="800.0" />
+      <point x="3010.0" y="800.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Enums.StoreType" target="models.Product" relationship="CREATE">
+      <point x="40.0" y="-17.5" />
+      <point x="2170.0" y="720.0" />
+      <point x="2810.0" y="720.0" />
+      <point x="2810.0" y="640.0" />
+      <point x="2804.5" y="640.0" />
+      <point x="34.5" y="17.5" />
+    </edge>
+    <edge source="models.TimeAndDate" target="models.Enums.Season" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="2990.0" y="120.0" />
+      <point x="2870.0" y="120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="views.StoreView" target="views.AppMenu" relationship="REALIZATION">
+      <point x="-39.75" y="-17.5" />
+      <point x="1310.25" y="1120.0" />
+      <point x="570.0" y="1120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="views.StoreView" target="models.Store" relationship="TO_ONE">
+      <point x="39.75" y="-17.5" />
+      <point x="1389.75" y="1120.0" />
+      <point x="1390.0" y="1120.0" />
+      <point x="1390.0" y="920.0" />
+      <point x="1310.0" y="920.0" />
+      <point x="0.0" y="-17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Skills.Fishing" relationship="CREATE">
+      <point x="30.25" y="-17.5" />
+      <point x="1520.25" y="500.0" />
+      <point x="2070.0" y="500.0" />
+      <point x="2070.0" y="420.0" />
+      <point x="2423.25" y="420.0" />
+      <point x="33.25" y="17.5" />
+    </edge>
+    <edge source="models.Item" target="models.TimeAndDate" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="2950.0" y="240.0" />
+      <point x="3110.0" y="240.0" />
+      <point x="3110.0" y="140.0" />
+      <point x="2990.0" y="140.0" />
+      <point x="0.0" y="-17.5" />
+    </edge>
+    <edge source="controllers.RegisterMenuController" target="controllers.MenuController" relationship="GENERALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="1610.0" y="1120.0" />
+      <point x="2230.0" y="1120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="controllers.MainMenuController" target="controllers.MenuController" relationship="GENERALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="1930.0" y="1120.0" />
+      <point x="2230.0" y="1120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.NPC" target="models.Item" relationship="TO_MANY">
+      <point x="0.0" y="-17.5" />
+      <point x="2770.0" y="740.0" />
+      <point x="2050.0" y="740.0" />
+      <point x="2050.0" y="700.0" />
+      <point x="2150.0" y="700.0" />
+      <point x="2150.0" y="480.0" />
+      <point x="2330.0" y="480.0" />
+      <point x="2330.0" y="440.0" />
+      <point x="2490.0" y="440.0" />
+      <point x="2490.0" y="260.0" />
+      <point x="2950.0" y="260.0" />
+      <point x="0.0" y="-17.5" />
+    </edge>
+    <edge source="models.Tool.Scythe" target="models.Enums.ItemLevel" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="430.0" y="260.0" />
+      <point x="610.0" y="260.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Skills.Farming" target="models.Skills.Skill" relationship="REALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="1450.0" y="260.0" />
+      <point x="2390.0" y="260.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Item" relationship="TO_MANY">
+      <point x="-30.25" y="-17.5" />
+      <point x="1459.75" y="560.0" />
+      <point x="1450.0" y="560.0" />
+      <point x="1450.0" y="460.0" />
+      <point x="2330.0" y="460.0" />
+      <point x="2330.0" y="440.0" />
+      <point x="2490.0" y="440.0" />
+      <point x="2490.0" y="260.0" />
+      <point x="2950.0" y="260.0" />
+      <point x="0.0" y="-17.5" />
+    </edge>
+    <edge source="views.ProfileMenu" target="views.AppMenu" relationship="REALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="250.0" y="1120.0" />
+      <point x="570.0" y="1120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Tool.TrashCan" target="models.Enums.ItemLevel" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="1090.0" y="260.0" />
+      <point x="610.0" y="260.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Tool.Hoe" target="models.Enums.ItemLevel" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="-90.0" y="260.0" />
+      <point x="610.0" y="260.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Enums.FishType" target="models.Enums.Season" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="3210.0" y="120.0" />
+      <point x="2870.0" y="120.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="controllers.ProfileMenuController" target="controllers.MenuController" relationship="GENERALIZATION">
+      <point x="0.0" y="-17.5" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.GameTile" target="models.Enums.BuildingType" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Player" target="models.Skills.Farming" relationship="TO_ONE">
+      <point x="-30.25" y="-17.5" />
+      <point x="1459.75" y="560.0" />
+      <point x="1450.0" y="560.0" />
+      <point x="0.0" y="17.5" />
+    </edge>
+    <edge source="models.Animal" target="models.Enums.AnimalType" relationship="TO_ONE">
+      <point x="0.0" y="-17.5" />
+      <point x="2470.0" y="920.0" />
+      <point x="2890.0" y="920.0" />
+      <point x="2890.0" y="780.0" />
+      <point x="3054.5" y="780.0" />
+      <point x="44.5" y="-17.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Compact" zoom="0.3822762814943527" showDependencies="true" x="1578.5" y="590.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
