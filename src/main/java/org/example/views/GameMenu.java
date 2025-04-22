@@ -2,10 +2,9 @@ package org.example.views;
 
 import org.example.controllers.GameMenuController;
 import org.example.controllers.MenuController;
-import org.example.controllers.RegisterMenuController;
 import org.example.models.Result;
 
-public class GameMenu implements org.example.views.AppMenu {
+public class GameMenu implements AppMenu {
     private final MenuController menuController;
     private final GameMenuController gameController;
 

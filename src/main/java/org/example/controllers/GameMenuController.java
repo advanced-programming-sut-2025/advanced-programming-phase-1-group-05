@@ -1,16 +1,13 @@
 package org.example.controllers;
 
-import org.example.models.App;
-import org.example.models.Game;
-import org.example.models.Item;
-import org.example.models.Result;
+import org.example.models.*;
 import org.example.models.Tool.Tool;
 
 import java.util.HashMap;
 
 public class GameMenuController {
     public Result showCraftInfo(String name){
-
+        return null;
     }
 
     public Result newGame(String[] usernames){
@@ -125,6 +122,12 @@ public class GameMenuController {
     }
 
 
+    public Result meetNPC(String npcName){
+        NPC npc = Game.getNPCByName(npcName);
+
+
+        return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().toString()));
+    }
 
 
 

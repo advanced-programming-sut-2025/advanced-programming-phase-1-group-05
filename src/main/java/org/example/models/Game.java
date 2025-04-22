@@ -35,6 +35,13 @@ public class Game {
         initializeItems();
         initializeNPCs();
     }
+    public static List<NPC> getAllNPCs() {
+        List<NPC> allNPCs = new ArrayList<>();
+        for (Map.Entry<String, NPC> entry : npcs.entrySet()) {
+            allNPCs.add(entry.getValue());
+        }
+        return allNPCs;
+    }
     public static void initializeItems(){
         items.add(new basicItem("friendshipPoints", 0));
         // this item will only be used as a gift for incrementing the friendship points between two players or an npc

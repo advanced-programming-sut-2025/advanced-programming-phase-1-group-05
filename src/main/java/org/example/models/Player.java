@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Player {
+    private String name;
     private User user;
     private int x, y;
     private WateringCan wateringCan = new WateringCan();
@@ -33,6 +34,9 @@ public class Player {
         inventory.put(new Hoe(), 1);
         inventory.put(new Pickaxe(), 1);
         inventory.put(new Scythe(), 1);
+    }
+    public String getName() {
+        return name;
     }
     public void addEnergy(int amount) {
         energy += amount;
