@@ -4,6 +4,7 @@ import org.example.controllers.MenuController;
 import org.example.controllers.RegisterMenuController;
 import org.example.models.Result;
 
+
 public class RegisterMenu implements org.example.views.AppMenu {
     private final MenuController menuController;
     private final RegisterMenuController registerController;
