@@ -1,8 +1,7 @@
-package org.example.models;//package views;
+package views;
 
-import org.example.controllers.StoreController;
+import controllers.StoreController;
 import models.Store;
-import org.example.views.AppMenu;
 
 import javax.swing.text.View;
 import java.util.regex.Matcher;
@@ -19,7 +18,7 @@ public class StoreView implements AppMenu {
 
     @Override
     public void handleUserInput() {
-       Matcher matcher = null;
+        Matcher matcher = null;
         //match user input and handle the command via store controller
     }
 }

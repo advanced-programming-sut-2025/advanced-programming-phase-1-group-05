@@ -1,6 +1,9 @@
 package org.example.controllers;
 
-import org.example.models.*;
+import org.example.models.App;
+import org.example.models.Game;
+import org.example.models.Item;
+import org.example.models.Result;
 import org.example.models.Tool.Tool;
 
 import java.util.HashMap;
@@ -42,19 +45,19 @@ public class GameMenuController {
 
     //cheat code set energy
     public Result setEnergy(int value){
-        Game.getCurrentPlayer().addEnergy(value);
+        App.getCurrentPlayer().addEnergy(value);
         return new Result(true, "** your energy got increased by " + value + " **");
     }
 
     //cheat code unlimited energy
     public Result unlimitedEnergy(){
-        Game.getCurrentPlayer().setUnlimitedEnergy();
+        App.getCurrentPlayer().setUnlimitedEnergy();
         return new Result(true, "** your energy is unlimited now **");
     }
 
     //showing the items in inventory
     public Result showInventory(){
-        HashMap<Item, Integer> items = Game.getCurrentPlayer().getInventory();
+        HashMap<Item, Integer> items = App.getCurrentPlayer().getInventory();
         for(Item item : items.keySet()){
             if(items.get(item) != 0) System.out.println(items.get(item) + " of " + item.getName());
         }
@@ -63,24 +66,17 @@ public class GameMenuController {
 
     //removing from inventory
     public Result removeFromInventory(String name, int quantity, boolean flag){
-        HashMap<Item, Integer> items = Game.getCurrentPlayer().getInventory();
-        for(Item item : items.keySet()){
-            if(!flag) quantity = items.get(item);
-            if(item.getName().equals(name)){
-                //remove selected amount
-                items.put(item, items.get(item) - quantity);
-            }
-        }
+        Game.getCurrentPlayer().getTrashCan().removeFromInventory(name, quantity, flag);
         return new Result(true, quantity + " of " + name + " was removed from inventory");
     }
 
     //equip a certain tool
     public Result equipTool(String name){
-        HashMap<Item, Integer> items = Game.getCurrentPlayer().getInventory();
+        HashMap<Item, Integer> items = App.getCurrentPlayer().getInventory();
         for(Item item : items.keySet()){
             if(item.getName().equals(name)){
                 items.put(item, items.get(item) - 1);
-                Game.getCurrentPlayer().setCurrentItem(item);
+                App.getCurrentPlayer().setCurrentItem(item);
                 return new Result(true, "You're now equipped with " + item.getName());
             }
         }
@@ -89,7 +85,7 @@ public class GameMenuController {
 
     //showing current tool
     public Result showCurrentTool(){
-        Item currentItem = Game.getCurrentPlayer().getCurrentItem();
+        Item currentItem = App.getCurrentPlayer().getCurrentItem();
         if(currentItem instanceof Tool) {
             return new Result(true, "You are equipped with " + currentItem.getName());
         } else {
@@ -100,7 +96,7 @@ public class GameMenuController {
     //showing available tools
     public Result showAvailableTools(){
         boolean found = false;
-        for(Item i : Game.getCurrentPlayer().getInventory().keySet()){
+        for(Item i : App.getCurrentPlayer().getInventory().keySet()){
             if(i instanceof Tool) {
                 System.out.println("* " + i.getName());
                 found = true;
@@ -113,7 +109,7 @@ public class GameMenuController {
     //upgrade tool
     public Result upgradeTool(String name){
         //only available when in ahangary
-        HashMap<Item, Integer> items = Game.getCurrentPlayer().getInventory();
+        HashMap<Item, Integer> items = App.getCurrentPlayer().getInventory();
         for(Item item : items.keySet()){
             if(item.getName().equals(name)){
                 if(item instanceof Tool) {
@@ -130,12 +126,6 @@ public class GameMenuController {
 
 
 
-    public Result meetNPC(String npcName){
-        NPC npc = Game.getNPCByName(npcName);
-
-
-        return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().toString()));
-    }
 
 
 }

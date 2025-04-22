@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Game {
+    private static GameMap gameMap = new GameMap();
     private static Player currentPlayer = null;
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static Map<String, NPC> npcs = new HashMap<>();
@@ -23,6 +24,9 @@ public class Game {
     }
     public static void addPlayer(Player player) {
         players.add(player);
+    }
+    public static GameMap getGameMap() {
+        return gameMap;
     }
     public static List<Player> getAllPlayers() {
         return players;
