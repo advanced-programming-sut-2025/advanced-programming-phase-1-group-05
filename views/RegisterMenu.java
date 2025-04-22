@@ -36,8 +36,6 @@ public class RegisterMenu implements views.AppMenu {
             Result result = menuController.enterMenu(menuName);
             System.out.println(result.getMessage());
         } else if (input.startsWith("register ")) {
-//            Result result = registerController.registerUser(input);
-//            System.out.println(result.getMessage());
             handleRegistration(input);
         } else {
             System.out.println("Invalid Command!");
@@ -48,42 +46,6 @@ public class RegisterMenu implements views.AppMenu {
         String currentInput = initialInput;
 
         while (attempts < MAX_PASSWORD_ATTEMPTS) {
-            Matcher randomMatcher = Pattern.compile(RegisterMenuCommand.RANDOM_PASSWORD.getRegexPattern())
-                    .matcher(currentInput);
-
-            if (randomMatcher.matches()) {
-                String randomPassword = registerController.generateRandomPassword();
-                System.out.println("Your random password is: " + randomPassword);
-                System.out.println("Do you want to use this password? (yes/no)");
-
-                String response = scanner.nextLine().trim();
-                if (response.equalsIgnoreCase("yes")) {
-                    currentInput = initialInput.replaceFirst(
-                            "-p\\s+\\S+\\s+\\S+",
-                            "-p " + randomPassword + " " + randomPassword
-                    );
-                } else {
-                    System.out.println("1. Generate another random password");
-                    System.out.println("2. Enter password manually");
-                    System.out.println("3. Back to registration menu");
-
-                    String choice = scanner.nextLine().trim();
-                    switch (choice) {
-                        case "1":
-                            continue;
-                        case "2":
-                            System.out.println("Please enter your password and confirmation:");
-                            currentInput = scanner.nextLine().trim();
-                            break;
-                        case "3":
-                            return;
-                        default:
-                            System.out.println("Invalid choice, returning to registration menu");
-                            return;
-                    }
-                }
-            }
-
 
             Result result = registerController.registerUser(currentInput);
             System.out.println(result.getMessage());
@@ -94,17 +56,31 @@ public class RegisterMenu implements views.AppMenu {
             }
 
             if (result.getMessage().equals("Password and confirm password do not match!")) {
-                System.out.println("Please re-enter your password and confirmation:");
-                System.out.println("Or type 'back' to return to registration menu");
+                System.out.println("1. Re-enter password manually");
+                System.out.println("2. Generate random password");
+                System.out.println("3. Back to registration menu");
 
-                String newInput = scanner.nextLine().trim();
-                if (newInput.equalsIgnoreCase("back")) {
-                    return;
+                String choice = scanner.nextLine().trim();
+                switch (choice) {
+                    case "1":
+                        System.out.println("Please enter your new password and confirmation:");
+                        System.out.println("Format: -p <newPassword> <confirmPassword>");
+                        String newPasswordInput = scanner.nextLine().trim();
+                        currentInput = updatePasswordInCommand(currentInput, newPasswordInput);
+                        break;
+                    case "2":
+                        handleRandomPasswordOption(currentInput);
+                        return; // Exit this method as handleRandomPasswordOption will handle the flow
+                    case "3":
+                        return;
+                    default:
+                        System.out.println("Invalid choice, please try again");
+                        attempts++;
+                        continue;
                 }
-
-                currentInput = newInput;
                 attempts++;
             } else {
+                // Other validation errors
                 return;
             }
         }
@@ -112,11 +88,94 @@ public class RegisterMenu implements views.AppMenu {
         System.out.println("Maximum password attempts reached. Returning to registration menu");
     }
 
+    private String updatePasswordInCommand(String originalCommand, String passwordInput) {
+        // Split both commands into parts
+        String[] originalParts = originalCommand.split("\\s+");
+        String[] passwordParts = passwordInput.split("\\s+");
+
+        // Find the password parts in the new input
+        String newPassword = "";
+        String newConfirm = "";
+        for (int i = 0; i < passwordParts.length; i++) {
+            if (passwordParts[i].equals("-p") && i + 2 < passwordParts.length) {
+                newPassword = passwordParts[i+1];
+                newConfirm = passwordParts[i+2];
+                break;
+            }
+        }
+
+        if (newPassword.isEmpty()) {
+            return originalCommand;
+        }
+        StringBuilder updatedCommand = new StringBuilder();
+        for (int i = 0; i < originalParts.length; i++) {
+            if (i > 0) updatedCommand.append(" ");
+            if (originalParts[i].equals("-p") && i + 2 < originalParts.length) {
+                updatedCommand.append("-p ").append(newPassword).append(" ").append(newConfirm);
+                i += 2; // skip the old password and confirmation
+            } else {
+                updatedCommand.append(originalParts[i]);
+            }
+        }
+
+        return updatedCommand.toString();
+    }
+
+    private void handleRandomPasswordOption(String originalCommand) {
+        String randomPassword = registerController.generateRandomPassword();
+        System.out.println("Your random password is: " + randomPassword);
+        System.out.println("Do you want to use this password? (yes/no)");
+
+        while (true) {
+            String response = scanner.nextLine().trim().toLowerCase();
+            if (response.equals("yes")) {
+                // Split the original command into parts and rebuild it with the new password
+                String[] parts = originalCommand.split("\\s+");
+                StringBuilder updatedCommand = new StringBuilder();
+
+                // Rebuild the command with the new password
+                for (int i = 0; i < parts.length; i++) {
+                    if (i > 0) updatedCommand.append(" ");
+                    if (parts[i].equals("-p") && i + 2 < parts.length) {
+                        updatedCommand.append("-p ").append(randomPassword).append(" ").append(randomPassword);
+                        i += 2; // skip the old password and confirmation
+                    } else {
+                        updatedCommand.append(parts[i]);
+                    }
+                }
+                Result result = registerController.registerUser(updatedCommand.toString());
+                System.out.println(result.getMessage());
+
+                if (result.isSuccess()) {
+                    showSecurityQuestions();
+                }
+                return;
+
+            } else if (response.equals("no")) {
+                System.out.println("Choose an option:");
+                System.out.println("1. Generate another random password");
+                System.out.println("2. Back to registration menu");
+
+                String choice = scanner.nextLine().trim();
+                if (choice.equals("1")) {
+                    handleRandomPasswordOption(originalCommand); // Recursive call
+                    return;
+                } else if (choice.equals("2")) {
+                    return;
+                } else {
+                    System.out.println("Invalid choice, please try again");
+                }
+            } else {
+                System.out.println("Please answer with 'yes' or 'no'");
+            }
+        }
+    }
+
     private void showSecurityQuestions() {
         System.out.println("Please select a security question:");
         System.out.println("1. What was your first pet's name?");
         System.out.println("2. What city were you born in?");
-        System.out.println("3. What is your mother's maiden name?");
+        System.out.println("3. What is your favorite color?");
 
         while (true) {
             String input = scanner.nextLine().trim();
@@ -135,6 +194,8 @@ public class RegisterMenu implements views.AppMenu {
 
                 registerController.saveSecurityQuestion(questionNumber, answer);
                 System.out.println("Security question saved successfully!");
+                System.out.println("Registration completed successfully! Redirecting to login menu...");
+                menuController.enterMenu("login");
                 break;
             } else if (input.equalsIgnoreCase("back")) {
                 return;
