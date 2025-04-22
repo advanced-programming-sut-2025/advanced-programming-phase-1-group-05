@@ -20,7 +20,6 @@ public class Player {
     private final Cooking cookingSkill = new Cooking();
     private final Fishing fishingSkill = new Fishing();
     private final Foraging foragingSkill = new Foraging();
-    private final HashMap<Item, Integer> inventory = new HashMap<>();
     private final TrashCan trashCan = new TrashCan();
     private final BackPack backPack = new BackPack();
     private boolean unlimitedEnergy = false;
@@ -30,9 +29,9 @@ public class Player {
         this.user = user;
         this.energy = 200;
         //base player tools
-        inventory.put(new Hoe(), 1);
-        inventory.put(new Pickaxe(), 1);
-        inventory.put(new Scythe(), 1);
+        backPack.getInventory().put(new Hoe(), 1);
+        backPack.getInventory().put(new Pickaxe(), 1);
+        backPack.getInventory().put(new Scythe(), 1);
     }
     public void addEnergy(int amount) {
         energy += amount;
@@ -70,9 +69,9 @@ public class Player {
     }
 
     public void addToInventory(Item item, int quantity) {
-        inventory.put(item, quantity);
+        backPack.getInventory().put(item, quantity);
     }
-    public HashMap<Item, Integer> getInventory() {return inventory;}
+    public HashMap<Item, Integer> getInventory() {return  backPack.getInventory();}
     public void addGold(int amount) {gold += amount;}
     public int getGold() {return gold;}
     public void setUnlimitedEnergy() {
@@ -84,5 +83,6 @@ public class Player {
     public Item getCurrentItem() {return currentItem;}
     public AnimalCare getAnimalCare() {return animalCare;}
     public TrashCan getTrashCan() {return trashCan;}
+    public BackPack getBackPack() {return backPack;}
 
 }

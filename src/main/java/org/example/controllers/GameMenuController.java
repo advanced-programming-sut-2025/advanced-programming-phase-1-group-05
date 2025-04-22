@@ -9,9 +9,6 @@ import org.example.models.Tool.Tool;
 import java.util.HashMap;
 
 public class GameMenuController {
-    public Result showCraftInfo(String name){
-
-    }
 
     public Result newGame(String[] usernames){
         return null;
@@ -57,7 +54,7 @@ public class GameMenuController {
 
     //showing the items in inventory
     public Result showInventory(){
-        HashMap<Item, Integer> items = App.getCurrentPlayer().getInventory();
+        HashMap<Item, Integer> items = App.getCurrentPlayer().getBackPack().getInventory();
         for(Item item : items.keySet()){
             if(items.get(item) != 0) System.out.println(items.get(item) + " of " + item.getName());
         }
@@ -72,7 +69,7 @@ public class GameMenuController {
 
     //equip a certain tool
     public Result equipTool(String name){
-        HashMap<Item, Integer> items = App.getCurrentPlayer().getInventory();
+        HashMap<Item, Integer> items = App.getCurrentPlayer().getBackPack().getInventory();
         for(Item item : items.keySet()){
             if(item.getName().equals(name)){
                 items.put(item, items.get(item) - 1);
@@ -96,7 +93,7 @@ public class GameMenuController {
     //showing available tools
     public Result showAvailableTools(){
         boolean found = false;
-        for(Item i : App.getCurrentPlayer().getInventory().keySet()){
+        for(Item i : App.getCurrentPlayer().getBackPack().getInventory().keySet()){
             if(i instanceof Tool) {
                 System.out.println("* " + i.getName());
                 found = true;
@@ -124,6 +121,11 @@ public class GameMenuController {
         return new Result(true, "You don't have that tool in your inventory");
     }
 
+
+    //show craft info
+    public Result showCraftInfo(String name){
+
+    }
 
 
 
