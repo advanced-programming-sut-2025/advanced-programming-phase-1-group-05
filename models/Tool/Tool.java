@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public interface Tool extends Item {
     void use(HashMap.Entry<Integer, Integer> coordinates);
-    void reduceEnergy();
+    void reduceEnergy(int amount);
     ItemLevel getLevel();
     void upgradeLevel();
 }

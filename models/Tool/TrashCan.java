@@ -9,4 +9,5 @@ public class TrashCan {
     public void removeFromInventory(Item item) {
 
     }
+
 }

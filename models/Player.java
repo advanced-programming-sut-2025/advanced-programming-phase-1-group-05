@@ -1,6 +1,7 @@
 package models;
 
 import models.Skills.*;
+import models.Tool.Hoe;
 import models.Tool.TrashCan;
 import models.Tool.WateringCan;
 
@@ -25,6 +26,8 @@ public class Player {
     public Player(User user) {
         this.user = user;
         this.energy = 200;
+        //base player tools
+        inventory.put(new Hoe(), 1);
     }
     public void addEnergy(int amount) {
         energy += amount;

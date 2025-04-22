@@ -1,7 +1,10 @@
 package models;
 
 public class GameMap {
-    public GameTile getTile(int x, int y) { return null; }
+    GameTile[][] map;
+    public GameTile getTile(int x, int y) {
+        return map[x][y];
+    }
 
     public void placeItemOnTile(Item item, int x, int y) {}
 
