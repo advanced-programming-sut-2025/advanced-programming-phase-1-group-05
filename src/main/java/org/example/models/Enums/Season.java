@@ -7,11 +7,11 @@ public enum Season {
     WINTER;
 
     public Season next(){
-        return switch (this){
-            case SPRING ->  SUMMER;
-            case SUMMER ->  FALL;
-            case FALL ->  WINTER;
-            default ->  SPRING;
-        };
+//        return switch (this){
+//            case SPRING ->  SUMMER;
+//            case SUMMER ->  FALL;
+//            case FALL ->  WINTER;
+//            default ->  SPRING;
+//        };
     }
 }
