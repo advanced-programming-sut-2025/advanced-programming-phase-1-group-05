@@ -4,6 +4,7 @@ import models.Result;
 import models.Enums.Menu;
 import views.*;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class MenuController {
@@ -51,7 +52,9 @@ public class MenuController {
 
     private AppMenu createMenuInstance(Menu menu) {
         switch (menu) {
-            case LOGIN: return new LoginMenu(this);
+            case LOGIN:
+                LoginMenuController loginController = new LoginMenuController(this.getScanner());
+                return new LoginMenu(this, loginController, this.getScanner());
             case MAIN: return new MainMenu(this);
             case PROFILE: return new ProfileMenu(this);
             case GAME: return new GameMenu(this);
