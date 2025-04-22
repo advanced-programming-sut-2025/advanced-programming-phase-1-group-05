@@ -43,6 +43,14 @@ public class Player {
         if(energy <= 0) faint();
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
     public void faint() {
         //skip the rest of the day
         //set current coordinate
@@ -77,6 +85,9 @@ public class Player {
         inventory.put(item, quantity);
     }
     public HashMap<Item, Integer> getInventory() {return inventory;}
+    public int getItemQuantity(Item item) {
+        return inventory.get(item);
+    }
     public void addGold(int amount) {gold += amount;}
     public int getGold() {return gold;}
     public void setUnlimitedEnergy() {

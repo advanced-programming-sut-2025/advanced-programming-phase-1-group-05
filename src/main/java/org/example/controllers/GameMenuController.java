@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameMenuController {
+    private NPC lastNPC = null;
     public Result showCraftInfo(String name){
         return null;
     }
@@ -126,7 +127,7 @@ public class GameMenuController {
     public Result meetNPC(String npcName){
         NPC npc = Game.getNPCByName(npcName);
 
-
+        lastNPC = npc;
         return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().toString()));
     }
 
@@ -143,15 +144,29 @@ public class GameMenuController {
 
     public void showAllQuests(){
         Player player = Game.getCurrentPlayer();
-        for (NPC npc : Game.getAllNPCs()) {
-            System.out.println(npc.getName() + " quests for you");
+
+            System.out.println(lastNPC.getName() + " quests for you");
             int index  = 0;
-            for (Map.Entry<Item, Integer> entry : npc.getRequests().entrySet()) {
-                System.out.println(entry.getValue() + " " + entry.getKey().getName() + "(s)");
+            for (Map.Entry<Item, Integer> entry : lastNPC.getRequests().entrySet()) {
+                System.out.println((index + 1) + entry.getValue() + " " + entry.getKey().getName() + "(s)");
                 index++;
-                if (index == npc.getNumOfUnlockedQuests(player)) break;
-            }
+                if (index == lastNPC.getNumOfUnlockedQuests(player)) break;
             System.out.println("-------------------------");
         }
+    }
+    public Result finishQuest(int questIndex){
+        Map.Entry<Item, Integer> quest = lastNPC.getQuest(questIndex);
+        if(quest == null) return new Result(false, "Quest not found");
+        Player player = Game.getCurrentPlayer();
+        if (Math.abs(player.getX() - lastNPC.getX()) > 1 || Math.abs(player.getY() - lastNPC.getY()) > 1) {
+            return new Result(false,"You can't wrap this up from here. Get back to " + lastNPC.getName() + " first!");
+        }
+        if (lastNPC.isCompleted(questIndex)) {
+            return new Result(false, "Another farmer's already taken care of that one. Why not lend a hand elsewhere?");
+        }
+        if (player.getItemQuantity(quest.getKey()) < quest.getValue()) {
+            return new Result(false, "Whoops! You're still a few shy of the total. Harvest more and pop back over!");
+        }
+        return new Result(true, "");
     }
 }

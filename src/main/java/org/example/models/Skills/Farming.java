@@ -1,5 +1,6 @@
 package org.example.models.Skills;
 
+import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.Seed;
 import org.example.models.GameTile;
 import org.example.models.Result;
@@ -21,6 +22,11 @@ public class Farming implements Skill{
     public Result waterCrop(GameTile tile, WateringCan wateringCan) {return null;}
     //درو کردن
     public void harvestCrop(GameTile tile, Scythe scythe) {}
+
+    @Override
+    public ItemLevel getLevel() {
+        return null;
+    }
 
     @Override
     public void setLevel(int level) {

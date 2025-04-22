@@ -2,25 +2,26 @@ package org.example.models.Enums;
 
 public enum FishType {
 
-    Salmon("Salmon", 75, Season.FALL, false),
-    Sardine(),
-    Shad(),
-    MidnightCarp(),
-    Squid(),
-    Tuna(),
-    Perch(),
-    Flounder(),
-    Lionfish(),
-    Herring(),
-    Ghostfish(),
-    Tilapia(),
-    Dorado(),
-    Sunfish(),
-    RainbowTrout(),
-    Legend(),
-    Glacierfish(),
-    Angler(),
-    Crimsonfish();
+//    Salmon("Salmon", 75, Season.FALL, false),
+//    Sardine(),
+//    Shad(),
+//    MidnightCarp(),
+//    Squid(),
+//    Tuna(),
+//    Perch(),
+//    Flounder(),
+//    Lionfish(),
+//    Herring(),
+//    Ghostfish(),
+//    Tilapia(),
+//    Dorado(),
+//    Sunfish(),
+//    RainbowTrout(),
+//    Legend(),
+//    Glacierfish(),
+//    Angler(),
+//    Crimsonfish()
+   ;
 
 
     private final String name;

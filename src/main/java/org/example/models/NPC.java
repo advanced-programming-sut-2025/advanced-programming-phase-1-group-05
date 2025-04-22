@@ -5,11 +5,14 @@ import org.example.models.Building.Building;
 import java.util.*;
 
 public class NPC {
+    // npc coordinates not initialized!!!!
+    int x, y;
     private final String name;
     private Map<Player, Integer> friendshipPoints = new HashMap<>();
     private final List<Item> favorites = new ArrayList<>();
     private Map<Item, Integer> requests = new LinkedHashMap<>();
     private Map<Item, Integer> rewards = new LinkedHashMap<>();
+    private Map<Integer, Boolean> questsStatus = new LinkedHashMap<>();
     private Building residence; // will implement this after the building class is done
     private Map<Player, Integer> unlockedQuests = new LinkedHashMap<>();
     private final int daysToUnlockThirdQuest;
@@ -23,9 +26,20 @@ public class NPC {
             friendshipPoints.put(player, 0);
             unlockedQuests.put(player, 1);
         }
+        for(int i = 1; i < 4; i++){
+            questsStatus.put(i, false);
+        }
         Random rand = new Random();
         daysToUnlockThirdQuest = rand.nextInt(10, 29);
         // this.residence = residence
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public String getName() {
@@ -57,12 +71,19 @@ public class NPC {
     public int getFriendshipLevel(Player player){
         return Math.min(799, (int) Math.floor(friendshipPoints.get(player)/200.0));
     }
+    public Map.Entry<Item, Integer> getQuest(int questIndex){
+        questIndex --;
+        int index = 0;
+        for (Map.Entry<Item, Integer> entry : requests.entrySet()) {
+            if (questIndex == index) return entry;
+            index ++;
+        }
+        return null;
+    }
     public void finishQuest(Player player, Item item) {
 
 
 
-        Random rand = new Random();
-        int index = 0;
         Item rewardItem = null;
         for (Map.Entry<Item, Integer> entry : rewards.entrySet()) {
             rewardItem = entry.getKey();
@@ -96,5 +117,8 @@ public class NPC {
             System.out.println("The weather reminded me of you today, "+ player.getName() +". Don't ask why. Just enjoy this " + gift.getName() + ". -" + name);
         }
 
+    }
+    public boolean isCompleted(int questIndex){
+        return questsStatus.get(questIndex);
     }
 }
