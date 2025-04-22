@@ -1,5 +1,7 @@
 package org.example.models;
 
+import org.example.models.Enums.Weather;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,9 @@ public class Game {
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static Map<String, NPC> npcs = new HashMap<>();
     private static List<Item> items = new ArrayList<>();
+    private static Weather currentWeather = Weather.Sunny;
+    // a method for changing the weather
+
     public static Player getCurrentPlayer() {
         return currentPlayer;
     }
@@ -104,6 +109,12 @@ public class Game {
             }
         }
         return null;
+    }
+    public static NPC getNPCByName(String npcName) {
+        return npcs.get(npcName);
+    }
+    public static Weather getCurrentWeather() {
+        return currentWeather;
     }
 
 }

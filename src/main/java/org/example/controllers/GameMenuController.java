@@ -1,9 +1,6 @@
 package org.example.controllers;
 
-import org.example.models.App;
-import org.example.models.Game;
-import org.example.models.Item;
-import org.example.models.Result;
+import org.example.models.*;
 import org.example.models.Tool.Tool;
 
 import java.util.HashMap;
@@ -45,19 +42,19 @@ public class GameMenuController {
 
     //cheat code set energy
     public Result setEnergy(int value){
-        App.getCurrentPlayer().addEnergy(value);
+        Game.getCurrentPlayer().addEnergy(value);
         return new Result(true, "** your energy got increased by " + value + " **");
     }
 
     //cheat code unlimited energy
     public Result unlimitedEnergy(){
-        App.getCurrentPlayer().setUnlimitedEnergy();
+        Game.getCurrentPlayer().setUnlimitedEnergy();
         return new Result(true, "** your energy is unlimited now **");
     }
 
     //showing the items in inventory
     public Result showInventory(){
-        HashMap<Item, Integer> items = App.getCurrentPlayer().getInventory();
+        HashMap<Item, Integer> items = Game.getCurrentPlayer().getInventory();
         for(Item item : items.keySet()){
             if(items.get(item) != 0) System.out.println(items.get(item) + " of " + item.getName());
         }
@@ -66,7 +63,7 @@ public class GameMenuController {
 
     //removing from inventory
     public Result removeFromInventory(String name, int quantity, boolean flag){
-        HashMap<Item, Integer> items = App.getCurrentPlayer().getInventory();
+        HashMap<Item, Integer> items = Game.getCurrentPlayer().getInventory();
         for(Item item : items.keySet()){
             if(!flag) quantity = items.get(item);
             if(item.getName().equals(name)){
@@ -79,11 +76,11 @@ public class GameMenuController {
 
     //equip a certain tool
     public Result equipTool(String name){
-        HashMap<Item, Integer> items = App.getCurrentPlayer().getInventory();
+        HashMap<Item, Integer> items = Game.getCurrentPlayer().getInventory();
         for(Item item : items.keySet()){
             if(item.getName().equals(name)){
                 items.put(item, items.get(item) - 1);
-                App.getCurrentPlayer().setCurrentItem(item);
+                Game.getCurrentPlayer().setCurrentItem(item);
                 return new Result(true, "You're now equipped with " + item.getName());
             }
         }
@@ -92,7 +89,7 @@ public class GameMenuController {
 
     //showing current tool
     public Result showCurrentTool(){
-        Item currentItem = App.getCurrentPlayer().getCurrentItem();
+        Item currentItem = Game.getCurrentPlayer().getCurrentItem();
         if(currentItem instanceof Tool) {
             return new Result(true, "You are equipped with " + currentItem.getName());
         } else {
@@ -103,7 +100,7 @@ public class GameMenuController {
     //showing available tools
     public Result showAvailableTools(){
         boolean found = false;
-        for(Item i : App.getCurrentPlayer().getInventory().keySet()){
+        for(Item i : Game.getCurrentPlayer().getInventory().keySet()){
             if(i instanceof Tool) {
                 System.out.println("* " + i.getName());
                 found = true;
@@ -116,7 +113,7 @@ public class GameMenuController {
     //upgrade tool
     public Result upgradeTool(String name){
         //only available when in ahangary
-        HashMap<Item, Integer> items = App.getCurrentPlayer().getInventory();
+        HashMap<Item, Integer> items = Game.getCurrentPlayer().getInventory();
         for(Item item : items.keySet()){
             if(item.getName().equals(name)){
                 if(item instanceof Tool) {
@@ -133,6 +130,12 @@ public class GameMenuController {
 
 
 
+    public Result meetNPC(String npcName){
+        NPC npc = Game.getNPCByName(npcName);
+
+
+        return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().toString()));
+    }
 
 
 }

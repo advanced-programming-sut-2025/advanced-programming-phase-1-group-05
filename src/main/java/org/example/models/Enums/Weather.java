@@ -20,4 +20,8 @@ public enum Weather {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return super.toString().toLowerCase();
+    }
 }
