@@ -1,10 +1,8 @@
 package org.example.models;
 
+import org.example.models.Enums.BackPackType;
 import org.example.models.Skills.*;
-import org.example.models.Tool.Hoe;
-import org.example.models.Tool.Pickaxe;
-import org.example.models.Tool.TrashCan;
-import org.example.models.Tool.WateringCan;
+import org.example.models.Tool.*;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -17,12 +15,14 @@ public class Player {
     private Farming farmingSkill;
     private int energy;
     private int gold;
+    private final AnimalCare animalCare = new AnimalCare();
     private final Crafting craftingSkill = new Crafting();
     private final Cooking cookingSkill = new Cooking();
     private final Fishing fishingSkill = new Fishing();
     private final Foraging foragingSkill = new Foraging();
     private final HashMap<Item, Integer> inventory = new HashMap<>();
     private final TrashCan trashCan = new TrashCan();
+    private final BackPack backPack = new BackPack();
     private boolean unlimitedEnergy = false;
     private Item currentItem;
 
@@ -32,6 +32,7 @@ public class Player {
         //base player tools
         inventory.put(new Hoe(), 1);
         inventory.put(new Pickaxe(), 1);
+        inventory.put(new Scythe(), 1);
     }
     public void addEnergy(int amount) {
         energy += amount;
@@ -81,5 +82,7 @@ public class Player {
         currentItem = item;
     }
     public Item getCurrentItem() {return currentItem;}
+    public AnimalCare getAnimalCare() {return animalCare;}
+    public TrashCan getTrashCan() {return trashCan;}
 
 }

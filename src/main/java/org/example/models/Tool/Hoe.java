@@ -8,7 +8,7 @@ import org.example.models.GameTile;
 
 import java.util.HashMap;
 
-public class Hoe implements Tool {
+public class Hoe implements Tool <ItemLevel> {
     ItemLevel level = ItemLevel.Normal;
 
     @Override

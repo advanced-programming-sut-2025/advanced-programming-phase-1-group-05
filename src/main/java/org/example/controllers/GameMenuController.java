@@ -66,14 +66,7 @@ public class GameMenuController {
 
     //removing from inventory
     public Result removeFromInventory(String name, int quantity, boolean flag){
-        HashMap<Item, Integer> items = App.getCurrentPlayer().getInventory();
-        for(Item item : items.keySet()){
-            if(!flag) quantity = items.get(item);
-            if(item.getName().equals(name)){
-                //remove selected amount
-                items.put(item, items.get(item) - quantity);
-            }
-        }
+        Game.getCurrentPlayer().getTrashCan().removeFromInventory(name, quantity, flag);
         return new Result(true, quantity + " of " + name + " was removed from inventory");
     }
 

@@ -1,13 +1,14 @@
 package org.example.models.Tool;
 
 import org.example.models.Enums.ItemLevel;
+import org.example.models.Enums.TileType;
 import org.example.models.Game;
 import org.example.models.GameMap;
 import org.example.models.GameTile;
 
 import java.util.HashMap;
 
-public class Pickaxe implements Tool {
+public class Pickaxe implements Tool <ItemLevel> {
     ItemLevel level = ItemLevel.Normal;
 
     @Override

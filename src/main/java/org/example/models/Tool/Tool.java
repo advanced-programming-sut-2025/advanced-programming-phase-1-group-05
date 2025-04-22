@@ -5,9 +5,9 @@ import org.example.models.Item;
 
 import java.util.HashMap;
 
-public interface Tool extends Item {
+public interface Tool<T extends Enum<T>> extends Item {
     void use(HashMap.Entry<Integer, Integer> coordinates);
     void reduceEnergy(int amount);
-    ItemLevel getLevel();
+    T getLevel();
     void upgradeLevel();
 }
