@@ -88,6 +88,15 @@ public class MenuController {
         }
     }
 
+    public Result logoutUser() {
+        if (currentMenu.getMenuName().equals("Main Menu")) {
+            currentMenu = createMenuInstance(Menu.LOGIN);
+            return new Result(true, "Logged out successfully! Redirected to login menu.");
+        } else {
+            return new Result(false, "You can only logout from Main Menu!");
+        }
+    }
+
     public Scanner getScanner() {
         return scanner;
     }

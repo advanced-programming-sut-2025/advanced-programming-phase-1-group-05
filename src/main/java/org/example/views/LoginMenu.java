@@ -52,6 +52,9 @@ public class LoginMenu implements org.example.views.AppMenu {
         } else if (input.startsWith("forget password -u")) {
             Result result = loginController.startPasswordRecovery(input);
             System.out.println(result.getMessage());
+        } else if (input.equalsIgnoreCase("user logout")){
+            Result result = menuController.logoutUser();
+            System.out.println(result.getMessage());
         } else {
             System.out.println("Invalid Command!");
         }
