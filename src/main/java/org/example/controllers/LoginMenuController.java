@@ -141,7 +141,6 @@ public class LoginMenuController extends MenuController {
         return result;
     }
 
-    // متدهای کمکی برای وضعیت‌ها
     public boolean isInPasswordRecovery() {
         return inPasswordRecovery;
     }

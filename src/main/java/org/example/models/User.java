@@ -33,6 +33,14 @@ public class User {
         this.nickName = nickName;
     }
 
+    public String getNickName() {
+        return nickName;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
     public String getUsername(){
         return username;
     }

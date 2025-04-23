@@ -2,6 +2,7 @@ package org.example.controllers;
 
 import org.example.models.Result;
 import org.example.models.Enums.Menu;
+import org.example.models.User;
 import org.example.views.*;
 
 import java.util.HashMap;
@@ -10,6 +11,8 @@ import java.util.Scanner;
 public class MenuController {
     private org.example.views.AppMenu currentMenu;
     private final Scanner scanner;
+    //?true?
+    private final User currentUser = new User();
 
     public MenuController(Scanner scanner) {
         this.scanner = scanner;
@@ -37,7 +40,11 @@ public class MenuController {
 
         if (target == Menu.MAIN) return true;
 
-        if (currentMenuName.equals("Main Menu")) return true;
+        if ((currentMenuName.equals("Main Menu") && target == Menu.GAME) ||
+                (currentMenuName.equals("Main Menu") && target == Menu.PROFILE) ||
+                (currentMenuName.equals("Main Menu") && target == Menu.AVATAR)){
+            return true;
+        }
 
         if ((currentMenuName.equals("Login Menu") && target == Menu.REGISTER) ||
                 (currentMenuName.equals("Register Menu") && target == Menu.LOGIN)) {
@@ -56,7 +63,12 @@ public class MenuController {
                 LoginMenuController loginController = new LoginMenuController(this.getScanner());
                 return new LoginMenu(this, loginController, this.getScanner());
             case MAIN: return new MainMenu(this);
-            case PROFILE: return new ProfileMenu(this);
+            case PROFILE:
+                ProfileMenuController profileController = new ProfileMenuController(
+                        this.getScanner(),
+                        this.currentUser // باید currentUser در MenuController وجود داشته باشد
+                );
+                return new ProfileMenu(this, profileController);
             case GAME: return new GameMenu(this);
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
