@@ -17,4 +17,8 @@ public class UserDatabase {
     public static boolean usernameExists(String username) {
         return users.containsKey(username.toLowerCase());
     }
+
+    public static void updateUser(User user) {
+        users.put(user.getUsername(), user);
+    }
 }
