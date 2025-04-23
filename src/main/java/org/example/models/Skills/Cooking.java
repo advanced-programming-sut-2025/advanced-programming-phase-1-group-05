@@ -1,0 +1,51 @@
+package org.example.models.Skills;
+
+import org.example.models.Enums.ItemLevel;
+import org.example.models.Player;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Cooking implements Skill{
+    private Map<String, Map<String, Integer>> knownRecipes;
+    int level = 0;
+    int capacity = 0;
+
+
+    public Cooking() {
+        this.knownRecipes = new HashMap<>();
+    }
+
+//    public void transferToFridge(String itemName, Inventory playerInventory) {}
+//
+//    public void takeFromFridge(String itemName, Inventory playerInventory) {}
+
+    public void learnRecipe(String foodName, Map<String, Integer> requiredIngredients) {}
+
+    public void cookFood(String recipeName) {}
+
+    public void consumeFood(String food, Player player) {}
+
+    @Override
+    public ItemLevel getLevel() {
+        return null;
+    }
+
+    @Override
+    public void setLevel(int level) {
+        this.level = level;
+    }
+    @Override
+    public void increaseLevel() {
+        if(level < 4) this.level ++;
+    }
+    @Override
+    public boolean canGoToNextLevel() {
+        if((level + 1) * 100 + 50 <= capacity) {
+            capacity -= (level + 1)*100 + 50;
+            increaseLevel();
+            return true;
+        }
+        return false;
+    }
+}
