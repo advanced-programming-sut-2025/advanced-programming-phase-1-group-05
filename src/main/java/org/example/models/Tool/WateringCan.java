@@ -8,7 +8,7 @@ import org.example.models.GameTile;
 
 import java.util.HashMap;
 
-public class WateringCan implements Tool {
+public class WateringCan implements Tool<ItemLevel> {
     ItemLevel level = ItemLevel.Normal;
     int waterlevel = level.getWateringcanCapacity();
 

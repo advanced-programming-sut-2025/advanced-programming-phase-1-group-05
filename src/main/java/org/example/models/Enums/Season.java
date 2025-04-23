@@ -6,12 +6,13 @@ public enum Season {
     FALL,
     WINTER;
 
+
     public Season next(){
         return switch (this){
-            case SPRING ->  SUMMER;
-            case SUMMER ->  FALL;
-            case FALL ->  WINTER;
-            default ->  SPRING;
+            case SPRING -> SUMMER;
+            case SUMMER -> FALL;
+            case FALL -> WINTER;
+            default -> SPRING;
         };
     }
 }

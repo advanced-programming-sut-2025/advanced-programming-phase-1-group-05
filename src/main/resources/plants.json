@@ -1,0 +1,401 @@
+[
+  {
+  "Name": "Blue Jazz",
+  "Source": "Jazz Seeds",
+  "Stages": "1-2-2-2",
+  "Total Harvest Time": 7,
+  "One Time": false,
+  "Regrowth Time": 0,
+  "Base Sell Price": 50,
+  "Is Edible": false,
+  "Energy": 45,
+  "Base Health": 20,
+  "Season": [
+    "SPRING"
+  ],
+  "Can Become Giant": false
+},
+  {
+    "Name": "Carrot",
+    "Source": "Carrot Seeds",
+    "Stages": "1-1-1",
+    "Total Harvest Time": 3,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 35,
+    "Is Edible": false,
+    "Energy": 75,
+    "Base Health": 33,
+    "Season": [
+      "SPRING"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Cauliflower",
+    "Source": "Cauliflower Seeds",
+    "Stages": "1-2-4-4-1",
+    "Total Harvest Time": 12,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 175,
+    "Is Edible": false,
+    "Energy": 75,
+    "Base Health": 33,
+    "Season": [
+      "SPRING"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Coffee Bean",
+    "Source": "Coffee Bean",
+    "Stages": "1-2-2-3-2",
+    "Total Harvest Time": 10,
+    "One Time": false,
+    "Regrowth Time": 2,
+    "Base Sell Price": 15,
+    "Is Edible": false,
+    "Energy": 0,
+    "Base Health": "-",
+    "Season": [
+      "SPRING",
+      "SUMMER"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Garlic",
+    "Source": "Garlic Seeds",
+    "Stages": "1-1-1-1",
+    "Total Harvest Time": 4,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 60,
+    "Is Edible": false,
+    "Energy": 20,
+    "Base Health": 9,
+    "Season": [
+      "SPRING"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Green Bean",
+    "Source": "Bean Starter",
+    "Stages": "1-1-1-3-4",
+    "Total Harvest Time": 10,
+    "One Time": false,
+    "Regrowth Time": 3,
+    "Base Sell Price": 40,
+    "Is Edible": false,
+    "Energy": 25,
+    "Base Health": 11,
+    "Season": [
+      "SPRING"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Kale",
+    "Source": "Kale Seeds",
+    "Stages": "1-2-2-1",
+    "Total Harvest Time": 6,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 110,
+    "Is Edible": false,
+    "Energy": 50,
+    "Base Health": 22,
+    "Season": [
+      "SPRING"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Parsnip",
+    "Source": "Parsnip Seeds",
+    "Stages": "1-1-1-1",
+    "Total Harvest Time": 4,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 35,
+    "Is Edible": false,
+    "Energy": 25,
+    "Base Health": 11,
+    "Season": [
+      "SPRING"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Potato",
+    "Source": "Potato Seeds",
+    "Stages": "1-1-1-2-1",
+    "Total Harvest Time": 6,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 80,
+    "Is Edible": false,
+    "Energy": 25,
+    "Base Health": 11,
+    "Season": [
+      "SPRING"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Rhubarb",
+    "Source": "Rhubarb Seeds",
+    "Stages": "2-2-2-3-4",
+    "Total Harvest Time": 13,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 220,
+    "Is Edible": false,
+    "Energy": 0,
+    "Base Health": "-",
+    "Season": [
+      "SPRING"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Strawberry",
+    "Source": "Strawberry Seeds",
+    "Stages": "1-1-2-2-2",
+    "Total Harvest Time": 8,
+    "One Time": false,
+    "Regrowth Time": 4,
+    "Base Sell Price": 120,
+    "Is Edible": false,
+    "Energy": 50,
+    "Base Health": 22,
+    "Season": [
+      "SPRING"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Tulip",
+    "Source": "Tulip Bulb",
+    "Stages": "1-1-2-2",
+    "Total Harvest Time": 6,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 30,
+    "Is Edible": false,
+    "Energy": 45,
+    "Base Health": 20,
+    "Season": [
+      "SPRING"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Unmilled Rice",
+    "Source": "Rice Shoot",
+    "Stages": "1-2-2-3",
+    "Total Harvest Time": 8,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 30,
+    "Is Edible": false,
+    "Energy": 3,
+    "Base Health": 1,
+    "Season": [
+      "SPRING"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Blueberry",
+    "Source": "Blueberry Seeds",
+    "Stages": "1-3-3-4-2",
+    "Total Harvest Time": 13,
+    "One Time": false,
+    "Regrowth Time": 4,
+    "Base Sell Price": 50,
+    "Is Edible": false,
+    "Energy": 25,
+    "Base Health": 11,
+    "Season": [
+      "SUMMER"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Corn",
+    "Source": "Corn Seeds",
+    "Stages": "2-3-3-3-3",
+    "Total Harvest Time": 14,
+    "One Time": false,
+    "Regrowth Time": 4,
+    "Base Sell Price": 50,
+    "Is Edible": false,
+    "Energy": 25,
+    "Base Health": 11,
+    "Season": [
+      "SUMMER",
+      "FALL"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Hops",
+    "Source": "Hops Starter",
+    "Stages": "1-1-2-3-4",
+    "Total Harvest Time": 11,
+    "One Time": false,
+    "Regrowth Time": 1,
+    "Base Sell Price": 25,
+    "Is Edible": false,
+    "Energy": 45,
+    "Base Health": 20,
+    "Season": [
+      "SUMMER"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Hot Pepper",
+    "Source": "Pepper Seeds",
+    "Stages": "1-1-1-1-1",
+    "Total Harvest Time": 5,
+    "One Time": false,
+    "Regrowth Time": 3,
+    "Base Sell Price": 40,
+    "Is Edible": false,
+    "Energy": 13,
+    "Base Health": 5,
+    "Season": [
+      "SUMMER"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Melon",
+    "Source": "Melon Seeds",
+    "Stages": "1-2-3-3-3",
+    "Total Harvest Time": 12,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 250,
+    "Is Edible": false,
+    "Energy": 113,
+    "Base Health": 50,
+    "Season": [
+      "SUMMER"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Poppy",
+    "Source": "Poppy Seeds",
+    "Stages": "1-2-2-2",
+    "Total Harvest Time": 7,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 140,
+    "Is Edible": false,
+    "Energy": 45,
+    "Base Health": 20,
+    "Season": [
+      "SUMMER"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Radish",
+    "Source": "Radish Seeds",
+    "Stages": "2-1-2-1",
+    "Total Harvest Time": 6,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 90,
+    "Is Edible": false,
+    "Energy": 45,
+    "Base Health": 20,
+    "Season": [
+      "SUMMER"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Red Cabbage",
+    "Source": "Red Cabbage Seeds",
+    "Stages": "2-1-2-2-2",
+    "Total Harvest Time": 9,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 260,
+    "Is Edible": false,
+    "Energy": 75,
+    "Base Health": 33,
+    "Season": [
+      "SUMMER"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Starfruit",
+    "Source": "Starfruit Seeds",
+    "Stages": "2-3-2-3-3",
+    "Total Harvest Time": 13,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 750,
+    "Is Edible": false,
+    "Energy": 125,
+    "Base Health": 56,
+    "Season": [
+      "SUMMER"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Summer Spangle",
+    "Source": "Spangle Seeds",
+    "Stages": "1-2-3-1",
+    "Total Harvest Time": 8,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 90,
+    "Is Edible": false,
+    "Energy": 45,
+    "Base Health": 20,
+    "Season": [
+      "SUMMER"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Summer Squash",
+    "Source": "Summer Squash Seeds",
+    "Stages": "1-1-1-2-1",
+    "Total Harvest Time": 6,
+    "One Time": false,
+    "Regrowth Time": 3,
+    "Base Sell Price": 45,
+    "Is Edible": false,
+    "Energy": 63,
+    "Base Health": 28,
+    "Season": [
+      "SUMMER"
+    ],
+    "Can Become Giant": false
+  },
+  {
+    "Name": "Sunflower",
+    "Source": "Sunflower Seeds",
+    "Stages": "1-2-3-2",
+    "Total Harvest Time": 8,
+    "One Time": false,
+    "Regrowth Time": 0,
+    "Base Sell Price": 80,
+    "Is Edible": false,
+    "Energy": 45,
+    "Base Health": 20,
+    "Season": []
+      }
+  ]

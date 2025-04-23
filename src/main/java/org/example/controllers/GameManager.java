@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import org.example.models.Enums.Season;
 import org.example.models.Game;
 import org.example.models.NPC;
 import org.example.models.Player;

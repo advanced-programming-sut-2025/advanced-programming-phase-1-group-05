@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Player {
+    private String name;
     private User user;
     private int x, y;
     private WateringCan wateringCan = new WateringCan();
@@ -33,9 +34,20 @@ public class Player {
         backPack.getInventory().put(new Pickaxe(), 1);
         backPack.getInventory().put(new Scythe(), 1);
     }
+    public String getName() {
+        return name;
+    }
     public void addEnergy(int amount) {
         energy += amount;
         if(energy <= 0) faint();
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public void faint() {
@@ -68,10 +80,6 @@ public class Player {
         this.y = y;
     }
 
-    public void addToInventory(Item item, int quantity) {
-        backPack.getInventory().put(item, quantity);
-    }
-    public HashMap<Item, Integer> getInventory() {return  backPack.getInventory();}
     public void addGold(int amount) {gold += amount;}
     public int getGold() {return gold;}
     public void setUnlimitedEnergy() {
