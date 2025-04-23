@@ -1,5 +1,8 @@
 package org.example.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     String username;
     String password;
@@ -8,6 +11,17 @@ public class User {
     String gender;
     private String securityQuestion;
     private String securityAnswer;
+    private List<String> friends = new ArrayList<>();
+
+    public void addFriend(String username) {
+        if (!friends.contains(username)) {
+            friends.add(username);
+        }
+    }
+
+    public List<String> getFriends() {
+        return new ArrayList<>(friends);
+    }
 
     public void setSecurityQuestion(String securityQuestion) {
         this.securityQuestion = securityQuestion;

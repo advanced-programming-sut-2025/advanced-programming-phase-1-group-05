@@ -66,10 +66,15 @@ public class MenuController {
             case PROFILE:
                 ProfileMenuController profileController = new ProfileMenuController(
                         this.getScanner(),
-                        this.currentUser // باید currentUser در MenuController وجود داشته باشد
+                        this.currentUser
                 );
                 return new ProfileMenu(this, profileController);
-            case GAME: return new GameMenu(this);
+            case GAME:
+                GameMenuController gameMenuController = new GameMenuController(
+                        this.scanner,
+                        this.currentUser
+                );
+                return new GameMenu(this ,gameMenuController);
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
                 return new RegisterMenu(this, registerController, this.getScanner());
