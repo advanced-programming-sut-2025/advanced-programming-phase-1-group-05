@@ -7,6 +7,7 @@ import org.example.models.GameMap;
 import org.example.models.GameTile;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class WateringCan implements Tool {
     ItemLevel level = ItemLevel.Normal;
@@ -28,7 +29,7 @@ public class WateringCan implements Tool {
             else waterlevel--;
         } else if(tile.getTileType() == TileType.Water) {
             if(farmingLevel.isMaxLevel()) energyUsage --;
-            reduceEnergy(energyUsage);
+            reduceEnergy(energyUsage)
             waterlevel = level.getWateringcanCapacity();
         } else {
             if(farmingLevel.isMaxLevel()) energyUsage --;
