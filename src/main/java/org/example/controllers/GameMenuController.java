@@ -123,7 +123,7 @@ public class GameMenuController {
 
     //show craft info
     public Result showCraftInfo(String name) {
-
+        return null;
     }
 
 

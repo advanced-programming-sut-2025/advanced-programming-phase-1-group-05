@@ -57,6 +57,8 @@ public class MenuController {
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
                 return new RegisterMenu(this, registerController, scanner);
+            case TRADE:
+                return new TradeMenu(new TradingController(), scanner);
             default: throw new IllegalArgumentException("Unknown menu type");
         }
     }
@@ -75,9 +77,10 @@ public class MenuController {
             String input = scanner.nextLine().trim();
 
             if (input.equals("show current menu")) {
-                Result result = showCurrentMenu();
-                System.out.println(result.getMessage());
+                System.out.println(showCurrentMenu().getMessage());
             }
+            if (input.equals("exit") && (currentMenu.getMenuName().equals("login menu") || currentMenu.getMenuName().equals("register menu")))
+                break;
             else {
                 currentMenu.handleUserInput(input);
             }

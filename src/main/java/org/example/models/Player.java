@@ -98,4 +98,7 @@ public class Player {
     public String getName() {
         return user.nickName;
     }
+    public String getUsername(){
+        return  user.getUsername();
+    }
 }

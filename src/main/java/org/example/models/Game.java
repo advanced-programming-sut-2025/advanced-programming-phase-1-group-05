@@ -127,5 +127,10 @@ public class Game {
     public static Weather getCurrentWeather() {
         return currentWeather;
     }
-
+    public static Player getPlayerByUsername(String username){
+        for (Player player : players){
+            if (player.getUsername().equals(username)) return player;
+        }
+        return null;
+    }
 }
