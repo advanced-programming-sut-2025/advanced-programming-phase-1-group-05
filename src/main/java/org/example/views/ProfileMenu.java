@@ -33,6 +33,7 @@ public class ProfileMenu implements org.example.views.AppMenu {
             System.out.println(result.getMessage());
         }
     }
+
     @Override
     public String getMenuName() {
         return "Profile Menu";
