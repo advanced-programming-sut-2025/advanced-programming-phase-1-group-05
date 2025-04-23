@@ -10,6 +10,8 @@ import java.util.Scanner;
 
 public class LoginMenuController extends MenuController {
     private User currentUser;
+    private boolean inPasswordRecovery = false;
+    private boolean waitingForNewPassword = false;
 
 
     public LoginMenuController(Scanner scanner) {
@@ -75,5 +77,76 @@ public class LoginMenuController extends MenuController {
         currentUser.setPassword(newPassword);
         currentUser = null;
         return Result.success("Password changed successfully!");
+    }
+
+    public Result handleLoginCommand(String input) {
+        String[] parts = input.split(" -");
+        String username = null;
+        String password = null;
+        boolean stayLoggedIn = false;
+
+        for (String part : parts) {
+            if (part.startsWith("u ")) {
+                username = part.substring(2).trim();
+            } else if (part.startsWith("p ")) {
+                password = part.substring(2).trim();
+            } else if (part.equals("stay-logged-in")) {
+                stayLoggedIn = true;
+            }
+        }
+
+        if (username == null || password == null) {
+            return Result.error("Invalid login command format!");
+        }
+
+        return loginUser(username, password, stayLoggedIn);
+    }
+
+    public Result startPasswordRecovery(String input) {
+        try {
+            String username = input.substring("forget password -u ".length()).trim();
+            Result result = initiatePasswordRecovery(username);
+
+            if (result.isSuccess()) {
+                this.inPasswordRecovery = true;
+            }
+
+            return result;
+        } catch (StringIndexOutOfBoundsException e) {
+            return Result.error("Invalid command format! Use: forget password -u <username>");
+        }
+    }
+
+    public Result handleSecurityAnswer(String input) {
+        if (!input.startsWith("answer -a ")) {
+            return Result.error("Please use the format: answer -a <your_answer>");
+        }
+
+        String answer = input.substring("answer -a ".length()).trim();
+        Result result = verifySecurityAnswer(answer);
+
+        if (result.isSuccess()) {
+            this.inPasswordRecovery = false;
+            this.waitingForNewPassword = true;
+        } else {
+            this.inPasswordRecovery = false;
+        }
+
+        return result;
+    }
+
+    public Result handleNewPassword(String input) {
+        Result result = setNewPassword(input);
+        this.waitingForNewPassword = false;
+        return result;
+    }
+
+    // متدهای کمکی برای وضعیت‌ها
+    public boolean isInPasswordRecovery() {
+        return inPasswordRecovery;
+    }
+
+    public boolean isWaitingForNewPassword() {
+        return waitingForNewPassword;
     }
 }
