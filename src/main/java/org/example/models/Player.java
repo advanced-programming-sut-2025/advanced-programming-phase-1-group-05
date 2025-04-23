@@ -37,6 +37,13 @@ public class Player {
         energy += amount;
         if(energy <= 0) faint();
     }
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 
     public void faint() {
         //skip the rest of the day
@@ -72,6 +79,9 @@ public class Player {
         backPack.getInventory().put(item, quantity);
     }
     public HashMap<Item, Integer> getInventory() {return  backPack.getInventory();}
+    public int getItemQuantity(Item item) {
+        return backPack.getInventory().get(item);
+    }
     public void addGold(int amount) {gold += amount;}
     public int getGold() {return gold;}
     public void setUnlimitedEnergy() {
@@ -85,4 +95,7 @@ public class Player {
     public TrashCan getTrashCan() {return trashCan;}
     public BackPack getBackPack() {return backPack;}
 
+    public String getName() {
+        return user.nickName;
+    }
 }

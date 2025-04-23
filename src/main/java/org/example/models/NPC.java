@@ -80,23 +80,21 @@ public class NPC {
         }
         return null;
     }
-    public void finishQuest(Player player, Item item) {
-
-
-
+    public Map.Entry<Item, Integer> finishQuest(Player player, int questIndex) {
+        questsStatus.put(questIndex, true);
         Item rewardItem = null;
+        int quantity = 0;
         for (Map.Entry<Item, Integer> entry : rewards.entrySet()) {
             rewardItem = entry.getKey();
             break;
         }
         if (rewardItem != null) {
-            int quantity = rewards.get(rewardItem);
+            quantity = rewards.get(rewardItem);
             if (getFriendshipLevel(player) >= 2) quantity *= 2;
             player.addToInventory(rewardItem, quantity);
-            System.out.println("You got " + quantity+ " " + rewardItem.getName() + "(s) from " + name + " for completing this quest.");
             rewards.remove(rewardItem);
         }
-
+        return new AbstractMap.SimpleEntry<>(rewardItem, quantity);
     }
     public Map<Item, Integer> getRequests() {
         return requests;
