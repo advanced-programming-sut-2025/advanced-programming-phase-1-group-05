@@ -13,7 +13,7 @@ public class MenuController {
     public MenuController(Scanner scanner) {
         this.scanner = scanner;
         RegisterMenuController registerController = new RegisterMenuController(scanner);
-        this.currentMenu = new RegisterMenu(this, registerController);
+        this.currentMenu = new RegisterMenu(this, registerController, scanner);
     }
 
     public Result enterMenu(String menuName) {
@@ -48,13 +48,15 @@ public class MenuController {
 
     private AppMenu createMenuInstance(Menu menu) {
         switch (menu) {
-            case LOGIN: return new LoginMenu(this);
+            case LOGIN:
+                LoginMenuController loginMenuController = new LoginMenuController(scanner);
+                return new LoginMenu(this, loginMenuController, scanner);
             case MAIN: return new MainMenu(this);
             case PROFILE: return new ProfileMenu(this);
             case GAME: return new GameMenu(this, new GameMenuController());
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
-                return new RegisterMenu(this, registerController);
+                return new RegisterMenu(this, registerController, scanner);
             default: throw new IllegalArgumentException("Unknown menu type");
         }
     }

@@ -13,9 +13,6 @@ public class ProfileMenu implements org.example.views.AppMenu {
 
     @Override
     public void handleUserInput(String input) {
-        System.out.println("\n=== Profile Menu ===");
-//        String input = scanner.nextLine();
-
         if (input.equals("show current menu")) {
             Result result = menuController.showCurrentMenu();
             System.out.println(result.getMessage());

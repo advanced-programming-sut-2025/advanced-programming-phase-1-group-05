@@ -1,8 +1,10 @@
 package org.example.models.Enums;
 
 public enum RegisterMenuCommand {
-    REGISTER("^register\\s+-u\\s+(?<username>\\S+)\\s+-p\\s+(?<password>\\S+)\\s+" +
-            "(?<confirmPassword>\\S+)\\s+-n\\s+(?<nickname>\\S+)\\s+-e\\s+(?<email>\\S+)\\s+-g\\s+(?<gender>\\S+)$"),
+    REGISTER("^register\\s+-u\\s+(?<username>.+?)\\s+-p\\s+(?<password>.+?)\\s+" +
+            "(?<confirmPassword>.+?)\\s+-n\\s+(?<nickname>.+?)\\s+-e\\s+(?<email>.+?)\\s+-g\\s+(?<gender>.+?)$"),
+    RANDOM_PASSWORD("^\\s*random\\s+password\\s*$"),
+    PICK_QUESTION("^pick question -q (?<questionNumber>\\d+) -a (?<answer>.+) -c (?<confirmAnswer>.+)$"),
     INVALID(".*");
 
     private final String regexPattern;

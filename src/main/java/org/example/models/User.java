@@ -5,6 +5,26 @@ public class User {
     String password;
     String nickName;
     String gender;
+    String email;
+
+    private String securityQuestion;
+    private String securityAnswer;
+
+    public void setSecurityQuestion(String securityQuestion) {
+        this.securityQuestion = securityQuestion;
+    }
+
+    public void setSecurityAnswer(String securityAnswer) {
+        this.securityAnswer = securityAnswer;
+    }
+
+    public String getSecurityQuestion() {
+        return securityQuestion;
+    }
+
+    public String getSecurityAnswer() {
+        return securityAnswer;
+    }
 
     public void setGender(String gender) {
         this.gender = gender;
@@ -25,5 +45,13 @@ public class User {
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

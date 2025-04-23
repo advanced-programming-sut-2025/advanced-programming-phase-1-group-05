@@ -13,8 +13,6 @@ public class MainMenu implements org.example.views.AppMenu {
 
     @Override
     public void handleUserInput(String input) {
-        System.out.println("\n=== Main Menu ===");
-//        String input = scanner.nextLine();
         input = input.trim();
         if (input.equals("show current menu")) {
             Result result = menuController.showCurrentMenu();

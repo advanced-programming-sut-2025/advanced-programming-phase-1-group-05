@@ -7,6 +7,7 @@ import org.example.models.Item;
 import org.example.models.Tool.Tool;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class BackPack implements Tool <BackPackType>{
     BackPackType level = BackPackType.Normal;
@@ -44,7 +45,7 @@ public class BackPack implements Tool <BackPackType>{
         return 0;
     }
     @Override
-    public void use(HashMap.Entry<Integer, Integer> coordinates){
+    public void use(Map.Entry<Integer, Integer> coordinates){
 
 
     }
