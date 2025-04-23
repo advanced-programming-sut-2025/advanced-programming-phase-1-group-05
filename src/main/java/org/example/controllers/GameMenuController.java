@@ -122,11 +122,13 @@ public class GameMenuController {
 
     //show craft info
     public Result showCraftInfo(String name) {
-        FruitAndVegetable plant = Game.getGameMap().getFruitAndVegetable(name);
+        FruitAndVegetable plant = Game.getDatabase().getFruitAndVegetable(name);
         if (plant == null) return new Result(true, "Couldn’t find the plant you're looking for");
         else plant.showCropInformation();
         return new Result(true, "");
     }
+
+
 
 
 

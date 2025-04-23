@@ -14,6 +14,8 @@ public class Game {
     private static Map<String, NPC> npcs = new HashMap<>();
     private static List<Item> items = new ArrayList<>();
     private static Weather currentWeather = Weather.Sunny;
+    private static Database database = new Database();
+
     // a method for changing the weather
 
     public static Player getCurrentPlayer() {
@@ -126,6 +128,9 @@ public class Game {
     }
     public static Weather getCurrentWeather() {
         return currentWeather;
+    }
+    public static Database getDatabase() {
+        return database;
     }
 
 }

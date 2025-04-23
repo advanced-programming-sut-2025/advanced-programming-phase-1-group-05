@@ -40,5 +40,6 @@ public class Foraging implements Skill{
     @Override
     public ItemLevel getLevel(){
 
+
     }
 }
