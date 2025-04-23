@@ -136,13 +136,20 @@ public class GameMenuController {
         return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().toString()));
     }
 
-    public Result giftNPC(String npcName, String itemName){
+    public Result giftNPC(String input){
+        int CIndex = input.indexOf('C');
+        int iIndex = input.indexOf('-');
+        String npcName = input.substring(CIndex + 1, iIndex).trim();
+        String itemName = input.substring(iIndex + 1).trim();
         NPC npc = Game.getNPCByName(npcName);
         if (npc == null) return new Result(false, "NPC not found");
         Item item = Game.getItemByName(itemName);
         if (item == null) return new Result(false, "Item not found");
         Player player = Game.getCurrentPlayer();
         npc.recieveGift(item, player);
+        if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1) return new Result(false, "Nice thought! But you can’t give a gift to thin air. Find "+ npcName +" first!")
+        if (item instanceof Tool<?>) return new Result(false, "Gifting your old tools? What’s next—handing out used socks?");
+
         if (npc.isFavorite(item)) return new Result(true, "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
         return new Result(true, "Oh, a " + itemName + " ?Thanks, " + player.getName());
     }

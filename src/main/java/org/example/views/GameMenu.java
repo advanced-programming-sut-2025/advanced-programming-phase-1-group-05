@@ -27,11 +27,7 @@ public class GameMenu implements AppMenu {
             System.out.println(gameController.meetNPC(input).getMessage());
         }
         else if (input.matches("gift\\s+NPC\\s+\\S+\\s+-i\\s+.*")){
-            int CIndex = input.indexOf('C');
-            int iIndex = input.indexOf('-');
-            String npcName = input.substring(CIndex + 1, iIndex).trim();
-            String itemName = input.substring(iIndex + 1).trim();
-            System.out.println(gameController.giftNPC(npcName, itemName).getMessage());
+            System.out.println(gameController.giftNPC(input).getMessage());
         }
         else if (input.matches("quests\\s+list")){
             System.out.println(gameController.showAllQuests().getMessage());
