@@ -12,11 +12,11 @@ public class Game {
     private static Player currentPlayer = null;
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static Map<String, NPC> npcs = new HashMap<>();
-    private static List<Item> items = new ArrayList<>();
+    private static List<Message> messages = new ArrayList<>();
     private static Weather currentWeather = Weather.Sunny;
     private static Database database = new Database();
-    // a method for changing the weather
-
+    // TODO a method for changing the weather
+    // TODO make the game methods nonstatic
     public static Player getCurrentPlayer() {
         return currentPlayer;
     }
@@ -124,5 +124,17 @@ public class Game {
     }
     public static Database getDatabase() {
         return database;
+    }
+    public static void addMessage(Message message) {
+        messages.add(message);
+    }
+    public static List<Message> getMessages(Player player1, Player player2) {
+        List<Message> commonMessages = new ArrayList<>();
+        for (Message message : messages) {
+            if ((message.getSender().equals(player1) && message.getReceiver().equals(player2))
+            || (message.getSender().equals(player2) && message.getReceiver().equals(player1)) )
+                commonMessages.add(message);
+        }
+        return commonMessages;
     }
 }

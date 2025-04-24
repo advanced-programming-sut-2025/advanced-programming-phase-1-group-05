@@ -51,6 +51,9 @@ public class GameMenu implements AppMenu {
         else if (input.matches("quests\\s+finish\\s+-i\\s+\\d+")){
             System.out.println(gameController.finishQuest(input).getMessage());
         }
+        else if (input.matches("talk\\s+history\\s+-u\\s+\\S+")){
+            System.out.println(gameController.talkHistory(input).getMessage());
+        }
         else if (input.startsWith("menu enter ")) {
             String menuName = input.substring("menu enter ".length()).trim();
             Result result = menuController.enterMenu(menuName);

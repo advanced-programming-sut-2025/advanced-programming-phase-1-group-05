@@ -18,6 +18,7 @@ public class GameMenuController extends MenuController {
         super(scanner);
         this.currentUser = currentUser;
     }
+
     private NPC lastNPC = null;
 
     public Result newGame(String input) {
@@ -51,7 +52,7 @@ public class GameMenuController extends MenuController {
     }
 
     public Result chooseMap(String input) {
-        if (canChooseMap){
+        if (canChooseMap) {
 
         }
         return null;
@@ -100,6 +101,7 @@ public class GameMenuController extends MenuController {
         }
         return new Result(false, "Inventory is empty");
     }
+
     //removing from inventory
     public Result removeFromInventory(String name, int quantity, boolean flag) {
         Game.getCurrentPlayer().getTrashCan().removeFromInventory(name, quantity, flag);
@@ -170,7 +172,6 @@ public class GameMenuController extends MenuController {
     }
 
 
-
     public Result meetNPC(String npcName) {
         NPC npc = Game.getNPCByName(npcName);
 
@@ -179,7 +180,7 @@ public class GameMenuController extends MenuController {
         return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().toString()));
     }
 
-    public Result giftNPC(String input){
+    public Result giftNPC(String input) {
         int CIndex = input.indexOf('C');
         int iIndex = input.indexOf('-');
         String npcName = input.substring(CIndex + 1, iIndex).trim();
@@ -190,10 +191,13 @@ public class GameMenuController extends MenuController {
         if (item == null) return new Result(false, "Item not found");
         Player player = Game.getCurrentPlayer();
         npc.recieveGift(item, player);
-        if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1) return new Result(false, "Nice thought! But you can’t give a gift to thin air. Find "+ npcName +" first!");
-        if (item instanceof Tool<?>) return new Result(false, "Gifting your old tools? What’s next—handing out used socks?");
+        if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1)
+            return new Result(false, "Nice thought! But you can’t give a gift to thin air. Find " + npcName + " first!");
+        if (item instanceof Tool<?>)
+            return new Result(false, "Gifting your old tools? What’s next—handing out used socks?");
 
-        if (npc.isFavorite(item)) return new Result(true, "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
+        if (npc.isFavorite(item))
+            return new Result(true, "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
         return new Result(true, "Oh, a " + itemName + " ?Thanks, " + player.getName());
     }
 
@@ -211,21 +215,21 @@ public class GameMenuController extends MenuController {
         return new Result(true, output.toString());
 
     }
-    public Result finishQuest(String input){
+
+    public Result finishQuest(String input) {
         int iIndex = input.indexOf('-') + 1;
         input = input.substring(iIndex + 1).trim();
         int questIndex;
         try {
             questIndex = Integer.parseInt(input);
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return new Result(false, "Invalid quest index");
         }
         Map.Entry<Item, Integer> quest = lastNPC.getQuest(questIndex);
-        if(quest == null) return new Result(false, "Quest not found");
+        if (quest == null) return new Result(false, "Quest not found");
         Player player = Game.getCurrentPlayer();
         if (Math.abs(player.getX() - lastNPC.getX()) > 1 || Math.abs(player.getY() - lastNPC.getY()) > 1) {
-            return new Result(false,"You can't wrap this up from here. Get back to " + lastNPC.getName() + " first!");
+            return new Result(false, "You can't wrap this up from here. Get back to " + lastNPC.getName() + " first!");
         }
         if (lastNPC.isCompleted(questIndex)) {
             return new Result(false, "Another farmer's already taken care of that one. Why not lend a hand elsewhere?");
@@ -234,6 +238,22 @@ public class GameMenuController extends MenuController {
             return new Result(false, "Whoops! You're still a few shy of the total. Harvest more and pop back over!");
         }
         Map.Entry<Item, Integer> reward = lastNPC.finishQuest(player, questIndex);
-        return new Result(true, "You got " + reward.getValue() + " " + reward.getKey().getName() + "(s) from " + lastNPC.getName() +" for finishing this quest.");
+        return new Result(true, "You got " + reward.getValue() + " " + reward.getKey().getName() + "(s) from " + lastNPC.getName() + " for finishing this quest.");
+    }
+
+    public Result talkHistory(String input) {
+        int uIndex = input.indexOf('u');
+        input = input.substring(uIndex + 1).trim();
+        Player player = Game.getPlayerByUsername(input);
+        if (player == null) return new Result(false, "Talking to ghosts again? That player isn't real.");
+        List<Message> messages = Game.getMessages(player, Game.getCurrentPlayer());
+        if (messages.isEmpty()) return new Result(false, "Looks like you two haven't broken the ice yet");
+
+        StringBuilder output = new StringBuilder();
+        output.append("Talk history with ").append(input);
+        for (Message message : messages) {
+            output.append(message.getSender().getName()).append(": ").append(message.getMessage()).append("\n");
+        }
+        return new Result(true, output.toString());
     }
 }

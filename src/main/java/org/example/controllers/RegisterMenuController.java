@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 public class RegisterMenuController {
     private final Scanner scanner;
     private User currentUser;
+    private static final int MAX_PASSWORD_ATTEMPTS = 3;
 
     public RegisterMenuController(Scanner scanner) {
         this.scanner = scanner;
@@ -199,4 +200,137 @@ public class RegisterMenuController {
 
         return new Result(true, "Password is strong.");
     }
+
+    public Result handleRegistration(String initialInput) {
+        int attempts = 0;
+        String currentInput = initialInput;
+
+        while (attempts < MAX_PASSWORD_ATTEMPTS) {
+            Result result = registerUser(currentInput);
+            if (result.isSuccess()) {
+                return result; // موفقیت‌آمیز
+            }
+
+            if (result.getMessage().equals("Password and confirm password do not match!")) {
+                System.out.println("1. Re-enter password manually");
+                System.out.println("2. Generate random password");
+                System.out.println("3. Back to registration menu");
+
+                String choice = scanner.nextLine().trim();
+                switch (choice) {
+                    case "1":
+                        System.out.println("Please enter your new password and confirmation:");
+                        System.out.println("Format: -p <newPassword> <confirmPassword>");
+                        String newPasswordInput = scanner.nextLine().trim();
+                        currentInput = updatePasswordInCommand(currentInput, newPasswordInput);
+                        break;
+                    case "2":
+                        return handleRandomPasswordOption(currentInput);
+                    case "3":
+                        return new Result(false, "Returning to registration menu");
+                    default:
+                        System.out.println("Invalid choice, please try again");
+                        attempts++;
+                        continue;
+                }
+                attempts++;
+            } else {
+                return result; // خطاهای دیگر
+            }
+        }
+        return new Result(false, "Maximum password attempts reached");
+    }
+
+    public String updatePasswordInCommand(String originalCommand, String passwordInput) {
+        String[] originalParts = originalCommand.split("\\s+");
+        String[] passwordParts = passwordInput.split("\\s+");
+
+        String newPassword = "";
+        String newConfirm = "";
+        for (int i = 0; i < passwordParts.length; i++) {
+            if (passwordParts[i].equals("-p") && i + 2 < passwordParts.length) {
+                newPassword = passwordParts[i+1];
+                newConfirm = passwordParts[i+2];
+                break;
+            }
+        }
+
+        if (newPassword.isEmpty()) {
+            return originalCommand;
+        }
+
+        StringBuilder updatedCommand = new StringBuilder();
+        for (int i = 0; i < originalParts.length; i++) {
+            if (i > 0) updatedCommand.append(" ");
+            if (originalParts[i].equals("-p") && i + 2 < originalParts.length) {
+                updatedCommand.append("-p ").append(newPassword).append(" ").append(newConfirm);
+                i += 2;
+            } else {
+                updatedCommand.append(originalParts[i]);
+            }
+        }
+        return updatedCommand.toString();
+    }
+
+    public Result handleRandomPasswordOption(String originalCommand) {
+        String randomPassword = generateRandomPassword();
+        System.out.println("Your random password is: " + randomPassword);
+        System.out.println("Do you want to use this password? (yes/no)");
+
+        while (true) {
+            String response = scanner.nextLine().trim().toLowerCase();
+            if (response.equals("yes")) {
+                String updatedCommand = updatePasswordInCommand(originalCommand,
+                        "-p " + randomPassword + " " + randomPassword);
+                Result result = registerUser(updatedCommand);
+                return result;
+            } else if (response.equals("no")) {
+                System.out.println("Choose an option:");
+                System.out.println("1. Generate another random password");
+                System.out.println("2. Back to registration menu");
+
+                String choice = scanner.nextLine().trim();
+                if (choice.equals("1")) {
+                    return handleRandomPasswordOption(originalCommand);
+                } else if (choice.equals("2")) {
+                    return new Result(false, "Returning to registration menu");
+                } else {
+                    System.out.println("Invalid choice, please try again");
+                }
+            } else {
+                System.out.println("Please answer with 'yes' or 'no'");
+            }
+        }
+    }
+
+    public Result showSecurityQuestions() {
+        System.out.println("Please select a security question:");
+        System.out.println("1. What was your first pet's name?");
+        System.out.println("2. What city were you born in?");
+        System.out.println("3. What is your favorite color?");
+
+        while (true) {
+            String input = scanner.nextLine().trim();
+            Matcher matcher = Pattern.compile(RegisterMenuCommand.PICK_QUESTION.getRegexPattern())
+                    .matcher(input);
+
+            if (matcher.matches()) {
+                String questionNumber = matcher.group("questionNumber");
+                String answer = matcher.group("answer");
+                String confirmAnswer = matcher.group("confirmAnswer");
+
+                if (!answer.equals(confirmAnswer)) {
+                    return new Result(false, "Answers do not match!");
+                }
+
+                saveSecurityQuestion(questionNumber, answer);
+                return new Result(true, "Registration completed successfully!");
+            } else if (input.equalsIgnoreCase("back")) {
+                return new Result(false, "Returning to registration menu");
+            } else {
+                System.out.println("Invalid command format!");
+            }
+        }
+    }
+
 }
