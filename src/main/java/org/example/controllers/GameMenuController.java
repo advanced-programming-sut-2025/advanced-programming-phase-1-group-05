@@ -184,6 +184,27 @@ public class GameMenuController extends MenuController {
         return new Result(true, builder.toString());
     }
 
+    public Result talkToPlayer(String input){
+        String username = "", message;
+        Player targetPlayer = Game.getPlayerByUsername(username);
+        Player currentPlayer = Game.getCurrentPlayer();
+        if (targetPlayer == null) return new Result(false, "Hmmm... either they moved away, or they never existed!");
+        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY()-currentPlayer.getY()) > 1)
+            return new Result(false, "You can't have a heart-to-heart with someone who's miles away!");
+        return new Result(true, "");
+    }
+
+    public Result giftPlayer(String input){
+        String username = "", itemName = "";
+        int amount = 0;
+        Item item = Game.getDatabase().getItem(itemName);
+        Player currentPlayer = Game.getCurrentPlayer();
+        Player targetPlayer = Game.getPlayerByUsername(username);
+        currentPlayer.getBackPack().getInventory().remove(item , amount);
+        currentPlayer.getBackPack().getInventory().put(item, amount);
+        return new Result(true, "");
+    }
+
     public Result giveFlower(String input){
         int uIndex = input.indexOf('u');
         input = input.substring(uIndex + 1);
@@ -194,6 +215,7 @@ public class GameMenuController extends MenuController {
         targetPlayer.getBackPack().getInventory().put(bouquet, 1);
         return new Result(true, "");
     }
+
     public Result respondToProposal(String input) {
         String[] parts = input.split("\\s+");
         int uIndex = -1;

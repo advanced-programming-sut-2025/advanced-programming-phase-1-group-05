@@ -18,6 +18,9 @@ public class TradeMenu implements AppMenu {
         if (input.matches("trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-a\\s+\\d+\\s+.*")){
             System.out.println(tradingController.trade(input).getMessage());
         }
+        else if (input.equals("trade list")){
+            System.out.println(tradingController.showTradeList());
+        }
     }
 
     @Override
