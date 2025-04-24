@@ -46,6 +46,9 @@ public class GameMenu implements AppMenu {
         else if (input.matches("talk\\s+history\\s+-u\\s+\\S+")){
             System.out.println(gameController.talkHistory(input).getMessage());
         }
+        else if (input.equals("hug\\s+-u\\s+\\S+")){
+            System.out.println();
+        }
         else if (input.matches("respond\\s+(-accept|-reject)\\s+-u\\s+.*")){
             System.out.println(gameController.respondToProposal(input));
         }

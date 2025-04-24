@@ -84,7 +84,7 @@ public class GameMenuController extends MenuController {
 
     //cheat code set energy
     public Result setEnergy(int value) {
-        App.getCurrentPlayer().addEnergy(value);
+        App.getCurrentPlayer().increaseEnergy(value);
         return new Result(true, "** your energy got increased by " + value + " **");
     }
 
@@ -200,7 +200,11 @@ public class GameMenuController extends MenuController {
         if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
             return new Result(false, "You can't have a heart-to-heart with someone who's miles away!");
         Game.addMessage(new Message(currentPlayer, targetPlayer, message));
-        return new Result(true, "");
+        currentPlayer.changeFriendshipXP(20, targetPlayer);
+        if (currentPlayer.isMarriedTo(targetPlayer)) {
+            currentPlayer.increaseEnergy(50);
+        }
+        return new Result(true, (targetPlayer.getName()) + "! A little birdie dropped off a message-check your inbox!");
     }
 
     public Result talkHistory(String input) {
@@ -248,7 +252,17 @@ public class GameMenuController extends MenuController {
         return new Result(true, "");
     }
 
-    public Result giveFlower(String input) {
+    public Result hugPlayer(String input) {
+        input = input.substring(input.indexOf('-') + 2).trim();
+        Player targetPlayer = Game.getPlayerByUsername(input);
+        Player currentPlayer = Game.getCurrentPlayer();
+        if (targetPlayer == null) return new Result(false, "You open your arms wide... but there's no one by that name to recieve it");
+        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
+            return new Result(false, "They're not here to catch your hug. Maybe next time!");
+        return new Result(true, "You hugged them tight. Even the cows felt the love.");
+    }
+
+    public Result giveBouquet(String input) {
         int uIndex = input.indexOf('u');
         input = input.substring(uIndex + 1);
         Player targetPlayer = Game.getCurrentPlayer();
@@ -294,11 +308,14 @@ public class GameMenuController extends MenuController {
         Player currentPlayer = Game.getCurrentPlayer();
         if (input.contains("accept")) {
             currentPlayer.changeLevel(targetPlayer, 4);
-
             currentPlayer.getBackPack().getInventory().put(lastRingProposedWith, 1);
-            targetPlayer.getBackPack().getInventory().put(lastRingProposedWith, 1);
+            targetPlayer.getBackPack().getInventory().remove(lastRingProposedWith, 1);
+            currentPlayer.setSpouse(targetPlayer);
+            targetPlayer.setSpouse(currentPlayer);
+            // TODO add messages here
         } else if (input.contains("reject")) {
             currentPlayer.changeLevel(targetPlayer, 0);
+            targetPlayer.setProposalRejectionDaysLeft(7);
         }
         return new Result(true, "");
     }
@@ -338,8 +355,11 @@ public class GameMenuController extends MenuController {
         if (item instanceof Tool<?>)
             return new Result(false, "Gifting your old tools? What’s next—handing out used socks?");
 
-        if (npc.isFavorite(item))
+        if (npc.isFavorite(item)){
+            npc.addFriendShipPoints(player, 200);
             return new Result(true, "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
+        }
+        npc.addFriendShipPoints(player, 50);
         return new Result(true, "Oh, a " + itemName + " ?Thanks, " + player.getName());
     }
 

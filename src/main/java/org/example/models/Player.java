@@ -7,7 +7,8 @@ import org.example.models.Tool.*;
 import java.util.*;
 
 public class Player {
-    private User user;
+    private final User user;
+    private Player spouse;
     private int x, y;
     private WateringCan wateringCan = new WateringCan();
     private Farming farmingSkill;
@@ -22,7 +23,8 @@ public class Player {
     private final BackPack backPack = new BackPack();
     private boolean unlimitedEnergy = false;
     private Item currentItem;
-    private static List<Friendship> friendships = new ArrayList<>();
+    private static final List<Friendship> friendships = new ArrayList<>();
+    private int proposalRejectionDaysLeft = 0;
 
     public Player(User user) {
         this.user = user;
@@ -32,10 +34,11 @@ public class Player {
         backPack.getInventory().put(new Pickaxe(), 1);
         backPack.getInventory().put(new Scythe(), 1);
     }
-    public void addEnergy(int amount) {
-        energy += amount;
-        if(energy <= 0) faint();
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
     }
+
     public int getX() {
         return x;
     }
@@ -58,6 +61,7 @@ public class Player {
         if(amount < 0 && unlimitedEnergy) return;
         energy += amount;
         if(energy >= 200) energy = 200;
+        if (energy <= 0) faint();
     }
     public int getEnergy() {return energy;}
     public boolean hasEnoughEnergy(int required) {
@@ -133,6 +137,13 @@ public class Player {
             friendship.setLevel(level);
     }
 
+    public void setSpouse(Player spouse) {
+        this.spouse = spouse;
+    }
+    public boolean isMarriedTo(Player a){
+        if (spouse == null) return false;
+        return  spouse.equals(a);
+    }
     public boolean canAskMarriage(Player a){
         Friendship friendship = getFriendship(a, this);
         if( friendship != null ) return friendship.canAskMarriage();
@@ -142,6 +153,19 @@ public class Player {
         Friendship friendship = getFriendship(this, a);
         if (friendship != null) friendship.addPoints(xp);
     }
+
+    public int getProposalRejectionDaysLeft() {
+        return proposalRejectionDaysLeft;
+    }
+
+    public void setProposalRejectionDaysLeft(int proposalRejectionDaysLeft) {
+        this.proposalRejectionDaysLeft = proposalRejectionDaysLeft;
+    }
+
+    public void decrementProposalRejectionDaysLeft() {
+        proposalRejectionDaysLeft--;
+    }
+
     private static class Friendship {
         private Player player1;
         private Player player2;
@@ -174,8 +198,12 @@ public class Player {
             friendshipLevel = level;
         }
 
-        public boolean canGiftFlower(){
+        public boolean canGiveBouquet(){
             return xpPoints >= 600;
+        }
+
+        public boolean canGift(){
+            return friendshipLevel >= 1;
         }
 
         public boolean canAskMarriage(){
