@@ -71,6 +71,9 @@ public class NPC {
     public int getFriendshipLevel(Player player){
         return Math.min(799, (int) Math.floor(friendshipPoints.get(player)/200.0));
     }
+    public int getFriendshipPoints(Player player){
+        return friendshipPoints.get(player);
+    }
     public Map.Entry<Item, Integer> getQuest(int questIndex){
         questIndex --;
         int index = 0;

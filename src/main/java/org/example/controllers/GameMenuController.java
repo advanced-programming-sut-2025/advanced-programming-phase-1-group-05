@@ -171,7 +171,28 @@ public class GameMenuController extends MenuController {
         return new Result(true, "");
     }
 
+    public Result showFriendshipLevels(){
+        StringBuilder builder = new StringBuilder();
+        Player currentPlayer = Game.getCurrentPlayer();
+        builder.append("friendship levels: \n");
+        for (Player player : Game.getAllPlayers()){
+            if (!player.equals(currentPlayer)) {
+                builder.append(player.getName()).append(" : ").append(currentPlayer.getFriendshipLevel(player));
+            }
+        }
+        return new Result(true, builder.toString());
+    }
 
+    public Result NPCFriendshipLevels() {
+        StringBuilder builder = new StringBuilder();
+        Player currentPlayer = Game.getCurrentPlayer();
+        builder.append("friendship status with NPCs: ");
+        for (NPC npc : Game.getAllNPCs()) {
+            builder.append("\n").append(npc.getName()).append(" friendship level: ").append(npc.getFriendshipLevel(currentPlayer))
+                    .append(" friendship points: ").append(npc.getFriendshipPoints(currentPlayer));
+        }
+        return new Result(true, builder.toString());
+    }
     public Result meetNPC(String npcName) {
         NPC npc = Game.getNPCByName(npcName);
 
