@@ -3,17 +3,57 @@ package org.example.controllers;
 import org.example.models.*;
 import org.example.models.Tool.Tool;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class GameMenuController {
+public class GameMenuController extends MenuController {
+    private User currentUser;
+    private static Map<String, Game> activeGames = new HashMap<>();
+    private Game pendingGame;
+    private List<User> selectedPlayers;
+    boolean canChooseMap = false;
+
+    public GameMenuController(Scanner scanner, User currentUser) {
+        super(scanner);
+        this.currentUser = currentUser;
+    }
     private NPC lastNPC = null;
 
-    public Result newGame(String[] usernames) {
-        return null;
+    public Result newGame(String input) {
+        // TODO : errors !!!
+        Pattern pattern = Pattern.compile("^game new( -u(?<username>[\\w-]+)){1,3}$");
+        Matcher matcher = pattern.matcher(input);
+
+        if (!matcher.find()) {
+            return Result.error("Invalid command format! Use: game new -u <username1> <username2> <username3>");
+        }
+
+        selectedPlayers = new ArrayList<>();
+        selectedPlayers.add(currentUser);
+
+        for (int i = 1; i <= 3; i++) {
+            String username = matcher.group("username" + i);
+            if (username != null) {
+                User user = UserDatabase.getUserByUsername(username);
+                if (user == null) {
+                    return Result.error("User '" + username + "' not found!");
+                }
+                selectedPlayers.add(user);
+                currentUser.addFriend(username);
+            }
+        }
+
+        System.out.println("Please enter map number (1-3):");
+        canChooseMap = true;
+        pendingGame = new Game(); // ایجاد بازی موقت
+        return Result.success("Waiting for map selection...");
     }
 
-    public Result chooseMap(int mapNumber) {
+    public Result chooseMap(String input) {
+        if (canChooseMap){
+
+        }
         return null;
     }
 
@@ -147,7 +187,7 @@ public class GameMenuController {
         if (item == null) return new Result(false, "Item not found");
         Player player = Game.getCurrentPlayer();
         npc.recieveGift(item, player);
-        if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1) return new Result(false, "Nice thought! But you can’t give a gift to thin air. Find "+ npcName +" first!")
+        if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1) return new Result(false, "Nice thought! But you can’t give a gift to thin air. Find "+ npcName +" first!");
         if (item instanceof Tool<?>) return new Result(false, "Gifting your old tools? What’s next—handing out used socks?");
 
         if (npc.isFavorite(item)) return new Result(true, "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");

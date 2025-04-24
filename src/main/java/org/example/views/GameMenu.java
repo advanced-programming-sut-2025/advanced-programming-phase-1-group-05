@@ -21,6 +21,22 @@ public class GameMenu implements AppMenu {
             Result result = menuController.showCurrentMenu();
             System.out.println(result.getMessage());
         }
+        else if (input.startsWith("game new")) {
+            Result result = gameController.newGame(input);
+            System.out.println(result.getMessage());
+        } else if (input.startsWith("game map")) {
+            Result result = gameController.chooseMap(input);
+            System.out.println(result.getMessage());
+        } else if (input.equalsIgnoreCase("load game")) {
+            Result result = gameController.loadGame();
+            System.out.println(result.getMessage());
+        } else if (input.equalsIgnoreCase("exit game")) {
+            Result result = gameController.exitGame();
+            System.out.println(result.getMessage());
+        } else if (input.equalsIgnoreCase("next turn")) {
+            Result result = gameController.nextTurn();
+            System.out.println(result.getMessage());
+        }
         else if (input.matches("meet\\s+NPC\\s+\\S+")){
             int CIndex = input.indexOf('C');
             input = input.substring(CIndex + 1).trim();

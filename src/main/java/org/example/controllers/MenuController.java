@@ -2,6 +2,7 @@ package org.example.controllers;
 
 import org.example.models.Enums.Menu;
 import org.example.models.Result;
+import org.example.models.User;
 import org.example.views.*;
 
 import java.util.Scanner;
@@ -9,6 +10,7 @@ import java.util.Scanner;
 public class MenuController {
     private org.example.views.AppMenu currentMenu;
     private final Scanner scanner;
+    private User currentUser;
 
     public MenuController(Scanner scanner) {
         this.scanner = scanner;
@@ -36,7 +38,11 @@ public class MenuController {
 
         if (target == Menu.MAIN) return true;
 
-        if (currentMenuName.equals("Main Menu")) return true;
+        if ((currentMenuName.equals("Main Menu") && target == Menu.GAME) ||
+                (currentMenuName.equals("Main Menu") && target == Menu.PROFILE) ||
+                (currentMenuName.equals("Main Menu") && target == Menu.AVATAR)){
+            return true;
+        }
 
         if ((currentMenuName.equals("Login Menu") && target == Menu.REGISTER) ||
                 (currentMenuName.equals("Register Menu") && target == Menu.LOGIN)) {
@@ -52,8 +58,13 @@ public class MenuController {
                 LoginMenuController loginMenuController = new LoginMenuController(scanner);
                 return new LoginMenu(this, loginMenuController, scanner);
             case MAIN: return new MainMenu(this);
-            case PROFILE: return new ProfileMenu(this);
-            case GAME: return new GameMenu(this, new GameMenuController());
+            case PROFILE:
+                ProfileMenuController profileController = new ProfileMenuController(
+                        this.getScanner(),
+                        this.currentUser
+                );
+                return new ProfileMenu(this, profileController);
+            case GAME: return new GameMenu(this, new GameMenuController(this.scanner, this.currentUser));
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
                 return new RegisterMenu(this, registerController, scanner);
@@ -87,6 +98,14 @@ public class MenuController {
         }
     }
 
+    public Result logoutUser() {
+        if (currentMenu.getMenuName().equals("Main Menu")) {
+            currentMenu = createMenuInstance(Menu.LOGIN);
+            return new Result(true, "Logged out successfully! Redirected to login menu.");
+        } else {
+            return new Result(false, "You can only logout from Main Menu!");
+        }
+    }
     public Scanner getScanner() {
         return scanner;
     }

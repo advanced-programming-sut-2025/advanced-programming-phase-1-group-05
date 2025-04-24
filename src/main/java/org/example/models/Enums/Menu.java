@@ -6,6 +6,7 @@ public enum Menu {
     MAIN,
     PROFILE,
     GAME,
-    TRADE
+    TRADE,
+    AVATAR
 
 }
