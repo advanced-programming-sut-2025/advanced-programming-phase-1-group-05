@@ -27,7 +27,7 @@ public class TradingController {
             if (parts[i].equals("-ta")) taIndex = i;
         }
 
-        for (int i = uIndex + 1 ; i < tIndex; i ++) {
+        for (int i = uIndex + 1; i < tIndex; i++) {
             builder.append(parts[i]).append(" ");
         }
         String targetUsername = builder.toString().trim();
@@ -35,13 +35,12 @@ public class TradingController {
         int amount;
         try {
             amount = Integer.parseInt(parts[aIndex + 1]);
-        }
-        catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return new Result(false, "invalid amount");
         }
         builder.setLength(0);
 
-        for (int i = iIndex + 1; i < aIndex; i++){
+        for (int i = iIndex + 1; i < aIndex; i++) {
             builder.append(parts[i]).append(" ");
         }
         String itemName = builder.toString().trim();
@@ -50,22 +49,23 @@ public class TradingController {
 
         Player targetPlayer = Game.getPlayerByUsername(targetUsername);
         if (targetPlayer == null) return new Result(false, "Trying to trade with imaginary friends again?");
-        if (Game.getCurrentPlayer().getItemQuantity(item) < amount) return new Result(false, "You're trying to give away more than you own. Generous… but impossible.");
-        if (input.contains("offer") && input.contains("request")) return new Result(false, "You're being a little too ambitious-choose to give or get, not both.");
-        if (input.contains("-p") && input.contains("-ti")) return new Result(false, "This isn’t an auction house. You’ve gotta choose: gold or goods!");
+        if (Game.getCurrentPlayer().getItemQuantity(item) < amount)
+            return new Result(false, "You're trying to give away more than you own. Generous… but impossible.");
+        if (input.contains("offer") && input.contains("request"))
+            return new Result(false, "You're being a little too ambitious-choose to give or get, not both.");
+        if (input.contains("-p") && input.contains("-ti"))
+            return new Result(false, "This isn’t an auction house. You’ve gotta choose: gold or goods!");
         String type = input.contains("offer") ? "offer" : "request";
         if (input.matches(tradeWithMoney)) {
             int price;
             try {
                 price = Integer.parseInt(parts[pIndex + 1]);
-            }
-            catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return new Result(false, "invalid price");
             }
-            trades.add(new Trade(Game.getCurrentPlayer(), targetPlayer, type, item, amount,price , null, null));
-        }
-        else if (input.matches(tradeWithItem)) {
-            for (int i = tiIndex + 1; i < taIndex; i ++) {
+            trades.add(new Trade(Game.getCurrentPlayer(), targetPlayer, type, item, amount, price, null, null));
+        } else if (input.matches(tradeWithItem)) {
+            for (int i = tiIndex + 1; i < taIndex; i++) {
                 builder.append(parts[i]).append(" ");
             }
             String targetItemName = builder.toString().trim();
@@ -74,11 +74,10 @@ public class TradingController {
             int targetAmount;
             try {
                 targetAmount = Integer.parseInt(parts[taIndex + 1]);
-            }
-            catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return new Result(false, "invalid amount");
             }
-            trades.add(new Trade(Game.getCurrentPlayer(), targetPlayer, type, item, amount, null , targetItem, targetAmount));
+            trades.add(new Trade(Game.getCurrentPlayer(), targetPlayer, type, item, amount, null, targetItem, targetAmount));
         }
         return new Result(false, "invalid input");
     }
@@ -86,6 +85,27 @@ public class TradingController {
 //
 //    }
 
+    public Result showTradeList() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("===TRADES===");
+        if (trades.isEmpty()) return new Result(false, "No deals brewing yet. Why not start one?");
+        for (Trade trade : trades) {
+            if (!trade.isAnswered()){
+                builder.append("\n").append("Id            :").append(trade.getId()).append("\n");
+                builder.append("From          :").append(trade.getSender().getName()).append("\n");
+                builder.append("To            :").append(trade.getReceiver().getName()).append("\n");
+                builder.append("Type          :").append(trade.getType()).append("\n");
+                builder.append("Item          :").append(trade.getItem().getName()).append("\n");
+                builder.append("Amount        :").append(trade.getAmount()).append("\n");
+                if (trade.getCost() != null) builder.append("Price   :").append(trade.getCost()).append("\n");
+                else{
+                    builder.append("target item   :").append(trade.getItem().getName()).append("\n");
+                    builder.append("target amount :").append(trade.getAmount()).append("\n");
+                }
+            }
+        }
+        return new Result(true, builder.toString());
+    }
 
 
 }

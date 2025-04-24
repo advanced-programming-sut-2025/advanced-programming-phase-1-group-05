@@ -122,6 +122,13 @@ public class Player {
         if (friendship == null) return 0;
         return friendship.getFriendshipLevel();
     }
+
+    public void changeLevel(Player a, int level) {
+        Friendship friendship = getFriendship(a, this);
+        if (friendship != null)
+            friendship.setLevel(level);
+    }
+
     private static class Friendship {
         private Player player1;
         private Player player2;
@@ -145,5 +152,8 @@ public class Player {
             return friendshipLevel >= 2;
         }
 
+        public void setLevel(int level){
+            friendshipLevel = level;
+        }
     }
 }

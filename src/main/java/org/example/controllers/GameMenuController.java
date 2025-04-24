@@ -171,16 +171,46 @@ public class GameMenuController extends MenuController {
         return new Result(true, "");
     }
 
-    public Result showFriendshipLevels(){
+    public Result showFriendshipLevels() {
         StringBuilder builder = new StringBuilder();
         Player currentPlayer = Game.getCurrentPlayer();
         builder.append("friendship levels: \n");
-        for (Player player : Game.getAllPlayers()){
+        for (Player player : Game.getAllPlayers()) {
             if (!player.equals(currentPlayer)) {
                 builder.append(player.getName()).append(" : ").append(currentPlayer.getFriendshipLevel(player));
             }
         }
         return new Result(true, builder.toString());
+    }
+
+    public Result giveFlower(String input){
+        int uIndex = input.indexOf('u');
+        input = input.substring(uIndex + 1);
+        Player targetPlayer = Game.getCurrentPlayer();
+        Player currentPlayer = Game.getCurrentPlayer();
+        Item bouquet = Game.getDatabase().getItem("bouquet");
+        currentPlayer.getBackPack().getInventory().remove(bouquet, 1);
+        targetPlayer.getBackPack().getInventory().put(bouquet, 1);
+        return new Result(true, "");
+    }
+    public Result respondToProposal(String input) {
+        String[] parts = input.split("\\s+");
+        int uIndex = -1;
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i].equals("-u")) {
+                uIndex = i;
+                break;
+            }
+        }
+        String username = parts[uIndex + 1];
+        Player otherPlayer = Game.getPlayerByUsername(username);
+        Player currentPlayer = Game.getCurrentPlayer();
+        if (input.contains("accept")) {
+            currentPlayer.changeLevel(otherPlayer, 4);
+        } else if (input.contains("reject")) {
+            currentPlayer.changeLevel(otherPlayer, 0);
+        }
+        return new Result(true, "");
     }
 
     public Result NPCFriendshipLevels() {
@@ -193,6 +223,7 @@ public class GameMenuController extends MenuController {
         }
         return new Result(true, builder.toString());
     }
+
     public Result meetNPC(String npcName) {
         NPC npc = Game.getNPCByName(npcName);
 
