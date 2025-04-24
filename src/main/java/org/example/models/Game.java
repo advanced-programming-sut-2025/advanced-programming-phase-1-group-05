@@ -13,6 +13,7 @@ public class Game {
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static Map<String, NPC> npcs = new HashMap<>();
     private static List<Message> messages = new ArrayList<>();
+    private static List<Gift> gifts = new ArrayList<>();
     private static Weather currentWeather = Weather.Sunny;
     private static Database database = new Database();
     // TODO a method for changing the weather
@@ -137,5 +138,15 @@ public class Game {
                 commonMessages.add(message);
         }
         return commonMessages;
+    }
+
+    public static void addGift(Gift gift) {
+        gifts.add(gift);
+    }
+    public static Gift getGiftById(int id){
+        for (Gift gift : gifts){
+            if (gift.Id == id) return gift;
+        }
+        return null;
     }
 }

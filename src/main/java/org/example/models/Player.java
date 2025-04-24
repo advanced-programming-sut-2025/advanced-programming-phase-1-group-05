@@ -138,6 +138,10 @@ public class Player {
         if( friendship != null ) return friendship.canAskMarriage();
         return false;
     }
+    public void changeFriendshipXP(int xp, Player a){
+        Friendship friendship = getFriendship(this, a);
+        if (friendship != null) friendship.addPoints(xp);
+    }
     private static class Friendship {
         private Player player1;
         private Player player2;

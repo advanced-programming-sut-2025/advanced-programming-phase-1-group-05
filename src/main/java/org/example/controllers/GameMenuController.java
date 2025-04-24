@@ -229,6 +229,24 @@ public class GameMenuController extends MenuController {
         currentPlayer.getBackPack().getInventory().put(item, amount);
         return new Result(true, "");
     }
+    public Result rateTheGift(String input){
+        int giftNumber = 0, rating = 0;
+//        try {
+//            rating = Integer.parseInt(something);
+//        }
+//        catch (NumberFormatException e){
+//            return  new Result(false, "That's not a real rating-are you making up your own scale?");
+//        }
+        if (rating < 1 || rating > 5)
+            return new Result(false, "Your rating confused the chickens. Please try again.");
+        Gift gift = Game.getGiftById(giftNumber);
+        Player currentPlayer = Game.getCurrentPlayer();
+        if (gift == null || !gift.getReceiver().equals(currentPlayer))
+            return new Result(false, "You stare into your empty hands and give it a " + rating + ". Interesting.");
+        Player targetPlayer = gift.getSender();
+        currentPlayer.changeFriendshipXP(((rating - 3)* 30 + 15), targetPlayer);
+        return new Result(true, "");
+    }
 
     public Result giveFlower(String input) {
         int uIndex = input.indexOf('u');
@@ -407,6 +425,7 @@ public class GameMenuController extends MenuController {
                 Game.getCurrentPlayer().getWateringCan().getWaterlevel();
         return new Result(true, waterLeft + " water units left in your watering can");
     }
+
 
 
 }
