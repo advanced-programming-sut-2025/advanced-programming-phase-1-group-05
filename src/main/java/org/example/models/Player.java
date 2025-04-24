@@ -96,6 +96,9 @@ public class Player {
     public String getUsername(){
         return  user.getUsername();
     }
+<<<<<<< HEAD
+    public WateringCan getWateringCan() {return wateringCan;}
+=======
 
 //    private Friendship getFriendship(Player otherPlayer){
 //        return friendships.computeIfAbsent(otherPlayer.getUsername(), k -> new Friendship(this, otherPlayer));
@@ -156,4 +159,5 @@ public class Player {
             friendshipLevel = level;
         }
     }
+>>>>>>> ab0894121ed0aa700144df4a1284cc3f5a0a5de7
 }

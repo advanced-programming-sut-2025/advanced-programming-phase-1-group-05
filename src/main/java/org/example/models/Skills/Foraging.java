@@ -1,7 +1,7 @@
 package org.example.models.Skills;
 
 import org.example.models.Enums.ItemLevel;
-import org.example.models.Enums.Seed;
+import org.example.models.Seed;
 import org.example.models.Tool.Axe;
 import org.example.models.Tool.Pickaxe;
 

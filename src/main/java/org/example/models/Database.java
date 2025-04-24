@@ -9,7 +9,9 @@ import java.util.ArrayList;
 
 public class Database {
     ArrayList<FruitAndVegetable> plantDatabase = new ArrayList<>();
+    ArrayList<Tree> treeDatabase = new ArrayList<>();
     ArrayList<Item> itemDatabase = new ArrayList<>();
+    ArrayList<Seed> seedDatabase = new ArrayList<>();
     //start when the game starts
     //put this somewhere where everything is initialized
     public void initializePlantDatabase(){
@@ -55,5 +57,12 @@ public class Database {
             }
         }
         return null;
+    }
+
+    public ArrayList<Tree> getTreeDatabase(){
+        return treeDatabase;
+    }
+    public ArrayList<Seed> getSeedDatabase(){
+        return seedDatabase;
     }
 }

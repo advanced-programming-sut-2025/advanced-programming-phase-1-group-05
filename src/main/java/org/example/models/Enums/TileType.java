@@ -8,5 +8,6 @@ public enum TileType {
     Wood,
     Flat,
     Object,
-    Tree;
+    Tree,
+    Coal;
 }
