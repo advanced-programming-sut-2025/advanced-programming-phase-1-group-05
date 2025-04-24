@@ -37,6 +37,12 @@ public class GameMenu implements AppMenu {
             Result result = gameController.nextTurn();
             System.out.println(result.getMessage());
         }
+        else if (input.equals("friendships")){
+            System.out.println(gameController.showFriendshipLevels().getMessage());
+        }
+        else if (input.equals("friendship\\s+NPC\\s+list")){
+            System.out.println(gameController.NPCFriendshipLevels().getMessage());
+        }
         else if (input.matches("meet\\s+NPC\\s+\\S+")){
             int CIndex = input.indexOf('C');
             input = input.substring(CIndex + 1).trim();

@@ -36,6 +36,7 @@ public class Game {
         database.initializeAllItems();
         database.initializePlantDatabase();
         initializeNPCs();
+        Player.initializeFriendships(players);
     }
     public static List<NPC> getAllNPCs() {
         List<NPC> allNPCs = new ArrayList<>();

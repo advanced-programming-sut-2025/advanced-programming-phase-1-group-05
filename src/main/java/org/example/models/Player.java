@@ -4,9 +4,7 @@ import org.example.models.Enums.BackPackType;
 import org.example.models.Skills.*;
 import org.example.models.Tool.*;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Player {
     private User user;
@@ -24,6 +22,7 @@ public class Player {
     private final BackPack backPack = new BackPack();
     private boolean unlimitedEnergy = false;
     private Item currentItem;
+    private static List<Friendship> friendships = new ArrayList<>();
 
     public Player(User user) {
         this.user = user;
@@ -97,5 +96,58 @@ public class Player {
     public String getUsername(){
         return  user.getUsername();
     }
+<<<<<<< HEAD
     public WateringCan getWateringCan() {return wateringCan;}
+=======
+
+//    private Friendship getFriendship(Player otherPlayer){
+//        return friendships.computeIfAbsent(otherPlayer.getUsername(), k -> new Friendship(this, otherPlayer));
+//    }
+
+    public static void initializeFriendships(List<Player> players){
+        for (int i = 0; i< players.size(); i++){
+            for (int j = i +1; j < players.size(); j++){
+                Player a = players.get(i);
+                Player b = players.get(j);
+                friendships.add(new Friendship(a, b));
+            }
+        }
+    }
+
+    private Friendship getFriendship(Player a, Player b) {
+        for (Friendship f : friendships) {
+            if(f.containsPlayer(a) && f.containsPlayer(b)) return f;
+        }
+        return null;
+    }
+    public int getFriendshipLevel(Player a) {
+        Friendship friendship = getFriendship(this, a);
+        if (friendship == null) return 0;
+        return friendship.getFriendshipLevel();
+    }
+    private static class Friendship {
+        private Player player1;
+        private Player player2;
+        private int xpPoints = 0;
+        private int friendshipLevel = 0;
+        private boolean bouquetGifted = false;
+        public Friendship(Player player1, Player player2) {
+            this.player1 = player1;
+            this.player2 = player2;
+        }
+
+        public boolean containsPlayer(Player a){
+            return  player1.equals(a) && player2.equals(a);
+        }
+
+        public int getFriendshipLevel(){
+            return friendshipLevel;
+        }
+
+        public boolean canHug(){
+            return friendshipLevel >= 2;
+        }
+
+    }
+>>>>>>> ab0894121ed0aa700144df4a1284cc3f5a0a5de7
 }
