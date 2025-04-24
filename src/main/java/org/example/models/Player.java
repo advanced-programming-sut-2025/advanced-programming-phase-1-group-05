@@ -97,4 +97,5 @@ public class Player {
     public String getUsername(){
         return  user.getUsername();
     }
+    public WateringCan getWateringCan() {return wateringCan;}
 }

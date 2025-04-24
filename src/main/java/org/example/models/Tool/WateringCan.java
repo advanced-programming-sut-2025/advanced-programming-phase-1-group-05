@@ -40,6 +40,12 @@ public class WateringCan implements Tool<ItemLevel> {
     }
 
 
+    public int getWaterlevel() {
+        return waterlevel;
+    }
+    public int getCapacity() {
+        return level.getWateringcanCapacity();
+    }
     @Override
     public String getName() {
         return "";

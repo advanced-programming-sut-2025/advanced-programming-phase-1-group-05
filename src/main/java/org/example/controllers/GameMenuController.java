@@ -1,6 +1,7 @@
 package org.example.controllers;
 
 import org.example.models.*;
+import org.example.models.Enums.TileType;
 import org.example.models.Tool.Tool;
 
 import java.util.*;
@@ -256,4 +257,49 @@ public class GameMenuController extends MenuController {
         }
         return new Result(true, output.toString());
     }
+
+    //plant seed on a specific tile
+    public Result plantSeed(String seed, Map.Entry<Integer,Integer> coordinates) {
+        GameMap map = Game.getGameMap();
+        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
+        //errors
+        if (tile == null) return new Result(false, "Tile not found");
+        if(tile.getTileType() != TileType.Soil) return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
+        if(!tile.isTileValidForPlanting()) return new Result(false, "You can't plant cause the tile is occupied!");
+        boolean successful = Game.getCurrentPlayer().getFarmingSkill().plantSeed(new Seed(seed), tile);
+        if(successful) return new Result(true, "Successfully planted " + seed);
+        else return new Result(false, "That's not a valid seed!");
+    }
+
+    //show the plant on a specific tile
+    public Result showPlant(Map.Entry<Integer,Integer> coordinates) {
+        GameMap map = Game.getGameMap();
+        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
+        if(tile.isTileValidForPlanting()) return new Result(true, "Nothing planted on this tile");
+
+        FruitAndVegetable plant = Game.getGameMap().getPlantedFruit(coordinates);
+        StringBuilder output = new StringBuilder();
+        output.append("** plant information **\n")
+                .append(plant.toString());
+        return new Result(true, output.toString());
+    }
+
+    //fertilize crop
+    public Result fertilizeCrop(String fertilizer, Map.Entry<Integer,Integer> coordinates) {
+        GameMap map = Game.getGameMap();
+        boolean successful = Game.getCurrentPlayer().getFarmingSkill().fertilizeCrop(coordinates, fertilizer);
+        if(successful) return new Result(true, "Successfully fertilized with " + fertilizer);
+        else return new Result(false, "You don't have that kind of fertilizer");
+    }
+
+    //how much water left
+    public Result howMuchWaterLeft(){
+        int waterLeft = Game.getCurrentPlayer().getWateringCan().getCapacity() -
+                Game.getCurrentPlayer().getWateringCan().getWaterlevel();
+        return new Result(true, waterLeft + " water units left in your watering can");
+    }
+    
+
+
+
 }

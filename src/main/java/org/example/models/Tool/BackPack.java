@@ -12,6 +12,7 @@ import java.util.Map;
 public class BackPack implements Tool <BackPackType>{
     BackPackType level = BackPackType.Normal;
     private final HashMap<Item, Integer> inventory = new HashMap<>();
+    private final HashMap<Item, Integer> foragingItems = new HashMap<>();
 
     public HashMap<Item, Integer> getInventory() {
         return inventory;
@@ -36,6 +37,10 @@ public class BackPack implements Tool <BackPackType>{
         return capacity;
     }
 
+    public void addForagingItem(Item item, int amount) {
+        inventory.put(item, amount);
+        foragingItems.put(item, amount);
+    }
     @Override
     public String getName() {
         return "BackPack";

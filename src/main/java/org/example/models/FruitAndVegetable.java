@@ -1,8 +1,6 @@
 package org.example.models;
 
-import org.example.models.Enums.GrowthStage;
 import org.example.models.Enums.Season;
-import org.example.models.Enums.Seed;
 
 import java.util.*;
 
@@ -13,13 +11,18 @@ public class FruitAndVegetable implements Item {
 
     private final String seed;
     private final String growthStage;
+    private boolean fullyGrown;
     private final int totalHarvestTime;
     private final boolean oneTime;
     private final int regrowthTime;
     private final boolean isEdible;
     private final int energy;
     private List<Season> seasons = new ArrayList<>();
-    private final boolean canBecomeGiant; //change name
+    private final boolean canBecomeGiant;
+    private boolean protectedByScareCrow;
+    private boolean hasBeenWatered;
+    private boolean hasBeenFertilized;
+
 
     public FruitAndVegetable(String name, int price, String seed, String growthStage, int totalHarvestTime, boolean oneTime, int regrowthTime, boolean isEdible,
                              int energy, List<Season> seasons, boolean isGiantifiable) {
@@ -97,13 +100,13 @@ public class FruitAndVegetable implements Item {
         ArrayList<FruitAndVegetable> possiblePlants = new ArrayList<>();
         FruitAndVegetable selectedPlant = null;
         //plants should be from another json file but for now
-//        for(FruitAndVegetable plant : Game.getDatabase().getPlantDatabase()) {
-//            for(Season season : plant.getSeasons()) {
-//                if(season == currentSeason) {
-//                    possiblePlants.add(plant);
-//                }
-//            }
-//        }
+        for(FruitAndVegetable plant : Game.getDatabase().getFruitAndVegetables()) {
+            for(Season season : plant.getSeasons()) {
+                if(season == currentSeason) {
+                    possiblePlants.add(plant);
+               }
+            }
+        }
 
         Random random = new Random();
         selectedPlant = possiblePlants.get(random.nextInt(possiblePlants.size()));
@@ -136,6 +139,9 @@ public class FruitAndVegetable implements Item {
         this.coordinates = coordinates;
     }
 
+    public void fertilize(){
+        hasBeenFertilized = true;
+    }
     @Override
     public String getName() {
         return name;
@@ -144,5 +150,10 @@ public class FruitAndVegetable implements Item {
     @Override
     public int getPrice() {
         return price;
+    }
+    @Override
+    public String toString() {
+        return "Name: " + name + "\n" + "Seed: " + seed + "\n" +"Growth stage: " + growthStage + "\n" +
+                "Has been watered today: " + hasBeenWatered +"\n" + "Has been fertilized: " + hasBeenFertilized;
     }
 }

@@ -1,12 +1,14 @@
 package org.example.models.Skills;
 
+import org.example.models.*;
 import org.example.models.Enums.ItemLevel;
-import org.example.models.Enums.Seed;
-import org.example.models.GameTile;
-import org.example.models.Result;
 import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Scythe;
 import org.example.models.Tool.WateringCan;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Farming implements Skill{
     int level = 0;
@@ -15,13 +17,68 @@ public class Farming implements Skill{
     //شخم زدن
     public void plowTile(GameTile tile, Hoe hoe) {}
     //کاشتن دانه
-    public void plantSeed(Seed seed, GameTile tile) {}
+    public boolean plantSeed(Seed seed, GameTile tile) {
+        if(getSeedType(seed) == null) return false;
+        else if(getSeedType(seed) == "crop") {
+            Game.getGameMap().addPlant(getFruitType(seed));
+        } else if(getSeedType(seed) == "tree") {
+            Game.getGameMap().addTree(getTreeType(seed));
+        }
+        return true;
+    }
+
     //کود دادن
-    public void fertilizeCrop(GameTile tile, String fertilizer) {}
+    public boolean fertilizeCrop(Map.Entry<Integer, Integer> coordinantes, String fertilizer) {
+        HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
+        for(Item item : items.keySet()) {
+            if(item.getName().equals(fertilizer)) {
+                FruitAndVegetable fruit = Game.getGameMap().getPlantedFruit(coordinantes);
+                // idk the details
+                fruit.fertilize();
+                return true;
+            }
+        }
+        return false;
+    }
     //آبیاری
     public Result waterCrop(GameTile tile, WateringCan wateringCan) {return null;}
     //درو کردن
     public void harvestCrop(GameTile tile, Scythe scythe) {}
+
+    //seed kind
+    public String getSeedType(Seed seed){
+        for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
+            if(f.getSeed().equals(seed.getName())){
+                return "crop";
+            }
+        }
+        for (Tree tree: Game.getDatabase().getTreeDatabase()) {
+            if(tree.getSeed().equals(seed.getName())){
+                return "tree";
+            }
+        }
+        return null;
+    }
+
+    //get fruit type from database
+    public FruitAndVegetable getFruitType(Seed seed) {
+        for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
+            if(f.getSeed().equals(seed.getName())){
+                return f;
+            }
+        }
+        return null;
+    }
+
+    //get tree type from database
+    public Tree getTreeType(Seed seed) {
+        for(Tree tree: Game.getDatabase().getTreeDatabase()){
+            if(tree.getSeed().equals(seed.getName())){
+                return tree;
+            }
+        }
+        return null;
+    }
 
     @Override
     public ItemLevel getLevel() {
