@@ -96,9 +96,7 @@ public class Player {
     public String getUsername(){
         return  user.getUsername();
     }
-<<<<<<< HEAD
     public WateringCan getWateringCan() {return wateringCan;}
-=======
 
 //    private Friendship getFriendship(Player otherPlayer){
 //        return friendships.computeIfAbsent(otherPlayer.getUsername(), k -> new Friendship(this, otherPlayer));
@@ -151,6 +149,11 @@ public class Player {
             return friendshipLevel;
         }
 
+        public void addPoints(int amount){
+            xpPoints += amount;
+            if (xpPoints > 300) friendshipLevel = 2;
+            else if (xpPoints > 100) friendshipLevel = 1;
+        }
         public boolean canHug(){
             return friendshipLevel >= 2;
         }
@@ -158,6 +161,9 @@ public class Player {
         public void setLevel(int level){
             friendshipLevel = level;
         }
+
+        public boolean canGiftFlower(){
+            return xpPoints >= 600;
+        }
     }
->>>>>>> ab0894121ed0aa700144df4a1284cc3f5a0a5de7
 }

@@ -87,7 +87,7 @@ public class TradingController {
 
     public Result showTradeList() {
         StringBuilder builder = new StringBuilder();
-        builder.append("===TRADES===");
+        builder.append("========TRADES========");
         if (trades.isEmpty()) return new Result(false, "No deals brewing yet. Why not start one?");
         for (Trade trade : trades) {
             if (!trade.isAnswered()){
@@ -102,6 +102,7 @@ public class TradingController {
                     builder.append("target item   :").append(trade.getItem().getName()).append("\n");
                     builder.append("target amount :").append(trade.getAmount()).append("\n");
                 }
+                builder.append("======================");
             }
         }
         return new Result(true, builder.toString());

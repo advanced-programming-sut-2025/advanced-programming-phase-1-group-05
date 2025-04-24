@@ -14,6 +14,7 @@ public class GameMenuController extends MenuController {
     private Game pendingGame;
     private List<User> selectedPlayers;
     boolean canChooseMap = false;
+    private Item lastRingProposedWith = null;
 
     public GameMenuController(Scanner scanner, User currentUser) {
         super(scanner);
@@ -213,9 +214,20 @@ public class GameMenuController extends MenuController {
         Item bouquet = Game.getDatabase().getItem("bouquet");
         currentPlayer.getBackPack().getInventory().remove(bouquet, 1);
         targetPlayer.getBackPack().getInventory().put(bouquet, 1);
+        targetPlayer.changeLevel(currentPlayer, 3);
         return new Result(true, "");
     }
 
+    public Result askMarriage(String input){
+        String username = "", ringName = "";
+        Player targetPlayer = Game.getPlayerByUsername(username);
+        Item ring = Game.getDatabase().getItem(ringName);
+        if (ring != null ) lastRingProposedWith = ring;
+        Player currentPlayer = Game.getCurrentPlayer();
+        currentPlayer.getBackPack().getInventory().remove(ring, 1);
+        targetPlayer.getBackPack().getInventory().put(ring, 1);
+        return new Result(true, "");
+    }
     public Result respondToProposal(String input) {
         String[] parts = input.split("\\s+");
         int uIndex = -1;
@@ -226,12 +238,15 @@ public class GameMenuController extends MenuController {
             }
         }
         String username = parts[uIndex + 1];
-        Player otherPlayer = Game.getPlayerByUsername(username);
+        Player targetPlayer = Game.getPlayerByUsername(username);
         Player currentPlayer = Game.getCurrentPlayer();
         if (input.contains("accept")) {
-            currentPlayer.changeLevel(otherPlayer, 4);
+            currentPlayer.changeLevel(targetPlayer, 4);
+
+            currentPlayer.getBackPack().getInventory().put(lastRingProposedWith, 1);
+            targetPlayer.getBackPack().getInventory().put(lastRingProposedWith, 1);
         } else if (input.contains("reject")) {
-            currentPlayer.changeLevel(otherPlayer, 0);
+            currentPlayer.changeLevel(targetPlayer, 0);
         }
         return new Result(true, "");
     }
