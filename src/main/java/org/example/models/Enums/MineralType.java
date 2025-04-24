@@ -2,9 +2,10 @@ package org.example.models.Enums;
 
 public enum MineralType {
     Quartz("Quartz", 25),
-    EarthCrystal(),
-    FrozenTear(),
-    FireQuarts();
+//    EarthCrystal(),
+//    FrozenTear(),
+//    FireQuarts()
+    ;
     //etc...
 
     private final String name;

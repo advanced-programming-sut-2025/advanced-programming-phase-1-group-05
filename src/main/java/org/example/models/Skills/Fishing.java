@@ -1,5 +1,6 @@
 package org.example.models.Skills;
 
+import org.example.models.Enums.ItemLevel;
 import org.example.models.GameTile;
 import org.example.models.Tool.FishingPole;
 
@@ -10,6 +11,12 @@ public class Fishing implements Skill {
     public void fishing (GameTile tile, FishingPole pole) {
 
     }
+
+    @Override
+    public ItemLevel getLevel() {
+        return null;
+    }
+
     @Override
     public void setLevel(int level) {
         this.level = level;

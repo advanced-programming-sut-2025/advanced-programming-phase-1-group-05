@@ -6,11 +6,13 @@ import java.util.List;
 public class User {
     String username;
     String password;
-    String email;
     String nickName;
     String gender;
+    String email;
+
     private String securityQuestion;
     private String securityAnswer;
+
     private List<String> friends = new ArrayList<>();
 
     public void addFriend(String username) {
@@ -22,7 +24,6 @@ public class User {
     public List<String> getFriends() {
         return new ArrayList<>(friends);
     }
-
     public void setSecurityQuestion(String securityQuestion) {
         this.securityQuestion = securityQuestion;
     }
@@ -47,19 +48,18 @@ public class User {
         this.nickName = nickName;
     }
 
+    public String getUsername(){
+        return username;
+    }
+    public String getPassword(){
+        return password;
+    }
     public String getNickName() {
         return nickName;
     }
 
     public String getGender() {
         return gender;
-    }
-
-    public String getUsername(){
-        return username;
-    }
-    public String getPassword(){
-        return password;
     }
     public void setUsername(String username) {
         this.username = username;

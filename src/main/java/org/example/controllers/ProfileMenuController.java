@@ -10,7 +10,6 @@ import java.util.regex.Matcher;
 public class ProfileMenuController extends MenuController {
     private User currentUser;
 
-
     private static final String USERNAME_REGEX = "^\\s*change\\s+username\\s+-u\\s+(?<username>\\S+)\\s*$";
     private static final String NICKNAME_REGEX = "^\\s*change\\s+nickname\\s+-u\\s+(?<nickname>\\S+)\\s*$";
     private static final String EMAIL_REGEX = "^\\s*change\\s+email\\s+-e\\s+(?<email>\\S+)\\s*$";

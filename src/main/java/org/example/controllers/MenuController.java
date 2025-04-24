@@ -1,23 +1,21 @@
 package org.example.controllers;
 
-import org.example.models.Result;
 import org.example.models.Enums.Menu;
+import org.example.models.Result;
 import org.example.models.User;
 import org.example.views.*;
 
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class MenuController {
     private org.example.views.AppMenu currentMenu;
     private final Scanner scanner;
-    //?true?
-    private final User currentUser = new User();
+    private User currentUser;
 
     public MenuController(Scanner scanner) {
         this.scanner = scanner;
         RegisterMenuController registerController = new RegisterMenuController(scanner);
-        this.currentMenu = new RegisterMenu(this, registerController, this.getScanner());
+        this.currentMenu = new RegisterMenu(this, registerController, scanner);
     }
 
     public Result enterMenu(String menuName) {
@@ -50,18 +48,15 @@ public class MenuController {
                 (currentMenuName.equals("Register Menu") && target == Menu.LOGIN)) {
             return true;
         }
-        else {
-            return false;
-        }
 
-//        return false;
+        return false;
     }
 
     private AppMenu createMenuInstance(Menu menu) {
         switch (menu) {
             case LOGIN:
-                LoginMenuController loginController = new LoginMenuController(this.getScanner());
-                return new LoginMenu(this, loginController, this.getScanner());
+                LoginMenuController loginMenuController = new LoginMenuController(scanner);
+                return new LoginMenu(this, loginMenuController, scanner);
             case MAIN: return new MainMenu(this);
             case PROFILE:
                 ProfileMenuController profileController = new ProfileMenuController(
@@ -69,22 +64,19 @@ public class MenuController {
                         this.currentUser
                 );
                 return new ProfileMenu(this, profileController);
-            case GAME:
-                GameMenuController gameMenuController = new GameMenuController(
-                        this.scanner,
-                        this.currentUser
-                );
-                return new GameMenu(this ,gameMenuController);
+            case GAME: return new GameMenu(this, new GameMenuController(this.scanner, this.currentUser));
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
-                return new RegisterMenu(this, registerController, this.getScanner());
+                return new RegisterMenu(this, registerController, scanner);
+            case TRADE:
+                return new TradeMenu(new TradingController(), scanner);
             default: throw new IllegalArgumentException("Unknown menu type");
         }
     }
 
     public Result exitMenu() {
-        System.out.println("Exiting app...");
-        return new Result(true, "App exited successfully");
+        System.out.println("Exiting current menu...");
+        return new Result(true, "Menu exited successfully");
     }
 
     public Result showCurrentMenu() {
@@ -96,9 +88,10 @@ public class MenuController {
             String input = scanner.nextLine().trim();
 
             if (input.equals("show current menu")) {
-                Result result = showCurrentMenu();
-                System.out.println(result.getMessage());
+                System.out.println(showCurrentMenu().getMessage());
             }
+            if (input.equals("exit") && (currentMenu.getMenuName().equals("login menu") || currentMenu.getMenuName().equals("register menu")))
+                break;
             else {
                 currentMenu.handleUserInput(input);
             }
@@ -113,7 +106,6 @@ public class MenuController {
             return new Result(false, "You can only logout from Main Menu!");
         }
     }
-
     public Scanner getScanner() {
         return scanner;
     }

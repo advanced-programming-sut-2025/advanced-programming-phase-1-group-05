@@ -13,5 +13,6 @@ public class FishingController {
         //choose a random fish type
         //calculate fish number using formula
         //calculate fish quality
+        return null;
     }
 }

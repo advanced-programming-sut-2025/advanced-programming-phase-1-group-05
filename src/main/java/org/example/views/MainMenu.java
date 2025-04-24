@@ -1,5 +1,6 @@
 package org.example.views;
 
+
 import org.example.controllers.MenuController;
 import org.example.models.Result;
 
@@ -12,6 +13,7 @@ public class MainMenu implements org.example.views.AppMenu {
 
     @Override
     public void handleUserInput(String input) {
+        input = input.trim();
         if (input.equals("show current menu")) {
             Result result = menuController.showCurrentMenu();
             System.out.println(result.getMessage());
@@ -19,10 +21,8 @@ public class MainMenu implements org.example.views.AppMenu {
             String menuName = input.substring("menu enter ".length()).trim();
             Result result = menuController.enterMenu(menuName);
             System.out.println(result.getMessage());
-        } else if (input.equalsIgnoreCase("user logout")){
-            Result result = menuController.logoutUser();
-            System.out.println(result.getMessage());
-        } else {
+        }
+        else {
             System.out.println("Invalid Command!");
         }
     }

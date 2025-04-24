@@ -3,12 +3,38 @@ package org.example.models.Tool;
 import org.example.models.Enums.BackPackType;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Game;
+import org.example.models.Item;
 import org.example.models.Tool.Tool;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class BackPack implements Tool <BackPackType>{
     BackPackType level = BackPackType.Normal;
+    private final HashMap<Item, Integer> inventory = new HashMap<>();
+
+    public HashMap<Item, Integer> getInventory() {
+        return inventory;
+    }
+
+    public void addToInventory(Item item, int amount) {
+        if(getInventoryCapacity() + amount <= level.getCapacity()) {
+            inventory.put(item, inventory.getOrDefault(item, 0) + amount);
+            System.out.println(item.getName() + " successfully added to your inventory");
+        } else {
+            System.out.println("You're backpack is full! Upgrade to store more items");
+        }
+    }
+
+    public int getInventoryCapacity() {
+        int capacity = 0;
+        for(Item i : inventory.keySet()) {
+            if(inventory.get(i) > 0) {
+                capacity += inventory.get(i);
+            }
+        }
+        return capacity;
+    }
 
     @Override
     public String getName() {
@@ -19,7 +45,7 @@ public class BackPack implements Tool <BackPackType>{
         return 0;
     }
     @Override
-    public void use(HashMap.Entry<Integer, Integer> coordinates){
+    public void use(Map.Entry<Integer, Integer> coordinates){
 
 
     }

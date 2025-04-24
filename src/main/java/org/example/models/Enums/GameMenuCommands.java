@@ -9,7 +9,8 @@ public enum GameMenuCommands {
     ShowCurrentTool("show current tool"),
     ShowAvailableTools("show available tools"),
     UpgradeTool("upgrade tool (?<toolName>\\S+)"),
-    UseTool("use tool -d (?<direction>\\S+)");
+    UseTool("use tool -d (?<direction>\\S+)"),
+    ShowCraftInfo("show craft info -n (?<craftName>\\S+)");
 
     private final String pattern;
     GameMenuCommands(String pattern) {

@@ -7,13 +7,14 @@ import org.example.models.GameMap;
 import org.example.models.GameTile;
 
 import java.util.HashMap;
+import java.util.Map;
 
-public class WateringCan implements Tool {
+public class WateringCan implements Tool<ItemLevel> {
     ItemLevel level = ItemLevel.Normal;
     int waterlevel = level.getWateringcanCapacity();
 
     @Override
-    public void use(HashMap.Entry<Integer, Integer> coordinates){
+    public void use(Map.Entry<Integer, Integer> coordinates){
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         ItemLevel farmingLevel = Game.getCurrentPlayer().getFarmingSkill().getLevel();
