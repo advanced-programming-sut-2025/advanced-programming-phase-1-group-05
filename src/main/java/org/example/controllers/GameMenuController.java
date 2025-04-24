@@ -96,10 +96,10 @@ public class GameMenuController extends MenuController {
         HashMap<Item, Integer> items = App.getCurrentPlayer().getBackPack().getInventory();
         for (Item item : items.keySet()) {
             if (items.get(item) != 0) System.out.println(items.get(item) + " of " + item.getName());
+            return new Result(true, "");
         }
-        return new Result(true, "");
+        return new Result(false, "Inventory is empty");
     }
-
     //removing from inventory
     public Result removeFromInventory(String name, int quantity, boolean flag) {
         Game.getCurrentPlayer().getTrashCan().removeFromInventory(name, quantity, flag);
@@ -145,7 +145,7 @@ public class GameMenuController extends MenuController {
     //upgrade tool
     public Result upgradeTool(String name) {
         //only available when in ahangary
-        HashMap<Item, Integer> items = App.getCurrentPlayer().getInventory();
+        HashMap<Item, Integer> items = App.getCurrentPlayer().getBackPack().getInventory();
         for (Item item : items.keySet()) {
             if (item.getName().equals(name)) {
                 if (item instanceof Tool) {
@@ -163,7 +163,10 @@ public class GameMenuController extends MenuController {
 
     //show craft info
     public Result showCraftInfo(String name) {
-        return null;
+        FruitAndVegetable plant = Game.getDatabase().getFruitAndVegetable(name);
+        if (plant == null) return new Result(true, "Couldn’t find the plant you're looking for");
+        else plant.showCropInformation();
+        return new Result(true, "");
     }
 
 
@@ -183,7 +186,7 @@ public class GameMenuController extends MenuController {
         String itemName = input.substring(iIndex + 1).trim();
         NPC npc = Game.getNPCByName(npcName);
         if (npc == null) return new Result(false, "NPC not found");
-        Item item = Game.getItemByName(itemName);
+        Item item = Game.getDatabase().getItem(itemName);
         if (item == null) return new Result(false, "Item not found");
         Player player = Game.getCurrentPlayer();
         npc.recieveGift(item, player);

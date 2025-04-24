@@ -91,7 +91,7 @@ public class NPC {
         if (rewardItem != null) {
             quantity = rewards.get(rewardItem);
             if (getFriendshipLevel(player) >= 2) quantity *= 2;
-            player.addToInventory(rewardItem, quantity);
+            player.getBackPack().addToInventory(rewardItem, quantity);
             rewards.remove(rewardItem);
         }
         return new AbstractMap.SimpleEntry<>(rewardItem, quantity);
@@ -102,7 +102,7 @@ public class NPC {
     public void sendGift(Player player){
         Random rand = new Random();
         Item gift = favorites.get(rand.nextInt(favorites.size()));
-        player.addToInventory(gift, rand.nextInt(1, 5));
+        player.getBackPack().addToInventory(gift, rand.nextInt(1, 5));
 
         int messageNumber = rand.nextInt(3);
         if (messageNumber == 0){

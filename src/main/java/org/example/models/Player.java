@@ -75,10 +75,6 @@ public class Player {
         this.y = y;
     }
 
-    public void addToInventory(Item item, int quantity) {
-        backPack.getInventory().put(item, quantity);
-    }
-    public HashMap<Item, Integer> getInventory() {return  backPack.getInventory();}
     public int getItemQuantity(Item item) {
         return backPack.getInventory().get(item);
     }
