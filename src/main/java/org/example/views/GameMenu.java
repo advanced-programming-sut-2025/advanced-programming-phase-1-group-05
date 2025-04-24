@@ -40,6 +40,15 @@ public class GameMenu implements AppMenu {
         else if (input.equals("friendships")){
             System.out.println(gameController.showFriendshipLevels().getMessage());
         }
+        else if (input.matches("talk\\s+-u\\s+\\S+-m\\s+.*")){
+            System.out.println(gameController.talkToPlayer(input).getMessage());
+        }
+        else if (input.matches("talk\\s+history\\s+-u\\s+\\S+")){
+            System.out.println(gameController.talkHistory(input).getMessage());
+        }
+        else if (input.matches("respond\\s+(-accept|-reject)\\s+-u\\s+.*")){
+            System.out.println(gameController.respondToProposal(input));
+        }
         else if (input.equals("friendship\\s+NPC\\s+list")){
             System.out.println(gameController.NPCFriendshipLevels().getMessage());
         }
@@ -56,9 +65,6 @@ public class GameMenu implements AppMenu {
         }
         else if (input.matches("quests\\s+finish\\s+-i\\s+\\d+")){
             System.out.println(gameController.finishQuest(input).getMessage());
-        }
-        else if (input.matches("talk\\s+history\\s+-u\\s+\\S+")){
-            System.out.println(gameController.talkHistory(input).getMessage());
         }
         else if (input.startsWith("menu enter ")) {
             String menuName = input.substring("menu enter ".length()).trim();

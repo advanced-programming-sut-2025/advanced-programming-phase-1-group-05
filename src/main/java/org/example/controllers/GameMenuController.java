@@ -185,28 +185,52 @@ public class GameMenuController extends MenuController {
         return new Result(true, builder.toString());
     }
 
-    public Result talkToPlayer(String input){
-        String username = "", message;
+    public Result talkToPlayer(String input) {
+        String[] parts = input.split("\\s+");
+        int uIndex = -1, mIndex = -1;
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i].equals("-u")) uIndex = i;
+            else if (parts[i].equals("-m")) mIndex = i;
+        }
+        String username = parts[uIndex + 1], message = input.substring(mIndex + 1).trim();
         Player targetPlayer = Game.getPlayerByUsername(username);
         Player currentPlayer = Game.getCurrentPlayer();
+
         if (targetPlayer == null) return new Result(false, "Hmmm... either they moved away, or they never existed!");
-        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY()-currentPlayer.getY()) > 1)
+        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
             return new Result(false, "You can't have a heart-to-heart with someone who's miles away!");
+        Game.addMessage(new Message(currentPlayer, targetPlayer, message));
         return new Result(true, "");
     }
 
-    public Result giftPlayer(String input){
+    public Result talkHistory(String input) {
+        int uIndex = input.indexOf('u');
+        input = input.substring(uIndex + 1).trim();
+        Player player = Game.getPlayerByUsername(input);
+        if (player == null) return new Result(false, "Talking to ghosts again? That player isn't real.");
+        List<Message> messages = Game.getMessages(player, Game.getCurrentPlayer());
+        if (messages.isEmpty()) return new Result(false, "Looks like you two haven't broken the ice yet");
+
+        StringBuilder output = new StringBuilder();
+        output.append("Talk history with ").append(input);
+        for (Message message : messages) {
+            output.append(message.getSender().getName()).append(": ").append(message.getMessage()).append("\n");
+        }
+        return new Result(true, output.toString());
+    }
+
+    public Result giftPlayer(String input) {
         String username = "", itemName = "";
         int amount = 0;
         Item item = Game.getDatabase().getItem(itemName);
         Player currentPlayer = Game.getCurrentPlayer();
         Player targetPlayer = Game.getPlayerByUsername(username);
-        currentPlayer.getBackPack().getInventory().remove(item , amount);
+        currentPlayer.getBackPack().getInventory().remove(item, amount);
         currentPlayer.getBackPack().getInventory().put(item, amount);
         return new Result(true, "");
     }
 
-    public Result giveFlower(String input){
+    public Result giveFlower(String input) {
         int uIndex = input.indexOf('u');
         input = input.substring(uIndex + 1);
         Player targetPlayer = Game.getCurrentPlayer();
@@ -218,16 +242,26 @@ public class GameMenuController extends MenuController {
         return new Result(true, "");
     }
 
-    public Result askMarriage(String input){
+    public Result askMarriage(String input) {
         String username = "", ringName = "";
         Player targetPlayer = Game.getPlayerByUsername(username);
         Item ring = Game.getDatabase().getItem(ringName);
-        if (ring != null ) lastRingProposedWith = ring;
         Player currentPlayer = Game.getCurrentPlayer();
+        if (targetPlayer == null) return new Result(false, "Imaginary partners don't make great spouses.");
+        if (Math.abs(currentPlayer.getX() - targetPlayer.getX()) > 1 || Math.abs(currentPlayer.getY() - targetPlayer.getY()) > 1)
+            return new Result(false, "Your love might be strong, but your range isn't. Get closer!");
+        if (ring == null || currentPlayer.getItemQuantity(ring) == 0)
+            return new Result(false, "You reach for the ring... but your pockets are full of nothing");
+        if (!currentPlayer.canAskMarriage(targetPlayer))
+            return new Result(false, "Slow down, lovebird-you're still just friendly acquaintances");
+        if (currentPlayer.getGender().equals("boy"))
+            return new Result(false, "Only the boys can propose... for now. Rules of the valley, not mine!");
+        lastRingProposedWith = ring;
         currentPlayer.getBackPack().getInventory().remove(ring, 1);
         targetPlayer.getBackPack().getInventory().put(ring, 1);
         return new Result(true, "");
     }
+
     public Result respondToProposal(String input) {
         String[] parts = input.split("\\s+");
         int uIndex = -1;
@@ -331,40 +365,26 @@ public class GameMenuController extends MenuController {
         return new Result(true, "You got " + reward.getValue() + " " + reward.getKey().getName() + "(s) from " + lastNPC.getName() + " for finishing this quest.");
     }
 
-    public Result talkHistory(String input) {
-        int uIndex = input.indexOf('u');
-        input = input.substring(uIndex + 1).trim();
-        Player player = Game.getPlayerByUsername(input);
-        if (player == null) return new Result(false, "Talking to ghosts again? That player isn't real.");
-        List<Message> messages = Game.getMessages(player, Game.getCurrentPlayer());
-        if (messages.isEmpty()) return new Result(false, "Looks like you two haven't broken the ice yet");
-
-        StringBuilder output = new StringBuilder();
-        output.append("Talk history with ").append(input);
-        for (Message message : messages) {
-            output.append(message.getSender().getName()).append(": ").append(message.getMessage()).append("\n");
-        }
-        return new Result(true, output.toString());
-    }
 
     //plant seed on a specific tile
-    public Result plantSeed(String seed, Map.Entry<Integer,Integer> coordinates) {
+    public Result plantSeed(String seed, Map.Entry<Integer, Integer> coordinates) {
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         //errors
         if (tile == null) return new Result(false, "Tile not found");
-        if(tile.getTileType() != TileType.Soil) return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
-        if(!tile.isTileValidForPlanting()) return new Result(false, "You can't plant cause the tile is occupied!");
+        if (tile.getTileType() != TileType.Soil)
+            return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
+        if (!tile.isTileValidForPlanting()) return new Result(false, "You can't plant cause the tile is occupied!");
         boolean successful = Game.getCurrentPlayer().getFarmingSkill().plantSeed(new Seed(seed), tile);
-        if(successful) return new Result(true, "Successfully planted " + seed);
+        if (successful) return new Result(true, "Successfully planted " + seed);
         else return new Result(false, "That's not a valid seed!");
     }
 
     //show the plant on a specific tile
-    public Result showPlant(Map.Entry<Integer,Integer> coordinates) {
+    public Result showPlant(Map.Entry<Integer, Integer> coordinates) {
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
-        if(tile.isTileValidForPlanting()) return new Result(true, "Nothing planted on this tile");
+        if (tile.isTileValidForPlanting()) return new Result(true, "Nothing planted on this tile");
 
         FruitAndVegetable plant = Game.getGameMap().getPlantedFruit(coordinates);
         StringBuilder output = new StringBuilder();
@@ -374,21 +394,19 @@ public class GameMenuController extends MenuController {
     }
 
     //fertilize crop
-    public Result fertilizeCrop(String fertilizer, Map.Entry<Integer,Integer> coordinates) {
+    public Result fertilizeCrop(String fertilizer, Map.Entry<Integer, Integer> coordinates) {
         GameMap map = Game.getGameMap();
         boolean successful = Game.getCurrentPlayer().getFarmingSkill().fertilizeCrop(coordinates, fertilizer);
-        if(successful) return new Result(true, "Successfully fertilized with " + fertilizer);
+        if (successful) return new Result(true, "Successfully fertilized with " + fertilizer);
         else return new Result(false, "You don't have that kind of fertilizer");
     }
 
     //how much water left
-    public Result howMuchWaterLeft(){
+    public Result howMuchWaterLeft() {
         int waterLeft = Game.getCurrentPlayer().getWateringCan().getCapacity() -
                 Game.getCurrentPlayer().getWateringCan().getWaterlevel();
         return new Result(true, waterLeft + " water units left in your watering can");
     }
-    
-
 
 
 }

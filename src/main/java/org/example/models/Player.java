@@ -44,6 +44,9 @@ public class Player {
         return y;
     }
 
+    public String getGender(){
+        return user.gender;
+    }
     public void faint() {
         //skip the rest of the day
         //set current coordinate
@@ -130,6 +133,11 @@ public class Player {
             friendship.setLevel(level);
     }
 
+    public boolean canAskMarriage(Player a){
+        Friendship friendship = getFriendship(a, this);
+        if( friendship != null ) return friendship.canAskMarriage();
+        return false;
+    }
     private static class Friendship {
         private Player player1;
         private Player player2;
@@ -164,6 +172,10 @@ public class Player {
 
         public boolean canGiftFlower(){
             return xpPoints >= 600;
+        }
+
+        public boolean canAskMarriage(){
+            return xpPoints >= 1000;
         }
     }
 }
