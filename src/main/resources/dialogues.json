@@ -76,5 +76,54 @@
       "There’s something strangely comforting about the sound of rain tapping against the clinic window."
     ]
   },
-  "Leah"
+  "Leah": {
+    "daily": [
+      "If you ever want to go foraging or sketch with me, I’d love the company."
+    ],
+    "rainy": [
+      "Rainy days are perfect for working on sculptures. The rhythm helps me focus.",
+      "I love how the rain makes everything smell so fresh. It’s like the world is starting over.",
+      "I don’t mind getting a little wet if it means seeing the forest come alive like this."
+    ],
+    "snowy": [
+      "I tried carving snow once. It didn’t go well… but it was fun!",
+      "I like how snow transforms everything. Even familiar places look brand new.",
+      "Winter is when I do the most thinking. There’s a quietness to it that I need sometimes."
+    ],
+    "sunny": [
+      "It’s so nice out today. I think I’ll take my sketchbook down by the river.",
+      "Days like this make me feel inspired… like the whole valley is whispering ideas.",
+      "Sometimes I just sit in the grass and listen to the wind. You should try it—it’s grounding."
+    ],
+    "stormy": [
+      "That thunder is intense… I hope none of the trees were hit.",
+      "Storms remind me of how powerful nature really is. It's beautiful and a little scary.",
+      "I had to bring all my supplies inside… I hope nothing got ruined."
+    ]
+  },
+  "Robin": {
+    "daily": [
+      "Hey! Got any construction ideas in mind? I’ve been itching to break out the blueprints."
+    ],
+    "rainy": [
+      "Ugh, this rain is going to slow down my project. Maybe I’ll reorganize the lumber pile instead.",
+      "If you hear loud banging from the workshop, don’t worry—just trying out a new wood joint method!",
+      "This weather's got Demetrius hiding with his data sheets, and I’m stuck inside with power tools. We're both in our happy places."
+    ],
+    "snowy": [
+      "Winter’s tough for business, but at least I have time to work on my own projects.",
+      "I always think I’m ready for snow, then I remember shoveling my way to the barn isn’t very fun.",
+      "I tried making a snowman with Maru. Let’s just say she upgraded it to a snow-bot."
+    ],
+    "sunny": [
+      "This is perfect weather to get some work done! Or… y’know, relax. But I’ll probably build a bench instead.",
+      "I’ve been thinking of adding a little patio outside the shop. Sunshine like this makes me itch to build.",
+      "Don’t you just love the smell of sawdust in the morning? No? Just me?"
+    ],
+    "stormy": [
+      "Storms make me nervous. One loose shingle and boom—leaks everywhere!",
+      "I told Sebastian to unplug his gadgets during the storm… He muttered something about 'risk builds character.'",
+      "If the workshop catches lightning, I’m blaming Demetrius for not installing that weather sensor."
+    ]
+  }
 }
