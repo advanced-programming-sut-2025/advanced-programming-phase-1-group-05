@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class LoginMenuController extends MenuController {
-    private User currentUser;
+    public static User currentUser;
     private boolean inPasswordRecovery = false;
     private boolean waitingForNewPassword = false;
 

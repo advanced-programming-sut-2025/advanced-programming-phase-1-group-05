@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class RegisterMenuController {
     private final Scanner scanner;
-    private User currentUser;
+    public static User currentUser;
     private static final int MAX_PASSWORD_ATTEMPTS = 3;
 
     public RegisterMenuController(Scanner scanner) {

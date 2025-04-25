@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 public class ProfileMenuController extends MenuController {
-    private User currentUser;
+    private static User currentUser;
 
-    private static final String USERNAME_REGEX = "^\\s*change\\s+username\\s+-u\\s+(?<username>\\S+)\\s*$";
+    private static final String USERNAME_REGEX = "^\\s*change\\s+username\\s+-u\\s+(?<username>.+?)\\s*$";
     private static final String NICKNAME_REGEX = "^\\s*change\\s+nickname\\s+-u\\s+(?<nickname>\\S+)\\s*$";
     private static final String EMAIL_REGEX = "^\\s*change\\s+email\\s+-e\\s+(?<email>\\S+)\\s*$";
     private static final String PASSWORD_REGEX = "^\\s*change\\s+password\\s+-p\\s+(?<newPassword>\\S+)\\s+-o\\s+" +
@@ -19,7 +19,7 @@ public class ProfileMenuController extends MenuController {
 
     public ProfileMenuController(Scanner scanner, User currentUser) {
         super(scanner);
-        this.currentUser = currentUser;
+        ProfileMenuController.currentUser = currentUser;
     }
 
     public Result handleProfileCommand(String input) {
@@ -65,7 +65,6 @@ public class ProfileMenuController extends MenuController {
         if (newUsername == null || newUsername.trim().isEmpty()) {
             return Result.error("Username cannot be empty!");
         }
-
         if (currentUser.getUsername().equals(newUsername)) {
             return Result.error("Your username must be different from last one!");
         }
@@ -74,7 +73,7 @@ public class ProfileMenuController extends MenuController {
             return Result.error("Username already exists!");
         }
 
-        if (isValidUsername(newUsername)) {
+        if (!isValidUsername(newUsername)) {
             return Result.error("Invalid username format! Must contain letters, numbers and hyphen only");
         }
 

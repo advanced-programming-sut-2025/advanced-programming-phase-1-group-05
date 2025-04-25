@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GameMenuController extends MenuController {
-    private User currentUser;
+    public static User currentUser;
     private static Map<String, Game> activeGames = new HashMap<>();
     private Game pendingGame;
     private List<User> selectedPlayers;

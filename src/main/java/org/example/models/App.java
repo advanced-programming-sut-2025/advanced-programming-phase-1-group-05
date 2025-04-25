@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class App {
     private static HashMap<String, User> users = new HashMap<>();
     private static Player currentPlayer = null;
-    private static User currentUser;
+    public static User currentUser;
     private static ArrayList<User> allUsers;
     public static HashMap<String, User> getUsers() {
         return users;
