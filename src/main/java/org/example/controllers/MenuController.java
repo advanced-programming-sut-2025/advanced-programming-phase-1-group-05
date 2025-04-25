@@ -1,8 +1,10 @@
 package org.example.controllers;
 
+import org.example.models.App;
 import org.example.models.Enums.Menu;
 import org.example.models.Result;
 import org.example.models.User;
+import org.example.models.UserDatabase;
 import org.example.views.*;
 
 import java.util.Scanner;
@@ -84,6 +86,8 @@ public class MenuController {
     }
 
     public void run() {
+        DBController.loadCurrentUser();
+        DBController.loadUsers();
         while (true) {
             String input = scanner.nextLine().trim();
 
