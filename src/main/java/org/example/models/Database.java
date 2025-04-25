@@ -12,6 +12,7 @@ public class Database {
     ArrayList<Tree> treeDatabase = new ArrayList<>();
     ArrayList<Item> itemDatabase = new ArrayList<>();
     ArrayList<Seed> seedDatabase = new ArrayList<>();
+    ArrayList<Craft> craftingRecipeDatabase = new ArrayList<>();
     //start when the game starts
     //put this somewhere where everything is initialized
     public void initializePlantDatabase(){
@@ -65,4 +66,11 @@ public class Database {
     public ArrayList<Seed> getSeedDatabase(){
         return seedDatabase;
     }
+    public ArrayList<Craft> getCraftingRecipeDatabase(){
+        return craftingRecipeDatabase;
+    }
+    public ArrayList<Item> getItemDatabase(){
+        return itemDatabase;
+    }
+
 }

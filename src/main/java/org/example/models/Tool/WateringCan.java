@@ -58,7 +58,7 @@ public class WateringCan implements Tool<ItemLevel> {
     @Override
     public void reduceEnergy(int amount){
         if(amount < 0) amount = 0;
-        Game.getCurrentPlayer().addEnergy(-amount);
+        Game.getCurrentPlayer().increaseEnergy(-amount);
     }
     @Override
     public ItemLevel getLevel() {
@@ -71,5 +71,12 @@ public class WateringCan implements Tool<ItemLevel> {
             level = level.nextLevel();
             System.out.println(getName() + " upgraded to " + level.getName());
         }
+    }
+    @Override
+    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
+    }
+    @Override
+    public Map.Entry<Integer, Integer> getCoordinates() {
+        return null;
     }
 }
