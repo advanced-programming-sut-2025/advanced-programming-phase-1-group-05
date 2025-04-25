@@ -1,5 +1,8 @@
 package org.example.models.Enums;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public enum GameMenuCommands {
     ShowEnergy("show energy"),
     EnergySetCC("set energy -v (?<value>\\d+)"),
@@ -14,10 +17,21 @@ public enum GameMenuCommands {
     Plant("plant -s (?<seed>\\S+) -d (?<direction>\\S+)"),
     ShowPlant("show plant -l (?<x, y>\\S+)"),
     FertilizeCrop("fertilize -f (?<fertilizer>\\S+) -d (?<direction>\\S+)"),
-    WaterCrop("how much water")
+    WaterCrop("how much water"),
+    ShowCraftingRecipes("show crafting recipes"),
+    PlaceItem("place item -n (?<item_name>\\S+) -d (?<direction>\\S+)"),
+    AddItemCC("cheat add item -n (?<item_name>\\S+) -c (?<count>\\d+)");
 
     private final String pattern;
     GameMenuCommands(String pattern) {
         this.pattern = pattern;
+    }
+    public Matcher getMatcher(String input){
+        Matcher matcher = Pattern.compile(this.pattern).matcher(input);
+
+        if(matcher.matches()){
+            return matcher;
+        }
+        return null;
     }
 }
