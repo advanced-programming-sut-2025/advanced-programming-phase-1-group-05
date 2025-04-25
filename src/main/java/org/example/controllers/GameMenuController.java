@@ -230,8 +230,8 @@ public class GameMenuController extends MenuController {
         Player currentPlayer = Game.getCurrentPlayer();
         Player targetPlayer = Game.getPlayerByUsername(username);
         currentPlayer.getBackPack().getInventory().remove(item, amount);
-        currentPlayer.getBackPack().getInventory().put(item, amount);
-        return new Result(true, "");
+        targetPlayer.getBackPack().getInventory().put(item, amount);
+        return new Result(true, targetPlayer.getName() + "! You've been gifted! Hope it's not rocks again.");
     }
     public Result rateTheGift(String input){
         int giftNumber = 0, rating = 0;
