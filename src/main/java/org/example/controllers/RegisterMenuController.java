@@ -212,6 +212,7 @@ public class RegisterMenuController {
             }
 
             if (result.getMessage().equals("Password and confirm password do not match!")) {
+                System.out.println("Password and confirm password do not match!");
                 System.out.println("1. Re-enter password manually");
                 System.out.println("2. Generate random password");
                 System.out.println("3. Back to registration menu");

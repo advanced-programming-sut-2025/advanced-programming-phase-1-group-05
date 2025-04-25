@@ -44,6 +44,9 @@ public class LoginMenu implements org.example.views.AppMenu {
         } else if (input.startsWith("login -u ")) {
             Result result = loginController.handleLoginCommand(input);
             System.out.println(result.getMessage());
+            if (result.isSuccess()) {
+                menuController.enterMenu("main");
+            }
         } else if (input.equals("menu exit")) {
             Result result = menuController.exitMenu();
             System.out.println(result.getMessage());
