@@ -57,7 +57,7 @@ public class BackPack implements Tool <BackPackType>{
     @Override
     public void reduceEnergy(int amount){
         if(amount < 0) amount = 0;
-        Game.getCurrentPlayer().addEnergy(-amount);
+        Game.getCurrentPlayer().increaseEnergy(-amount);
     }
     @Override
     public BackPackType getLevel() {

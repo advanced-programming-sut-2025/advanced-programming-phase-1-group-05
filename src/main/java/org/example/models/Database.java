@@ -1,17 +1,25 @@
 package org.example.models;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Database {
     ArrayList<FruitAndVegetable> plantDatabase = new ArrayList<>();
     ArrayList<Tree> treeDatabase = new ArrayList<>();
     ArrayList<Item> itemDatabase = new ArrayList<>();
     ArrayList<Seed> seedDatabase = new ArrayList<>();
+    Map<String, NPC> NPCs = new HashMap<>();
+
     //start when the game starts
     //put this somewhere where everything is initialized
     public void initializePlantDatabase(){
@@ -64,5 +72,52 @@ public class Database {
     }
     public ArrayList<Seed> getSeedDatabase(){
         return seedDatabase;
+    }
+
+    public void loadNPCs() {
+        String json;
+        try {
+             json = new String(Files.readAllBytes(Paths.get("npcInfos.json")));
+        }
+        catch (IOException e){
+            System.out.println("can't get json.");
+            return;
+        }
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        JsonArray npcsArray = jsonObject.getAsJsonArray("npcs");
+
+        for (JsonElement npcElement : npcsArray) {
+            JsonObject npcObject = npcElement.getAsJsonObject();
+
+            String name = npcObject.get("name").getAsString();
+            JsonArray favoritesArray = npcObject.getAsJsonArray("favorites");
+            JsonObject requestsObject = npcObject.getAsJsonObject("requests");
+            JsonObject rewardsObject = npcObject.getAsJsonObject("rewards");
+
+            List<Item> favorites = new ArrayList<>();
+            for (JsonElement favoriteElement : favoritesArray) {
+                favorites.add(getItem(favoriteElement.getAsString()));
+            }
+
+            Map<Item, Integer> requests = new HashMap<>();
+            for (Map.Entry<String, JsonElement> entry : requestsObject.entrySet()) {
+                Item item = getItem(entry.getKey());
+                int quantity = entry.getValue().getAsInt();
+                requests.put(item, quantity);
+            }
+
+            Map<Item, Integer> rewards = new HashMap<>();
+            for (Map.Entry<String, JsonElement> entry : rewardsObject.entrySet()) {
+                Item item = getItem(entry.getKey());
+                int quantity = entry.getValue().getAsInt();
+                rewards.put(item, quantity);
+            }
+
+            NPC npc = new NPC(name, favorites, requests, rewards);
+            NPCs.put(name, npc);
+        }
+    }
+    public Map<String, NPC> getNPCs(){
+        return NPCs;
     }
 }
