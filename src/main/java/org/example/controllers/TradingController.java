@@ -89,9 +89,21 @@ public class TradingController {
     }
 
     public Result respondToTrade(String input) {
-        boolean accepted = false;
-        int tradeId = 0;
+        boolean accepted = input.contains("-accept");
+        String[] parts = input.split("\\s+");
+        int iIndex = -1;
+        for (int i = 0; i < parts.length; i++){
+            if (parts[i].equals("-i")) iIndex = i;
+        }
+        int tradeId ;
+        try {
+            tradeId = Integer.parseInt(parts[iIndex + 1]);
+        }
+        catch (NumberFormatException e) {
+            return new Result(false, "invalid tradeId");
+        }
         Trade trade = getTradeById(tradeId);
+        if (trade == null) return new Result(false, "Trade with id " + tradeId + " not found");
         if (accepted) {
             trade.getSender().changeFriendshipXP(50, Game.getCurrentPlayer());
         }
