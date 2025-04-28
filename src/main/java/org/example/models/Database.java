@@ -18,6 +18,7 @@ public class Database {
     ArrayList<Tree> treeDatabase = new ArrayList<>();
     ArrayList<Item> itemDatabase = new ArrayList<>();
     ArrayList<Seed> seedDatabase = new ArrayList<>();
+    ArrayList<Craft> craftingRecipeDatabase = new ArrayList<>();
     Map<String, NPC> NPCs = new HashMap<>();
 
     //start when the game starts
@@ -66,12 +67,19 @@ public class Database {
         }
         return null;
     }
-
     public ArrayList<Tree> getTreeDatabase(){
         return treeDatabase;
     }
     public ArrayList<Seed> getSeedDatabase(){
         return seedDatabase;
+    }
+
+
+    public ArrayList<Craft> getCraftingRecipeDatabase(){
+        return craftingRecipeDatabase;
+    }
+    public ArrayList<Item> getItemDatabase(){
+        return itemDatabase;
     }
 
     public void loadNPCs() {

@@ -486,7 +486,7 @@ public class GameMenuController extends MenuController {
 
     //add item cheat code
     public Result addItemCheatCode(String name, int count) {
-        ArrayList<Item> items = Game.getDatabase().getItemDatabase();
+        List<Item> items = Game.getDatabase().getItemDatabase();
         Item item = null;
         for(Item i : items) {
             if(i.getName().equals(name)) {

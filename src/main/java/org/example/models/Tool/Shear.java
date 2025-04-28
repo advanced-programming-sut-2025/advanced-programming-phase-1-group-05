@@ -7,6 +7,7 @@ import org.example.models.GameMap;
 import org.example.models.GameTile;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Shear implements Tool<ItemLevel> {
     ItemLevel level;
@@ -19,6 +20,17 @@ public class Shear implements Tool<ItemLevel> {
     public int getPrice() {
         return 1000;
     }
+
+    @Override
+    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
+
+    }
+
+    @Override
+    public Map.Entry<Integer, Integer> getCoordinates() {
+        return null;
+    }
+
     @Override
     public void use(HashMap.Entry<Integer, Integer> coordinates) {
         GameMap map = Game.getGameMap();
@@ -35,7 +47,7 @@ public class Shear implements Tool<ItemLevel> {
     @Override
     public void reduceEnergy(int amount){
         if(amount < 0) amount = 0;
-        Game.getCurrentPlayer().addEnergy(-amount);
+        Game.getCurrentPlayer().increaseEnergy(-amount);
     }
     @Override
     public ItemLevel getLevel() {

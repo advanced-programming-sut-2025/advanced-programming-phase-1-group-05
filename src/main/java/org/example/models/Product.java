@@ -1,5 +1,7 @@
 package org.example.models;
 
+import java.util.Map;
+
 public class Product implements Item{
     private final String name;
     private final String description;
@@ -23,6 +25,17 @@ public class Product implements Item{
     public int getPrice() {
         return price;
     }
+
+    @Override
+    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
+        //booooo not necessary
+    }
+
+    @Override
+    public Map.Entry<Integer, Integer> getCoordinates() {
+        return null;
+    }
+
     public int getLimit() {
         return limit;
     }

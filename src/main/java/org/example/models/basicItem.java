@@ -2,6 +2,8 @@ package org.example.models;
 
 import org.example.models.Enums.ItemLevel;
 
+import java.util.Map;
+
 public class basicItem implements Item {
     private String name;
     private int price;
@@ -19,5 +21,15 @@ public class basicItem implements Item {
     @Override
     public int getPrice() {
         return price;
+    }
+
+    @Override
+    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
+
+    }
+
+    @Override
+    public Map.Entry<Integer, Integer> getCoordinates() {
+        return null;
     }
 }
