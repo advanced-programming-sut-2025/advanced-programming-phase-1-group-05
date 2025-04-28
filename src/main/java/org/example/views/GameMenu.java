@@ -38,7 +38,39 @@ public class GameMenu implements org.example.views.AppMenu {
         } else if (input.equalsIgnoreCase("next turn")) {
             Result result = gameMenuController.nextTurn();
             System.out.println(result.getMessage());
-        } else {
+        }
+        else if (input.equals("friendships")){
+            System.out.println(gameMenuController.showFriendshipLevels().getMessage());
+        }
+        else if (input.matches("talk\\s+-u\\s+\\S+-m\\s+.*")){
+            System.out.println(gameMenuController.talkToPlayer(input).getMessage());
+        }
+        else if (input.matches("talk\\s+history\\s+-u\\s+\\S+")){
+            System.out.println(gameMenuController.talkHistory(input).getMessage());
+        }
+        else if (input.equals("hug\\s+-u\\s+\\S+")){
+            System.out.println();
+        }
+        else if (input.matches("respond\\s+(-accept|-reject)\\s+-u\\s+.*")){
+            System.out.println(gameMenuController.respondToProposal(input));
+        }
+        else if (input.equals("friendship\\s+NPC\\s+list")){
+            System.out.println(gameMenuController.NPCFriendshipLevels().getMessage());
+        }
+        else if (input.matches("meet\\s+NPC\\s+\\S+")){
+            int CIndex = input.indexOf('C');
+            input = input.substring(CIndex + 1).trim();
+            System.out.println(gameMenuController.meetNPC(input).getMessage());
+        }
+        else if (input.matches("gift\\s+NPC\\s+\\S+\\s+-i\\s+.*")){
+            System.out.println(gameMenuController.giftNPC(input).getMessage());
+        }
+        else if (input.matches("quests\\s+list")){
+            System.out.println(gameMenuController.showAllQuests().getMessage());
+        }
+        else if (input.matches("quests\\s+finish\\s+-i\\s+\\d+")){
+            System.out.println(gameMenuController.finishQuest(input).getMessage());
+        }else {
             System.out.println("Invalid Command!");
         }
     }

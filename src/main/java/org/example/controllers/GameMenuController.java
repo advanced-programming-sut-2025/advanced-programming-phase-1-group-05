@@ -229,6 +229,13 @@ public class GameMenuController extends MenuController {
         Item item = Game.getDatabase().getItem(itemName);
         Player currentPlayer = Game.getCurrentPlayer();
         Player targetPlayer = Game.getPlayerByUsername(username);
+        if (targetPlayer == null) return Result.error("Invisible friends don't accept gifts, you know!");
+        if (Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1 || Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1)
+            return Result.error("You can't just throw gifts across the valley... get closer first!");
+        if (currentPlayer.getItemQuantity(item) < amount)
+            return Result.error("You hold out your gift... and reality holds out a calculator.");
+        if (currentPlayer.getFriendshipLevel(targetPlayer) < 1)
+            return Result.error("Maybe get to know them a little better before tossing gifts their way?");
         currentPlayer.getBackPack().getInventory().remove(item, amount);
         targetPlayer.getBackPack().getInventory().put(item, amount);
         return new Result(true, targetPlayer.getName() + "! You've been gifted! Hope it's not rocks again.");
