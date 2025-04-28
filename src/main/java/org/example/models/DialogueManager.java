@@ -7,10 +7,7 @@ import org.example.models.Enums.Weather;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class DialogueManager {
     private static final Map<String, Map<String, List<String>>> npcDialogues = new HashMap<>();
@@ -19,7 +16,7 @@ public class DialogueManager {
     static {
         try {
             InputStreamReader reader = new InputStreamReader(
-                    DialogueManager.class.getResourceAsStream("/dialogues.json"), StandardCharsets.UTF_8
+                    Objects.requireNonNull(DialogueManager.class.getResourceAsStream("/dialogues.json")), StandardCharsets.UTF_8
             );
             Type type = new TypeToken<Map<String, Map<String, List<String>>>>() {}.getType();
             Map<String, Map<String, List<String>>> data = new Gson().fromJson(reader, type);

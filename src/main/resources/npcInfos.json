@@ -1,0 +1,74 @@
+{
+  "npcs": [
+    {
+      "name": "Sebastian",
+      "favorites": ["wool", "pumpkinPie", "pizza"],
+      "requests": {
+        "iron": 50,
+        "pumpkinPie": 1,
+        "stone": 150
+      },
+      "rewards": {
+        "diamond": 2,
+        "goldCoin": 5000,
+        "quartz": 50
+      }
+    },
+    {
+      "name": "Abigail",
+      "favorites": ["stone", "ironOre", "coffee"],
+      "requests": {
+        "goldBar": 1,
+        "pumpkin": 1,
+        "wheat": 50
+      },
+      "rewards": {
+        "friendshipPoints": 1,
+        "goldCoin": 500,
+        "AutomaticSprinkler": 1
+      }
+    },
+    {
+      "name": "Harvey",
+      "favorites": ["coffee", "pickle", "wine"],
+      "requests": {
+        "dandelion": 12,
+        "salmon": 1,
+        "wine": 1
+      },
+      "rewards": {
+        "friendshipPoints": 1,
+        "goldCoin": 750,
+        "salad": 5
+      }
+    },
+    {
+      "name": "Leah",
+      "favorites": ["salad", "grape", "wine"],
+      "requests": {
+        "hardWood": 10,
+        "salmon": 1,
+        "wood": 200
+      },
+      "rewards": {
+        "dinnerSalmonRecipe": 1,
+        "goldCoin": 500,
+        "ScareCrow": 5
+      }
+    },
+    {
+      "name": "Robin",
+      "favorites": ["spaghetti", "wood", "ironBar"],
+      "requests": {
+        "spaghetti": 80,
+        "ironBar": 10,
+        "wood": 1000
+      },
+      "rewards": {
+        "beeHouse": 3,
+        "goldCoin": 1000,
+        "coin": 25000
+      }
+    }
+  ]
+}

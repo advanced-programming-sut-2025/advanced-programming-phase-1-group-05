@@ -1,6 +1,9 @@
 package org.example.models;
 
-public class Seed extends Item{
+import java.util.Map;
+
+public class Seed implements Item{
+
     String name;
     int price;
 
@@ -18,5 +21,12 @@ public class Seed extends Item{
     @Override
     public int getPrice() {
         return price;
+    }
+    @Override
+    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
+    }
+    @Override
+    public Map.Entry<Integer, Integer> getCoordinates() {
+        return null;
     }
 }

@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GameMenuController extends MenuController {
-    private User currentUser;
+    public static User currentUser;
     private static Map<String, Game> activeGames = new HashMap<>();
     private Game pendingGame;
     private List<User> selectedPlayers;
@@ -360,7 +360,7 @@ public class GameMenuController extends MenuController {
             return new Result(true, "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
         }
         npc.addFriendShipPoints(player, 50);
-        return new Result(true, "Oh, a " + itemName + " ?Thanks, " + player.getName());
+        return new Result(true, "Oh, a " + itemName + " ? Thanks, " + player.getName());
     }
 
     public Result showAllQuests() {
@@ -445,6 +445,62 @@ public class GameMenuController extends MenuController {
                 Game.getCurrentPlayer().getWateringCan().getWaterlevel();
         return new Result(true, waterLeft + " water units left in your watering can");
     }
+
+
+    //place item on ground
+    public Result placeItem(String itemName, String direction) {
+        Item item = null;
+        int[] directions = getDirections(direction);
+        for(Item i : Game.getCurrentPlayer().getBackPack().getInventory().keySet()) {
+            if(i.getName().equals(itemName)) {
+                item = i;
+            }
+        }
+        if(item == null) return new Result(false, "No such item in your inventory");
+        else if(directions == null) return new Result(false, "Invalid direction");
+        Map.Entry<Integer, Integer> newCoordinates = new AbstractMap.SimpleEntry<>(item.getCoordinates().getKey() + directions[0],
+                item.getCoordinates().getValue() + directions[1]);
+        item.setCoordinates(newCoordinates);
+        return new Result(true, "Item placed successfully" );
+    }
+
+    //get coordinates changes based on direction input
+    //TODO add four other directions
+    public int[] getDirections(String direction) {
+        int[]directions = new int[2];
+        if(direction.equals("up")) {
+            directions[1] = -1;
+            return directions;
+        } else if(direction.equals("down")) {
+            directions[1] = 1;
+            return directions;
+        } else if(direction.equals("left")) {
+            directions[0] = -1;
+            return directions;
+        } else if(direction.equals("right")) {
+            directions[0] = 1;
+            return directions;
+        }
+        return null;
+    }
+
+    //add item cheat code
+    public Result addItemCheatCode(String name, int count) {
+        ArrayList<Item> items = Game.getDatabase().getItemDatabase();
+        Item item = null;
+        for(Item i : items) {
+            if(i.getName().equals(name)) {
+                item = i;
+            }
+        }
+        if(item == null) return new Result(false, "** No item with that name exists **");
+        Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
+        return new Result(true, "** " + count + " of " + name + " added to your inventory **");
+    }
+
+
+
+
 
 
 

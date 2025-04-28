@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class RegisterMenuController {
     private final Scanner scanner;
-    private User currentUser;
+    public static User currentUser;
     private static final int MAX_PASSWORD_ATTEMPTS = 3;
 
     public RegisterMenuController(Scanner scanner) {
@@ -212,6 +212,7 @@ public class RegisterMenuController {
             }
 
             if (result.getMessage().equals("Password and confirm password do not match!")) {
+                System.out.println("Password and confirm password do not match!");
                 System.out.println("1. Re-enter password manually");
                 System.out.println("2. Generate random password");
                 System.out.println("3. Back to registration menu");
