@@ -13,6 +13,12 @@ public class TradingController {
     private static final String tradeWithMoney = "trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-a\\s+\\d+\\s+-p\\s+\\d+";
     private static final String tradeWithItem = "trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-a\\s+\\d+\\d+\\s+-ti.*\\s+-ta\\s+.*";
 
+    private Trade getTradeById(int id) {
+        for (Trade trade : trades){
+            if (trade.getId() == id) return trade;
+        }
+        return null;
+    }
     public Result trade(String input) {
         StringBuilder builder = new StringBuilder();
         int uIndex = -1, tIndex = -1, iIndex = -1, aIndex = -1, pIndex = -1, tiIndex = -1, taIndex = -1;
@@ -81,10 +87,20 @@ public class TradingController {
         }
         return new Result(false, "invalid input");
     }
-//    public void acceptTradingRequest(OffersAndRequests request, boolean accepted) {
-//
-//    }
 
+    public Result respondToTrade(String input) {
+        boolean accepted = false;
+        int tradeId = 0;
+        Trade trade = getTradeById(tradeId);
+        if (accepted) {
+            trade.getSender().changeFriendshipXP(50, Game.getCurrentPlayer());
+        }
+        else {
+            trade.getSender().changeFriendshipXP(-30, Game.getCurrentPlayer());
+        }
+
+        return Result.success("");
+    }
     public Result showTradeList() {
         StringBuilder builder = new StringBuilder();
         builder.append("========TRADES========");
