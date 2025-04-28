@@ -19,6 +19,7 @@ public class Database {
     ArrayList<Item> itemDatabase = new ArrayList<>();
     ArrayList<Seed> seedDatabase = new ArrayList<>();
     ArrayList<Craft> craftingRecipeDatabase = new ArrayList<>();
+    ArrayList<Food> foodDatabase = new ArrayList<>();
     Map<String, NPC> NPCs = new HashMap<>();
 
     //start when the game starts
@@ -127,5 +128,8 @@ public class Database {
     }
     public Map<String, NPC> getNPCs(){
         return NPCs;
+    }
+    public ArrayList<Food> getFoodDatabase(){
+        return foodDatabase;
     }
 }

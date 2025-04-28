@@ -25,6 +25,7 @@ public class Player {
     private Item currentItem;
     private static final List<Friendship> friendships = new ArrayList<>();
     private int proposalRejectionDaysLeft = 0;
+    private static Farm farm;
 
     public Player(User user) {
         this.user = user;
@@ -166,6 +167,9 @@ public class Player {
         proposalRejectionDaysLeft--;
     }
 
+    public Farm getFarm(){
+        return farm;
+    }
     private static class Friendship {
         private Player player1;
         private Player player2;
@@ -209,5 +213,6 @@ public class Player {
         public boolean canAskMarriage(){
             return xpPoints >= 1000;
         }
+
     }
 }

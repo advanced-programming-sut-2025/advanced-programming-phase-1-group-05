@@ -5,6 +5,7 @@ import org.example.models.Enums.BackPackType;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Game;
 import org.example.models.Item;
+import org.example.models.Result;
 import org.example.models.Tool.Tool;
 
 import java.util.ArrayList;
@@ -31,6 +32,13 @@ public class BackPack implements Tool <BackPackType>{
         }
     }
 
+
+    public Result removeFromInventory(Item item, int amount) {
+        if(!inventory.containsKey(item)) return new Result(false, "No such item in your inventory");
+        inventory.put(item, inventory.get(item) - amount);
+        return new Result(true, "Successfully removed " + amount + " of " + item.getName() + " from your inventory");
+    }
+
     public int getInventoryCapacity() {
         int capacity = 0;
         for(Item i : inventory.keySet()) {
@@ -39,6 +47,10 @@ public class BackPack implements Tool <BackPackType>{
             }
         }
         return capacity;
+    }
+
+    public boolean isInventoryFull() {
+        return getInventoryCapacity() == level.getCapacity();
     }
 
     public void addForagingItem(Item item, int amount) {
