@@ -30,10 +30,13 @@ public enum ItemLevel {
     public double getTrashcanCoeff() {
         return trashcanCoeff;
     }
-    public ItemLevel nextLevel() {
-        int nextOrdinal = this.ordinal() + 1;
-        ItemLevel[] levels = ItemLevel.values();
-        return nextOrdinal < levels.length ? levels[nextOrdinal] : this;
+    public ItemLevel upgradeLevel() {
+        return switch (this) {
+            case Normal -> Brass;
+            case Brass -> Iron;
+            case Iron -> Gold;
+            case Gold, Iridium -> Iridium;
+        };
     }
 
     public boolean isMaxLevel() {

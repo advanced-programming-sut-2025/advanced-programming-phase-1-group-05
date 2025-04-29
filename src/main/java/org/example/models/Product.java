@@ -1,5 +1,7 @@
 package org.example.models;
 
+import org.example.models.Enums.ItemLevel;
+
 import java.util.Map;
 
 public class Product implements Item{
@@ -7,6 +9,7 @@ public class Product implements Item{
     private final String description;
     private final int price;
     private final int limit;
+    private ItemLevel level = ItemLevel.Normal;
     private boolean available;
 
     public Product(String name, String description, int price, int limit) {

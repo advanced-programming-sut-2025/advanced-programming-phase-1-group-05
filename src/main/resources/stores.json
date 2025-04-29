@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Blacksmith",
+    "xStart": 75,
+    "xEnd": 85,
+    "products": [
+      {
+        "name": "meow",
+        "price": 200,
+        "stock": 10
+      }
+    ]
+  }
+]
