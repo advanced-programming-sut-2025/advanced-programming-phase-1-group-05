@@ -76,6 +76,8 @@ public class MenuController {
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
                 return new RegisterMenu(this, registerController, this.getScanner());
+            case TRADE:
+                return new TradeMenu(new TradingController(), this);
             default: throw new IllegalArgumentException("Unknown menu type");
         }
     }

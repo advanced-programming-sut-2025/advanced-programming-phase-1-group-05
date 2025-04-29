@@ -20,8 +20,8 @@ public enum GameMenuCommands {
     WaterCrop("how much water"),
     ShowCraftingRecipes("show crafting recipes"),
     PlaceItem("place item -n (?<item_name>\\S+) -d (?<direction>\\S+)"),
-    AddItemCC("cheat add item -n (?<item_name>\\S+) -c (?<count>\\d+)");
-
+    AddItemCC("cheat add item -n (?<item_name>\\S+) -c (?<count>\\d+)"),
+    GiftHistory("gift\\s+history\\s+-u\\s+(?<username>.+?)");
     private final String pattern;
     GameMenuCommands(String pattern) {
         this.pattern = pattern;

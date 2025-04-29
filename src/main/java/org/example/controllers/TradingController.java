@@ -3,9 +3,7 @@ package org.example.controllers;
 import org.example.models.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class TradingController {
@@ -106,6 +104,7 @@ public class TradingController {
         if (trade == null) return new Result(false, "Trade with id " + tradeId + " not found");
         if (accepted) {
             trade.getSender().changeFriendshipXP(50, Game.getCurrentPlayer());
+            // add to trades list
         }
         else {
             trade.getSender().changeFriendshipXP(-30, Game.getCurrentPlayer());

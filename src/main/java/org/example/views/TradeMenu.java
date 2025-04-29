@@ -7,8 +7,8 @@ import org.example.models.Result;
 import java.util.Scanner;
 
 public class TradeMenu implements AppMenu {
-    private TradingController tradingController;
-    private MenuController menuController;
+    private final TradingController tradingController;
+    private final MenuController menuController;
 
     public TradeMenu(TradingController tradingController, MenuController menuController){
         this.tradingController = tradingController;

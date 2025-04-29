@@ -22,4 +22,16 @@ public class Gift {
     public Player getSender() {
         return sender;
     }
+
+    public int getAmount(){
+        return  amount;
+    }
+
+    public String getName(){
+        return item.getName();
+    }
+
+    public int getId(){
+        return Id;
+    }
 }

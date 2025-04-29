@@ -82,4 +82,7 @@ public class Game {
         }
         return null;
     }
+    public static List<Gift> getAllGifts(){
+        return gifts;
+    }
 }
