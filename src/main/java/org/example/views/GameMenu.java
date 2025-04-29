@@ -51,6 +51,9 @@ public class GameMenu implements org.example.views.AppMenu {
             m = Pattern.compile(purchaseRegex).matcher(input);
             System.out.println(storeController.purchase(m.group("productName"), Integer.parseInt(m.group("count"))));
         }
+        else if (input.equals("show all available products")) {
+            System.out.println(storeController.showAvailableProducts());
+        }
         else if (input.equals("friendships")){
             System.out.println(gameMenuController.showFriendshipLevels().getMessage());
         }

@@ -36,7 +36,20 @@ public class StoreController {
         }
         return null;
     }
-    //for purchasing a product
+
+    public Result showAvailableProducts() {
+        StringBuilder output = new StringBuilder();
+        Store store = getCurrentStore();
+        if (store == null)
+            return Result.error("No store, no shelves, no products.");
+        output.append("Available products:\n");
+        for (Product product : store.getProducts()) {
+            if (product.isAvailable()) {
+                output.append(product.getName()).append(" ").append(product.getPrice()).append("\n");
+            }
+        }
+        return Result.success(output.toString());
+    }
     public Result purchase(String productName, int count) {
         Store store = getCurrentStore();
         if (store == null) {

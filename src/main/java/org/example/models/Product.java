@@ -10,14 +10,13 @@ public class Product implements Item{
     private final int price;
     private final int limit;
     private ItemLevel level = ItemLevel.Normal;
-    private boolean available;
+    private int stock;
 
     public Product(String name, String description, int price, int limit) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.limit = limit;
-        this.available = true;
     }
     public String getName() {
         return name;
@@ -43,9 +42,9 @@ public class Product implements Item{
         return limit;
     }
     public boolean isAvailable() {
-        return available;
+        return stock > 0;
     }
-    public void setAvailable(boolean available) {
-        this.available = available;
+    public void decrementStock(int amount) {
+        stock -= amount;
     }
 }
