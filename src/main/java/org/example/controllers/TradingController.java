@@ -12,11 +12,12 @@ public class TradingController {
     private static final String tradeWithItem = "trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-a\\s+\\d+\\d+\\s+-ti.*\\s+-ta\\s+.*";
 
     private Trade getTradeById(int id) {
-        for (Trade trade : trades){
+        for (Trade trade : trades) {
             if (trade.getId() == id) return trade;
         }
         return null;
     }
+
     public Result trade(String input) {
         StringBuilder builder = new StringBuilder();
         int uIndex = -1, tIndex = -1, iIndex = -1, aIndex = -1, pIndex = -1, tiIndex = -1, taIndex = -1;
@@ -90,14 +91,13 @@ public class TradingController {
         boolean accepted = input.contains("-accept");
         String[] parts = input.split("\\s+");
         int iIndex = -1;
-        for (int i = 0; i < parts.length; i++){
+        for (int i = 0; i < parts.length; i++) {
             if (parts[i].equals("-i")) iIndex = i;
         }
-        int tradeId ;
+        int tradeId;
         try {
             tradeId = Integer.parseInt(parts[iIndex + 1]);
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return new Result(false, "invalid tradeId");
         }
         Trade trade = getTradeById(tradeId);
@@ -105,19 +105,19 @@ public class TradingController {
         if (accepted) {
             trade.getSender().changeFriendshipXP(50, Game.getCurrentPlayer());
             // add to trades list
-        }
-        else {
+        } else {
             trade.getSender().changeFriendshipXP(-30, Game.getCurrentPlayer());
         }
 
         return Result.success("");
     }
+
     public Result showTradeList() {
         StringBuilder builder = new StringBuilder();
         builder.append("========TRADES========");
         if (trades.isEmpty()) return new Result(false, "No deals brewing yet. Why not start one?");
         for (Trade trade : trades) {
-            if (!trade.isAnswered()){
+            if (!trade.isAnswered()) {
                 builder.append("\n").append("Id            :").append(trade.getId()).append("\n");
                 builder.append("From          :").append(trade.getSender().getName()).append("\n");
                 builder.append("To            :").append(trade.getReceiver().getName()).append("\n");
@@ -125,7 +125,7 @@ public class TradingController {
                 builder.append("Item          :").append(trade.getItem().getName()).append("\n");
                 builder.append("Amount        :").append(trade.getAmount()).append("\n");
                 if (trade.getCost() != null) builder.append("Price   :").append(trade.getCost()).append("\n");
-                else{
+                else {
                     builder.append("target item   :").append(trade.getItem().getName()).append("\n");
                     builder.append("target amount :").append(trade.getAmount()).append("\n");
                 }

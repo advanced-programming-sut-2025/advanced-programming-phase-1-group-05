@@ -3,30 +3,12 @@ package org.example.controllers;
 import org.example.models.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class StoreController {
 
-
-//    //for showing all the products in a store
-//    public Result showAllProducts(Store store){
-//        List<Product> products = store.getProducts();
-//        for(Product product : products) {
-//            //show product name and price
-//        }
-//        return null;
-//    }
-//
-//    //for showing all available products in a store
-//    public Result showAvailableProducts(Store store) {
-//        List<Product> products = store.getProducts();
-//        for (Product product : products) {
-//            if (product.isAvailable()) {
-//                //show product name and price
-//            }
-//        }
-//        return null;
-//    }
     private Store getCurrentStore() {
         Player player = Game.getCurrentPlayer();
         for (Store store : Game.getDatabase().getStores()){
@@ -35,6 +17,18 @@ public class StoreController {
             }
         }
         return null;
+    }
+
+    public Result showAllProducts() {
+        StringBuilder output = new StringBuilder();
+        Store store = getCurrentStore();
+        if (store == null)
+            return Result.error("No store, no shelves, no products.");
+        output.append("All products: \n");
+        for (Product product : store.getProducts()) {
+                output.append(product.getName()).append(" ").append(product.getPrice()).append("\n");
+        }
+        return Result.success(output.toString());
     }
 
     public Result showAvailableProducts() {
@@ -74,6 +68,18 @@ public class StoreController {
 //
 //        return null;
 //    }
+
+    public Result sell(String productName, int count) {
+        Store store = getCurrentStore();
+        if (store == null) {
+            return Result.error(" ");
+        }
+        Player currentPlayer = Game.getCurrentPlayer();
+        Item item = Game.getDatabase().getItem(productName);
+
+        Game.soldItems.put(currentPlayer, item);
+        return Result.success(" ");
+    }
 
 
 

@@ -15,6 +15,7 @@ public class Game {
     private static List<Gift> gifts = new ArrayList<>();
     private static Weather currentWeather = Weather.Sunny;
     private static final Database database = new Database();
+    public static Map<Player, Item> soldItems = new HashMap<>();
     // TODO a method for changing the weather
     // TODO make the game methods nonstatic
     public static Player getCurrentPlayer() {

@@ -2,6 +2,7 @@ package org.example.controllers;
 
 import org.example.models.*;
 
+import java.util.Map;
 import java.util.Random;
 
 public class GameManager {
@@ -13,6 +14,7 @@ public class GameManager {
         resetEnergy();
         checkNPCGifts();
         checkForThirdQuest();
+        giveBackSoldItemGolds();
     }
 
     public static void resetEnergy() {
@@ -43,5 +45,13 @@ public class GameManager {
                 }
             }
         }
+    }
+
+    public static void giveBackSoldItemGolds(){
+        for (Map.Entry<Player, Item> entry : Game.soldItems.entrySet()) {
+            entry.getKey().addGold(entry.getValue().getPrice());
+        }
+
+        Game.soldItems.clear();
     }
 }

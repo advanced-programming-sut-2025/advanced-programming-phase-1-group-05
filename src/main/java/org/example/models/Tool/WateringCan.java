@@ -68,7 +68,7 @@ public class WateringCan implements Tool<ItemLevel> {
     public void upgradeLevel(){
         //only in blacksmith
         if (!level.isMaxLevel()) {
-            level = level.nextLevel();
+            level = level.upgradeLevel();
             System.out.println(getName() + " upgraded to " + level.getName());
         }
     }
