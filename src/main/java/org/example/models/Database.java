@@ -20,17 +20,19 @@ public class Database {
     ArrayList<Seed> seedDatabase = new ArrayList<>();
     ArrayList<Craft> craftingRecipeDatabase = new ArrayList<>();
     ArrayList<Food> foodDatabase = new ArrayList<>();
+    List<Store> stores = new ArrayList<>();
     Map<String, NPC> NPCs = new HashMap<>();
 
     //start when the game starts
     //put this somewhere where everything is initialized
-    public void initializePlantDatabase(){
+    public void initializePlantDatabase() {
         try {
             Gson gson = new Gson();
 
             FileReader reader = new FileReader("plants.json");
 
-            Type plantListType = new TypeToken<ArrayList<FruitAndVegetable>>(){}.getType();
+            Type plantListType = new TypeToken<ArrayList<FruitAndVegetable>>() {
+            }.getType();
 
             ArrayList<FruitAndVegetable> plantList = gson.fromJson(reader, plantListType);
 
@@ -40,55 +42,60 @@ public class Database {
 
     }
 
-    public FruitAndVegetable getFruitAndVegetable(String name){
+    public FruitAndVegetable getFruitAndVegetable(String name) {
         FruitAndVegetable plant = null;
-        for(FruitAndVegetable f : plantDatabase){
-            if(f.getName().equals(name)){
+        for (FruitAndVegetable f : plantDatabase) {
+            if (f.getName().equals(name)) {
                 plant = f;
             }
         }
         return plant;
     }
 
-    public ArrayList<FruitAndVegetable> getFruitAndVegetables(){
+    public ArrayList<FruitAndVegetable> getFruitAndVegetables() {
         return plantDatabase;
     }
 
-    public void initializeAllItems(){
+    public void initializeAllItems() {
         itemDatabase.add(new basicItem("friendshipPoints", 0));
         // this item will only be used as a gift for incrementing the friendship points between two players or an npc
         //can't be bought or added to inventory
     }
 
-    public Item getItem(String name){
-        for(Item i : itemDatabase){
-            if(i.getName().equals(name)){
+    public Item getItem(String name) {
+        for (Item i : itemDatabase) {
+            if (i.getName().equals(name)) {
                 return i;
             }
         }
         return null;
     }
-    public ArrayList<Tree> getTreeDatabase(){
+
+    public ArrayList<Tree> getTreeDatabase() {
         return treeDatabase;
     }
-    public ArrayList<Seed> getSeedDatabase(){
+
+    public ArrayList<Seed> getSeedDatabase() {
         return seedDatabase;
     }
 
 
-    public ArrayList<Craft> getCraftingRecipeDatabase(){
+    public ArrayList<Craft> getCraftingRecipeDatabase() {
         return craftingRecipeDatabase;
     }
-    public ArrayList<Item> getItemDatabase(){
+
+    public ArrayList<Item> getItemDatabase() {
         return itemDatabase;
     }
 
+    public List<Store> getStores() {
+        return stores;
+    }
     public void loadNPCs() {
         String json;
         try {
-             json = new String(Files.readAllBytes(Paths.get("npcInfos.json")));
-        }
-        catch (IOException e){
+            json = new String(Files.readAllBytes(Paths.get("npcInfos.json")));
+        } catch (IOException e) {
             System.out.println("can't get json.");
             return;
         }
@@ -126,10 +133,12 @@ public class Database {
             NPCs.put(name, npc);
         }
     }
-    public Map<String, NPC> getNPCs(){
+
+    public Map<String, NPC> getNPCs() {
         return NPCs;
     }
-    public ArrayList<Food> getFoodDatabase(){
+
+    public ArrayList<Food> getFoodDatabase() {
         return foodDatabase;
     }
 }

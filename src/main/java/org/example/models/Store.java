@@ -8,6 +8,7 @@ public class Store {
     String storeName;
     NPC storeOwner;
     List<Product> products;
+    int xStart, xEnd, yStart, yEnd;
 
     Store(StoreType storeType) {
         this.storeName = storeType.getStoreName();
@@ -15,6 +16,9 @@ public class Store {
         this.products = storeType.getProducts();
     }
 
+    public boolean isInside(int x, int y) {
+        return x >= xStart && x <= xEnd && y >= yStart && y <= yEnd;
+    }
     public String getStoreName() {
         return storeName;
     }
@@ -23,5 +27,13 @@ public class Store {
     }
     public List<Product> getProducts() {
         return products;
+    }
+    public Product getProduct(String name) {
+        for (Product product : products) {
+            if (product.getName().equals(name)) {
+                return product;
+            }
+        }
+        return null;
     }
 }

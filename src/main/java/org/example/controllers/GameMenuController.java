@@ -247,7 +247,8 @@ public class GameMenuController extends MenuController {
         Player currentPlayer = Game.getCurrentPlayer();
         for (Gift gift : Game.getAllGifts()) {
             if (gift.getReceiver().equals(currentPlayer))
-                output.append(gift.getId()).append(".  ").append(gift.getAmount()).append(" ").append(gift.getName()).append(" (s)\n");
+                output.append(gift.getId()).append(".  ").append(gift.getAmount()).append(" ")
+                        .append(gift.getName()).append(" (s)\n");
         }
         if (output.toString().isEmpty())
             return Result.success("Still waiting for that surprise delivery. It'll happen... probably");
@@ -361,9 +362,9 @@ public class GameMenuController extends MenuController {
 
     public Result meetNPC(String npcName) {
         NPC npc = Game.getNPCByName(npcName);
-
-
+        Player player = Game.getCurrentPlayer();
         lastNPC = npc;
+        npc.addFriendShipPoints(player, 20);
         return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().toString()));
     }
 
