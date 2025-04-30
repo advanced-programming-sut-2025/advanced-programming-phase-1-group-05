@@ -293,14 +293,21 @@ public class GameMenuController extends MenuController {
 
     public Result giveBouquet(String input) {
         int uIndex = input.indexOf('u');
+        String username = "";
         input = input.substring(uIndex + 1);
-        Player targetPlayer = Game.getCurrentPlayer();
         Player currentPlayer = Game.getCurrentPlayer();
+        Player targetPlayer = Game.getPlayerByUsername(username);
         Item bouquet = Game.getDatabase().getItem("bouquet");
+        if (targetPlayer == null)
+            return Result.error("Bouquet in hand, heart full of hope... too bad that player doesn't even exist.");
+        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
+            return Result.error("You wave the bouquet around like a romantic maniac, but there's no one nearby to impress");
+        if (currentPlayer.getItemQuantity(bouquet) < 1)
+            return Result.error("You reach for the bouquet... but your inventory says 'not today, Romeo'.");
         currentPlayer.getBackPack().getInventory().remove(bouquet, 1);
         targetPlayer.getBackPack().getInventory().put(bouquet, 1);
         targetPlayer.changeLevel(currentPlayer, 3);
-        return new Result(true, "");
+        return new Result(true, "They accepted the bouquet! Quick, act cool before your face turns red.");
     }
 
     public Result askMarriage(String input) {

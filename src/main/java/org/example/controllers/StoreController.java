@@ -76,7 +76,15 @@ public class StoreController {
         }
         Player currentPlayer = Game.getCurrentPlayer();
         Item item = Game.getDatabase().getItem(productName);
+        if (item == null) return Result.error("try selling something that exists!");
+        if (currentPlayer.getItemQuantity(item) == 0 )
+            return Result.error("You present your empty hands with confidence. Sadly, buyers prefer actual stuff");
+        if (currentPlayer.getItemQuantity(item) < count) {
+            return Result.error("You can't sell what you don't have. Unless you're secretly a magician");
+        }
 
+        if (!Game.shippingBin.isNear(currentPlayer.getX(), currentPlayer.getY()))
+            return Result.error("You can't just toss things into air and hope for a sale. Find a shipping bin first.");
         Game.soldItems.put(currentPlayer, item);
         return Result.success(" ");
     }
