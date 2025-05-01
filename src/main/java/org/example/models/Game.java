@@ -16,7 +16,6 @@ public class Game {
     private static Weather currentWeather = Weather.Sunny;
     private static final Database database = new Database();
     public static Map<Player, Item> soldItems = new HashMap<>();
-    public static ShippingBin shippingBin = new ShippingBin();
     // TODO a method for changing the weather
     // TODO make the game methods nonstatic
     public static Player getCurrentPlayer() {
@@ -89,13 +88,5 @@ public class Game {
     }
 
 
-    public static class ShippingBin {
-        int startX, startY, endX = startX + 2, endY = startY + 1;
 
-        public boolean isNear(int x, int y) {
-            boolean nearX = (x >= startX - 1 && x <= endX + 1);
-            boolean nearY = (y >= startY - 1 && y <= endY + 1);
-            return nearX && nearY;
-        }
-    }
 }

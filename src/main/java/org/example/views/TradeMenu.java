@@ -26,6 +26,9 @@ public class TradeMenu implements AppMenu {
         else if (input.equals("trade list")){
             System.out.println(tradingController.showTradeList());
         }
+        else if (input.equals("stop trading")){
+            menuController.enterMenu("game");
+        }
         else if (input.equals("show current menu")) {
             Result result = menuController.showCurrentMenu();
             System.out.println(result.getMessage());

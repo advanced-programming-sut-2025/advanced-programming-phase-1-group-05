@@ -4,11 +4,12 @@ import org.example.models.Enums.ItemLevel;
 
 import java.util.Map;
 
-public class Product implements Item{
+public class Product implements Item {
     private final String name;
     private final String description;
     private final int price;
     private final int limit;
+    private int soldToday = 0;
     private ItemLevel level = ItemLevel.Normal;
     private int stock;
 
@@ -18,12 +19,15 @@ public class Product implements Item{
         this.price = price;
         this.limit = limit;
     }
+
     public String getName() {
         return name;
     }
+
     public String getDescription() {
         return description;
     }
+
     public int getPrice() {
         return price;
     }
@@ -41,10 +45,24 @@ public class Product implements Item{
     public int getLimit() {
         return limit;
     }
+
     public boolean isAvailable() {
         return stock > 0;
     }
+
     public void decrementStock(int amount) {
         stock -= amount;
     }
+
+    public void setSoldToday(int soldToday) {
+        this.soldToday = soldToday;
+    }
+
+    public void addSold(int amount) {
+        soldToday += amount;
+    }
+    public int getRemainingForToday(){
+        return limit - soldToday;
+    }
+
 }

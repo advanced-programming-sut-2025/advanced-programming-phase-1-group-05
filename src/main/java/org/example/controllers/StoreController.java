@@ -2,11 +2,6 @@ package org.example.controllers;
 
 import org.example.models.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class StoreController {
 
     private Store getCurrentStore() {
@@ -47,33 +42,30 @@ public class StoreController {
     public Result purchase(String productName, int count) {
         Store store = getCurrentStore();
         if (store == null) {
-            return Result.error(" ");
+            return Result.error("Nice try, but the valley's still one solar panel away from online shopping.");
         }
+        Player player = Game.getCurrentPlayer();
         Product product = store.getProduct(productName);
-
         if (product == null) {
-            return Result.error(" ");
+            return Result.error("That item doesn't exist. But hey, points for creativity!");
         }
-        //sell item
-        if(product.getLimit() < count) {
-            //can't purchase
-        } else if (Game.getCurrentPlayer().getGold() < product.getPrice()){
-            //not enough gold
+
+        if (player.getGold() < product.getPrice()*count){
+            return Result.error("You reach for your wallet... and it echoes. Try again when it stops crying.");
+        }
+
+        if (!store.contains(product)) {
+            return Result.error("This store doesn't have that product. Maybe try shopping elsewhere.");
+        }
+
+        if(product.getRemainingForToday() < count) {
+            return Result.error("Can't purchase any more of that. come back tomorrow!");
         }
         return null;
     }
-//
-//    //cheat code for increasing ??
-//    public Result addDollars(int amount) {
-//
-//        return null;
-//    }
 
     public Result sell(String productName, int count) {
-        Store store = getCurrentStore();
-        if (store == null) {
-            return Result.error(" ");
-        }
+
         Player currentPlayer = Game.getCurrentPlayer();
         Item item = Game.getDatabase().getItem(productName);
         if (item == null) return Result.error("try selling something that exists!");
@@ -83,10 +75,10 @@ public class StoreController {
             return Result.error("You can't sell what you don't have. Unless you're secretly a magician");
         }
 
-        if (!Game.shippingBin.isNear(currentPlayer.getX(), currentPlayer.getY()))
+        if (!currentPlayer.getFarm().getShippingBin().isNear(currentPlayer.getX(), currentPlayer.getY()))
             return Result.error("You can't just toss things into air and hope for a sale. Find a shipping bin first.");
         Game.soldItems.put(currentPlayer, item);
-        return Result.success(" ");
+        return Result.success("You will recieve the gold tomorrow morning!");
     }
 
 

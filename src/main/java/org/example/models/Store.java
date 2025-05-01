@@ -36,4 +36,8 @@ public class Store {
         }
         return null;
     }
+
+    public boolean contains(Product product) {
+        return products.contains(product);
+    }
 }

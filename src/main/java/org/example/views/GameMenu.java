@@ -16,6 +16,7 @@ public class GameMenu implements org.example.views.AppMenu {
     private final String giftHistoryRegex = "gift\\s+history\\s+-u\\s+(?<username>.+?)";
     private final String rateGiftRegex = "gift\\s+rate\\s+-i\\s+(?<giftNumber>\\d+?)\\s+-r\\s+(?<rate>\\d+?)";
     private final String purchaseRegex = "purchase\\s+(?<productName>.+?)(?:\\s+-n\\s+(?<count>\\d+))?";
+    private final String cheatAddMoney = "cheat\\s+add\\s+(?<count>\\d+?)\\s+dollars";
     public GameMenu(MenuController menuController, GameMenuController gameMenuController) {
         this.menuController = menuController;
         this.gameMenuController = gameMenuController;
@@ -50,6 +51,10 @@ public class GameMenu implements org.example.views.AppMenu {
         else if (input.matches(purchaseRegex)) {
             m = Pattern.compile(purchaseRegex).matcher(input);
             System.out.println(storeController.purchase(m.group("productName"), Integer.parseInt(m.group("count"))));
+        }
+        else if (input.matches(cheatAddMoney)) {
+            m = Pattern.compile(cheatAddMoney).matcher(input);
+            System.out.println(gameMenuController.cheatAddMoney(Integer.parseInt(m.group("count"))));
         }
         else if (input.equals("show all products")) {
             System.out.println(storeController.showAllProducts());

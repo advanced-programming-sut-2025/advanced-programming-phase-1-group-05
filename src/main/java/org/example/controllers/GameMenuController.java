@@ -173,6 +173,11 @@ public class GameMenuController extends MenuController {
         return new Result(true, "");
     }
 
+    public Result cheatAddMoney(int amount){
+        Player player = Game.getCurrentPlayer();
+        player.addGold(amount);
+        return Result.success("added " + amount + " gold");
+    }
     public Result showFriendshipLevels() {
         StringBuilder builder = new StringBuilder();
         Player currentPlayer = Game.getCurrentPlayer();
@@ -322,7 +327,7 @@ public class GameMenuController extends MenuController {
             return new Result(false, "You reach for the ring... but your pockets are full of nothing");
         if (!currentPlayer.canAskMarriage(targetPlayer))
             return new Result(false, "Slow down, lovebird-you're still just friendly acquaintances");
-        if (currentPlayer.getGender().equals("boy"))
+        if (!currentPlayer.getGender().equals("boy"))
             return new Result(false, "Only the boys can propose... for now. Rules of the valley, not mine!");
         lastRingProposedWith = ring;
         currentPlayer.getBackPack().getInventory().remove(ring, 1);
