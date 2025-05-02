@@ -22,7 +22,14 @@ public enum GameMenuCommands {
     ShowCraftingRecipes("show crafting recipes"),
     PlaceItem("place item -n (?<item_name>\\S+) -d (?<direction>\\S+)"),
     AddItemCC("cheat add item -n (?<item_name>\\S+) -c (?<count>\\d+)"),
-    GiftHistory("gift\\s+history\\s+-u\\s+(?<username>.+?)");
+    GiftHistory("gift\\s+history\\s+-u\\s+(?<username>.+?)"),
+    RateGift("gift\\s+rate\\s+-i\\s+(?<giftNumber>\\d+?)\\s+-r\\s+(?<rate>\\d+?)"),
+    Purchase("purchase\\s+(?<productName>.+?)(?:\\s+-n\\s+(?<count>\\d+))?"),
+    CheatAddMoney("cheat\\s+add\\s+(?<count>\\d+?)\\s+dollars"),
+    Sell("sell\\s+<?productName>.+?(?:\\s+-n\\s+(?<count>\\d+))?"),
+    GiveBouquet("flower\\s+-u\\s+(?<username>.+?)"),
+    Hug("hug\\s+-u\\s+(?<username>.+?)");
+
     private final String pattern;
     GameMenuCommands(String pattern) {
         this.pattern = pattern;

@@ -4,11 +4,11 @@ import org.example.models.Enums.ItemLevel;
 
 import java.util.Map;
 
-public class basicItem implements Item {
+public class BasicItem implements Item {
     private String name;
     private int price;
     private ItemLevel level;
-    public basicItem(String name, int price) {
+    public BasicItem(String name, int price) {
         this.name = name;
         this.price = price;
     }

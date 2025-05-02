@@ -60,7 +60,7 @@ public class Database {
 
 
     public void initializeStoresAndItems() {
-        itemDatabase.add(new basicItem("friendshipPoints", 0));
+        itemDatabase.add(new BasicItem("friendshipPoints", 0));
         String json;
         try {
             json = new String(Files.readAllBytes(Paths.get("stores.json")));
@@ -91,6 +91,7 @@ public class Database {
                     seasonsInStock.add(Season.valueOf(season.getAsString()));
                 }
                 products.add(new Product(productName, price, limit, BuildingType.valueOf(buildingType), seasonsInStock));
+                itemDatabase.add(new BasicItem(productName, price));
             }
             stores.add(new Store(storeName, products, xStart, xEnd, yStart, yEnd));
         }

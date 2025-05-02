@@ -1,14 +1,1074 @@
-[
+{
+"stores": [
   {
     "name": "Blacksmith",
     "xStart": 75,
     "xEnd": 85,
+    "yStart": 10,
+    "yEnd": 18,
     "products": [
       {
-        "name": "meow",
+        "name": "Copper Ore",
+        "price": 75,
+        "limit": -1
+      },
+      {
+        "name": "Iron Ore",
+        "price": 150,
+        "limit": -1
+      },
+      {
+        "name": "Gold Ore",
+        "price": 450,
+        "limit": -1
+      },
+      {
+        "name": "Coal",
+        "price": 150,
+        "limit": -1
+      },
+      {
+        "name": "Coal",
+        "price": 150,
+        "limit": -1
+      },
+      {
+        "name": "Copper Tool",
+        "price": 2000,
+        "limit": 1
+      },
+      {
+        "name": "Steel Tool",
+        "price": 5000,
+        "limit": 1
+      },
+      {
+        "name": "Gold Tool",
+        "price": 10000,
+        "limit": 1
+      },
+      {
+        "name": "Iridium Tool",
+        "price": 25000,
+        "limit": 1
+      },
+      {
+        "name": "Copper Trash Can",
+        "price": 1000,
+        "limit": 1
+      },
+      {
+        "name": "Steel Trash Can",
+        "price": 2500,
+        "limit": 1
+      },
+      {
+        "name": "Gold Trash Can",
+        "price": 5000,
+        "limit": 1
+      },
+      {
+        "name": "Iridium Trash Can",
+        "price": 12500,
+        "limit": 1
+      }
+    ]
+  },
+  {
+    "name": "Marnie's Ranch",
+    "xStart": 15,
+    "xEnd": 30,
+    "yStart": 70,
+    "yEnd": 80,
+    "products": [
+      {
+        "name": "Hay",
+        "price": 50,
+        "limit": -1
+      },
+      {
+        "name": "Milk Pail",
+        "price": 1000,
+        "limit": 1
+      },
+      {
+        "name": "Shears",
+        "price": 1000,
+        "limit": 1
+      },
+      {
+        "name": "Chicken",
+        "price": 800,
+        "limit": 2,
+        "buildingRequired": "Coop"
+      },
+      {
+        "name": "Cow",
+        "price": 1500,
+        "limit": 2,
+        "buildingRequired": "Barn"
+      },
+      {
+        "name": "Goat",
+        "price": 4000,
+        "limit": 2,
+        "buildingRequired": "Barn"
+      },
+      {
+        "name": "Duck",
+        "price": 1200,
+        "limit": 2,
+        "buildingRequired": "Coop"
+      },
+      {
+        "name": "Sheep",
+        "price": 8000,
+        "limit": 2,
+        "buildingRequired": "Barn"
+      },
+      {
+        "name": "Rabbit",
+        "price": 8000,
+        "limit": 2,
+        "buildingRequired": "Coop"
+      },
+      {
+        "name": "Dinosaur",
+        "price": 14000,
+        "limit": 2,
+        "buildingRequired": "Coop"
+      },
+      {
+        "name": "Pig",
+        "price": 16000,
+        "limit": 2,
+        "buildingRequired": "Barn"
+      }
+    ]
+  },
+  {
+    "name": "Joja Mart",
+    "xStart": 45,
+    "xEnd": 60,
+    "yStart": 8,
+    "yEnd": 18,
+    "products": [
+      {
+        "name": "Joja Cola",
+        "price": 75,
+        "limit": -1,
+        "season": [
+          "Spring",
+          "Summer",
+          "Fall",
+          "Winter"
+        ]
+      },
+      {
+        "name": "Ancient Seed",
+        "price": 500,
+        "limit": 1,
+        "season": [
+          "Spring",
+          "Summer",
+          "Fall",
+          "Winter"
+        ]
+      },
+      {
+        "name": "Grass Starter",
+        "price": 125,
+        "limit": -1,
+        "season": [
+          "Spring",
+          "Summer",
+          "Fall",
+          "Winter"
+        ]
+      },
+      {
+        "name": "Sugar",
+        "price": 125,
+        "limit": -1,
+        "season": [
+          "Spring",
+          "Summer",
+          "Fall",
+          "Winter"
+        ]
+      },
+      {
+        "name": "Wheat Flour",
+        "price": 125,
+        "limit": -1,
+        "season": [
+          "Spring",
+          "Summer",
+          "Fall",
+          "Winter"
+        ]
+      },
+      {
+        "name": "Rice",
+        "price": 250,
+        "limit": -1,
+        "season": [
+          "Spring",
+          "Summer",
+          "Fall",
+          "Winter"
+        ]
+      },
+      {
+        "name": "Parsnip Seed",
+        "price": 25,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Bean Starter",
+        "price": 75,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Cauliflower Seed",
+        "price": 100,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Potato Seed",
+        "price": 62,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Strawberry Seed",
+        "price": 100,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Tulip Bulb",
+        "price": 25,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Kale Seed",
+        "price": 87,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Coffee Bean",
         "price": 200,
-        "stock": 10
+        "limit": 1,
+        "season": [
+          "Spring",
+          "Summer"
+        ]
+      },
+      {
+        "name": "Carrot Seed",
+        "price": 5,
+        "limit": 10,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Rhubarb Seed",
+        "price": 100,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Jazz Seed",
+        "price": 37,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Tomato Seed",
+        "price": 62,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Pepper Seed",
+        "price": 50,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Wheat Seed",
+        "price": 12,
+        "limit": 10,
+        "season": [
+          "Summer",
+          "Fall"
+        ]
+      },
+      {
+        "name": "Summer Squash Seed",
+        "price": 10,
+        "limit": 10,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Radish Seed",
+        "price": 50,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Melon Seed",
+        "price": 100,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Hops Starter",
+        "price": 75,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Poppy Seed",
+        "price": 125,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Spangle Seed",
+        "price": 62,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Starfruit Seed",
+        "price": 400,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Sunflower Seed",
+        "price": 125,
+        "limit": 5,
+        "season": [
+          "Summer",
+          "Fall"
+        ]
+      },
+      {
+        "name": "Corn Seed",
+        "price": 187,
+        "limit": 5,
+        "season": [
+          "Summer",
+          "Fall"
+        ]
+      },
+      {
+        "name": "Eggplant Seed",
+        "price": 25,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Pumpkin Seed",
+        "price": 125,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Broccoli Seed",
+        "price": 15,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Amaranth Seed",
+        "price": 87,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Grape Starter",
+        "price": 75,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Beet Seed",
+        "price": 20,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Yam Seed",
+        "price": 75,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Bok Choy Seed",
+        "price": 62,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Fairy Seed",
+        "price": 250,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Rare Seed",
+        "price": 1000,
+        "limit": 1,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Powdermelon Seed",
+        "price": 20,
+        "limit": 10,
+        "season": [
+          "Winter"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "The Stardrop Saloon",
+    "xStart": 45,
+    "xEnd": 60,
+    "yStart": 35,
+    "yEnd": 45,
+    "products": [
+      {
+        "name": "Beer",
+        "price": 400,
+        "limit": -1
+      },
+      {
+        "name": "Salad",
+        "price": 220,
+        "limit": -1
+      },
+      {
+        "name": "Bread",
+        "price": 120,
+        "limit": -1
+      },
+      {
+        "name": "Spaghetti",
+        "price": 240,
+        "limit": -1
+      },
+      {
+        "name": "Pizza",
+        "price": 600,
+        "limit": -1
+      },
+      {
+        "name": "Coffee",
+        "price": 300,
+        "limit": -1
+      },
+      {
+        "name": "Hashbrowns Recipe",
+        "price": 50,
+        "limit": 1
+      },
+      {
+        "name": "Omelet Recipe",
+        "price": 100,
+        "limit": 1
+      },
+      {
+        "name": "Pancakes Recipe",
+        "price": 100,
+        "limit": 1
+      },
+      {
+        "name": "Bread Recipe",
+        "price": 100,
+        "limit": 1
+      },
+      {
+        "name": "Tortilla Recipe",
+        "price": 100,
+        "limit": 1
+      },
+      {
+        "name": "Pizza Recipe",
+        "price": 150,
+        "limit": 1
+      },
+      {
+        "name": "Maki Roll Recipe",
+        "price": 300,
+        "limit": 1
+      },
+      {
+        "name": "Triple Shot Espresso Recipe",
+        "price": 5000,
+        "limit": 1
+      },
+      {
+        "name": "Cookie Recipe",
+        "price": 100,
+        "limit": 1
+      }
+    ]
+  },
+  {
+    "name": "Carpenter's shop",
+    "xStart": 8,
+    "xEnd": 20,
+    "yStart": 8,
+    "yEnd": 18,
+    "products": [
+      {
+        "name": "Wood",
+        "price": 10,
+        "limit": -1
+      },
+      {
+        "name": "Stone",
+        "price": 20,
+        "limit": -1
+      },
+      {
+        "name": "Barn",
+        "price": 6000,
+        "cost": {
+          "Wood": 350,
+          "Stone": 150
+        },
+        "limit": 1
+      },
+      {
+        "name": "Big Barn",
+        "price": 12000,
+        "cost": {
+          "Wood": 450,
+          "Stone": 200
+        },
+        "limit": 1
+      },
+      {
+        "name": "Deluxe Barn",
+        "price": 25000,
+        "cost": {
+          "Wood": 550,
+          "Stone": 300
+        },
+        "limit": 1
+      },
+      {
+        "name": "Coop",
+        "price": 4000,
+        "cost": {
+          "Wood": 300,
+          "Stone": 100
+        },
+        "limit": 1
+      },
+      {
+        "name": "Big Coop",
+        "price": 10000,
+        "cost": {
+          "Wood": 400,
+          "Stone": 150
+        },
+        "limit": 1
+      },
+      {
+        "name": "Deluxe Coop",
+        "price": 20000,
+        "cost": {
+          "Wood": 550,
+          "Stone": 200
+        },
+        "limit": 1
+      },
+      {
+        "name": "Well",
+        "price": 1000,
+        "cost": {
+          "Stone": 75
+        },
+        "limit": 1
+      },
+      {
+        "name": "Shipping bin",
+        "price": 250,
+        "cost": {
+          "Wood": 150
+        },
+        "limit": 1
+      }
+    ]
+  },
+  {
+    "name": "Pierre's General Store",
+    "xStart": 25,
+    "xEnd": 40,
+    "yStart": 35,
+    "yEnd": 45,
+    "products": [
+      {
+        "name": "Rice",
+        "price": 75,
+        "limit": -1
+      },
+      {
+        "name": "Wheat Flour",
+        "price": 100,
+        "limit": -1
+      },
+      {
+        "name": "Bouquet",
+        "price": 1000,
+        "limit": 2
+      },
+      {
+        "name": "Wedding Ring",
+        "price": 10000,
+        "limit": 2
+      },
+      {
+        "name": "Dehydrator Recipe",
+        "price": 10000,
+        "limit": 1
+      },
+      {
+        "name": "Grass Starter Recipe",
+        "price": 1000,
+        "limit": 1
+      },
+      {
+        "name": "Sugar",
+        "price": 100,
+        "limit": -1
+      },
+      {
+        "name": "Oil",
+        "price": 200,
+        "limit": -1
+      },
+      {
+        "name": "Vinegar",
+        "price": 200,
+        "limit": -1
+      },
+      {
+        "name": "Deluxe Retaining Soil",
+        "price": 150,
+        "limit": -1
+      },
+      {
+        "name": "Grass Starter",
+        "price": 100,
+        "limit": -1
+      },
+      {
+        "name": "Speed-Gro",
+        "price": 100,
+        "limit": -1
+      },
+      {
+        "name": "Apple Sapling",
+        "price": 4000,
+        "limit": -1
+      },
+      {
+        "name": "Apricot Sapling",
+        "price": 2000,
+        "limit": -1
+      },
+      {
+        "name": "Cherry Sapling",
+        "price": 3400,
+        "limit": -1
+      },
+      {
+        "name": "Orange Sapling",
+        "price": 4000,
+        "limit": -1
+      },
+      {
+        "name": "Peach Sapling",
+        "price": 6000,
+        "limit": -1
+      },
+      {
+        "name": "Pomegranate Sapling",
+        "price": 6000,
+        "limit": -1
+      },
+      {
+        "name": "Basic Retaining Soil",
+        "price": 100,
+        "limit": -1
+      },
+      {
+        "name": "Quality Retaining Soil",
+        "price": 150,
+        "limit": -1
+      },
+      {
+        "name": "Large Pack",
+        "price": 2000,
+        "limit": 1
+      },
+      {
+        "name": "Deluxe Pack",
+        "price": 10000,
+        "limit": 1
+      },
+      {
+        "name": "Parsnip Seed",
+        "price": 20,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Bean Starter",
+        "price": 60,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Cauliflower Seed",
+        "price": 80,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Potato Seed",
+        "price": 50,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Tulip Bulb",
+        "price": 20,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Kale Seed",
+        "price": 70,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Jazz Seed",
+        "price": 30,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Garlic Seed",
+        "price": 40,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Rice Shoot",
+        "price": 40,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Melon Seed",
+        "price": 80,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Tomato Seed",
+        "price": 50,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Blueberry Seed",
+        "price": 80,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Pepper Seed",
+        "price": 40,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Wheat Seed",
+        "price": 10,
+        "limit": 5,
+        "season": [
+          "Summer",
+          "Fall"
+        ]
+      },
+      {
+        "name": "Radish Seed",
+        "price": 40,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Poppy Seed",
+        "price": 100,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Spangle Seed",
+        "price": 50,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Hops Starter",
+        "price": 60,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Corn Seed",
+        "price": 150,
+        "limit": 5,
+        "season": [
+          "Summer",
+          "Fall"
+        ]
+      },
+      {
+        "name": "Sunflower Seed",
+        "price": 200,
+        "limit": 5,
+        "season": [
+          "Summer",
+          "Fall"
+        ]
+      },
+      {
+        "name": "Red Cabbage Seed",
+        "price": 100,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Eggplant Seed",
+        "price": 20,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Pumpkin Seed",
+        "price": 100,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Bok Choy Seed",
+        "price": 50,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Yam Seed",
+        "price": 60,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Cranberry Seed",
+        "price": 240,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Fairy Seed",
+        "price": 200,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Amaranth Seed",
+        "price": 70,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Grape Starter",
+        "price": 60,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Artichoke Seed",
+        "price": 30,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Fish Shop",
+    "xStart": 75,
+    "xEnd": 85,
+    "yStart": 85,
+    "yEnd": 95,
+    "products": [
+      {
+        "name": "Fish Smoker Recipe",
+        "price": 10000,
+        "limit": 1
+      },
+      {
+        "name": "Trout Soup",
+        "price": 250,
+        "limit": 1
+      },
+      {
+        "name": "Bamboo Pole",
+        "price": 500,
+        "limit": 1
+      },
+      {
+        "name": "Training Rod",
+        "price": 25,
+        "limit": 1
+      },
+      {
+        "name": "Fiberglass Rod",
+        "price": 1800,
+        "limit": 1
+      },
+      {
+        "name": "Iridium Rod",
+        "price": 7500,
+        "limit": 1
       }
     ]
   }
-]
+]}

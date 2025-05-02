@@ -14,11 +14,10 @@ public class GameMenuController extends MenuController {
     private Game pendingGame;
     private List<User> selectedPlayers;
     boolean canChooseMap = false;
-    private Item lastRingProposedWith = null;
 
     public GameMenuController(Scanner scanner, User currentUser) {
         super(scanner);
-        this.currentUser = currentUser;
+        currentUser = currentUser;
     }
 
     private NPC lastNPC = null;
@@ -298,9 +297,8 @@ public class GameMenuController extends MenuController {
         return new Result(true, output.toString());
     }
 
-    public Result hugPlayer(String input) {
-        input = input.substring(input.indexOf('-') + 2).trim();
-        Player targetPlayer = Game.getPlayerByUsername(input);
+    public Result hugPlayer(String username) {
+        Player targetPlayer = Game.getPlayerByUsername(username);
         Player currentPlayer = Game.getCurrentPlayer();
         if (targetPlayer == null)
             return new Result(false, "You open your arms wide... but there's no one by that name to recieve it");
@@ -310,10 +308,7 @@ public class GameMenuController extends MenuController {
         return new Result(true, "You hugged them tight. Even the cows felt the love.");
     }
 
-    public Result giveBouquet(String input) {
-        int uIndex = input.indexOf('u');
-        String username = "";
-        input = input.substring(uIndex + 1);
+    public Result giveBouquet(String username) {
         Player currentPlayer = Game.getCurrentPlayer();
         Player targetPlayer = Game.getPlayerByUsername(username);
         Item bouquet = Game.getDatabase().getItem("bouquet");
@@ -343,7 +338,6 @@ public class GameMenuController extends MenuController {
             return new Result(false, "Slow down, lovebird-you're still just friendly acquaintances");
         if (!currentPlayer.getGender().equals("boy"))
             return new Result(false, "Only the boys can propose... for now. Rules of the valley, not mine!");
-        lastRingProposedWith = ring;
         currentPlayer.getBackPack().getInventory().remove(ring, 1);
         targetPlayer.getBackPack().getInventory().put(ring, 1);
         return new Result(true, "");
@@ -361,10 +355,11 @@ public class GameMenuController extends MenuController {
         String username = parts[uIndex + 1];
         Player targetPlayer = Game.getPlayerByUsername(username);
         Player currentPlayer = Game.getCurrentPlayer();
+        Item ring = Game.getDatabase().getItem("Wedding Ring");
         if (input.contains("accept")) {
             currentPlayer.changeLevel(targetPlayer, 4);
-            currentPlayer.getBackPack().getInventory().put(lastRingProposedWith, 1);
-            targetPlayer.getBackPack().getInventory().remove(lastRingProposedWith, 1);
+            currentPlayer.getBackPack().getInventory().put(ring, 1);
+            targetPlayer.getBackPack().getInventory().remove(ring, 1);
             currentPlayer.setSpouse(targetPlayer);
             targetPlayer.setSpouse(currentPlayer);
             // TODO add messages here
@@ -421,6 +416,7 @@ public class GameMenuController extends MenuController {
     public Result showAllQuests() {
         Player player = Game.getCurrentPlayer();
         StringBuilder output = new StringBuilder();
+        if (lastNPC == null) return Result.error("No NPC chosen");
         output.append(lastNPC.getName()).append(" quests for you");
         int index = 0;
         for (Map.Entry<Item, Integer> entry : lastNPC.getRequests().entrySet()) {
@@ -442,6 +438,7 @@ public class GameMenuController extends MenuController {
         } catch (NumberFormatException e) {
             return new Result(false, "Invalid quest index");
         }
+        if (lastNPC == null) return Result.error("No NPC chosen");
         Map.Entry<Item, Integer> quest = lastNPC.getQuest(questIndex);
         if (quest == null) return new Result(false, "Quest not found");
         Player player = Game.getCurrentPlayer();
