@@ -5,7 +5,7 @@ import org.example.models.Product;
 import java.util.List;
 
 public enum AnimalType {
-    Chicken("Chicken", org.example.models.Enums.CoopAndBarnType.Small, 800, List.of(new Product("egg", "", 50, -1))),
+   // Chicken("Chicken", org.example.models.Enums.CoopAndBarnType.Small, 800, List.of(new Product("egg", "", 50, -1))),
 //    Duck(),
 //    Rabbit(),
 //    Dinosaur(),

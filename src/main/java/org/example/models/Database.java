@@ -2,6 +2,8 @@ package org.example.models;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import org.example.models.Enums.BuildingType;
+import org.example.models.Enums.Season;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -56,12 +58,43 @@ public class Database {
         return plantDatabase;
     }
 
-    public void initializeAllItems() {
-        itemDatabase.add(new basicItem("friendshipPoints", 0));
-        // this item will only be used as a gift for incrementing the friendship points between two players or an npc
-        //can't be bought or added to inventory
-    }
 
+    public void initializeStoresAndItems() {
+        itemDatabase.add(new basicItem("friendshipPoints", 0));
+        String json;
+        try {
+            json = new String(Files.readAllBytes(Paths.get("stores.json")));
+        } catch (IOException e) {
+            System.out.println("can't get json.");
+            return;
+        }
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        JsonArray storesArray = jsonObject.get("stores").getAsJsonArray();
+        for (JsonElement store : storesArray) {
+            JsonObject storeObject = store.getAsJsonObject();
+            String storeName = storeObject.get("name").getAsString();
+            int xStart = storeObject.get("xStart").getAsInt();
+            int xEnd = storeObject.get("xEnd").getAsInt();
+            int yStart = storeObject.get("yStart").getAsInt();
+            int yEnd = storeObject.get("yEnd").getAsInt();
+            List<Product> products = new ArrayList<>();
+            JsonArray storeProducts = storeObject.get("products").getAsJsonArray();
+            for (JsonElement storeProduct : storeProducts) {
+                JsonObject storeProductObject = storeProduct.getAsJsonObject();
+                String productName = storeProductObject.get("name").getAsString();
+                int price = storeProductObject.get("price").getAsInt();
+                int limit = storeProductObject.get("limit").getAsInt();
+                String buildingType = storeProductObject.get("buildingType").getAsString();
+                JsonArray seasons = storeProductObject.get("seasons").getAsJsonArray();
+                List<Season> seasonsInStock = new ArrayList<>();
+                for (JsonElement season : seasons) {
+                    seasonsInStock.add(Season.valueOf(season.getAsString()));
+                }
+                products.add(new Product(productName, price, limit, BuildingType.valueOf(buildingType), seasonsInStock));
+            }
+            stores.add(new Store(storeName, products, xStart, xEnd, yStart, yEnd));
+        }
+    }
     public Item getItem(String name) {
         for (Item i : itemDatabase) {
             if (i.getName().equals(name)) {

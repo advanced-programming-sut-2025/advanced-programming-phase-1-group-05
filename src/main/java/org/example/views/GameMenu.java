@@ -2,15 +2,22 @@ package org.example.views;
 
 import org.example.controllers.GameMenuController;
 import org.example.controllers.MenuController;
+import org.example.controllers.StoreController;
 import org.example.models.Enums.GameMenuCommands;
 import org.example.models.Result;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class GameMenu implements org.example.views.AppMenu {
     private final MenuController menuController;
     private final GameMenuController gameMenuController;
+    private final StoreController storeController = new StoreController();
+    private final String giftHistoryRegex = "gift\\s+history\\s+-u\\s+(?<username>.+?)";
+    private final String rateGiftRegex = "gift\\s+rate\\s+-i\\s+(?<giftNumber>\\d+?)\\s+-r\\s+(?<rate>\\d+?)";
+    private final String purchaseRegex = "purchase\\s+(?<productName>.+?)(?:\\s+-n\\s+(?<count>\\d+))?";
+    private final String cheatAddMoney = "cheat\\s+add\\s+(?<count>\\d+?)\\s+dollars";
 
     public GameMenu(MenuController menuController, GameMenuController gameMenuController) {
         this.menuController = menuController;
@@ -19,7 +26,7 @@ public class GameMenu implements org.example.views.AppMenu {
 
     @Override
     public void handleUserInput(String input) {
-        Matcher matcher = null;
+        Matcher matcher;
         if (input.equals("show current menu")) {
             Result result = menuController.showCurrentMenu();
             System.out.println(result.getMessage());
@@ -43,6 +50,20 @@ public class GameMenu implements org.example.views.AppMenu {
             Result result = gameMenuController.nextTurn();
             System.out.println(result.getMessage());
         }
+        else if (input.matches(purchaseRegex)) {
+            matcher = Pattern.compile(purchaseRegex).matcher(input);
+            System.out.println(storeController.purchase(matcher.group("productName"), Integer.parseInt(matcher.group("count"))));
+        }
+        else if (input.matches(cheatAddMoney)) {
+            matcher = Pattern.compile(cheatAddMoney).matcher(input);
+            System.out.println(gameMenuController.cheatAddMoney(Integer.parseInt(matcher.group("count"))));
+        }
+        else if (input.equals("show all products")) {
+            System.out.println(storeController.showAllProducts());
+        }
+        else if (input.equals("show all available products")) {
+            System.out.println(storeController.showAvailableProducts());
+        }
         else if (input.equals("friendships")){
             System.out.println(gameMenuController.showFriendshipLevels().getMessage());
         }
@@ -51,6 +72,18 @@ public class GameMenu implements org.example.views.AppMenu {
         }
         else if (input.matches("talk\\s+history\\s+-u\\s+\\S+")){
             System.out.println(gameMenuController.talkHistory(input).getMessage());
+        }
+        else if (input.equals("gift list")) {
+            System.out.println(gameMenuController.showGiftList());
+        }
+        else if (input.matches(rateGiftRegex)) {
+            matcher = Pattern.compile(rateGiftRegex).matcher(input);
+            System.out.println(gameMenuController.
+                    rateTheGift(Integer.parseInt(matcher.group("giftNumber")), Integer.parseInt(matcher.group("rate"))));
+        }
+        else if (input.matches(giftHistoryRegex)){
+            matcher = Pattern.compile(giftHistoryRegex).matcher(input);
+            System.out.println(gameMenuController.showGiftHistory(matcher.group("username")));
         }
         else if (input.equals("hug\\s+-u\\s+\\S+")){
             System.out.println();

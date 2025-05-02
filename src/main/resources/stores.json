@@ -1,4 +1,5 @@
-[
+{
+"stores": [
   {
     "name": "Blacksmith",
     "xStart": 75,
@@ -155,101 +156,344 @@
       {
         "name": "Joja Cola",
         "price": 75,
-        "limit": -1
+        "limit": -1,
+        "season": [
+          "Spring",
+          "Summer",
+          "Fall",
+          "Winter"
+        ]
       },
       {
         "name": "Ancient Seed",
         "price": 500,
-        "limit": 1
+        "limit": 1,
+        "season": [
+          "Spring",
+          "Summer",
+          "Fall",
+          "Winter"
+        ]
       },
       {
         "name": "Grass Starter",
         "price": 125,
-        "limit": -1
+        "limit": -1,
+        "season": [
+          "Spring",
+          "Summer",
+          "Fall",
+          "Winter"
+        ]
       },
       {
         "name": "Sugar",
         "price": 125,
-        "limit": -1
+        "limit": -1,
+        "season": [
+          "Spring",
+          "Summer",
+          "Fall",
+          "Winter"
+        ]
       },
       {
         "name": "Wheat Flour",
         "price": 125,
-        "limit": -1
+        "limit": -1,
+        "season": [
+          "Spring",
+          "Summer",
+          "Fall",
+          "Winter"
+        ]
       },
       {
         "name": "Rice",
         "price": 250,
-        "limit": -1
+        "limit": -1,
+        "season": [
+          "Spring",
+          "Summer",
+          "Fall",
+          "Winter"
+        ]
       },
       {
         "name": "Parsnip Seed",
         "price": 25,
         "limit": 5,
-        "season": "Spring"
+        "season": [
+          "Spring"
+        ]
       },
       {
         "name": "Bean Starter",
         "price": 75,
         "limit": 5,
-        "season": "Spring"
+        "season": [
+          "Spring"
+        ]
       },
       {
         "name": "Cauliflower Seed",
         "price": 100,
         "limit": 5,
-        "season": "Spring"
+        "season": [
+          "Spring"
+        ]
       },
       {
         "name": "Potato Seed",
         "price": 62,
         "limit": 5,
-        "season": "Spring"
+        "season": [
+          "Spring"
+        ]
       },
       {
         "name": "Strawberry Seed",
         "price": 100,
         "limit": 5,
-        "season": "Spring"
+        "season": [
+          "Spring"
+        ]
       },
       {
         "name": "Tulip Bulb",
         "price": 25,
         "limit": 5,
-        "season": "Spring"
+        "season": [
+          "Spring"
+        ]
       },
       {
         "name": "Kale Seed",
         "price": 87,
         "limit": 5,
-        "season": "Spring"
+        "season": [
+          "Spring"
+        ]
       },
       {
         "name": "Coffee Bean",
         "price": 200,
         "limit": 1,
-        "season": "Spring"
+        "season": [
+          "Spring",
+          "Summer"
+        ]
       },
       {
         "name": "Carrot Seed",
         "price": 5,
         "limit": 10,
-        "season": "Spring"
+        "season": [
+          "Spring"
+        ]
       },
       {
         "name": "Rhubarb Seed",
         "price": 100,
         "limit": 5,
-        "season": "Spring"
+        "season": [
+          "Spring"
+        ]
       },
       {
         "name": "Jazz Seed",
         "price": 37,
         "limit": 5,
-        "season": "Spring"
-      }
+        "season": [
+          "Spring"
+        ]
+      },
       {
-        "name": "Tomato Seed"
+        "name": "Tomato Seed",
+        "price": 62,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Pepper Seed",
+        "price": 50,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Wheat Seed",
+        "price": 12,
+        "limit": 10,
+        "season": [
+          "Summer",
+          "Fall"
+        ]
+      },
+      {
+        "name": "Summer Squash Seed",
+        "price": 10,
+        "limit": 10,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Radish Seed",
+        "price": 50,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Melon Seed",
+        "price": 100,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Hops Starter",
+        "price": 75,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Poppy Seed",
+        "price": 125,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Spangle Seed",
+        "price": 62,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Starfruit Seed",
+        "price": 400,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Sunflower Seed",
+        "price": 125,
+        "limit": 5,
+        "season": [
+          "Summer",
+          "Fall"
+        ]
+      },
+      {
+        "name": "Corn Seed",
+        "price": 187,
+        "limit": 5,
+        "season": [
+          "Summer",
+          "Fall"
+        ]
+      },
+      {
+        "name": "Eggplant Seed",
+        "price": 25,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Pumpkin Seed",
+        "price": 125,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Broccoli Seed",
+        "price": 15,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Amaranth Seed",
+        "price": 87,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Grape Starter",
+        "price": 75,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Beet Seed",
+        "price": 20,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Yam Seed",
+        "price": 75,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Bok Choy Seed",
+        "price": 62,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Fairy Seed",
+        "price": 250,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Rare Seed",
+        "price": 1000,
+        "limit": 1,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Powdermelon Seed",
+        "price": 20,
+        "limit": 10,
+        "season": [
+          "Winter"
+        ]
       }
     ]
   },
@@ -335,7 +579,7 @@
         "price": 100,
         "limit": 1
       }
-      ]
+    ]
   },
   {
     "name": "Carpenter's shop",
@@ -425,5 +669,406 @@
         "limit": 1
       }
     ]
+  },
+  {
+    "name": "Pierre's General Store",
+    "xStart": 25,
+    "xEnd": 40,
+    "yStart": 35,
+    "yEnd": 45,
+    "products": [
+      {
+        "name": "Rice",
+        "price": 75,
+        "limit": -1
+      },
+      {
+        "name": "Wheat Flour",
+        "price": 100,
+        "limit": -1
+      },
+      {
+        "name": "Bouquet",
+        "price": 1000,
+        "limit": 2
+      },
+      {
+        "name": "Wedding Ring",
+        "price": 10000,
+        "limit": 2
+      },
+      {
+        "name": "Dehydrator Recipe",
+        "price": 10000,
+        "limit": 1
+      },
+      {
+        "name": "Grass Starter Recipe",
+        "price": 1000,
+        "limit": 1
+      },
+      {
+        "name": "Sugar",
+        "price": 100,
+        "limit": -1
+      },
+      {
+        "name": "Oil",
+        "price": 200,
+        "limit": -1
+      },
+      {
+        "name": "Vinegar",
+        "price": 200,
+        "limit": -1
+      },
+      {
+        "name": "Deluxe Retaining Soil",
+        "price": 150,
+        "limit": -1
+      },
+      {
+        "name": "Grass Starter",
+        "price": 100,
+        "limit": -1
+      },
+      {
+        "name": "Speed-Gro",
+        "price": 100,
+        "limit": -1
+      },
+      {
+        "name": "Apple Sapling",
+        "price": 4000,
+        "limit": -1
+      },
+      {
+        "name": "Apricot Sapling",
+        "price": 2000,
+        "limit": -1
+      },
+      {
+        "name": "Cherry Sapling",
+        "price": 3400,
+        "limit": -1
+      },
+      {
+        "name": "Orange Sapling",
+        "price": 4000,
+        "limit": -1
+      },
+      {
+        "name": "Peach Sapling",
+        "price": 6000,
+        "limit": -1
+      },
+      {
+        "name": "Pomegranate Sapling",
+        "price": 6000,
+        "limit": -1
+      },
+      {
+        "name": "Basic Retaining Soil",
+        "price": 100,
+        "limit": -1
+      },
+      {
+        "name": "Quality Retaining Soil",
+        "price": 150,
+        "limit": -1
+      },
+      {
+        "name": "Large Pack",
+        "price": 2000,
+        "limit": 1
+      },
+      {
+        "name": "Deluxe Pack",
+        "price": 10000,
+        "limit": 1
+      },
+      {
+        "name": "Parsnip Seed",
+        "price": 20,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Bean Starter",
+        "price": 60,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Cauliflower Seed",
+        "price": 80,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Potato Seed",
+        "price": 50,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Tulip Bulb",
+        "price": 20,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Kale Seed",
+        "price": 70,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Jazz Seed",
+        "price": 30,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Garlic Seed",
+        "price": 40,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Rice Shoot",
+        "price": 40,
+        "limit": 5,
+        "season": [
+          "Spring"
+        ]
+      },
+      {
+        "name": "Melon Seed",
+        "price": 80,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Tomato Seed",
+        "price": 50,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Blueberry Seed",
+        "price": 80,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Pepper Seed",
+        "price": 40,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Wheat Seed",
+        "price": 10,
+        "limit": 5,
+        "season": [
+          "Summer",
+          "Fall"
+        ]
+      },
+      {
+        "name": "Radish Seed",
+        "price": 40,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Poppy Seed",
+        "price": 100,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Spangle Seed",
+        "price": 50,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Hops Starter",
+        "price": 60,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Corn Seed",
+        "price": 150,
+        "limit": 5,
+        "season": [
+          "Summer",
+          "Fall"
+        ]
+      },
+      {
+        "name": "Sunflower Seed",
+        "price": 200,
+        "limit": 5,
+        "season": [
+          "Summer",
+          "Fall"
+        ]
+      },
+      {
+        "name": "Red Cabbage Seed",
+        "price": 100,
+        "limit": 5,
+        "season": [
+          "Summer"
+        ]
+      },
+      {
+        "name": "Eggplant Seed",
+        "price": 20,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Pumpkin Seed",
+        "price": 100,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Bok Choy Seed",
+        "price": 50,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Yam Seed",
+        "price": 60,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Cranberry Seed",
+        "price": 240,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Fairy Seed",
+        "price": 200,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Amaranth Seed",
+        "price": 70,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Grape Starter",
+        "price": 60,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      },
+      {
+        "name": "Artichoke Seed",
+        "price": 30,
+        "limit": 5,
+        "season": [
+          "Fall"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Fish Shop",
+    "xStart": 75,
+    "xEnd": 85,
+    "yStart": 85,
+    "yEnd": 95,
+    "products": [
+      {
+        "name": "Fish Smoker Recipe",
+        "price": 10000,
+        "limit": 1
+      },
+      {
+        "name": "Trout Soup",
+        "price": 250,
+        "limit": 1
+      },
+      {
+        "name": "Bamboo Pole",
+        "price": 500,
+        "limit": 1
+      },
+      {
+        "name": "Training Rod",
+        "price": 25,
+        "limit": 1
+      },
+      {
+        "name": "Fiberglass Rod",
+        "price": 1800,
+        "limit": 1
+      },
+      {
+        "name": "Iridium Rod",
+        "price": 7500,
+        "limit": 1
+      }
+    ]
   }
-]
+]}

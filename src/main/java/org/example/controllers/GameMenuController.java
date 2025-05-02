@@ -330,9 +330,9 @@ public class GameMenuController extends MenuController {
     }
 
     public Result askMarriage(String input) {
-        String username = "", ringName = "";
+        String username = "";
         Player targetPlayer = Game.getPlayerByUsername(username);
-        Item ring = Game.getDatabase().getItem(ringName);
+        Item ring = Game.getDatabase().getItem("Wedding Ring");
         Player currentPlayer = Game.getCurrentPlayer();
         if (targetPlayer == null) return new Result(false, "Imaginary partners don't make great spouses.");
         if (Math.abs(currentPlayer.getX() - targetPlayer.getX()) > 1 || Math.abs(currentPlayer.getY() - targetPlayer.getY()) > 1)

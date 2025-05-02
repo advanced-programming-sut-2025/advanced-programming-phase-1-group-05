@@ -1,19 +1,21 @@
 package org.example.models;
 
-import org.example.models.Enums.StoreType;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class Store {
     String storeName;
     NPC storeOwner;
-    List<Product> products;
+    List<Product> products = new ArrayList<>();
     int xStart, xEnd, yStart, yEnd;
 
-    Store(StoreType storeType) {
-        this.storeName = storeType.getStoreName();
-        this.storeOwner = null;
-        this.products = storeType.getProducts();
+    Store(String name, List<Product> products, int xStart, int xEnd, int yStart, int yEnd) {
+        this.storeName = name;
+        this.products.addAll(products);
+        this.xStart = xStart;
+        this.xEnd = xEnd;
+        this.yStart = yStart;
+        this.yEnd = yEnd;
     }
 
     public boolean isInside(int x, int y) {

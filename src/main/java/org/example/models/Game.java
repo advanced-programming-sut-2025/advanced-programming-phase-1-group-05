@@ -34,7 +34,7 @@ public class Game {
         return players;
     }
     public static void startTheGame() {
-        database.initializeAllItems();
+        database.initializeStoresAndItems();
         database.initializePlantDatabase();
         database.loadNPCs();
         Player.initializeFriendships(players);
