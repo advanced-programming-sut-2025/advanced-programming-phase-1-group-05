@@ -42,4 +42,5 @@ public enum ItemLevel {
     public boolean isMaxLevel() {
         return this == ItemLevel.values()[ItemLevel.values().length - 1];
     }
+
 }

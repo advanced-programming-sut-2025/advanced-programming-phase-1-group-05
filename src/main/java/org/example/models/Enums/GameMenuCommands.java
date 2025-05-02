@@ -8,6 +8,7 @@ public enum GameMenuCommands {
     EnergySetCC("set energy -v (?<value>\\d+)"),
     EnergyUnlimitedCC("unlimited energy"),
     ShowInventory("show inventory"),
+    InventoryTrash("inventory trash -i (?<itemName>\\S+) (-n (?<number>\\d+))?"),
     EquipTool("equip tool (?<toolName>\\S+)"),
     ShowCurrentTool("show current tool"),
     ShowAvailableTools("show available tools"),

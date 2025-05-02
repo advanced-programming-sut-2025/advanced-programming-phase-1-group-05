@@ -1,5 +1,6 @@
 package org.example.models;
 
+import org.example.controllers.GameManager;
 import org.example.models.Enums.BackPackType;
 import org.example.models.Skills.*;
 import org.example.models.Tool.*;
@@ -18,6 +19,7 @@ public class Player {
     private final Crafting craftingSkill = new Crafting();
     private final Cooking cookingSkill = new Cooking();
     private final Fishing fishingSkill = new Fishing();
+    private final Mining miningSkill = new Mining();
     private final Foraging foragingSkill = new Foraging();
     private final TrashCan trashCan = new TrashCan();
     private final BackPack backPack = new BackPack();
@@ -26,6 +28,7 @@ public class Player {
     private static final List<Friendship> friendships = new ArrayList<>();
     private int proposalRejectionDaysLeft = 0;
     private static Farm farm;
+    private Map.Entry<Integer, Integer> coordinates;
 
     public Player(User user) {
         this.user = user;
@@ -51,10 +54,12 @@ public class Player {
     public String getGender(){
         return user.gender;
     }
+
     public void faint() {
-        //skip the rest of the day
-        //set current coordinate
-        //waiting for time functionality
+        //TODO use time controller
+        TimeAndDate timeAndDate = new TimeAndDate();
+        timeAndDate.advanceDay();
+        //TODO waking up in the same spot
         energy *= 0.75;
     }
 
@@ -74,6 +79,9 @@ public class Player {
     public Farming getFarmingSkill() {return farmingSkill;}
     public Foraging getForagingSkill() {return foragingSkill;}
     public Fishing getFishingSkill() {return fishingSkill;}
+    public Mining getMiningSkill() {
+        return miningSkill;
+    }
     public Map.Entry<Integer, Integer> getCoordinate() {
         return new AbstractMap.SimpleEntry<>(x, y);
     }

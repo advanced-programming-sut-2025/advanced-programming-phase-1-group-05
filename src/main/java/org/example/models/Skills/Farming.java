@@ -2,6 +2,7 @@ package org.example.models.Skills;
 
 import org.example.models.*;
 import org.example.models.Enums.ItemLevel;
+import org.example.models.Enums.TileType;
 import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Scythe;
 import org.example.models.Tool.WateringCan;
@@ -24,10 +25,11 @@ public class Farming implements Skill{
         } else if(getSeedType(seed) == "tree") {
             Game.getGameMap().addTree(getTreeType(seed));
         }
+        increaseCapacity();
         return true;
     }
 
-    //کود دادن
+    //fertilize crop
     public boolean fertilizeCrop(Map.Entry<Integer, Integer> coordinantes, String fertilizer) {
         HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
         for(Item item : items.keySet()) {
@@ -40,12 +42,29 @@ public class Farming implements Skill{
         }
         return false;
     }
-    //آبیاری
-    public Result waterCrop(GameTile tile, WateringCan wateringCan) {return null;}
-    //درو کردن
-    public void harvestCrop(GameTile tile, Scythe scythe) {}
 
-    //seed kind
+    //water crop
+    public void waterCrop(GameTile tile) {
+        GameMap map = Game.getGameMap();
+        for(FruitAndVegetable f : map.getPlants()) {
+            if(map.getTile(f.getCoordinates().getKey(), f.getCoordinates().getValue()) == tile) {
+                f.waterCrop();
+            }
+        }
+    }
+
+    //harvest crop
+    public void harvestCrop(GameTile tile) {
+        GameMap map = Game.getGameMap();
+        for(FruitAndVegetable f : map.getPlants()) {
+            if(map.getTile(f.getCoordinates().getKey(), f.getCoordinates().getValue()) == tile) {
+                Game.getCurrentPlayer().getBackPack().addToInventory(f, 1);
+                map.getPlants().remove(f);
+            }
+        }
+    }
+
+    //seed type
     public String getSeedType(Seed seed){
         for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
             if(f.getSeed().equals(seed.getName())){
@@ -101,5 +120,9 @@ public class Farming implements Skill{
             return true;
         }
         return false;
+    }
+    @Override
+    public void increaseCapacity() {
+        this.capacity += 5;
     }
 }

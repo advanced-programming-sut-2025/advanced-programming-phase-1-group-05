@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import org.example.models.Game;
 import org.example.models.Result;
 import org.example.models.Enums.Menu;
 import org.example.models.User;
@@ -93,6 +94,7 @@ public class MenuController {
 
     public void run() {
         while (true) {
+
             String input = scanner.nextLine().trim();
 
             if (input.equals("show current menu")) {

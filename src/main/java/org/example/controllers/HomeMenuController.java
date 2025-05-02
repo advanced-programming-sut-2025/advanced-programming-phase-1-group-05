@@ -121,7 +121,7 @@ public class HomeMenuController {
         }
         if(Game.getCurrentPlayer().getBackPack().isInventoryFull())
             return new Result(false, "Inventory is full");
-        
+
         Game.getCurrentPlayer().getCookingSkill().cookFood(food);
         return new Result(true, "Your food is cooked and ready!");
     }

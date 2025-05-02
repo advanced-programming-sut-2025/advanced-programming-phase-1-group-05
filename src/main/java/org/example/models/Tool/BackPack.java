@@ -22,16 +22,15 @@ public class BackPack implements Tool <BackPackType>{
         return inventory;
     }
 
-    public void addToInventory(Item item, int amount) {
+    public Result addToInventory(Item item, int amount) {
         if(getInventoryCapacity() + amount <= level.getCapacity()) {
             if(!inventory.containsKey(item)) inventory.put(item, inventory.getOrDefault(item, 0) + amount);
             else inventory.put(item, inventory.get(item) + amount);
-            System.out.println(item.getName() + " successfully added to your inventory");
+            return new Result(true, item.getName() + " successfully added to your inventory");
         } else {
-            System.out.println("You're backpack is full! Upgrade to store more items");
+            return new Result(false, "You're backpack is full! Upgrade to store more items");
         }
     }
-
 
     public Result removeFromInventory(Item item, int amount) {
         if(!inventory.containsKey(item)) return new Result(false, "No such item in your inventory");
@@ -75,9 +74,8 @@ public class BackPack implements Tool <BackPackType>{
         return 0;
     }
     @Override
-    public void use(Map.Entry<Integer, Integer> coordinates){
-
-
+    public Result use(Map.Entry<Integer, Integer> coordinates){
+        return new Result(true, "");
     }
     @Override
     public void reduceEnergy(int amount){

@@ -31,8 +31,9 @@ public class TrashCan implements Tool <ItemLevel> {
         return 1000;
     }
     @Override
-    public void use(HashMap.Entry<Integer, Integer> coordinates) {
+    public Result use(HashMap.Entry<Integer, Integer> coordinates) {
         //nada
+        return new Result(false, "");
     }
     @Override
     public void reduceEnergy(int amount){
