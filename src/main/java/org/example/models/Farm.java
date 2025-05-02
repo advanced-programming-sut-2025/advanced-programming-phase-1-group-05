@@ -2,18 +2,25 @@ package org.example.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Farm {
-    private Player owner;
+    private List<Player> owner = new ArrayList<>();
     // TODO make this a list of owners for after marriage
     private HashMap<Food, Integer> refrigeratedFoods = new HashMap<>();
     private final ShippingBin shippingBin = new ShippingBin();
     //TODO the shipping bin coordinates should be in the farm
 //    private final int startX, startY, endX, endY;
 
+    public Farm (Player player){
+        owner.add(player);
+    }
 
-    public Player getOwner() {
-        return owner;
+    public boolean isOwner(Player player) {
+        return  owner.contains(player);
+    }
+    public void addOwner(Player player){
+        owner.add(player);
     }
     public HashMap<Food, Integer> getRefrigeratedFoods() {
         return refrigeratedFoods;
