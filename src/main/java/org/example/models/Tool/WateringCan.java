@@ -5,6 +5,7 @@ import org.example.models.Enums.TileType;
 import org.example.models.Game;
 import org.example.models.GameMap;
 import org.example.models.GameTile;
+import org.example.models.Result;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,7 @@ public class WateringCan implements Tool<ItemLevel> {
     int waterlevel = level.getWateringcanCapacity();
 
     @Override
-    public void use(Map.Entry<Integer, Integer> coordinates){
+    public Result use(Map.Entry<Integer, Integer> coordinates){
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         ItemLevel farmingLevel = Game.getCurrentPlayer().getFarmingSkill().getLevel();
@@ -23,8 +24,7 @@ public class WateringCan implements Tool<ItemLevel> {
         if(tile.getTileType() == TileType.Plant) {
             if(farmingLevel.isMaxLevel()) energyUsage --;
             reduceEnergy(energyUsage);
-            //water crop
-            Game.getCurrentPlayer().getFarmingSkill().waterCrop(tile, this);
+            Game.getCurrentPlayer().getFarmingSkill().waterCrop(tile);
             if(waterlevel - 1 < 9) waterlevel = 0;
             else waterlevel--;
         } else if(tile.getTileType() == TileType.Water) {
@@ -34,9 +34,9 @@ public class WateringCan implements Tool<ItemLevel> {
         } else {
             if(farmingLevel.isMaxLevel()) energyUsage --;
             reduceEnergy(energyUsage - 1);
-            System.out.println("You can't use the watering can on this tile");
+            return new Result(false, "You can't use the watering can on this tile");
         }
-
+        return new Result(true, "");
     }
 
 

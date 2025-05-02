@@ -78,8 +78,7 @@ public class GameMenuController extends MenuController {
 
     //for showing current player's energy level
     public Result showEnergy() {
-        System.out.println("energy :" + Game.getCurrentPlayer().getEnergy());
-        return new Result(true, "");
+        return new Result(true, "energy :" + Game.getCurrentPlayer().getEnergy());
     }
 
     //cheat code set energy
@@ -97,9 +96,13 @@ public class GameMenuController extends MenuController {
     //showing the items in inventory
     public Result showInventory() {
         HashMap<Item, Integer> items = App.getCurrentPlayer().getBackPack().getInventory();
+        StringBuilder output = new StringBuilder();
         for (Item item : items.keySet()) {
-            if (items.get(item) != 0) System.out.println(items.get(item) + " of " + item.getName());
-            return new Result(true, "");
+            if (items.get(item) != 0)
+                output.append(items.get(item)).append(" of ")
+                        .append(item.getName())
+                        .append("\n");
+            return new Result(true, output.toString());
         }
         return new Result(false, "Inventory is empty");
     }
@@ -136,19 +139,20 @@ public class GameMenuController extends MenuController {
     //showing available tools
     public Result showAvailableTools() {
         boolean found = false;
+        StringBuilder output = new StringBuilder();
         for (Item i : App.getCurrentPlayer().getBackPack().getInventory().keySet()) {
             if (i instanceof Tool) {
-                System.out.println("* " + i.getName());
+                output.append("* ").append(i.getName()).append("\n");
                 found = true;
             }
         }
         if (!found) return new Result(true, "You don't have any tools in your inventory");
-        return new Result(true, "");
+        return new Result(true, output.toString());
     }
 
     //upgrade tool
     public Result upgradeTool(String name) {
-        //only available when in ahangary
+        //TODO blacksmith stuff??
         HashMap<Item, Integer> items = App.getCurrentPlayer().getBackPack().getInventory();
         for (Item item : items.keySet()) {
             if (item.getName().equals(name)) {
@@ -164,6 +168,16 @@ public class GameMenuController extends MenuController {
         return new Result(true, "You don't have that tool in your inventory");
     }
 
+    //use tool
+    public Result useTool(String direction) {
+        int[]dir = getDirections(direction);
+        Item currentItem = Game.getCurrentPlayer().getCurrentItem();
+        if(currentItem instanceof Tool) {
+            String message = ((Tool)currentItem).use(new AbstractMap.SimpleEntry<>(Game.getCurrentPlayer().getCoordinate().getKey() + dir[0],
+                    Game.getCurrentPlayer().getCoordinate().getKey() + dir[1])).getMessage();
+            return new Result(true, message);
+        } else return new Result(true, "You aren't equipped with any tool");
+    }
 
     //show craft info
     public Result showCraftInfo(String name) {

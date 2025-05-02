@@ -138,7 +138,10 @@ public class FruitAndVegetable implements Item {
     public void plant(Map.Entry<Integer,Integer> coordinates){
         this.coordinates = coordinates;
     }
-
+    public void waterCrop(){
+        //TODO make sure this resets every day
+        hasBeenWatered = true;
+    }
     public void fertilize(){
         hasBeenFertilized = true;
     }

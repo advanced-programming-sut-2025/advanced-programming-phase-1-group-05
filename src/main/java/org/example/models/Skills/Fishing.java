@@ -34,4 +34,8 @@ public class Fishing implements Skill {
         }
         return false;
     }
+    @Override
+    public void increaseCapacity() {
+        this.capacity += 10;
+    }
 }

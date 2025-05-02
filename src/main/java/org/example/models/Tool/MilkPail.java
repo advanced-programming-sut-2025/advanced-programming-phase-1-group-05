@@ -5,6 +5,7 @@ import org.example.models.Enums.TileType;
 import org.example.models.Game;
 import org.example.models.GameMap;
 import org.example.models.GameTile;
+import org.example.models.Result;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,17 +33,19 @@ public class MilkPail implements Tool<ItemLevel> {
     }
 
     @Override
-    public void use(HashMap.Entry<Integer, Integer> coordinates){
+    public Result use(HashMap.Entry<Integer, Integer> coordinates){
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
 
-        //if there's an animal on the tile (idk how to implement)
+        //TODO animal on tile
+
         if(true) {
             Game.getCurrentPlayer().getAnimalCare().milkAnimal(tile);
         } else {
-            System.out.println("No animal to milk!");
+            return new Result(false, "No animal to milk!");
         }
         reduceEnergy(4);
+        return new Result(true, "");
     }
 
     @Override

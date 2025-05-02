@@ -57,4 +57,8 @@ public class Cooking implements Skill{
         }
         return false;
     }
+    @Override
+    public void increaseCapacity() {
+
+    }
 }

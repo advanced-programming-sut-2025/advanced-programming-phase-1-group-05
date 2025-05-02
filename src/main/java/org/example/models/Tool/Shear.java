@@ -5,6 +5,7 @@ import org.example.models.Enums.TileType;
 import org.example.models.Game;
 import org.example.models.GameMap;
 import org.example.models.GameTile;
+import org.example.models.Result;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,18 +33,21 @@ public class Shear implements Tool<ItemLevel> {
     }
 
     @Override
-    public void use(HashMap.Entry<Integer, Integer> coordinates) {
+    public Result use(HashMap.Entry<Integer, Integer> coordinates) {
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
 
-        //if there's sheep on the tile
+        //TODO sheep on tile
+
         if(true) {
             Game.getCurrentPlayer().getAnimalCare().shaveAnimal(tile);
         } else {
-            System.out.println("No sheep on this tile!");
+            return new Result(false, "No sheep on this tile!");
         }
         reduceEnergy(4);
+        return new Result(true, "");
     }
+
     @Override
     public void reduceEnergy(int amount){
         if(amount < 0) amount = 0;
