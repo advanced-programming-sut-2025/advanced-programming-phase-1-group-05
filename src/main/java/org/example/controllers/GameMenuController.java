@@ -12,7 +12,6 @@ public class GameMenuController extends MenuController {
     public static User currentUser;
     private static Map<String, Game> activeGames = new HashMap<>();
     private Game pendingGame;
-    private List<User> selectedPlayers;
     boolean canChooseMap = false;
 
     public GameMenuController(Scanner scanner, User currentUser) {
@@ -31,8 +30,8 @@ public class GameMenuController extends MenuController {
             return Result.error("Invalid command format! Use: game new -u <username1> <username2> <username3>");
         }
 
-        selectedPlayers = new ArrayList<>();
-        selectedPlayers.add(currentUser);
+        List<Player> selectedPlayers = new ArrayList<>();
+        selectedPlayers.add(new Player(currentUser));
 
         for (int i = 1; i <= 3; i++) {
             String username = matcher.group("username" + i);
@@ -41,14 +40,15 @@ public class GameMenuController extends MenuController {
                 if (user == null) {
                     return Result.error("User '" + username + "' not found!");
                 }
-                selectedPlayers.add(user);
+                Player player = new Player(user);
+                selectedPlayers.add(player);
                 currentUser.addFriend(username);
             }
         }
-
         System.out.println("Please enter map number (1-3):");
         canChooseMap = true;
-        pendingGame = new Game(); // ایجاد بازی موقت
+        //pendingGame = new Game(); // ایجاد بازی موقت
+        Game.getAllPlayers().addAll(selectedPlayers);
         return Result.success("Waiting for map selection...");
     }
 
@@ -241,9 +241,9 @@ public class GameMenuController extends MenuController {
         return new Result(true, output.toString());
     }
 
-    public Result giftPlayer(String input) {
-        String username = "", itemName = "";
-        int amount = 0;
+    public Result giftPlayer(Matcher matcher) {
+        String username = matcher.group("username"), itemName = matcher.group("itemName");
+        int amount = Integer.parseInt(matcher.group("amount"));
         Item item = Game.getDatabase().getItem(itemName);
         Player currentPlayer = Game.getCurrentPlayer();
         Player targetPlayer = Game.getPlayerByUsername(username);
