@@ -101,4 +101,10 @@ public class GameMap {
     public void placeItemOnTile(Item item, int x, int y) {}
 
     public void removeItemFromTile(int x, int y) {}
+
+    public void growPlants(){
+        for(FruitAndVegetable f: plants){
+            f.grow();
+        }
+    }
 }
