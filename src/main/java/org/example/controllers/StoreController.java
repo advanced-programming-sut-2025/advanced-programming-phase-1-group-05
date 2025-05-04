@@ -57,11 +57,15 @@ public class StoreController {
         if (!store.contains(product)) {
             return Result.error("This store doesn't have that product. Maybe try shopping elsewhere.");
         }
-
+        if (!product. isInSeason(store)) {
+            return Result.error("This product isn't available in " + GameManager.getSeason() + " in this store.");
+        }
         if(product.getRemainingForToday() < count) {
             return Result.error("Can't purchase any more of that. come back tomorrow!");
         }
-        return null;
+
+        player.getBackPack().addToInventory(product, count);
+        return Result.success("Purchased " + productName + " successfully!");
     }
 
     public Result sell(String productName, int count) {
