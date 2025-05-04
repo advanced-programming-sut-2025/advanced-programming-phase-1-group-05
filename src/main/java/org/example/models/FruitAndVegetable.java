@@ -1,5 +1,7 @@
 package org.example.models;
 
+import org.example.GrowthStep;
+import org.example.models.Enums.GrowthStage;
 import org.example.models.Enums.Season;
 
 import java.util.*;
@@ -8,9 +10,7 @@ public class FruitAndVegetable implements Item {
     private Map.Entry<Integer,Integer> coordinates;
     private final String name;
     private int price;
-
     private final String seed;
-    private final String growthStage;
     private boolean fullyGrown;
     private final int totalHarvestTime;
     private final boolean oneTime;
@@ -22,21 +22,39 @@ public class FruitAndVegetable implements Item {
     private boolean protectedByScareCrow;
     private boolean hasBeenWatered;
     private boolean hasBeenFertilized;
+    private int age;
+    private List<GrowthStep> growthTimeline;
+    private int currentGrowthStage;
+    private boolean isFullyGrown;
+    private final String growthStage;
 
 
     public FruitAndVegetable(String name, int price, String seed, String growthStage, int totalHarvestTime, boolean oneTime, int regrowthTime, boolean isEdible,
-                             int energy, List<Season> seasons, boolean isGiantifiable) {
+                             int energy, String seasons, boolean canBecomeGiant) {
         this.name = name;
         this.price = price;
         this.seed = seed;
         this.growthStage = growthStage;
+        this.growthTimeline = new ArrayList<>();
+        int stageIndex = 1;
+        String[]growthStages = growthStage.split("-");
+        for(String gs : growthStages) {
+            //i have no idea what im doing
+            growthTimeline.add(new GrowthStep(GrowthStage.valueOf(String.valueOf(stageIndex)), Integer.parseInt(gs)));
+        }
         this.totalHarvestTime = totalHarvestTime;
         this.oneTime = oneTime;
         this.regrowthTime = regrowthTime;
         this.isEdible = isEdible;
         this.energy = energy;
-        this.seasons = seasons;
-        this.canBecomeGiant = isGiantifiable;
+
+        String[] seasonNames = seasons.split("& ");
+        List<Season> seasonList = new ArrayList<>();
+        seasonList.add(Season.valueOf(seasonNames[0]));
+        this.seasons = seasonList;
+
+        this.canBecomeGiant = canBecomeGiant;
+        this.age = 0;
     }
 
     public void showCropInformation(){
@@ -139,11 +157,25 @@ public class FruitAndVegetable implements Item {
         this.coordinates = coordinates;
     }
     public void waterCrop(){
-        //TODO make sure this resets every day
         hasBeenWatered = true;
     }
     public void fertilize(){
         hasBeenFertilized = true;
+    }
+
+    public void grow(){
+        if(hasBeenWatered && currentGrowthStage < growthTimeline.size()) {
+            GrowthStep currentStage = growthTimeline.get(currentGrowthStage);
+            age++;
+
+            if(age > currentStage.getDays()) {
+                currentGrowthStage++;
+                if(currentGrowthStage >= growthTimeline.size()) {
+                    isFullyGrown = true;
+                }
+            }
+            hasBeenWatered = false;
+        }
     }
     @Override
     public String getName() {

@@ -34,6 +34,7 @@ public class TimeAndDate {
             day = 1;
             season = season.next();
         }
+        Game.getGameMap().growPlants();
         GameManager.nextDay();
     }
     public Season getCurrentSeason() { return season; }
