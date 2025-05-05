@@ -90,4 +90,8 @@ public class GameManager {
         }
         return "wtf intellij";
     }
+
+    public static int getCurrentHour() {
+        return gameClock.getHour();
+    }
 }

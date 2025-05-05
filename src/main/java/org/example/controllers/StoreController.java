@@ -1,6 +1,9 @@
 package org.example.controllers;
 
 import org.example.models.*;
+import org.example.models.Tool.Tool;
+
+import java.util.regex.Matcher;
 
 public class StoreController {
 
@@ -19,6 +22,8 @@ public class StoreController {
         Store store = getCurrentStore();
         if (store == null)
             return Result.error("No store, no shelves, no products.");
+        if (!store.isOpen(GameManager.getCurrentHour()))
+           return Result.error("store not open right now.");
         output.append("All products: \n");
         for (Product product : store.getProducts()) {
                 output.append(product.getName()).append(" ").append(product.getPrice()).append("\n");
@@ -31,6 +36,8 @@ public class StoreController {
         Store store = getCurrentStore();
         if (store == null)
             return Result.error("No store, no shelves, no products.");
+        if (!store.isOpen(GameManager.getCurrentHour()))
+            return Result.error("store not open right now.");
         output.append("Available products:\n");
         for (Product product : store.getProducts()) {
             if (product.isAvailable()) {
@@ -39,11 +46,16 @@ public class StoreController {
         }
         return Result.success(output.toString());
     }
-    public Result purchase(String productName, int count) {
+    public Result purchase(Matcher m) {
+        String productName = m.group("productName");
+        int count = Integer.parseInt(m.group("count"));
+
         Store store = getCurrentStore();
         if (store == null) {
             return Result.error("Nice try, but the valley's still one solar panel away from online shopping.");
         }
+        if (!store.isOpen(GameManager.getCurrentHour()))
+            return Result.error("store not open right now.");
         Player player = Game.getCurrentPlayer();
         Product product = store.getProduct(productName);
         if (product == null) {
@@ -64,12 +76,14 @@ public class StoreController {
             return Result.error("Can't purchase any more of that. come back tomorrow!");
         }
 
+        player.addGold(-product.getPrice()*count);
         player.getBackPack().addToInventory(product, count);
         return Result.success("Purchased " + productName + " successfully!");
     }
 
-    public Result sell(String productName, int count) {
-
+    public Result sell(Matcher m) {
+        int count = Integer.parseInt(m.group("count"));
+        String productName = m.group("productName");
         Player currentPlayer = Game.getCurrentPlayer();
         Item item = Game.getDatabase().getItem(productName);
         if (item == null) return Result.error("try selling something that exists!");
@@ -81,6 +95,9 @@ public class StoreController {
 
         if (!currentPlayer.getFarm().getShippingBin().isNear(currentPlayer.getX(), currentPlayer.getY()))
             return Result.error("You can't just toss things into air and hope for a sale. Find a shipping bin first.");
+        if (item instanceof Tool<?>) {
+            return Result.error("Nice try, but the shipping bin has standards. Tools not accepted.");
+        }
         Game.soldItems.put(currentPlayer, item);
         return Result.success("You will recieve the gold tomorrow morning!");
     }

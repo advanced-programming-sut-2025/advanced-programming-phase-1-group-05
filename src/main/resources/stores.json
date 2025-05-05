@@ -6,6 +6,8 @@
     "xEnd": 85,
     "yStart": 10,
     "yEnd": 18,
+    "openingTime": 9,
+    "closingTime": 16,
     "products": [
       {
         "name": "Copper Ore",
@@ -80,6 +82,8 @@
     "xEnd": 30,
     "yStart": 70,
     "yEnd": 80,
+    "openingTime": 9,
+    "closingTime": 16,
     "products": [
       {
         "name": "Hay",
@@ -152,6 +156,8 @@
     "xEnd": 60,
     "yStart": 8,
     "yEnd": 18,
+    "openingTime": 9,
+    "closingTime": 23,
     "products": [
       {
         "name": "Joja Cola",
@@ -503,6 +509,8 @@
     "xEnd": 60,
     "yStart": 35,
     "yEnd": 45,
+    "openingTime": 12,
+    "closingTime": 24,
     "products": [
       {
         "name": "Beer",
@@ -587,6 +595,8 @@
     "xEnd": 20,
     "yStart": 8,
     "yEnd": 18,
+    "openingTime": 9,
+    "closingTime": 20,
     "products": [
       {
         "name": "Wood",
@@ -676,6 +686,8 @@
     "xEnd": 40,
     "yStart": 35,
     "yEnd": 45,
+    "openingTime": 9,
+    "closingTime": 17,
     "products": [
       {
         "name": "Rice",
@@ -1038,6 +1050,8 @@
     "xEnd": 85,
     "yStart": 85,
     "yEnd": 95,
+    "openingTime": 9,
+    "closingTime": 17,
     "products": [
       {
         "name": "Fish Smoker Recipe",

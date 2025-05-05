@@ -338,9 +338,9 @@ public class GameMenuController extends MenuController {
             return new Result(false, "Slow down, lovebird-you're still just friendly acquaintances");
         if (!currentPlayer.getGender().equals("boy"))
             return new Result(false, "Only the boys can propose... for now. Rules of the valley, not mine!");
-        currentPlayer.getBackPack().getInventory().remove(ring, 1);
-        targetPlayer.getBackPack().getInventory().put(ring, 1);
-        return new Result(true, "");
+
+        currentPlayer.hasProposed(targetPlayer);
+        return new Result(true, "Now we wait...");
     }
 
     public Result respondToProposal(String input) {
@@ -356,7 +356,11 @@ public class GameMenuController extends MenuController {
         Player targetPlayer = Game.getPlayerByUsername(username);
         Player currentPlayer = Game.getCurrentPlayer();
         Item ring = Game.getDatabase().getItem("Wedding Ring");
+        if (targetPlayer == null)
+            return Result.error("");
         if (input.contains("accept")) {
+            if (!targetPlayer.hasProposed(currentPlayer))
+                return Result.error("You dramatically accept... nothing. Nobody proposed, drama queen.");
             currentPlayer.changeLevel(targetPlayer, 4);
             currentPlayer.getBackPack().getInventory().put(ring, 1);
             targetPlayer.getBackPack().getInventory().remove(ring, 1);
@@ -364,6 +368,8 @@ public class GameMenuController extends MenuController {
             targetPlayer.setSpouse(currentPlayer);
             // TODO add messages here
         } else if (input.contains("reject")) {
+            if (!targetPlayer.hasProposed(currentPlayer))
+                return Result.error("That's a bold rejection for someone who hasn't been proposed to.");
             currentPlayer.changeLevel(targetPlayer, 0);
             targetPlayer.setProposalRejectionDaysLeft(7);
         }

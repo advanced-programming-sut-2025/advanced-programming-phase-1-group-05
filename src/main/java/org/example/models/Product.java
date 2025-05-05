@@ -1,6 +1,8 @@
 package org.example.models;
 
+import org.example.controllers.GameManager;
 import org.example.models.Enums.BuildingType;
+import org.example.models.Enums.GameMenuCommands;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.Season;
 
@@ -15,6 +17,8 @@ public class Product implements Item {
     private int soldToday = 0;
     private final BuildingType buildingType;
     private final List<Season> seasons = new ArrayList<>();
+    private ItemLevel itemLevel = ItemLevel.Normal;
+
 
     public Product(String name, int price, int limit
     , BuildingType buildingType, List<Season> seasons) {
@@ -23,16 +27,37 @@ public class Product implements Item {
         this.limit = limit;
         this.buildingType = buildingType;
         this.seasons.addAll(seasons);
+        this.setItemLevel();
     }
 
+
+    public void setItemLevel() {
+        String[] parts = name.split("\\s+");
+        try {
+            itemLevel = ItemLevel.valueOf(parts[0]);
+        }
+        catch (IllegalArgumentException e) {
+            itemLevel = ItemLevel.Normal;
+        }
+
+    }
     public String getName() {
         return name;
     }
 
     public int getPrice() {
-        return price;
+        if (!seasons.contains(GameManager.getSeason())) {
+            return (int) (price * 3 / 2.0 * itemLevel.getPriceCoefficient());
+        }
+        return (int) (price * itemLevel.getPriceCoefficient());
     }
 
+    public boolean isInSeason(Store store) {
+        if (store.getStoreName().equals("Joja Mart")) {
+            return seasons.contains(GameManager.getSeason());
+        }
+        return true;
+    }
     @Override
     public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
         //booooo not necessary

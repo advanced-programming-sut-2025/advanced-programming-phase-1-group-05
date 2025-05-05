@@ -181,10 +181,18 @@ public class Player {
         this.proposalRejectionDaysLeft = proposalRejectionDaysLeft;
     }
 
+    public void proposed(Player player) {
+        Friendship friendship = getFriendship(this, player);
+        if (friendship!= null) friendship.Proposed();
+    }
     public void decrementProposalRejectionDaysLeft() {
         proposalRejectionDaysLeft--;
     }
-
+    public boolean hasProposed(Player player) {
+        Friendship friendship = getFriendship(this, player);
+        if (friendship == null) return false;
+        return friendship.hasProposed;
+    }
     public Farm getFarm(){
         return farm;
     }
@@ -193,6 +201,7 @@ public class Player {
         private final Player player2;
         private int xpPoints = 0;
         private int friendshipLevel = 0;
+        private boolean hasProposed = false;
         public Friendship(Player player1, Player player2) {
             this.player1 = player1;
             this.player2 = player2;
@@ -231,6 +240,13 @@ public class Player {
             return xpPoints >= 1000;
         }
 
+        public void Proposed(){
+            hasProposed = true;
+        }
+
+        public boolean HasProposed() {
+            return hasProposed;
+        }
     }
     private static class SharedWallet {
         private int gold;

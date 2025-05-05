@@ -46,14 +46,17 @@ public class GameMenu implements org.example.views.AppMenu {
             Result result = gameMenuController.nextTurn();
             System.out.println(result.getMessage());
         } else if ((matcher = GameMenuCommands.Purchase.getMatcher(input)) != null) {
-            System.out.println(storeController.purchase(matcher.group("productName"), Integer.parseInt(matcher.group("count"))));
+            System.out.println(storeController.purchase(matcher));
         } else if ((matcher = GameMenuCommands.CheatAddMoney.getMatcher(input)) != null) {
             System.out.println(gameMenuController.cheatAddMoney(Integer.parseInt(matcher.group("count"))));
         } else if (input.equals("show all products")) {
             System.out.println(storeController.showAllProducts());
         } else if (input.equals("show all available products")) {
             System.out.println(storeController.showAvailableProducts());
-        } else if (input.equals("friendships")) {
+        }else if ((matcher = GameMenuCommands.Sell.getMatcher(input)) != null) {
+            System.out.println(storeController.sell(matcher));
+        }
+        else if (input.equals("friendships")) {
             System.out.println(gameMenuController.showFriendshipLevels().getMessage());
         } else if (input.matches("talk\\s+-u\\s+\\S+-m\\s+.*")) {
             System.out.println(gameMenuController.talkToPlayer(input).getMessage());

@@ -27,7 +27,7 @@ public enum GameMenuCommands {
     RateGift("gift\\s+rate\\s+-i\\s+(?<giftNumber>\\d+?)\\s+-r\\s+(?<rate>\\d+?)"),
     Purchase("purchase\\s+(?<productName>.+?)(?:\\s+-n\\s+(?<count>\\d+))?"),
     CheatAddMoney("cheat\\s+add\\s+(?<count>\\d+?)\\s+dollars"),
-    Sell("sell\\s+<?productName>.+?(?:\\s+-n\\s+(?<count>\\d+))?"),
+    Sell("sell\\s+(<?productName>.+?)(?:\\s+-n\\s+(?<count>\\d+))?"),
     GiveBouquet("flower\\s+-u\\s+(?<username>.+?)"),
     Hug("hug\\s+-u\\s+(?<username>.+?)");
 

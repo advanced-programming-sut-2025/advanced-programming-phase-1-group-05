@@ -8,18 +8,25 @@ public class Store {
     NPC storeOwner;
     List<Product> products = new ArrayList<>();
     int xStart, xEnd, yStart, yEnd;
+    int openingTime, closingTime;
 
-    Store(String name, List<Product> products, int xStart, int xEnd, int yStart, int yEnd) {
+    Store(String name, List<Product> products, int xStart, int xEnd,
+          int yStart, int yEnd, int openingTime, int closingTime) {
         this.storeName = name;
         this.products.addAll(products);
         this.xStart = xStart;
         this.xEnd = xEnd;
         this.yStart = yStart;
         this.yEnd = yEnd;
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
     }
 
     public boolean isInside(int x, int y) {
         return x >= xStart && x <= xEnd && y >= yStart && y <= yEnd;
+    }
+    public boolean isOpen(int currentHour) {
+        return currentHour >= openingTime && currentHour <= closingTime;
     }
     public String getStoreName() {
         return storeName;

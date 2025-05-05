@@ -77,6 +77,8 @@ public class Database {
             int xEnd = storeObject.get("xEnd").getAsInt();
             int yStart = storeObject.get("yStart").getAsInt();
             int yEnd = storeObject.get("yEnd").getAsInt();
+            int openingTime = storeObject.get("openingTime").getAsInt();
+            int closingTime = storeObject.get("closingTime").getAsInt();
             List<Product> products = new ArrayList<>();
             JsonArray storeProducts = storeObject.get("products").getAsJsonArray();
             for (JsonElement storeProduct : storeProducts) {
@@ -90,10 +92,11 @@ public class Database {
                 for (JsonElement season : seasons) {
                     seasonsInStock.add(Season.valueOf(season.getAsString()));
                 }
+
                 products.add(new Product(productName, price, limit, BuildingType.valueOf(buildingType), seasonsInStock));
                 itemDatabase.add(new BasicItem(productName, price));
             }
-            stores.add(new Store(storeName, products, xStart, xEnd, yStart, yEnd));
+            stores.add(new Store(storeName, products, xStart, xEnd, yStart, yEnd, openingTime, closingTime));
         }
     }
     public Item getItem(String name) {
