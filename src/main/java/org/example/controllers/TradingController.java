@@ -7,9 +7,18 @@ import java.util.List;
 
 
 public class TradingController {
+    private static TradingController instance;
     private List<Trade> trades = new ArrayList<>();
     private static final String tradeWithMoney = "trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-a\\s+\\d+\\s+-p\\s+\\d+";
     private static final String tradeWithItem = "trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-a\\s+\\d+\\d+\\s+-ti.*\\s+-ta\\s+.*";
+
+    public TradingController() {
+        instance = this;
+    }
+    public static TradingController getInstance() {
+        if (instance == null) return new TradingController();
+        return instance;
+    }
 
     private Trade getTradeById(int id) {
         for (Trade trade : trades) {

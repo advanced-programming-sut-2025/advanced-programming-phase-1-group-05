@@ -10,13 +10,20 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class MenuController {
+    private static MenuController menuController;
     private org.example.views.AppMenu currentMenu;
     private final Scanner scanner;
 
     public MenuController(Scanner scanner) {
+        menuController = this;
         this.scanner = scanner;
         RegisterMenuController registerController = new RegisterMenuController(scanner);
         this.currentMenu = new RegisterMenu(this, registerController, this.getScanner());
+    }
+
+    public static MenuController getController() {
+        if (menuController == null) return new MenuController(new Scanner(System.in));
+        return menuController;
     }
 
     public Result enterMenu(String menuName) {
@@ -78,7 +85,7 @@ public class MenuController {
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
                 return new RegisterMenu(this, registerController, this.getScanner());
             case TRADE:
-                return new TradeMenu(new TradingController(), this);
+                return TradeMenu.getTradeMenu();
             default: throw new IllegalArgumentException("Unknown menu type");
         }
     }

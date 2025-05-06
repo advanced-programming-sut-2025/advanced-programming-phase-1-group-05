@@ -7,14 +7,20 @@ import org.example.models.Result;
 import java.util.Scanner;
 
 public class TradeMenu implements AppMenu {
+    private static TradeMenu tradeMenu;
     private final TradingController tradingController;
     private final MenuController menuController;
 
     public TradeMenu(TradingController tradingController, MenuController menuController){
+        tradeMenu = this;
         this.tradingController = tradingController;
         this.menuController = menuController;
     }
 
+    public static TradeMenu getTradeMenu(){
+        if (tradeMenu != null) return tradeMenu;
+        return new TradeMenu(TradingController.getInstance(), MenuController.getController());
+    }
     @Override
     public void handleUserInput(String input) {
         if (input.matches("trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-a\\s+\\d+\\s+.*")){
@@ -36,6 +42,9 @@ public class TradeMenu implements AppMenu {
             String menuName = input.substring("menu enter ".length()).trim();
             Result result = menuController.enterMenu(menuName);
             System.out.println(result.getMessage());
+        }
+        else if (input.equals("stop trade")) {
+            menuController.enterMenu("game");
         }
         else {
             System.out.println("Invalid command!");

@@ -53,10 +53,9 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(storeController.showAllProducts());
         } else if (input.equals("show all available products")) {
             System.out.println(storeController.showAvailableProducts());
-        }else if ((matcher = GameMenuCommands.Sell.getMatcher(input)) != null) {
+        } else if ((matcher = GameMenuCommands.Sell.getMatcher(input)) != null) {
             System.out.println(storeController.sell(matcher));
-        }
-        else if (input.equals("friendships")) {
+        } else if (input.equals("friendships")) {
             System.out.println(gameMenuController.showFriendshipLevels().getMessage());
         } else if (input.matches("talk\\s+-u\\s+\\S+-m\\s+.*")) {
             System.out.println(gameMenuController.talkToPlayer(input).getMessage());
@@ -64,23 +63,23 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(gameMenuController.talkHistory(input).getMessage());
         } else if (input.equals("gift list")) {
             System.out.println(gameMenuController.showGiftList());
-        }
-        else if ((matcher = GameMenuCommands.Gift.getMatcher(input)) != null){
+        } else if ((matcher = GameMenuCommands.Gift.getMatcher(input)) != null) {
             System.out.println(gameMenuController.giftPlayer(matcher));
-        }
-        else if ((matcher = GameMenuCommands.RateGift.getMatcher(input)) != null) {
+        } else if ((matcher = GameMenuCommands.RateGift.getMatcher(input)) != null) {
             System.out.println(gameMenuController.
                     rateTheGift(Integer.parseInt(matcher.group("giftNumber")), Integer.parseInt(matcher.group("rate"))));
         } else if ((matcher = GameMenuCommands.GiftHistory.getMatcher(input)) != null) {
             System.out.println(gameMenuController.showGiftHistory(matcher.group("username")));
         } else if ((matcher = GameMenuCommands.Hug.getMatcher(input)) != null) {
             System.out.println(gameMenuController.hugPlayer(matcher.group("username")));
-        }else if ((matcher = GameMenuCommands.GiveBouquet.getMatcher(input)) != null) {
+        } else if ((matcher = GameMenuCommands.GiveBouquet.getMatcher(input)) != null) {
             System.out.println(gameMenuController.giveBouquet(matcher.group("username")));
-        }
-        else if (input.matches("respond\\s+(-accept|-reject)\\s+-u\\s+.*")) {
+        } else if (input.matches("respond\\s+(-accept|-reject)\\s+-u\\s+.*")) {
             System.out.println(gameMenuController.respondToProposal(input));
-        } else if (input.equals("friendship\\s+NPC\\s+list")) {
+        } else if (input.equals("start trade")) {
+            menuController.enterMenu("trade");
+        }
+        else if (input.equals("friendship\\s+NPC\\s+list")) {
             System.out.println(gameMenuController.NPCFriendshipLevels().getMessage());
         } else if (input.matches("meet\\s+NPC\\s+\\S+")) {
             int CIndex = input.indexOf('C');
