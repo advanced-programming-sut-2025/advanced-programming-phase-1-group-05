@@ -72,7 +72,7 @@ public class Farming implements Skill{
             }
         }
         for (Tree tree: Game.getDatabase().getTreeDatabase()) {
-            if(tree.getSeed().equals(seed.getName())){
+            if(tree.getTreeType().getSeed().equals(seed.getName())){
                 return "tree";
             }
         }
@@ -92,7 +92,7 @@ public class Farming implements Skill{
     //get tree type from database
     public Tree getTreeType(Seed seed) {
         for(Tree tree: Game.getDatabase().getTreeDatabase()){
-            if(tree.getSeed().equals(seed.getName())){
+            if(tree.getTreeType().getSeed().equals(seed.getName())){
                 return tree;
             }
         }

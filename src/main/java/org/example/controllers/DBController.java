@@ -46,13 +46,14 @@ public class DBController {
     public static void saveUsers() {
         try {
             FileController.writeTextToFile(
-                    gson.toJson(App.getAllUsers()),
-                    USERS_FILE
+                    gson.toJson(UserDatabase.getAllUsers()),
+                    "src/main/resources/users.json"
             );
         } catch (Exception e) {
             System.err.println("Error saving users: " + e.getMessage());
         }
     }
+
 
     public static void loadCurrentUser() {
         try {
@@ -68,8 +69,8 @@ public class DBController {
     public static void saveCurrentUser() {
         try {
             FileController.writeTextToFile(
-                    gson.toJson(App.getCurrentUser()),
-                    CURRENT_USER_FILE
+                    gson.toJson(RegisterMenuController.currentUser),
+                    "src/main/resources/current_user.json"
             );
         } catch (Exception e) {
             System.err.println("Error saving current user: " + e.getMessage());

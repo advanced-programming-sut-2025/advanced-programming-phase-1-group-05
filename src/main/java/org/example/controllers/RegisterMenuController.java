@@ -76,8 +76,8 @@ public class RegisterMenuController {
         newUser.setEmail(email);
         newUser.setGender(gender);
 
-        UserDatabase.addUser(newUser);
         this.currentUser = newUser;
+        UserDatabase.addUser(newUser);
 
         return new Result(true, "User registered successfully!");
     }

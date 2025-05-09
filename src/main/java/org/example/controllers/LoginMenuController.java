@@ -37,8 +37,7 @@ public class LoginMenuController extends MenuController {
         if (stayLoggedIn) {
             // پیاده‌سازی منطق ذخیره وضعیت ورود
         }
-
-
+        this.currentUser = user;
         return new Result(true, "Logged in successfully!");
 
     }
@@ -74,7 +73,7 @@ public class LoginMenuController extends MenuController {
         }
 
         currentUser.setPassword(newPassword);
-        currentUser = null;
+//        currentUser = null;
         return Result.success("Password changed successfully!");
     }
     public Result handleLoginCommand(String input) {
