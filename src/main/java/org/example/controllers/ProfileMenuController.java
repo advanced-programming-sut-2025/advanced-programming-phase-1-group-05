@@ -192,6 +192,7 @@ public class ProfileMenuController extends MenuController {
         return username.matches(allowedCharsRegex) && hasLower && hasUpper && hasHyphen;
     }
 
+
     private boolean isValidEmail(String email) {
         String localPartRegex = "^[a-zA-Z0-9][a-zA-Z0-9-_.]*[a-zA-Z0-9]";
         String domainPartRegex = "([a-zA-Z0-9-]+\\.[a-zA-Z]{2,})$";
