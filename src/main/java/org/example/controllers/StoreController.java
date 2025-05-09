@@ -2,9 +2,8 @@ package org.example.controllers;
 
 import org.example.models.*;
 import org.example.models.Building.AnimalHouse;
-import org.example.models.Building.Building;
 import org.example.models.Enums.AnimalHouseLevel;
-import org.example.models.Enums.AnimalType;
+import org.example.models.Enums.EnclosureType;
 import org.example.models.Enums.TileType;
 import org.example.models.Tool.Tool;
 
@@ -29,10 +28,10 @@ public class StoreController {
         if (store == null)
             return Result.error("No store, no shelves, no products.");
         if (!store.isOpen(GameManager.getCurrentHour()))
-           return Result.error("store not open right now.");
+            return Result.error("store not open right now.");
         output.append("All products: \n");
         for (Product product : store.getProducts()) {
-                output.append(product.getName()).append(" ").append(product.getPrice()).append("\n");
+            output.append(product.getName()).append(" ").append(product.getPrice()).append("\n");
         }
         return Result.success(output.toString());
     }
@@ -91,8 +90,8 @@ public class StoreController {
         int count = Integer.parseInt(m.group("count"));
         String productName = m.group("productName");
         Player currentPlayer = Game.getCurrentPlayer();
-        Item item = Game.getDatabase().getItem(productName);
-        if (item == null) return Result.error("try selling something that exists!");
+        Item item = currentPlayer.getBackPack().getFromInventory(productName);
+        if (Game.getDatabase().getItem(productName) == null) return Result.error("try selling something that exists!");
         if (currentPlayer.getItemQuantity(item) == 0 )
             return Result.error("You present your empty hands with confidence. Sadly, buyers prefer actual stuff");
         if (currentPlayer.getItemQuantity(item) < count) {
@@ -105,7 +104,7 @@ public class StoreController {
             return Result.error("Nice try, but the shipping bin has standards. Tools not accepted.");
         }
         Game.soldItems.put(currentPlayer, item);
-        return Result.success("You will recieve the gold tomorrow morning!");
+        return Result.success("You will receive the gold tomorrow morning!");
     }
 
     public Result buildAnimalHouse(Matcher m) {
@@ -115,12 +114,12 @@ public class StoreController {
         }
 
         Product product = store.getProduct(m.group("buildingName"));
-        AnimalType type;
+        EnclosureType type;
         if (product.getName().contains("Coop")) {
-            type = AnimalType.COOP;
+            type = EnclosureType.COOP;
         }
         else if (product.getName().contains("Barn")) {
-            type = AnimalType.BARN;
+            type = EnclosureType.BARN;
         }
         else   return Result.error("You can only build a coop or a barn.");
         int x = Integer.parseInt(m.group("x")), y = Integer.parseInt(m.group("y"));

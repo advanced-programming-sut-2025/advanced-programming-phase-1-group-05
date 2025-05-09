@@ -32,6 +32,12 @@ public class BackPack implements Tool <BackPackType>{
         }
     }
 
+    public Item getFromInventory(String name) {
+        for (Map.Entry<Item, Integer> entry : inventory.entrySet()) {
+            if (entry.getKey().getName().equalsIgnoreCase(name)) return entry.getKey();
+        }
+        return null;
+    }
     public Result removeFromInventory(Item item, int amount) {
         if(!inventory.containsKey(item)) return new Result(false, "No such item in your inventory");
         inventory.put(item, inventory.get(item) - amount);

@@ -1,6 +1,7 @@
 package org.example.controllers;
 
 import org.example.models.*;
+import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.Season;
 
 import java.util.Map;
@@ -17,6 +18,16 @@ public class GameManager {
         checkNPCGifts();
         checkForThirdQuest();
         giveBackSoldItemGolds();
+        getAnimalProducts();
+    }
+
+    public static void getAnimalProducts() {
+        for (Player player : Game.getAllPlayers()) {
+            for (AnimalHouse animalHouse : player.getCoopsAndBarns()) {
+                for (Animal animal : animalHouse.getAnimals())
+                    animal.produce();
+            }
+        }
     }
 
     public static void resetEnergy() {
