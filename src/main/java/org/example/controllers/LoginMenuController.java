@@ -73,6 +73,8 @@ public class LoginMenuController extends MenuController {
         }
 
         currentUser.setPassword(newPassword);
+        DBController.saveUsers();
+        DBController.saveCurrentUser();
 //        currentUser = null;
         return Result.success("Password changed successfully!");
     }
