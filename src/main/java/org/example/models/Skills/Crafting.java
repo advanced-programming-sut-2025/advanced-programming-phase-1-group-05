@@ -35,5 +35,9 @@ public class Crafting implements Skill{
         }
         return false;
     }
+    @Override
+    public void increaseCapacity() {
+
+    }
 
 }

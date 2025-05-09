@@ -30,7 +30,7 @@ public class NPC {
             questsStatus.put(i, false);
         }
         Random rand = new Random();
-        daysToUnlockThirdQuest = rand.nextInt(10, 29);
+        daysToUnlockThirdQuest = rand.nextInt(19) + 10;
         // this.residence = residence
     }
 
@@ -105,7 +105,7 @@ public class NPC {
     public void sendGift(Player player){
         Random rand = new Random();
         Item gift = favorites.get(rand.nextInt(favorites.size()));
-        player.getBackPack().addToInventory(gift, rand.nextInt(1, 5));
+        player.getBackPack().addToInventory(gift, rand.nextInt(4)+1);
 
         int messageNumber = rand.nextInt(3);
         if (messageNumber == 0){

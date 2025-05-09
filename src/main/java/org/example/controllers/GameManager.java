@@ -1,7 +1,9 @@
 package org.example.controllers;
 
 import org.example.models.*;
+import org.example.models.Enums.Season;
 
+import java.util.Map;
 import java.util.Random;
 
 public class GameManager {
@@ -9,10 +11,12 @@ public class GameManager {
     public GameManager(){
         gameClock = new TimeAndDate();
     }
+
     public static void nextDay(){
         resetEnergy();
         checkNPCGifts();
         checkForThirdQuest();
+        giveBackSoldItemGolds();
     }
 
     public static void resetEnergy() {
@@ -43,5 +47,51 @@ public class GameManager {
                 }
             }
         }
+    }
+
+    public static void giveBackSoldItemGolds(){
+        for (Map.Entry<Player, Item> entry : Game.soldItems.entrySet()) {
+            entry.getKey().addGold(entry.getValue().getPrice());
+        }
+        Game.soldItems.clear();
+    }
+
+    public static Season getSeason() {
+        return gameClock.getCurrentSeason();
+    }
+
+    public static int getDay() {
+        return gameClock.getDay();
+    }
+
+    public static String getDayOfTheWeek() {
+        switch (getDay() % 7){
+            case 1 -> {
+                return "Saturday";
+            }
+            case 2 -> {
+                return "Sunday";
+            }
+            case 3 -> {
+                return "Monday";
+            }
+            case 4 -> {
+                return "Tuesday";
+            }
+            case 5 -> {
+                return "Wednesday";
+            }
+            case 6 -> {
+                return "Thursday";
+            }
+            case 0 -> {
+                return "Friday";
+            }
+        }
+        return "wtf intellij";
+    }
+
+    public static int getCurrentHour() {
+        return gameClock.getHour();
     }
 }

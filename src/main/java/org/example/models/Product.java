@@ -1,35 +1,86 @@
 package org.example.models;
 
-public class Product implements Item{
+import org.example.controllers.GameManager;
+import org.example.models.Enums.BuildingType;
+import org.example.models.Enums.GameMenuCommands;
+import org.example.models.Enums.ItemLevel;
+import org.example.models.Enums.Season;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class Product implements Item {
     private final String name;
-    private final String description;
     private final int price;
     private final int limit;
-    private boolean available;
+    private int soldToday = 0;
+    private final BuildingType buildingType;
+    private final List<Season> seasons = new ArrayList<>();
+    private ItemLevel itemLevel = ItemLevel.Normal;
 
-    public Product(String name, String description, int price, int limit) {
+
+    public Product(String name, int price, int limit
+    , BuildingType buildingType, List<Season> seasons) {
         this.name = name;
-        this.description = description;
         this.price = price;
         this.limit = limit;
-        this.available = true;
+        this.buildingType = buildingType;
+        this.seasons.addAll(seasons);
+        this.setItemLevel();
+    }
+
+
+    public void setItemLevel() {
+        String[] parts = name.split("\\s+");
+        try {
+            itemLevel = ItemLevel.valueOf(parts[0]);
+        }
+        catch (IllegalArgumentException e) {
+            itemLevel = ItemLevel.Normal;
+        }
+
     }
     public String getName() {
         return name;
     }
-    public String getDescription() {
-        return description;
-    }
+
     public int getPrice() {
-        return price;
+        if (!seasons.contains(GameManager.getSeason())) {
+            return (int) (price * 3 / 2.0 * itemLevel.getPriceCoefficient());
+        }
+        return (int) (price * itemLevel.getPriceCoefficient());
     }
-    public int getLimit() {
-        return limit;
+
+    public boolean isInSeason(Store store) {
+        if (store.getStoreName().equals("Joja Mart")) {
+            return seasons.contains(GameManager.getSeason());
+        }
+        return true;
     }
-    public boolean isAvailable() {
-        return available;
+    @Override
+    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
+        //booooo not necessary
     }
-    public void setAvailable(boolean available) {
-        this.available = available;
+
+    @Override
+    public Map.Entry<Integer, Integer> getCoordinates() {
+        return null;
+    }
+
+
+    public void setSoldToday(int soldToday) {
+        this.soldToday = soldToday;
+    }
+
+    public void addSold(int amount) {
+        soldToday += amount;
+    }
+    public int getRemainingForToday(){
+        return limit - soldToday;
+    }
+
+    public boolean isAvailable(){
+        return getRemainingForToday() > 0;
     }
 }

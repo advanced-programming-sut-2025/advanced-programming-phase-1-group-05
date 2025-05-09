@@ -41,4 +41,8 @@ public class Foraging implements Skill{
     public ItemLevel getLevel(){
         return null;
     }
+    @Override
+    public void increaseCapacity() {
+        this.capacity += 10;
+    }
 }

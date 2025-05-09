@@ -1,57 +1,105 @@
 package org.example.controllers;
 
-import org.example.models.Game;
-import org.example.models.Result;
-import org.example.models.Store;
-import org.example.models.Product;
+import org.example.models.*;
+import org.example.models.Tool.Tool;
 
-import java.util.List;
+import java.util.regex.Matcher;
 
 public class StoreController {
 
-    //for showing all the products in a store
-    public Result showAllProducts(Store store){
-        List<Product> products = store.getProducts();
-        for(Product product : products) {
-            //show product name and price
+    private Store getCurrentStore() {
+        Player player = Game.getCurrentPlayer();
+        for (Store store : Game.getDatabase().getStores()){
+            if (store.isInside(player.getX(), player.getY())){
+                return store;
+            }
         }
         return null;
     }
 
-    //for showing all available products in a store
-    public Result showAvailableProducts(Store store) {
-        List<Product> products = store.getProducts();
-        for (Product product : products) {
+    public Result showAllProducts() {
+        StringBuilder output = new StringBuilder();
+        Store store = getCurrentStore();
+        if (store == null)
+            return Result.error("No store, no shelves, no products.");
+        if (!store.isOpen(GameManager.getCurrentHour()))
+           return Result.error("store not open right now.");
+        output.append("All products: \n");
+        for (Product product : store.getProducts()) {
+                output.append(product.getName()).append(" ").append(product.getPrice()).append("\n");
+        }
+        return Result.success(output.toString());
+    }
+
+    public Result showAvailableProducts() {
+        StringBuilder output = new StringBuilder();
+        Store store = getCurrentStore();
+        if (store == null)
+            return Result.error("No store, no shelves, no products.");
+        if (!store.isOpen(GameManager.getCurrentHour()))
+            return Result.error("store not open right now.");
+        output.append("Available products:\n");
+        for (Product product : store.getProducts()) {
             if (product.isAvailable()) {
-                //show product name and price
+                output.append(product.getName()).append(" ").append(product.getPrice()).append("\n");
             }
         }
-        return null;
+        return Result.success(output.toString());
     }
+    public Result purchase(Matcher m) {
+        String productName = m.group("productName");
+        int count = Integer.parseInt(m.group("count"));
 
-    //for purchasing a product
-    public Result purchase(String productName, Store store, int count) {
-        List<Product> products = store.getProducts();
-        Product productToPurchase = null;
-        for (Product product : products) {
-            if (product.getName().equals(productName)) {
-                productToPurchase = product;
-            }
+        Store store = getCurrentStore();
+        if (store == null) {
+            return Result.error("Nice try, but the valley's still one solar panel away from online shopping.");
+        }
+        if (!store.isOpen(GameManager.getCurrentHour()))
+            return Result.error("store not open right now.");
+        Player player = Game.getCurrentPlayer();
+        Product product = store.getProduct(productName);
+        if (product == null) {
+            return Result.error("That item doesn't exist. But hey, points for creativity!");
         }
 
-        //sell item
-        if(productToPurchase.getLimit() < count) {
-            //can't purchase
-        } else if (Game.getCurrentPlayer().getGold() < productToPurchase.getPrice()){
-            //not enough gold
+        if (player.getGold() < product.getPrice()*count){
+            return Result.error("You reach for your wallet... and it echoes. Try again when it stops crying.");
         }
-        return null;
+
+        if (!store.contains(product)) {
+            return Result.error("This store doesn't have that product. Maybe try shopping elsewhere.");
+        }
+        if (!product. isInSeason(store)) {
+            return Result.error("This product isn't available in " + GameManager.getSeason() + " in this store.");
+        }
+        if(product.getRemainingForToday() < count) {
+            return Result.error("Can't purchase any more of that. come back tomorrow!");
+        }
+
+        player.addGold(-product.getPrice()*count);
+        player.getBackPack().addToInventory(product, count);
+        return Result.success("Purchased " + productName + " successfully!");
     }
 
-    //cheat code for increasing ??
-    public Result addDollars(int amount) {
+    public Result sell(Matcher m) {
+        int count = Integer.parseInt(m.group("count"));
+        String productName = m.group("productName");
+        Player currentPlayer = Game.getCurrentPlayer();
+        Item item = Game.getDatabase().getItem(productName);
+        if (item == null) return Result.error("try selling something that exists!");
+        if (currentPlayer.getItemQuantity(item) == 0 )
+            return Result.error("You present your empty hands with confidence. Sadly, buyers prefer actual stuff");
+        if (currentPlayer.getItemQuantity(item) < count) {
+            return Result.error("You can't sell what you don't have. Unless you're secretly a magician");
+        }
 
-        return null;
+        if (!currentPlayer.getFarm().getShippingBin().isNear(currentPlayer.getX(), currentPlayer.getY()))
+            return Result.error("You can't just toss things into air and hope for a sale. Find a shipping bin first.");
+        if (item instanceof Tool<?>) {
+            return Result.error("Nice try, but the shipping bin has standards. Tools not accepted.");
+        }
+        Game.soldItems.put(currentPlayer, item);
+        return Result.success("You will recieve the gold tomorrow morning!");
     }
 
 

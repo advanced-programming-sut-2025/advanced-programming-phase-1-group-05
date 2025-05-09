@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import org.example.models.Game;
 import org.example.models.Result;
 import org.example.models.Enums.Menu;
 import org.example.models.User;
@@ -9,13 +10,20 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class MenuController {
+    private static MenuController menuController;
     private org.example.views.AppMenu currentMenu;
     private final Scanner scanner;
 
     public MenuController(Scanner scanner) {
+        menuController = this;
         this.scanner = scanner;
         RegisterMenuController registerController = new RegisterMenuController(scanner);
         this.currentMenu = new RegisterMenu(this, registerController, this.getScanner());
+    }
+
+    public static MenuController getController() {
+        if (menuController == null) return new MenuController(new Scanner(System.in));
+        return menuController;
     }
 
     public Result enterMenu(String menuName) {
@@ -76,6 +84,8 @@ public class MenuController {
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
                 return new RegisterMenu(this, registerController, this.getScanner());
+            case TRADE:
+                return TradeMenu.getTradeMenu();
             default: throw new IllegalArgumentException("Unknown menu type");
         }
     }
@@ -91,6 +101,7 @@ public class MenuController {
 
     public void run() {
         while (true) {
+
             String input = scanner.nextLine().trim();
 
             if (input.equals("show current menu")) {

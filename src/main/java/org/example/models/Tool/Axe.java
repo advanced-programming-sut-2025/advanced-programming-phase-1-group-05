@@ -5,6 +5,7 @@ import org.example.models.Enums.TileType;
 import org.example.models.Game;
 import org.example.models.GameMap;
 import org.example.models.GameTile;
+import org.example.models.Result;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +22,7 @@ public class Axe implements Tool <ItemLevel>{
         return 0;
     }
     @Override
-    public void use(HashMap.Entry<Integer, Integer> coordinates){
+    public Result use(HashMap.Entry<Integer, Integer> coordinates){
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         ItemLevel foragingLevel = Game.getCurrentPlayer().getForagingSkill().getLevel();
@@ -29,7 +30,7 @@ public class Axe implements Tool <ItemLevel>{
         if(tile.getTileType() == TileType.Tree) {
             if(foragingLevel.isMaxLevel()) energyUsage --;
             reduceEnergy(energyUsage);
-            //tree sap and wood
+            //TODO tree wood and sap
             tile.setTileType(TileType.Flat);
         } else if(tile.getTileType() == TileType.Wood) {
             if(foragingLevel.isMaxLevel()) energyUsage --;
@@ -39,8 +40,9 @@ public class Axe implements Tool <ItemLevel>{
         } else {
             if(foragingLevel.isMaxLevel()) energyUsage --;
             reduceEnergy(energyUsage -1);
-            System.out.println("You can't use the axe on this tile");
+            return new Result(false, "You can't use the axe on this tile");
         }
+        return new Result(true, "");
     }
     @Override
     public void reduceEnergy(int amount){
@@ -54,7 +56,7 @@ public class Axe implements Tool <ItemLevel>{
     @Override
     public void upgradeLevel(){
         if (!level.isMaxLevel()) {
-            level = level.nextLevel();
+            level = level.upgradeLevel();
             System.out.println(getName() + " upgraded to " + level.getName());
         }
     }

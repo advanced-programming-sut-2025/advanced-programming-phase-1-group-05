@@ -50,5 +50,9 @@ public class AnimalCare implements Skill{
         }
         return false;
     }
+    @Override
+    public void increaseCapacity() {
+        this.capacity += 5;
+    }
 
 }

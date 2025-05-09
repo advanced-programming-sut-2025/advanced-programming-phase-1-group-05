@@ -5,6 +5,7 @@ import org.example.models.Enums.TileType;
 import org.example.models.Game;
 import org.example.models.GameMap;
 import org.example.models.GameTile;
+import org.example.models.Result;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,11 +22,10 @@ public class Pickaxe implements Tool <ItemLevel> {
         return 0;
     }
     @Override
-    public void use(HashMap.Entry<Integer, Integer> coordinates){
+    public Result use(HashMap.Entry<Integer, Integer> coordinates){
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
-        //mining skill level ??
-        ItemLevel miningLevel = Game.getCurrentPlayer().getForagingSkill().getLevel();
+        ItemLevel miningLevel = Game.getCurrentPlayer().getMiningSkill().getLevel();
         int energyUsage = level.getEnergyUsage();
         //or just set to flat
         if(tile.getTileType() == TileType.Stone) {
@@ -43,8 +43,9 @@ public class Pickaxe implements Tool <ItemLevel> {
         } else {
             if(miningLevel.isMaxLevel()) energyUsage --;
             reduceEnergy(energyUsage - 1);
-            System.out.println("You can't use the pickaxe on this tile");
+            return new Result(false, "You can't use the pickaxe on this tile");
         }
+        return new Result(true, "");
     }
 
     @Override
@@ -59,7 +60,7 @@ public class Pickaxe implements Tool <ItemLevel> {
     @Override
     public void upgradeLevel(){
         if (!level.isMaxLevel()) {
-            level = level.nextLevel();
+            level = level.upgradeLevel();
             System.out.println(getName() + " upgraded to " + level.getName());
         }
     }

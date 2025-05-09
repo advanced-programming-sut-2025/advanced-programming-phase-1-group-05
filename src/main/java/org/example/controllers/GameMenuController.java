@@ -12,13 +12,11 @@ public class GameMenuController extends MenuController {
     public static User currentUser;
     private static Map<String, Game> activeGames = new HashMap<>();
     private Game pendingGame;
-    private List<User> selectedPlayers;
     boolean canChooseMap = false;
-    private Item lastRingProposedWith = null;
 
     public GameMenuController(Scanner scanner, User currentUser) {
         super(scanner);
-        this.currentUser = currentUser;
+        currentUser = currentUser;
     }
 
     private NPC lastNPC = null;
@@ -32,8 +30,8 @@ public class GameMenuController extends MenuController {
             return Result.error("Invalid command format! Use: game new -u <username1> <username2> <username3>");
         }
 
-        selectedPlayers = new ArrayList<>();
-        selectedPlayers.add(currentUser);
+        List<Player> selectedPlayers = new ArrayList<>();
+        selectedPlayers.add(new Player(currentUser));
 
         for (int i = 1; i <= 3; i++) {
             String username = matcher.group("username" + i);
@@ -51,14 +49,15 @@ public class GameMenuController extends MenuController {
                 if (user == null) {
                     return Result.error("User '" + username + "' not found!");
                 }
-                selectedPlayers.add(user);
+                Player player = new Player(user);
+                selectedPlayers.add(player);
                 currentUser.addFriend(username);
             }
         }
-
         System.out.println("Please enter map number (1-3):");
         canChooseMap = true;
-        pendingGame = new Game(); // ایجاد بازی موقت
+        //pendingGame = new Game(); // ایجاد بازی موقت
+        Game.getAllPlayers().addAll(selectedPlayers);
         return Result.success("Waiting for map selection...");
     }
 
@@ -87,8 +86,7 @@ public class GameMenuController extends MenuController {
 
     //for showing current player's energy level
     public Result showEnergy() {
-        System.out.println("energy :" + Game.getCurrentPlayer().getEnergy());
-        return new Result(true, "");
+        return new Result(true, "energy :" + Game.getCurrentPlayer().getEnergy());
     }
 
     //cheat code set energy
@@ -106,9 +104,13 @@ public class GameMenuController extends MenuController {
     //showing the items in inventory
     public Result showInventory() {
         HashMap<Item, Integer> items = App.getCurrentPlayer().getBackPack().getInventory();
+        StringBuilder output = new StringBuilder();
         for (Item item : items.keySet()) {
-            if (items.get(item) != 0) System.out.println(items.get(item) + " of " + item.getName());
-            return new Result(true, "");
+            if (items.get(item) != 0)
+                output.append(items.get(item)).append(" of ")
+                        .append(item.getName())
+                        .append("\n");
+            return new Result(true, output.toString());
         }
         return new Result(false, "Inventory is empty");
     }
@@ -145,19 +147,20 @@ public class GameMenuController extends MenuController {
     //showing available tools
     public Result showAvailableTools() {
         boolean found = false;
+        StringBuilder output = new StringBuilder();
         for (Item i : App.getCurrentPlayer().getBackPack().getInventory().keySet()) {
             if (i instanceof Tool) {
-                System.out.println("* " + i.getName());
+                output.append("* ").append(i.getName()).append("\n");
                 found = true;
             }
         }
         if (!found) return new Result(true, "You don't have any tools in your inventory");
-        return new Result(true, "");
+        return new Result(true, output.toString());
     }
 
     //upgrade tool
     public Result upgradeTool(String name) {
-        //only available when in ahangary
+        //TODO blacksmith stuff??
         HashMap<Item, Integer> items = App.getCurrentPlayer().getBackPack().getInventory();
         for (Item item : items.keySet()) {
             if (item.getName().equals(name)) {
@@ -173,6 +176,16 @@ public class GameMenuController extends MenuController {
         return new Result(true, "You don't have that tool in your inventory");
     }
 
+    //use tool
+    public Result useTool(String direction) {
+        int[]dir = getDirections(direction);
+        Item currentItem = Game.getCurrentPlayer().getCurrentItem();
+        if(currentItem instanceof Tool) {
+            String message = ((Tool)currentItem).use(new AbstractMap.SimpleEntry<>(Game.getCurrentPlayer().getCoordinate().getKey() + dir[0],
+                    Game.getCurrentPlayer().getCoordinate().getKey() + dir[1])).getMessage();
+            return new Result(true, message);
+        } else return new Result(true, "You aren't equipped with any tool");
+    }
 
     //show craft info
     public Result showCraftInfo(String name) {
@@ -182,6 +195,11 @@ public class GameMenuController extends MenuController {
         return new Result(true, "");
     }
 
+    public Result cheatAddMoney(int amount){
+        Player player = Game.getCurrentPlayer();
+        player.addGold(amount);
+        return Result.success("added " + amount + " gold");
+    }
     public Result showFriendshipLevels() {
         StringBuilder builder = new StringBuilder();
         Player currentPlayer = Game.getCurrentPlayer();
@@ -232,24 +250,39 @@ public class GameMenuController extends MenuController {
         return new Result(true, output.toString());
     }
 
-    public Result giftPlayer(String input) {
-        String username = "", itemName = "";
-        int amount = 0;
+    public Result giftPlayer(Matcher matcher) {
+        String username = matcher.group("username"), itemName = matcher.group("itemName");
+        int amount = Integer.parseInt(matcher.group("amount"));
         Item item = Game.getDatabase().getItem(itemName);
         Player currentPlayer = Game.getCurrentPlayer();
         Player targetPlayer = Game.getPlayerByUsername(username);
+        if (targetPlayer == null) return Result.error("Invisible friends don't accept gifts, you know!");
+        if (Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1 || Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1)
+            return Result.error("You can't just throw gifts across the valley... get closer first!");
+        if (currentPlayer.getItemQuantity(item) < amount)
+            return Result.error("You hold out your gift... and reality holds out a calculator.");
+        if (currentPlayer.getFriendshipLevel(targetPlayer) < 1)
+            return Result.error("Maybe get to know them a little better before tossing gifts their way?");
         currentPlayer.getBackPack().getInventory().remove(item, amount);
         targetPlayer.getBackPack().getInventory().put(item, amount);
+        Game.addGift(new Gift(currentPlayer, targetPlayer, item, amount));
         return new Result(true, targetPlayer.getName() + "! You've been gifted! Hope it's not rocks again.");
     }
-    public Result rateTheGift(String input){
-        int giftNumber = 0, rating = 0;
-//        try {
-//            rating = Integer.parseInt(something);
-//        }
-//        catch (NumberFormatException e){
-//            return  new Result(false, "That's not a real rating-are you making up your own scale?");
-//        }
+
+    public Result showGiftList() {
+        StringBuilder output = new StringBuilder();
+        Player currentPlayer = Game.getCurrentPlayer();
+        for (Gift gift : Game.getAllGifts()) {
+            if (gift.getReceiver().equals(currentPlayer))
+                output.append(gift.getId()).append(".  ").append(gift.getAmount()).append(" ")
+                        .append(gift.getName()).append(" (s)\n");
+        }
+        if (output.toString().isEmpty())
+            return Result.success("Still waiting for that surprise delivery. It'll happen... probably");
+        return Result.success(output.toString());
+    }
+    public Result rateTheGift(int giftNumber, int rating) {
+
         if (rating < 1 || rating > 5)
             return new Result(false, "Your rating confused the chickens. Please try again.");
         Gift gift = Game.getGiftById(giftNumber);
@@ -257,36 +290,53 @@ public class GameMenuController extends MenuController {
         if (gift == null || !gift.getReceiver().equals(currentPlayer))
             return new Result(false, "You stare into your empty hands and give it a " + rating + ". Interesting.");
         Player targetPlayer = gift.getSender();
-        currentPlayer.changeFriendshipXP(((rating - 3)* 30 + 15), targetPlayer);
+        currentPlayer.changeFriendshipXP(((rating - 3) * 30 + 15), targetPlayer);
         return new Result(true, "");
     }
 
-    public Result hugPlayer(String input) {
-        input = input.substring(input.indexOf('-') + 2).trim();
-        Player targetPlayer = Game.getPlayerByUsername(input);
+    public Result showGiftHistory(String username) {
+        StringBuilder output = new StringBuilder();
+        Player player = Game.getPlayerByUsername(username);
+        for (Gift gift : Game.getAllGifts()) {
+            if (gift.getSender().equals(player) || gift.getReceiver().equals(player)) {
+                output.append(gift.getSender()).append(" gave ").append(gift.getReceiver()).append(" ")
+                        .append(gift.getAmount()).append(" ").append(gift.getName()).append(" (s).\n");
+            }
+        }
+        return new Result(true, output.toString());
+    }
+
+    public Result hugPlayer(String username) {
+        Player targetPlayer = Game.getPlayerByUsername(username);
         Player currentPlayer = Game.getCurrentPlayer();
-        if (targetPlayer == null) return new Result(false, "You open your arms wide... but there's no one by that name to recieve it");
+        if (targetPlayer == null)
+            return new Result(false, "You open your arms wide... but there's no one by that name to recieve it");
         if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
             return new Result(false, "They're not here to catch your hug. Maybe next time!");
+        currentPlayer.changeFriendshipXP(60, targetPlayer);
         return new Result(true, "You hugged them tight. Even the cows felt the love.");
     }
 
-    public Result giveBouquet(String input) {
-        int uIndex = input.indexOf('u');
-        input = input.substring(uIndex + 1);
-        Player targetPlayer = Game.getCurrentPlayer();
+    public Result giveBouquet(String username) {
         Player currentPlayer = Game.getCurrentPlayer();
+        Player targetPlayer = Game.getPlayerByUsername(username);
         Item bouquet = Game.getDatabase().getItem("bouquet");
+        if (targetPlayer == null)
+            return Result.error("Bouquet in hand, heart full of hope... too bad that player doesn't even exist.");
+        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
+            return Result.error("You wave the bouquet around like a romantic maniac, but there's no one nearby to impress");
+        if (currentPlayer.getItemQuantity(bouquet) < 1)
+            return Result.error("You reach for the bouquet... but your inventory says 'not today, Romeo'.");
         currentPlayer.getBackPack().getInventory().remove(bouquet, 1);
         targetPlayer.getBackPack().getInventory().put(bouquet, 1);
         targetPlayer.changeLevel(currentPlayer, 3);
-        return new Result(true, "");
+        return new Result(true, "They accepted the bouquet! Quick, act cool before your face turns red.");
     }
 
     public Result askMarriage(String input) {
-        String username = "", ringName = "";
+        String username = "";
         Player targetPlayer = Game.getPlayerByUsername(username);
-        Item ring = Game.getDatabase().getItem(ringName);
+        Item ring = Game.getDatabase().getItem("Wedding Ring");
         Player currentPlayer = Game.getCurrentPlayer();
         if (targetPlayer == null) return new Result(false, "Imaginary partners don't make great spouses.");
         if (Math.abs(currentPlayer.getX() - targetPlayer.getX()) > 1 || Math.abs(currentPlayer.getY() - targetPlayer.getY()) > 1)
@@ -295,12 +345,11 @@ public class GameMenuController extends MenuController {
             return new Result(false, "You reach for the ring... but your pockets are full of nothing");
         if (!currentPlayer.canAskMarriage(targetPlayer))
             return new Result(false, "Slow down, lovebird-you're still just friendly acquaintances");
-        if (currentPlayer.getGender().equals("boy"))
+        if (!currentPlayer.getGender().equals("boy"))
             return new Result(false, "Only the boys can propose... for now. Rules of the valley, not mine!");
-        lastRingProposedWith = ring;
-        currentPlayer.getBackPack().getInventory().remove(ring, 1);
-        targetPlayer.getBackPack().getInventory().put(ring, 1);
-        return new Result(true, "");
+
+        currentPlayer.hasProposed(targetPlayer);
+        return new Result(true, "Now we wait...");
     }
 
     public Result respondToProposal(String input) {
@@ -315,14 +364,21 @@ public class GameMenuController extends MenuController {
         String username = parts[uIndex + 1];
         Player targetPlayer = Game.getPlayerByUsername(username);
         Player currentPlayer = Game.getCurrentPlayer();
+        Item ring = Game.getDatabase().getItem("Wedding Ring");
+        if (targetPlayer == null)
+            return Result.error("");
         if (input.contains("accept")) {
+            if (!targetPlayer.hasProposed(currentPlayer))
+                return Result.error("You dramatically accept... nothing. Nobody proposed, drama queen.");
             currentPlayer.changeLevel(targetPlayer, 4);
-            currentPlayer.getBackPack().getInventory().put(lastRingProposedWith, 1);
-            targetPlayer.getBackPack().getInventory().remove(lastRingProposedWith, 1);
+            currentPlayer.getBackPack().getInventory().put(ring, 1);
+            targetPlayer.getBackPack().getInventory().remove(ring, 1);
             currentPlayer.setSpouse(targetPlayer);
             targetPlayer.setSpouse(currentPlayer);
             // TODO add messages here
         } else if (input.contains("reject")) {
+            if (!targetPlayer.hasProposed(currentPlayer))
+                return Result.error("That's a bold rejection for someone who hasn't been proposed to.");
             currentPlayer.changeLevel(targetPlayer, 0);
             targetPlayer.setProposalRejectionDaysLeft(7);
         }
@@ -342,9 +398,9 @@ public class GameMenuController extends MenuController {
 
     public Result meetNPC(String npcName) {
         NPC npc = Game.getNPCByName(npcName);
-
-
+        Player player = Game.getCurrentPlayer();
         lastNPC = npc;
+        npc.addFriendShipPoints(player, 20);
         return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().toString()));
     }
 
@@ -364,7 +420,7 @@ public class GameMenuController extends MenuController {
         if (item instanceof Tool<?>)
             return new Result(false, "Gifting your old tools? What’s next—handing out used socks?");
 
-        if (npc.isFavorite(item)){
+        if (npc.isFavorite(item)) {
             npc.addFriendShipPoints(player, 200);
             return new Result(true, "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
         }
@@ -375,6 +431,7 @@ public class GameMenuController extends MenuController {
     public Result showAllQuests() {
         Player player = Game.getCurrentPlayer();
         StringBuilder output = new StringBuilder();
+        if (lastNPC == null) return Result.error("No NPC chosen");
         output.append(lastNPC.getName()).append(" quests for you");
         int index = 0;
         for (Map.Entry<Item, Integer> entry : lastNPC.getRequests().entrySet()) {
@@ -396,6 +453,7 @@ public class GameMenuController extends MenuController {
         } catch (NumberFormatException e) {
             return new Result(false, "Invalid quest index");
         }
+        if (lastNPC == null) return Result.error("No NPC chosen");
         Map.Entry<Item, Integer> quest = lastNPC.getQuest(questIndex);
         if (quest == null) return new Result(false, "Quest not found");
         Player player = Game.getCurrentPlayer();
@@ -460,33 +518,33 @@ public class GameMenuController extends MenuController {
     public Result placeItem(String itemName, String direction) {
         Item item = null;
         int[] directions = getDirections(direction);
-        for(Item i : Game.getCurrentPlayer().getBackPack().getInventory().keySet()) {
-            if(i.getName().equals(itemName)) {
+        for (Item i : Game.getCurrentPlayer().getBackPack().getInventory().keySet()) {
+            if (i.getName().equals(itemName)) {
                 item = i;
             }
         }
-        if(item == null) return new Result(false, "No such item in your inventory");
-        else if(directions == null) return new Result(false, "Invalid direction");
+        if (item == null) return new Result(false, "No such item in your inventory");
+        else if (directions == null) return new Result(false, "Invalid direction");
         Map.Entry<Integer, Integer> newCoordinates = new AbstractMap.SimpleEntry<>(item.getCoordinates().getKey() + directions[0],
                 item.getCoordinates().getValue() + directions[1]);
         item.setCoordinates(newCoordinates);
-        return new Result(true, "Item placed successfully" );
+        return new Result(true, "Item placed successfully");
     }
 
     //get coordinates changes based on direction input
     //TODO add four other directions
     public int[] getDirections(String direction) {
-        int[]directions = new int[2];
-        if(direction.equals("up")) {
+        int[] directions = new int[2];
+        if (direction.equals("up")) {
             directions[1] = -1;
             return directions;
-        } else if(direction.equals("down")) {
+        } else if (direction.equals("down")) {
             directions[1] = 1;
             return directions;
-        } else if(direction.equals("left")) {
+        } else if (direction.equals("left")) {
             directions[0] = -1;
             return directions;
-        } else if(direction.equals("right")) {
+        } else if (direction.equals("right")) {
             directions[0] = 1;
             return directions;
         }
@@ -495,22 +553,17 @@ public class GameMenuController extends MenuController {
 
     //add item cheat code
     public Result addItemCheatCode(String name, int count) {
-        ArrayList<Item> items = Game.getDatabase().getItemDatabase();
+        List<Item> items = Game.getDatabase().getItemDatabase();
         Item item = null;
-        for(Item i : items) {
-            if(i.getName().equals(name)) {
+        for (Item i : items) {
+            if (i.getName().equals(name)) {
                 item = i;
             }
         }
-        if(item == null) return new Result(false, "** No item with that name exists **");
+        if (item == null) return new Result(false, "** No item with that name exists **");
         Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
         return new Result(true, "** " + count + " of " + name + " added to your inventory **");
     }
-
-
-
-
-
 
 
 }

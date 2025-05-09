@@ -1,5 +1,6 @@
 package org.example.models;
 
+import org.example.controllers.GameManager;
 import org.example.models.Enums.BackPackType;
 import org.example.models.Skills.*;
 import org.example.models.Tool.*;
@@ -18,6 +19,7 @@ public class Player {
     private final Crafting craftingSkill = new Crafting();
     private final Cooking cookingSkill = new Cooking();
     private final Fishing fishingSkill = new Fishing();
+    private final Mining miningSkill = new Mining();
     private final Foraging foragingSkill = new Foraging();
     private final TrashCan trashCan = new TrashCan();
     private final BackPack backPack = new BackPack();
@@ -25,6 +27,9 @@ public class Player {
     private Item currentItem;
     private static final List<Friendship> friendships = new ArrayList<>();
     private int proposalRejectionDaysLeft = 0;
+    private final Farm farm;
+    private SharedWallet sharedWallet = null;
+    private Map.Entry<Integer, Integer> coordinates;
 
     public Player(User user) {
         this.user = user;
@@ -33,6 +38,7 @@ public class Player {
         backPack.getInventory().put(new Hoe(), 1);
         backPack.getInventory().put(new Pickaxe(), 1);
         backPack.getInventory().put(new Scythe(), 1);
+        farm = new Farm(this);
     }
 
     public void setEnergy(int energy) {
@@ -50,11 +56,13 @@ public class Player {
     public String getGender(){
         return user.gender;
     }
+
     public void faint() {
-        //skip the rest of the day
-        //set current coordinate
-        //waiting for time functionality
-        energy *= 0.75;
+        //TODO use time controller
+        TimeAndDate timeAndDate = new TimeAndDate();
+        timeAndDate.advanceDay();
+        //TODO waking up in the same spot
+        energy = energy *3/2;
     }
 
     public void increaseEnergy(int amount) {
@@ -73,6 +81,9 @@ public class Player {
     public Farming getFarmingSkill() {return farmingSkill;}
     public Foraging getForagingSkill() {return foragingSkill;}
     public Fishing getFishingSkill() {return fishingSkill;}
+    public Mining getMiningSkill() {
+        return miningSkill;
+    }
     public Map.Entry<Integer, Integer> getCoordinate() {
         return new AbstractMap.SimpleEntry<>(x, y);
     }
@@ -84,8 +95,16 @@ public class Player {
     public int getItemQuantity(Item item) {
         return backPack.getInventory().get(item);
     }
-    public void addGold(int amount) {gold += amount;}
-    public int getGold() {return gold;}
+    public void addGold(int amount) {
+        if (sharedWallet == null)
+            gold += amount;
+        else sharedWallet.addGold(amount);
+    }
+    public int getGold() {
+        if (sharedWallet == null )
+            return gold;
+        return sharedWallet.getGold();
+    }
     public void setUnlimitedEnergy() {
         unlimitedEnergy = true;
     }
@@ -104,10 +123,6 @@ public class Player {
         return  user.getUsername();
     }
     public WateringCan getWateringCan() {return wateringCan;}
-
-//    private Friendship getFriendship(Player otherPlayer){
-//        return friendships.computeIfAbsent(otherPlayer.getUsername(), k -> new Friendship(this, otherPlayer));
-//    }
 
     public static void initializeFriendships(List<Player> players){
         for (int i = 0; i< players.size(); i++){
@@ -139,6 +154,10 @@ public class Player {
 
     public void setSpouse(Player spouse) {
         this.spouse = spouse;
+        farm.addOwner(spouse);
+        SharedWallet wallet = new SharedWallet(this.gold, spouse.gold);
+        this.sharedWallet = wallet;
+        spouse.sharedWallet = wallet;
     }
     public boolean isMarriedTo(Player a){
         if (spouse == null) return false;
@@ -162,16 +181,27 @@ public class Player {
         this.proposalRejectionDaysLeft = proposalRejectionDaysLeft;
     }
 
+    public void proposed(Player player) {
+        Friendship friendship = getFriendship(this, player);
+        if (friendship!= null) friendship.Proposed();
+    }
     public void decrementProposalRejectionDaysLeft() {
         proposalRejectionDaysLeft--;
     }
-
+    public boolean hasProposed(Player player) {
+        Friendship friendship = getFriendship(this, player);
+        if (friendship == null) return false;
+        return friendship.hasProposed;
+    }
+    public Farm getFarm(){
+        return farm;
+    }
     private static class Friendship {
-        private Player player1;
-        private Player player2;
+        private final Player player1;
+        private final Player player2;
         private int xpPoints = 0;
         private int friendshipLevel = 0;
-        private boolean bouquetGifted = false;
+        private boolean hasProposed = false;
         public Friendship(Player player1, Player player2) {
             this.player1 = player1;
             this.player2 = player2;
@@ -209,5 +239,28 @@ public class Player {
         public boolean canAskMarriage(){
             return xpPoints >= 1000;
         }
+
+        public void Proposed(){
+            hasProposed = true;
+        }
+
+        public boolean HasProposed() {
+            return hasProposed;
+        }
+    }
+    private static class SharedWallet {
+        private int gold;
+        public SharedWallet(int gold1, int gold2){
+            gold = gold1 + gold2;
+        }
+
+        public int getGold(){
+            return gold;
+        }
+
+        public void addGold(int amount){
+            gold += amount;
+        }
+
     }
 }

@@ -3,15 +3,29 @@ package org.example.controllers;
 import org.example.models.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class TradingController {
+    private static TradingController instance;
     private List<Trade> trades = new ArrayList<>();
     private static final String tradeWithMoney = "trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-a\\s+\\d+\\s+-p\\s+\\d+";
     private static final String tradeWithItem = "trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-a\\s+\\d+\\d+\\s+-ti.*\\s+-ta\\s+.*";
+
+    public TradingController() {
+        instance = this;
+    }
+    public static TradingController getInstance() {
+        if (instance == null) return new TradingController();
+        return instance;
+    }
+
+    private Trade getTradeById(int id) {
+        for (Trade trade : trades) {
+            if (trade.getId() == id) return trade;
+        }
+        return null;
+    }
 
     public Result trade(String input) {
         StringBuilder builder = new StringBuilder();
@@ -81,16 +95,38 @@ public class TradingController {
         }
         return new Result(false, "invalid input");
     }
-//    public void acceptTradingRequest(OffersAndRequests request, boolean accepted) {
-//
-//    }
+
+    public Result respondToTrade(String input) {
+        boolean accepted = input.contains("-accept");
+        String[] parts = input.split("\\s+");
+        int iIndex = -1;
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i].equals("-i")) iIndex = i;
+        }
+        int tradeId;
+        try {
+            tradeId = Integer.parseInt(parts[iIndex + 1]);
+        } catch (NumberFormatException e) {
+            return new Result(false, "invalid tradeId");
+        }
+        Trade trade = getTradeById(tradeId);
+        if (trade == null) return new Result(false, "Trade with id " + tradeId + " not found");
+        if (accepted) {
+            trade.getSender().changeFriendshipXP(50, Game.getCurrentPlayer());
+            // add to trades list
+        } else {
+            trade.getSender().changeFriendshipXP(-30, Game.getCurrentPlayer());
+        }
+
+        return Result.success("");
+    }
 
     public Result showTradeList() {
         StringBuilder builder = new StringBuilder();
         builder.append("========TRADES========");
         if (trades.isEmpty()) return new Result(false, "No deals brewing yet. Why not start one?");
         for (Trade trade : trades) {
-            if (!trade.isAnswered()){
+            if (!trade.isAnswered()) {
                 builder.append("\n").append("Id            :").append(trade.getId()).append("\n");
                 builder.append("From          :").append(trade.getSender().getName()).append("\n");
                 builder.append("To            :").append(trade.getReceiver().getName()).append("\n");
@@ -98,7 +134,7 @@ public class TradingController {
                 builder.append("Item          :").append(trade.getItem().getName()).append("\n");
                 builder.append("Amount        :").append(trade.getAmount()).append("\n");
                 if (trade.getCost() != null) builder.append("Price   :").append(trade.getCost()).append("\n");
-                else{
+                else {
                     builder.append("target item   :").append(trade.getItem().getName()).append("\n");
                     builder.append("target amount :").append(trade.getAmount()).append("\n");
                 }

@@ -2,6 +2,8 @@ package org.example.models;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import org.example.models.Enums.BuildingType;
+import org.example.models.Enums.Season;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,17 +20,21 @@ public class Database {
     ArrayList<Tree> treeDatabase = new ArrayList<>();
     ArrayList<Item> itemDatabase = new ArrayList<>();
     ArrayList<Seed> seedDatabase = new ArrayList<>();
+    ArrayList<Craft> craftingRecipeDatabase = new ArrayList<>();
+    ArrayList<Food> foodDatabase = new ArrayList<>();
+    List<Store> stores = new ArrayList<>();
     Map<String, NPC> NPCs = new HashMap<>();
 
     //start when the game starts
     //put this somewhere where everything is initialized
-    public void initializePlantDatabase(){
+    public void initializePlantDatabase() {
         try {
             Gson gson = new Gson();
 
             FileReader reader = new FileReader("plants.json");
 
-            Type plantListType = new TypeToken<ArrayList<FruitAndVegetable>>(){}.getType();
+            Type plantListType = new TypeToken<ArrayList<FruitAndVegetable>>() {
+            }.getType();
 
             ArrayList<FruitAndVegetable> plantList = gson.fromJson(reader, plantListType);
 
@@ -38,48 +44,95 @@ public class Database {
 
     }
 
-    public FruitAndVegetable getFruitAndVegetable(String name){
+    public FruitAndVegetable getFruitAndVegetable(String name) {
         FruitAndVegetable plant = null;
-        for(FruitAndVegetable f : plantDatabase){
-            if(f.getName().equals(name)){
+        for (FruitAndVegetable f : plantDatabase) {
+            if (f.getName().equals(name)) {
                 plant = f;
             }
         }
         return plant;
     }
 
-    public ArrayList<FruitAndVegetable> getFruitAndVegetables(){
+    public ArrayList<FruitAndVegetable> getFruitAndVegetables() {
         return plantDatabase;
     }
 
-    public void initializeAllItems(){
-        itemDatabase.add(new basicItem("friendshipPoints", 0));
-        // this item will only be used as a gift for incrementing the friendship points between two players or an npc
-        //can't be bought or added to inventory
-    }
 
-    public Item getItem(String name){
-        for(Item i : itemDatabase){
-            if(i.getName().equals(name)){
+    public void initializeStoresAndItems() {
+        itemDatabase.add(new BasicItem("friendshipPoints", 0));
+        String json;
+        try {
+            json = new String(Files.readAllBytes(Paths.get("stores.json")));
+        } catch (IOException e) {
+            System.out.println("can't get json.");
+            return;
+        }
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+        JsonArray storesArray = jsonObject.get("stores").getAsJsonArray();
+        for (JsonElement store : storesArray) {
+            JsonObject storeObject = store.getAsJsonObject();
+            String storeName = storeObject.get("name").getAsString();
+            int xStart = storeObject.get("xStart").getAsInt();
+            int xEnd = storeObject.get("xEnd").getAsInt();
+            int yStart = storeObject.get("yStart").getAsInt();
+            int yEnd = storeObject.get("yEnd").getAsInt();
+            int openingTime = storeObject.get("openingTime").getAsInt();
+            int closingTime = storeObject.get("closingTime").getAsInt();
+            List<Product> products = new ArrayList<>();
+            JsonArray storeProducts = storeObject.get("products").getAsJsonArray();
+            for (JsonElement storeProduct : storeProducts) {
+                JsonObject storeProductObject = storeProduct.getAsJsonObject();
+                String productName = storeProductObject.get("name").getAsString();
+                int price = storeProductObject.get("price").getAsInt();
+                int limit = storeProductObject.get("limit").getAsInt();
+                String buildingType = storeProductObject.get("buildingType").getAsString();
+                JsonArray seasons = storeProductObject.get("seasons").getAsJsonArray();
+                List<Season> seasonsInStock = new ArrayList<>();
+                for (JsonElement season : seasons) {
+                    seasonsInStock.add(Season.valueOf(season.getAsString()));
+                }
+
+                products.add(new Product(productName, price, limit, BuildingType.valueOf(buildingType), seasonsInStock));
+                itemDatabase.add(new BasicItem(productName, price));
+            }
+            stores.add(new Store(storeName, products, xStart, xEnd, yStart, yEnd, openingTime, closingTime));
+        }
+    }
+    public Item getItem(String name) {
+        for (Item i : itemDatabase) {
+            if (i.getName().equals(name)) {
                 return i;
             }
         }
         return null;
     }
 
-    public ArrayList<Tree> getTreeDatabase(){
+    public ArrayList<Tree> getTreeDatabase() {
         return treeDatabase;
     }
-    public ArrayList<Seed> getSeedDatabase(){
+
+    public ArrayList<Seed> getSeedDatabase() {
         return seedDatabase;
     }
 
+
+    public ArrayList<Craft> getCraftingRecipeDatabase() {
+        return craftingRecipeDatabase;
+    }
+
+    public ArrayList<Item> getItemDatabase() {
+        return itemDatabase;
+    }
+
+    public List<Store> getStores() {
+        return stores;
+    }
     public void loadNPCs() {
         String json;
         try {
-             json = new String(Files.readAllBytes(Paths.get("npcInfos.json")));
-        }
-        catch (IOException e){
+            json = new String(Files.readAllBytes(Paths.get("npcInfos.json")));
+        } catch (IOException e) {
             System.out.println("can't get json.");
             return;
         }
@@ -117,7 +170,12 @@ public class Database {
             NPCs.put(name, npc);
         }
     }
-    public Map<String, NPC> getNPCs(){
+
+    public Map<String, NPC> getNPCs() {
         return NPCs;
+    }
+
+    public ArrayList<Food> getFoodDatabase() {
+        return foodDatabase;
     }
 }

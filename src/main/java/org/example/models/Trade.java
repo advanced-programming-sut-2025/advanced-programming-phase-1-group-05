@@ -1,16 +1,16 @@
 package org.example.models;
 
 public class Trade {
-    private int id;
+    private final int id;
     private static int tradesCount = 0;
-    private Player player; // who initiated the trade
-    private Player targetPlayer; // who the offer request is for
-    private String type;
-    private Item item;
-    private int amount;
-    private Integer cost;
-    private Item targetItem;
-    private Integer targetAmount;
+    private final Player player; // who initiated the trade
+    private final Player targetPlayer; // who the offer request is for
+    private final String type;
+    private final Item item;
+    private final int amount;
+    private final Integer cost;
+    private final Item targetItem;
+    private final Integer targetAmount;
     private boolean answered = false;
 
     public Trade(Player player, Player targetPlayer, String type, Item item, int amount, Integer cost, Item targetItem, Integer targetAmount) {

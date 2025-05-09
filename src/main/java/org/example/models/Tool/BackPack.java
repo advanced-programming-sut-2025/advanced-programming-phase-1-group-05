@@ -5,6 +5,7 @@ import org.example.models.Enums.BackPackType;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Game;
 import org.example.models.Item;
+import org.example.models.Result;
 import org.example.models.Tool.Tool;
 
 import java.util.ArrayList;
@@ -21,14 +22,20 @@ public class BackPack implements Tool <BackPackType>{
         return inventory;
     }
 
-    public void addToInventory(Item item, int amount) {
+    public Result addToInventory(Item item, int amount) {
         if(getInventoryCapacity() + amount <= level.getCapacity()) {
             if(!inventory.containsKey(item)) inventory.put(item, inventory.getOrDefault(item, 0) + amount);
             else inventory.put(item, inventory.get(item) + amount);
-            System.out.println(item.getName() + " successfully added to your inventory");
+            return new Result(true, item.getName() + " successfully added to your inventory");
         } else {
-            System.out.println("You're backpack is full! Upgrade to store more items");
+            return new Result(false, "You're backpack is full! Upgrade to store more items");
         }
+    }
+
+    public Result removeFromInventory(Item item, int amount) {
+        if(!inventory.containsKey(item)) return new Result(false, "No such item in your inventory");
+        inventory.put(item, inventory.get(item) - amount);
+        return new Result(true, "Successfully removed " + amount + " of " + item.getName() + " from your inventory");
     }
 
     public int getInventoryCapacity() {
@@ -39,6 +46,10 @@ public class BackPack implements Tool <BackPackType>{
             }
         }
         return capacity;
+    }
+
+    public boolean isInventoryFull() {
+        return getInventoryCapacity() == level.getCapacity();
     }
 
     public void addForagingItem(Item item, int amount) {
@@ -63,9 +74,8 @@ public class BackPack implements Tool <BackPackType>{
         return 0;
     }
     @Override
-    public void use(Map.Entry<Integer, Integer> coordinates){
-
-
+    public Result use(Map.Entry<Integer, Integer> coordinates){
+        return new Result(true, "");
     }
     @Override
     public void reduceEnergy(int amount){

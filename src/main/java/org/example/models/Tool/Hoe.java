@@ -5,6 +5,7 @@ import org.example.models.Enums.TileType;
 import org.example.models.Game;
 import org.example.models.GameMap;
 import org.example.models.GameTile;
+import org.example.models.Result;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,15 +22,16 @@ public class Hoe implements Tool <ItemLevel> {
         return 0;
     }
     @Override
-    public void use(HashMap.Entry<Integer, Integer> coordinates){
+    public Result use(HashMap.Entry<Integer, Integer> coordinates){
         reduceEnergy(level.getEnergyUsage());
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         if(tile.getTileType() == TileType.Flat) {
             tile.setTileType(TileType.Soil);
         } else {
-            System.out.println("You can't use the hoe on this tile");
+            return new Result(false, "You can't use the hoe on this tile");
         }
+        return new Result(true, "");
     }
     @Override
     public void reduceEnergy(int amount){
@@ -43,7 +45,7 @@ public class Hoe implements Tool <ItemLevel> {
     @Override
     public void upgradeLevel(){
         if (!level.isMaxLevel()) {
-            level = level.nextLevel();
+            level = level.upgradeLevel();
             System.out.println(getName() + " upgraded to " + level.getName());
         }
     }

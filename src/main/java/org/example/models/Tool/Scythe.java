@@ -6,6 +6,7 @@ import org.example.models.Enums.TileType;
 import org.example.models.Game;
 import org.example.models.GameMap;
 import org.example.models.GameTile;
+import org.example.models.Result;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,17 +23,18 @@ public class Scythe implements Tool<ItemLevel> {
         return 0;
     }
     @Override
-    public void use(HashMap.Entry<Integer, Integer> coordinates) {
+    public Result use(HashMap.Entry<Integer, Integer> coordinates) {
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
 
         if(tile.getTileType() == TileType.Plant) {
             //different for crops and grass
-            Game.getCurrentPlayer().getFarmingSkill().harvestCrop(tile, this);
+            Game.getCurrentPlayer().getFarmingSkill().harvestCrop(tile);
         } else {
-            System.out.println("You can't use the scythe on this tile");
+            return new Result(false, "You can't use the scythe on this tile");
         }
         reduceEnergy(2);
+        return new Result(true, "");
     }
     @Override
     public void reduceEnergy(int amount){
@@ -46,7 +48,7 @@ public class Scythe implements Tool<ItemLevel> {
     @Override
     public void upgradeLevel(){
         if (!level.isMaxLevel()) {
-            level = level.nextLevel();
+            level = level.upgradeLevel();
             System.out.println(getName() + " upgraded to " + level.getName());
         }
     }

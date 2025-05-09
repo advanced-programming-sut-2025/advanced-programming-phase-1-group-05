@@ -1,28 +1,37 @@
 package org.example.models.Skills;
 
 import org.example.models.Enums.ItemLevel;
+import org.example.models.Food;
+import org.example.models.Game;
 import org.example.models.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Cooking implements Skill{
-    private Map<String, Map<String, Integer>> knownRecipes;
+    private List<Food> learntRecipes = new ArrayList<>();
     int level = 0;
     int capacity = 0;
 
 
-    public Cooking() {
-        this.knownRecipes = new HashMap<>();
+    public void learnRecipe(Food food) {
+        learntRecipes.add(food);
     }
 
-//    public void transferToFridge(String itemName, Inventory playerInventory) {}
-//
-//    public void takeFromFridge(String itemName, Inventory playerInventory) {}
+    public List<Food> getLearntRecipes() {
+        return learntRecipes;
+    }
 
-    public void learnRecipe(String foodName, Map<String, Integer> requiredIngredients) {}
-
-    public void cookFood(String recipeName) {}
+    public void cookFood(Food food) {
+        for(Food f : food.getIngredients().keySet()) {
+            Game.getCurrentPlayer().getBackPack().removeFromInventory
+                    (f, Game.getCurrentPlayer().getBackPack().getInventory().get(f));
+        }
+        Game.getCurrentPlayer().increaseEnergy(-3);
+        Game.getCurrentPlayer().getBackPack().addToInventory(food, 1);
+    }
 
     public void consumeFood(String food, Player player) {}
 
@@ -47,5 +56,9 @@ public class Cooking implements Skill{
             return true;
         }
         return false;
+    }
+    @Override
+    public void increaseCapacity() {
+
     }
 }

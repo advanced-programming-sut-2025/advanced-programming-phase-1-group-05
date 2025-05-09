@@ -6,6 +6,7 @@ import org.example.models.Enums.TileType;
 import org.example.models.Game;
 import org.example.models.GameMap;
 import org.example.models.GameTile;
+import org.example.models.Result;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class FishingPole implements Tool<FishingPoleType> {
         return level.getPrice();
     }
     @Override
-    public void use(HashMap.Entry<Integer, Integer> coordinates){
+    public Result use(HashMap.Entry<Integer, Integer> coordinates){
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         ItemLevel fishingLevel = Game.getCurrentPlayer().getFishingSkill().getLevel();
@@ -32,13 +33,15 @@ public class FishingPole implements Tool<FishingPoleType> {
             if(fishingLevel.isMaxLevel()) energyUsage --;
             reduceEnergy(energyUsage);
             Game.getCurrentPlayer().getFishingSkill().fishing(tile, this);
-            //fishing complications for later im tired dude
+            //TODO implement fishing
         } else {
             if(fishingLevel.isMaxLevel()) energyUsage --;
             reduceEnergy(energyUsage -1);
-            System.out.println("Wrong tile! what are you trying to fish?");
+            return new Result(false, "Wrong tile! what are you trying to fish?");
         }
+        return new Result(true, "");
     }
+
     @Override
     public void reduceEnergy(int amount){
         if(amount < 0) amount = 0;
