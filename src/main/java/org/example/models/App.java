@@ -4,6 +4,7 @@ import org.example.controllers.DBController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class App {
     private static HashMap<String, User> users = new HashMap<>();
@@ -23,11 +24,6 @@ public class App {
     }
     public static void setCurrentPlayer(Player currentPlayer) {
         App.currentPlayer = currentPlayer;
-    }
-
-
-    public static ArrayList<User> getAllUsers() {
-        return allUsers;
     }
 
     public static void setAllUsers(ArrayList<User> allusers) {
@@ -53,6 +49,9 @@ public class App {
 
     public static void setCurrentGame(Game currentGame) {
 
+    }
+    public static Map<String, User> getAllUsers() {
+        return UserDatabase.getAllUsers();
     }
 
 }

@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import org.example.models.Enums.BuildingType;
 import org.example.models.Enums.Season;
+import org.example.models.BasicItem;
 
 import java.io.FileReader;
 import java.io.IOException;
