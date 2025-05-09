@@ -33,11 +33,28 @@ public class Game {
     public static List<Player> getAllPlayers() {
         return players;
     }
-    public static void startTheGame() {
-        database.initializeStoresAndItems();
-        database.initializePlantDatabase();
-        database.loadNPCs();
-        Player.initializeFriendships(players);
+//    public static void startTheGame() {
+//        database.initializeStoresAndItems();
+//        database.initializePlantDatabase();
+//        database.loadNPCs();
+//        Player.initializeFriendships(players);
+//    }
+    public static Result startTheGame() {
+        try {
+            database.initializeStoresAndItems();
+            database.initializePlantDatabase();
+            database.loadNPCs();
+            Player.initializeFriendships(players);
+
+            if (!players.isEmpty()) {
+                currentPlayer = players.get(0);
+            }
+
+            return Result.success("Game started successfully! Current player: " +
+                    (currentPlayer != null ? currentPlayer.getUsername() : "None"));
+        } catch (Exception e) {
+            return Result.error("Failed to start game: " + e.getMessage());
+        }
     }
     public static List<NPC> getAllNPCs() {
         List<NPC> allNPCs = new ArrayList<>();
