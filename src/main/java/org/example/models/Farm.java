@@ -6,12 +6,11 @@ import java.util.List;
 
 public class Farm {
     private List<Player> owner = new ArrayList<>();
-    // TODO make this a list of owners for after marriage
     private HashMap<Food, Integer> refrigeratedFoods = new HashMap<>();
     private final ShippingBin shippingBin = new ShippingBin();
     //TODO the shipping bin coordinates should be in the farm
-//    private final int startX, startY, endX, endY;
-
+    private final int startX = 10, startY = 10, endX = startX + 80, endY = startY + 50;
+    // TODO add the farm coordinates
     public Farm (Player player){
         owner.add(player);
     }
@@ -33,6 +32,9 @@ public class Farm {
         refrigeratedFoods.put(food, refrigeratedFoods.get(food) - amount);
     }
 
+    public boolean containsTile (int x, int y) {
+        return (x >= startX && x <= endX) && (y >= startY && y <= endY);
+    }
     public ShippingBin getShippingBin() {
         return shippingBin;
     }

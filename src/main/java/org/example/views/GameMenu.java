@@ -50,7 +50,11 @@ public class GameMenu implements org.example.views.AppMenu {
         } else if (input.equalsIgnoreCase("next turn")) {
             Result result = gameMenuController.nextTurn();
             System.out.println(result.getMessage());
-        } else if ((matcher = GameMenuCommands.Purchase.getMatcher(input)) != null) {
+        }
+        else if ((matcher = GameMenuCommands.BuildAnimalHouse.getMatcher(input)) != null) {
+            System.out.println();
+        }
+         else if ((matcher = GameMenuCommands.Purchase.getMatcher(input)) != null) {
             System.out.println(storeController.purchase(matcher));
         } else if ((matcher = GameMenuCommands.CheatAddMoney.getMatcher(input)) != null) {
             System.out.println(gameMenuController.cheatAddMoney(Integer.parseInt(matcher.group("count"))));

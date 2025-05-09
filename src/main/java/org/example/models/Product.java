@@ -7,6 +7,7 @@ import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.Season;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,17 +18,19 @@ public class Product implements Item {
     private int soldToday = 0;
     private final BuildingType buildingType;
     private final List<Season> seasons = new ArrayList<>();
+    private final Map<Item, Integer> costs = new HashMap<>();
     private ItemLevel itemLevel = ItemLevel.Normal;
 
 
     public Product(String name, int price, int limit
-    , BuildingType buildingType, List<Season> seasons) {
+    , BuildingType buildingType, List<Season> seasons, Map<Item, Integer> costs) {
         this.name = name;
         this.price = price;
         this.limit = limit;
         this.buildingType = buildingType;
         this.seasons.addAll(seasons);
         this.setItemLevel();
+        this.costs.putAll(costs);
     }
 
 
@@ -82,5 +85,9 @@ public class Product implements Item {
 
     public boolean isAvailable(){
         return getRemainingForToday() > 0;
+    }
+
+    public Map<Item, Integer> getCosts() {
+        return costs;
     }
 }

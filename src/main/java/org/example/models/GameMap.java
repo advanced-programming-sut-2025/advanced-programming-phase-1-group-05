@@ -16,6 +16,7 @@ import java.util.Random;
 
 public class GameMap {
     GameTile[][] map;
+    // TODO initialize this!!
     ArrayList<FruitAndVegetable> plants = new ArrayList<>();
     ArrayList<Tree> trees = new ArrayList<>();
     GreenHouse greenHouse = new GreenHouse();
@@ -95,7 +96,7 @@ public class GameMap {
     }
 
     public GameTile getTile(int x, int y) {
-        return map[x][y];
+        return map[x-1][y-1];
     }
 
     public void placeItemOnTile(Item item, int x, int y) {}

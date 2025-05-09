@@ -88,12 +88,22 @@ public class Database {
                 int limit = storeProductObject.get("limit").getAsInt();
                 String buildingType = storeProductObject.get("buildingType").getAsString();
                 JsonArray seasons = storeProductObject.get("seasons").getAsJsonArray();
+                Map<Item, Integer> costs = new HashMap<>();
                 List<Season> seasonsInStock = new ArrayList<>();
                 for (JsonElement season : seasons) {
                     seasonsInStock.add(Season.valueOf(season.getAsString()));
                 }
-
-                products.add(new Product(productName, price, limit, BuildingType.valueOf(buildingType), seasonsInStock));
+                JsonObject costObject = storeProductObject.getAsJsonObject("cost");
+                for (Map.Entry<String, JsonElement> entry : costObject.entrySet()) {
+                    String itemName = entry.getKey();
+                    int quantity = entry.getValue().getAsInt();
+                    Item item = Game.getDatabase().getItem(itemName);
+                    if (item == null) {
+                        continue;
+                    }
+                    costs.put(item, quantity);
+                }
+                products.add(new Product(productName, price, limit, BuildingType.valueOf(buildingType), seasonsInStock, costs));
                 itemDatabase.add(new BasicItem(productName, price));
             }
             stores.add(new Store(storeName, products, xStart, xEnd, yStart, yEnd, openingTime, closingTime));
@@ -101,7 +111,7 @@ public class Database {
     }
     public Item getItem(String name) {
         for (Item i : itemDatabase) {
-            if (i.getName().equals(name)) {
+            if (i.getName().equalsIgnoreCase(name)) {
                 return i;
             }
         }
