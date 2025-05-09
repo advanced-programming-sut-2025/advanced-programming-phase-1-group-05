@@ -38,6 +38,15 @@ public class GameMenuController extends MenuController {
         for (int i = 1; i <= 3; i++) {
             String username = matcher.group("username" + i);
             if (username != null) {
+                if (!UserDatabase.usernameExists(username)) {
+                    return Result.error("User '" + username + "' not found!");
+                }
+            }
+        }
+
+        for (int i = 1; i <= 3; i++) {
+            String username = matcher.group("username" + i);
+            if (username != null) {
                 User user = UserDatabase.getUserByUsername(username);
                 if (user == null) {
                     return Result.error("User '" + username + "' not found!");
