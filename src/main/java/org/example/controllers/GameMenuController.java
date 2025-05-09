@@ -192,7 +192,8 @@ public class GameMenuController extends MenuController {
             currentPlayerIndex = 0;
             canDeleteGame = false;
 
-            Game.terminateTheGame();
+            Game.getAllPlayers().clear();
+
             return Result.success("Game deleted successfully!");
         } catch (Exception e) {
             return Result.error("Error deleting game: " + e.getMessage());

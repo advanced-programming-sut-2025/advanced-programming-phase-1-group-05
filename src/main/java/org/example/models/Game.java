@@ -57,14 +57,6 @@ public class Game {
             return Result.error("Failed to start game: " + e.getMessage());
         }
     }
-    public static void terminateTheGame() {
-        currentPlayer = null;
-        players.clear();
-        messages.clear();
-        gifts.clear();
-        currentWeather = Weather.Sunny;
-        soldItems.clear();
-    }
     public static List<NPC> getAllNPCs() {
         List<NPC> allNPCs = new ArrayList<>();
         for (Map.Entry<String, NPC> entry : database.getNPCs().entrySet()) {
