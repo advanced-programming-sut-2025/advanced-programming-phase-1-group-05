@@ -9,6 +9,7 @@ public class User {
     String nickName;
     String gender;
     String email;
+    private int gamesPlayed;
 
     private String securityQuestion;
     private String securityAnswer;
@@ -74,5 +75,13 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public int getGamesPlayed() {
+        return gamesPlayed;
+    }
+
+    public void incrementGamesPlayed() {
+        this.gamesPlayed++;
     }
 }

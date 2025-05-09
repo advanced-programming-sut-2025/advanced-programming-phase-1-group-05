@@ -131,10 +131,9 @@ public class ProfileMenuController extends MenuController {
         StringBuilder info = new StringBuilder();
         info.append("Username: ").append(currentUser.getUsername()).append("\n");
         info.append("Nickname: ").append(currentUser.getNickName());
-        // TODO
-        //بالاترین پول کسب شده
-        //تعداد بازی انجام شده
-
+        info.append("Games played: ").append(currentUser.getGamesPlayed()).append("\n");
+//        info.append("Highest score: ").append(currentUser.getHighestScore());
+        // TODO: Highest score
         return Result.success(info.toString());
     }
 
