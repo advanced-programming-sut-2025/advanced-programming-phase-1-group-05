@@ -17,11 +17,12 @@ public class GameMenuController extends MenuController {
     private static int currentPlayerIndex = 0;
     public static boolean canChooseMap = false;
     public static boolean canDeleteGame = false;
+    public static boolean canLoadGame = false;
     private static Map<Integer, Integer> playerMapChoices = new HashMap<>();
 
     public GameMenuController(Scanner scanner, User currentUser) {
         super(scanner);
-        currentUser = currentUser;
+        GameMenuController.currentUser = currentUser;
     }
 
     private NPC lastNPC = null;
@@ -110,10 +111,14 @@ public class GameMenuController extends MenuController {
 
 
     public Result loadGame() {
+        if (!canLoadGame) {
+            Result.error("You should first exit pending Game!");
+        }
         return null;
     }
 
     public Result exitGame() {
+        canLoadGame = true;
         return null;
     }
 
