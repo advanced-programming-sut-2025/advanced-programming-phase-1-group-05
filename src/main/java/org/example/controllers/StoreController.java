@@ -1,8 +1,14 @@
 package org.example.controllers;
 
 import org.example.models.*;
+import org.example.models.Building.AnimalHouse;
+import org.example.models.Building.Building;
+import org.example.models.Enums.AnimalHouseLevel;
+import org.example.models.Enums.AnimalType;
+import org.example.models.Enums.TileType;
 import org.example.models.Tool.Tool;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 
 public class StoreController {
@@ -102,7 +108,75 @@ public class StoreController {
         return Result.success("You will recieve the gold tomorrow morning!");
     }
 
+    public Result buildAnimalHouse(Matcher m) {
+        Store store = getCurrentStore();
+        if (store == null || !store.getStoreName().equals("Carpenter's shop")) {
+            return Result.error("You can only do this in the carpenter's shop.");
+        }
+
+        Product product = store.getProduct(m.group("buildingName"));
+        AnimalType type;
+        if (product.getName().contains("Coop")) {
+            type = AnimalType.COOP;
+        }
+        else if (product.getName().contains("Barn")) {
+            type = AnimalType.BARN;
+        }
+        else   return Result.error("You can only build a coop or a barn.");
+        int x = Integer.parseInt(m.group("x")), y = Integer.parseInt(m.group("y"));
+
+        Player player = Game.getCurrentPlayer();
+        for (int i = x; i < type.getRows() + x; i++) {
+            for (int j = y; j < type.getColumns() + y; j++) {
+                GameTile tile = Game.getGameMap().getTile(i, j);
+                if (tile == null || !tile.getTileType().equals(TileType.Flat)) {
+                    return Result.error("You can’t build here. The area must be completely flat.");
+                }
+                if (!player.getFarm().containsTile(i , j))
+                    return Result.error("Nice try, but that patch of land isn’t yours. No trespassing… or building!");
+            }
+        }
+
+        if (!canAfford(product)) {
+            return Result.error("Looks like your gold took one look at the blueprint and noped out. You can’t afford to build this right now!");
+        }
+        player.addGold(-product.getPrice());
+
+        AnimalHouseLevel level;
+        if (product.getName().contains("Big")) level = AnimalHouseLevel.Big;
+        else if (product.getName().contains("Deluxe")) level = AnimalHouseLevel.Deluxe;
+        else level = AnimalHouseLevel.Small;
+        AnimalHouse animalHouse = new AnimalHouse(type, level);
+        player.addAnimalHouse(animalHouse);
+
+        for (int i = x; i < type.getRows() + x; i++) {
+            for (int j = y; j < type.getColumns() + y; j++) {
+                GameTile tile = Game.getGameMap().getTile(i, j);
+                tile.setTileType(TileType.Building);
+                tile.setBuilding(animalHouse.getType());
+            }
+        }
+        return Result.success(type + " built successfully!");
+
+    }
 
 
+
+    private boolean canAfford(Product product) {
+        for (Map.Entry<Item, Integer> cost : product.getCosts().entrySet()) {
+            Item item = cost.getKey();
+            int quantity = cost.getValue();
+            if (Game.getCurrentPlayer().getItemQuantity(item) < quantity) {
+                return false;
+            }
+        }
+        for (Map.Entry<Item, Integer> cost : product.getCosts().entrySet()) {
+            Item item = cost.getKey();
+            int quantity = cost.getValue();
+            Player currentPlayer = Game.getCurrentPlayer();
+            currentPlayer.getBackPack().getInventory().remove(item, quantity);
+        }
+        return true;
+    }
 
 }

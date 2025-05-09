@@ -1,6 +1,7 @@
 package org.example.models;
 
 import org.example.controllers.GameManager;
+import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.BackPackType;
 import org.example.models.Skills.*;
 import org.example.models.Tool.*;
@@ -30,6 +31,7 @@ public class Player {
     private final Farm farm;
     private SharedWallet sharedWallet = null;
     private Map.Entry<Integer, Integer> coordinates;
+    private List<AnimalHouse> coopAndBarns = new ArrayList<>();
 
     public Player(User user) {
         this.user = user;
@@ -51,6 +53,10 @@ public class Player {
 
     public int getY() {
         return y;
+    }
+
+    public void addAnimalHouse(AnimalHouse animalHouse) {
+        coopAndBarns.add(animalHouse);
     }
 
     public String getGender(){

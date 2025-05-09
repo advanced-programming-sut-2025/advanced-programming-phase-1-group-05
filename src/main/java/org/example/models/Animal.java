@@ -1,13 +1,15 @@
 package org.example.models;
 
-import java.util.List;
+import org.example.models.Building.AnimalHouse;
+import org.example.models.Enums.AnimalType;
 
 public class Animal {
-    //private AnimalType type;
     private String name;
+    private AnimalType type;
+    private Item product;
     private int health;
     private int hunger;
-    private String currentEnclosure;
+    private AnimalHouse currentEnclosure;
 
 
     public void setCurrentEnclosure(String enclosureName) {}

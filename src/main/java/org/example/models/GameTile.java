@@ -7,6 +7,7 @@ public class GameTile {
     private int x, y;
     private TileType tileType;
     private BuildingType building;
+    private boolean occupied = false; // can't be walked over if it's occupied
 
     public GameTile(int x, int y, TileType tileType) {
         this.x = x;
@@ -16,6 +17,10 @@ public class GameTile {
         return tileType;
     }
     //for changing tile type
+    public void setBuilding(BuildingType building) {
+        this.building = building;
+        this.occupied = true;
+    }
     public void setTileType(TileType tileType) {
         this.tileType = tileType;
     }

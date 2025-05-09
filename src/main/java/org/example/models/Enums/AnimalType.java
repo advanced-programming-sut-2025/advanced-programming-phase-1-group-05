@@ -5,26 +5,21 @@ import org.example.models.Product;
 import java.util.List;
 
 public enum AnimalType {
-   // Chicken("Chicken", org.example.models.Enums.CoopAndBarnType.Small, 800, List.of(new Product("egg", "", 50, -1))),
-//    Duck(),
-//    Rabbit(),
-//    Dinosaur(),
-//    Cow(),
-//    Goat(),
-//    Sheep(),
-//    Pig()
-;
+    COOP(7, 4), // chicken, duck, rabbit, dinosaur
+    BARN(6, 3);// cow, goat, sheep, pig
 
 
-    private final String type;
-    private final CoopAndBarnType CoopAndBarnType;
-    private final int price;
-    private final List<Product> produce;
+    private int rows;
+    private int columns;
+    AnimalType(int rows, int columns) {
+        this.rows = rows;
+        this.columns = columns;
+    }
 
-    AnimalType(String type, CoopAndBarnType coopAndBarnType, int price, List<Product> produce) {
-        this.type = type;
-        this.CoopAndBarnType = coopAndBarnType;
-        this.price = price;
-        this.produce = produce;
+    public int getRows() {
+        return rows;
+    }
+    public int getColumns() {
+        return columns;
     }
 }
