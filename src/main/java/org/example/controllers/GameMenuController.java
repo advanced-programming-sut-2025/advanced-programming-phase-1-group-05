@@ -170,7 +170,7 @@ public class GameMenuController extends MenuController {
         }
         for (int i = 0; i < selectedPlayers.size(); i++) {
             if (OK[i] != 1) {
-                Result.error("Game deletion canceled! Not all players agreed.");
+                return Result.error("Game deletion canceled! Not all players agreed.");
             }
         }
 
