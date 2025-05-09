@@ -18,7 +18,9 @@ public class GameMenuController extends MenuController {
     public static boolean canChooseMap = false;
     public static boolean canDeleteGame = false;
     public static boolean canLoadGame = false;
+    public static boolean[] canExitGame;
     private static Map<Integer, Integer> playerMapChoices = new HashMap<>();
+    public static Player currentPlayer;
 
     public GameMenuController(Scanner scanner, User currentUser) {
         super(scanner);
@@ -66,6 +68,10 @@ public class GameMenuController extends MenuController {
             }
         }
         canChooseMap = true;
+        canExitGame = new boolean[selectedPlayers.size()];
+        for (int i = 0; i < selectedPlayers.size(); i++) {
+            canExitGame[i] = false;
+        }
         for (Player player : selectedPlayers) {
             UserDatabase.setUserInGame(player.getUsername(), true);
         }
@@ -86,7 +92,7 @@ public class GameMenuController extends MenuController {
             return Result.error("Map num must be 1-4!");
         }
         int mapNumber = Integer.parseInt(matcher.group("mapNumber"));
-        Player currentPlayer = selectedPlayers.get(currentPlayerIndex);
+        currentPlayer = selectedPlayers.get(currentPlayerIndex);
 
         playerMapChoices.put(currentPlayerIndex, mapNumber);
 
@@ -114,12 +120,39 @@ public class GameMenuController extends MenuController {
         if (!canLoadGame) {
             Result.error("You should first exit pending Game!");
         }
-        return null;
+        if (!currentUser.getUsername().equals(currentPlayer.getUsername())
+                || !currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())) {
+            for (int i = 0; i < selectedPlayers.size(); i++) {
+                if (currentUser.getUsername().equals(selectedPlayers.get(i).getUsername())) {
+                    canExitGame[i] = true;
+                }
+            }
+        }
+        if (Game.haveSavedGame) {
+            //TODO : پیاده سازی لود بازی
+            Result.success("Game loaded successfully :)");
+        }
+        return Result.error("There is no Game to continue!");
     }
 
     public Result exitGame() {
-        canLoadGame = true;
-        return null;
+        boolean done = false;
+        for (int i = 0; i < selectedPlayers.size(); i++) {
+            if (currentUser.getUsername().equals(selectedPlayers.get(i).getUsername())) {
+                if (canExitGame[i]) {
+                    done = true;
+                }
+            }
+        }
+        if (currentUser.getUsername().equals(currentPlayer.getUsername()) ||
+                currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())|| done) {
+            // TODO
+            pendingGame = null;
+            canLoadGame = true;
+            return Result.success("Exited Game successfully!");
+        }
+        // TODO
+        return Result.error("You can't exit the game!");
     }
 
     public Result nextTurn() {
