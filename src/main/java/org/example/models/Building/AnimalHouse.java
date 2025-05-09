@@ -28,6 +28,9 @@ public class AnimalHouse extends Building{
         return BuildingType.valueOf(Type.name());
     }
 
+    public List<Animal> getAnimals () {
+        return animals;
+    }
     public Animal getAnimal(String name) {
         for (Animal animal : animals) {
             if (animal.getName().equalsIgnoreCase(name))

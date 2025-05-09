@@ -99,7 +99,7 @@ public class Player {
     }
 
     public int getItemQuantity(Item item) {
-        return backPack.getInventory().get(item);
+        return backPack.getInventory().getOrDefault(item, 0);
     }
     public void addGold(int amount) {
         if (sharedWallet == null)
@@ -130,7 +130,10 @@ public class Player {
     }
     public WateringCan getWateringCan() {return wateringCan;}
 
-    public static void initializeFriendships(List<Player> players){
+    public List<AnimalHouse> getCoopsAndBarns() {
+        return coopAndBarns;
+    }
+      public static void initializeFriendships(List<Player> players){
         for (int i = 0; i< players.size(); i++){
             for (int j = i +1; j < players.size(); j++){
                 Player a = players.get(i);

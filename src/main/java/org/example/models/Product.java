@@ -33,7 +33,6 @@ public class Product implements Item {
         this.costs.putAll(costs);
     }
 
-
     public void setItemLevel() {
         String[] parts = name.split("\\s+");
         try {
@@ -44,10 +43,14 @@ public class Product implements Item {
         }
 
     }
+    public void setItemLevel(ItemLevel itemLevel) {
+        this.itemLevel = itemLevel;
+    }
     public String getName() {
         return name;
     }
 
+    @Override
     public int getPrice() {
         if (!seasons.contains(GameManager.getSeason())) {
             return (int) (price * 3 / 2.0 * itemLevel.getPriceCoefficient());

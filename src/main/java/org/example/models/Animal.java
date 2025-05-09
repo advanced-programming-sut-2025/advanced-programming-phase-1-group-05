@@ -2,17 +2,19 @@ package org.example.models;
 
 import org.example.models.Enums.AnimalType;
 import org.example.models.Enums.EnclosureType;
+import org.example.models.Enums.ItemLevel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Animal {
     private String name;
     private EnclosureType enclosureType;
     private List<Item> products = new ArrayList<>();
     private List<Product> unCollectedProducts = new ArrayList<>();
-    private int health;
-    private int hunger;
+    private boolean wasFed = false;
+    int friendshipPoints = 0;
     private AnimalType type;
 
     public Animal(String name, AnimalType type) {
@@ -22,13 +24,26 @@ public class Animal {
     }
 
 
-    public void setCurrentEnclosure(String enclosureName) {}
-
-    public void feed() {
-        health += 1;
-        hunger -= 1;
+    public void produce() {
+        if (wasFed) {
+            Random random = new Random();
+            int index = 0;
+            if (friendshipPoints > 100) {
+                int chance = (int) ((friendshipPoints + (150 * (random.nextDouble(1)+0.5))) / 1500);
+                if (random.nextInt(100) > chance) index = 1;
+            }
+            Item item = products.get(index);
+            Product product = new Product(item.getName(), item.getPrice(), 0, null, null, null);
+            unCollectedProducts.add(product);
+            int levelValue = (int) ((friendshipPoints/1000) * (0.5 + 0.5*random.nextDouble(1)));
+            ItemLevel level;
+            if (levelValue < 0.5) level = ItemLevel.Normal;
+            else if (levelValue >= 05 && levelValue < 0.7) level = ItemLevel.Iron;
+            else if (levelValue >= 0.7 && levelValue < 0.9) level = ItemLevel.Gold;
+            else level = ItemLevel.Iridium;
+            product.setItemLevel(level);
+        }
     }
-
     public String getName() {
         return name;
     }
