@@ -11,11 +11,12 @@ import java.util.regex.Pattern;
 
 public class GameMenuController extends MenuController {
     public static User currentUser;
-    private static final List<Player> selectedPlayers = new ArrayList<>();
+    private static List<Player> selectedPlayers;
     private static Map<String, Game> activeGames = new HashMap<>();
     private Game pendingGame;
     private static int currentPlayerIndex = 0;
     public static boolean canChooseMap = false;
+    public static boolean canDeleteGame = false;
     private static Map<Integer, Integer> playerMapChoices = new HashMap<>();
 
     public GameMenuController(Scanner scanner, User currentUser) {
@@ -43,6 +44,7 @@ public class GameMenuController extends MenuController {
             return Result.error("Maximum 3 usernames allowed!");
         }
 
+        selectedPlayers = new ArrayList<>();
         selectedPlayers.add(new Player(currentUser));
 
         for (int i = 1; i <= 3; i++) {
@@ -93,13 +95,19 @@ public class GameMenuController extends MenuController {
                     ", please choose your map (1-4):");
         } else {
             canChooseMap = false;
-            return startGameWithSelectedMaps();
+            pendingGame = new Game();
+            for (int i = 0; i < selectedPlayers.size(); i++) {
+//                pendingGame.setPlayerMap(selectedPlayers.get(i), playerMapChoices.get(i));
+                // TODO: map for players :)
+            }
+            Result startResult = Game.startTheGame();
+            if (startResult.isSuccess()) {
+                activeGames.put(currentUser.getUsername(), pendingGame);
+            }
+            return startResult;
         }
     }
 
-    public Result startGameWithSelectedMaps() {
-        return null;
-    }
 
     public Result loadGame() {
         return null;
@@ -114,7 +122,44 @@ public class GameMenuController extends MenuController {
     }
 
     public Result deleteGame() {
-        return null;
+        Scanner scanner = new Scanner(System.in);
+        int[] OK = new int[selectedPlayers.size()];
+        System.out.println("Vote to delete the game (1 for yes, 0 for no):");
+        for (int i = 0 ; i < selectedPlayers.size(); i++) {
+            Player player = selectedPlayers.get(i);
+            System.out.print(player.getUsername() + "'s vote: ");
+            OK[i] = scanner.nextInt();
+        }
+        for (int i = 0; i < selectedPlayers.size(); i++) {
+            if (OK[i] != 1) {
+                Result.error("Game deletion canceled! Not all players agreed.");
+            }
+        }
+
+        return terminateGame();
+    }
+
+    private Result terminateGame() {
+        try {
+            pendingGame = null;
+            activeGames.values().removeIf(game ->
+                    selectedPlayers.contains(currentUser));
+
+            for (Player player : selectedPlayers) {
+                UserDatabase.setUserInGame(player.getUsername(), false);
+            }
+
+            selectedPlayers.clear();
+            canChooseMap = false;
+            currentPlayerIndex = 0;
+            canDeleteGame = false;
+
+            Game.getAllPlayers().clear();
+
+            return Result.success("Game deleted successfully!");
+        } catch (Exception e) {
+            return Result.error("Error deleting game: " + e.getMessage());
+        }
     }
 
     //for showing current player's energy level
