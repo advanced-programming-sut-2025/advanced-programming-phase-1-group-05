@@ -2,9 +2,8 @@ package org.example.controllers;
 
 import org.example.models.*;
 import org.example.models.Building.AnimalHouse;
-import org.example.models.Building.Building;
 import org.example.models.Enums.AnimalHouseLevel;
-import org.example.models.Enums.AnimalType;
+import org.example.models.Enums.EnclosureType;
 import org.example.models.Enums.TileType;
 import org.example.models.Tool.Tool;
 
@@ -29,10 +28,10 @@ public class StoreController {
         if (store == null)
             return Result.error("No store, no shelves, no products.");
         if (!store.isOpen(GameManager.getCurrentHour()))
-           return Result.error("store not open right now.");
+            return Result.error("store not open right now.");
         output.append("All products: \n");
         for (Product product : store.getProducts()) {
-                output.append(product.getName()).append(" ").append(product.getPrice()).append("\n");
+            output.append(product.getName()).append(" ").append(product.getPrice()).append("\n");
         }
         return Result.success(output.toString());
     }
@@ -115,12 +114,12 @@ public class StoreController {
         }
 
         Product product = store.getProduct(m.group("buildingName"));
-        AnimalType type;
+        EnclosureType type;
         if (product.getName().contains("Coop")) {
-            type = AnimalType.COOP;
+            type = EnclosureType.COOP;
         }
         else if (product.getName().contains("Barn")) {
-            type = AnimalType.BARN;
+            type = EnclosureType.BARN;
         }
         else   return Result.error("You can only build a coop or a barn.");
         int x = Integer.parseInt(m.group("x")), y = Integer.parseInt(m.group("y"));

@@ -202,6 +202,14 @@ public class Player {
     public Farm getFarm(){
         return farm;
     }
+    public Animal getAnimal(String name) {
+        Animal animal = null;
+        for (AnimalHouse house : coopAndBarns) {
+            animal = house.getAnimal(name);
+            if (animal!=null) break;
+        }
+        return animal;
+    }
     private static class Friendship {
         private final Player player1;
         private final Player player2;

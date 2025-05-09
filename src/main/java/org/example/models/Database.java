@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import org.example.models.Enums.BuildingType;
 import org.example.models.Enums.Season;
+import org.example.models.BasicItem;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -61,6 +62,19 @@ public class Database {
 
     public void initializeStoresAndItems() {
         itemDatabase.add(new BasicItem("friendshipPoints", 0));
+        itemDatabase.add(new BasicItem("Egg", 50));
+        itemDatabase.add(new BasicItem("Large egg", 95));
+        itemDatabase.add(new BasicItem("Duck egg", 95));
+        itemDatabase.add(new BasicItem("Duck feather", 50));
+        itemDatabase.add(new BasicItem("Wool", 340));
+        itemDatabase.add(new BasicItem("Rabbit's foot", 565));
+        itemDatabase.add(new BasicItem("Dinosaur egg", 350));
+        itemDatabase.add(new BasicItem("Milk", 125));
+        itemDatabase.add(new BasicItem("Large milk", 190));
+        itemDatabase.add(new BasicItem("Goat milk", 225));
+        itemDatabase.add(new BasicItem("Large goat milk", 345));
+        itemDatabase.add(new BasicItem("Wool", 340));
+        itemDatabase.add(new BasicItem("Truffle", 625));
         String json;
         try {
             json = new String(Files.readAllBytes(Paths.get("stores.json")));
