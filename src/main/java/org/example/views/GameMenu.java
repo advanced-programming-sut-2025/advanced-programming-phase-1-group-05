@@ -23,6 +23,11 @@ public class GameMenu implements org.example.views.AppMenu {
     @Override
     public void handleUserInput(String input) {
         Matcher matcher;
+        if (GameMenuController.canChooseMap) {
+            if (!input.startsWith("game map")) {
+                System.out.println("You should choose map!");
+            }
+        }
         if (input.equals("show current menu")) {
             Result result = menuController.showCurrentMenu();
             System.out.println(result.getMessage());

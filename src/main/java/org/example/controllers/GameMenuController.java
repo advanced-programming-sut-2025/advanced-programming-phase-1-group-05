@@ -4,15 +4,19 @@ import org.example.models.*;
 import org.example.models.Enums.TileType;
 import org.example.models.Tool.Tool;
 
+import javax.swing.plaf.PanelUI;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GameMenuController extends MenuController {
     public static User currentUser;
+    private static final List<Player> selectedPlayers = new ArrayList<>();
     private static Map<String, Game> activeGames = new HashMap<>();
     private Game pendingGame;
-    boolean canChooseMap = false;
+    private static int currentPlayerIndex = 0;
+    public static boolean canChooseMap = false;
+    private static Map<Integer, Integer> playerMapChoices = new HashMap<>();
 
     public GameMenuController(Scanner scanner, User currentUser) {
         super(scanner);
@@ -22,14 +26,13 @@ public class GameMenuController extends MenuController {
     private NPC lastNPC = null;
 
     public Result newGame(String input) {
-        // TODO : errors !!!
         Pattern pattern = Pattern.compile
                 ("^game new( -u(?<username>[\\w-]+))" +
                         "( -u(?<username2>[\\w-]+))?( -u(?<username3>[\\w-]+))?(?<extra> -u[\\w-]+)*$");
         Matcher matcher = pattern.matcher(input);
 
         if (!matcher.find()) {
-            return Result.error("Invalid command format! Use: game new -u <username1> [-u <username2>] [-u <username3>]");
+            return Result.error("Invalid command format!");
         }
 
         if (matcher.group("username") == null) {
@@ -40,8 +43,6 @@ public class GameMenuController extends MenuController {
             return Result.error("Maximum 3 usernames allowed!");
         }
 
-
-        List<Player> selectedPlayers = new ArrayList<>();
         selectedPlayers.add(new Player(currentUser));
 
         for (int i = 1; i <= 3; i++) {
@@ -57,22 +58,46 @@ public class GameMenuController extends MenuController {
                 Player player = new Player(user);
                 selectedPlayers.add(player);
                 currentUser.addFriend(username);
+                user.incrementGamesPlayed();
+                UserDatabase.updateUser(user);
             }
         }
-        System.out.println("Please enter map number (1-3):");
         canChooseMap = true;
-//        pendingGame = new Game(); // ایجاد بازی موقت
         for (Player player : selectedPlayers) {
             UserDatabase.setUserInGame(player.getUsername(), true);
         }
+        currentPlayerIndex = 0;
+        playerMapChoices.clear();
         Game.getAllPlayers().addAll(selectedPlayers);
-        return Result.success("Waiting for map selection...");
+        return Result.success(selectedPlayers.get(0).getUsername() +
+                ", please choose your map (1-4):");
     }
 
     public Result chooseMap(String input) {
-        if (canChooseMap) {
-
+        if (!canChooseMap) {
+            return Result.error("Not in map selection phase!");
         }
+        Pattern pattern = Pattern.compile("^game map (?<mapNumber>[1-4])$");
+        Matcher matcher = pattern.matcher(input);
+        if (!matcher.find()) {
+            return Result.error("Map num must be 1-4!");
+        }
+        int mapNumber = Integer.parseInt(matcher.group("mapNumber"));
+        Player currentPlayer = selectedPlayers.get(currentPlayerIndex);
+
+        playerMapChoices.put(currentPlayerIndex, mapNumber);
+
+        currentPlayerIndex++;
+        if (currentPlayerIndex < selectedPlayers.size()) {
+            return Result.success("Player " + selectedPlayers.get(currentPlayerIndex).getUsername() +
+                    ", please choose your map (1-4):");
+        } else {
+            canChooseMap = false;
+            return startGameWithSelectedMaps();
+        }
+    }
+
+    public Result startGameWithSelectedMaps() {
         return null;
     }
 
