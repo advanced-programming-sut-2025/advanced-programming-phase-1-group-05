@@ -23,24 +23,26 @@ public class GameMenuController extends MenuController {
 
     public Result newGame(String input) {
         // TODO : errors !!!
-        Pattern pattern = Pattern.compile("^game new( -u(?<username>[\\w-]+)){1,3}$");
+        Pattern pattern = Pattern.compile
+                ("^game new( -u(?<username>[\\w-]+))" +
+                        "( -u(?<username2>[\\w-]+))?( -u(?<username3>[\\w-]+))?(?<extra> -u[\\w-]+)*$");
         Matcher matcher = pattern.matcher(input);
 
         if (!matcher.find()) {
-            return Result.error("Invalid command format! Use: game new -u <username1> <username2> <username3>");
+            return Result.error("Invalid command format! Use: game new -u <username1> [-u <username2>] [-u <username3>]");
         }
+
+        if (matcher.group("username") == null) {
+            return Result.error("At least one username must be provided!");
+        }
+
+        if (matcher.group("extra") != null) {
+            return Result.error("Maximum 3 usernames allowed!");
+        }
+
 
         List<Player> selectedPlayers = new ArrayList<>();
         selectedPlayers.add(new Player(currentUser));
-
-        for (int i = 1; i <= 3; i++) {
-            String username = matcher.group("username" + i);
-            if (username != null) {
-                if (!UserDatabase.usernameExists(username)) {
-                    return Result.error("User '" + username + "' not found!");
-                }
-            }
-        }
 
         for (int i = 1; i <= 3; i++) {
             String username = matcher.group("username" + i);
@@ -49,6 +51,9 @@ public class GameMenuController extends MenuController {
                 if (user == null) {
                     return Result.error("User '" + username + "' not found!");
                 }
+                if (UserDatabase.isUserInGame(username)) {
+                    return Result.error("User '" + username + "' is already in another game!");
+                }
                 Player player = new Player(user);
                 selectedPlayers.add(player);
                 currentUser.addFriend(username);
@@ -56,7 +61,10 @@ public class GameMenuController extends MenuController {
         }
         System.out.println("Please enter map number (1-3):");
         canChooseMap = true;
-        //pendingGame = new Game(); // ایجاد بازی موقت
+//        pendingGame = new Game(); // ایجاد بازی موقت
+        for (Player player : selectedPlayers) {
+            UserDatabase.setUserInGame(player.getUsername(), true);
+        }
         Game.getAllPlayers().addAll(selectedPlayers);
         return Result.success("Waiting for map selection...");
     }
