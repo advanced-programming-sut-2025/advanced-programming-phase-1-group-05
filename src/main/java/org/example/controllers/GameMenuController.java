@@ -118,7 +118,7 @@ public class GameMenuController extends MenuController {
 
     public Result loadGame() {
         if (!canLoadGame) {
-            Result.error("You should first exit pending Game!");
+            return Result.error("You should first exit pending Game!");
         }
         if (!currentUser.getUsername().equals(currentPlayer.getUsername())
                 || !currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())) {
@@ -130,7 +130,7 @@ public class GameMenuController extends MenuController {
         }
         if (Game.haveSavedGame) {
             //TODO : پیاده سازی لود بازی
-            Result.success("Game loaded successfully :)");
+            return Result.success("Game loaded successfully :)");
         }
         return Result.error("There is no Game to continue!");
     }
