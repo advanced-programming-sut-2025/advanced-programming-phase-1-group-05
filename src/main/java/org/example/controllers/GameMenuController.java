@@ -311,6 +311,21 @@ public class GameMenuController extends MenuController {
         return new Result(true, "");
     }
 
+    public Result collectProduce(Matcher m) {
+        String animalName = m.group("name");
+        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        if (animal == null)
+            return Result.error("Selected animal doesn't exist or isn't yours");
+
+        List<Product> products = animal.getUnCollectedProducts();
+        if (products.isEmpty()) return Result.error("no uncollected products found");
+        for (Product product : products) {
+            Game.getCurrentPlayer().getBackPack().addToInventory(product, 1);
+        }
+        products.clear();
+        return new Result(true, "collected successfully");
+
+    }
     public Result cheatAddMoney(int amount){
         Player player = Game.getCurrentPlayer();
         player.addGold(amount);
@@ -464,7 +479,7 @@ public class GameMenuController extends MenuController {
         if (!currentPlayer.getGender().equals("boy"))
             return new Result(false, "Only the boys can propose... for now. Rules of the valley, not mine!");
 
-        currentPlayer.hasProposed(targetPlayer);
+        currentPlayer.proposed(targetPlayer);
         return new Result(true, "Now we wait...");
     }
 
