@@ -48,7 +48,9 @@ public class MenuController {
 
         if ((currentMenuName.equals("Main Menu") && target == Menu.GAME) ||
                 (currentMenuName.equals("Main Menu") && target == Menu.PROFILE) ||
-                (currentMenuName.equals("Main Menu") && target == Menu.AVATAR)){
+                (currentMenuName.equals("Main Menu") && target == Menu.AVATAR)||
+                (currentMenuName.equals("Main Menu") && target == Menu.LOGIN) ||
+                (currentMenuName.equals("Main Menu") && target == Menu.REGISTER)){
             return true;
         }
 

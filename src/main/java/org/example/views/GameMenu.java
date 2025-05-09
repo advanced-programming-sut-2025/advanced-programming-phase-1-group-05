@@ -51,6 +51,10 @@ public class GameMenu implements org.example.views.AppMenu {
             Result result = gameMenuController.nextTurn();
             System.out.println(result.getMessage());
         }
+        else if (input.equalsIgnoreCase("user logout")){
+            Result result = menuController.logoutUser();
+            System.out.println(result.getMessage());
+        }
         else if (input.startsWith("delete game")) {
             Result result = gameMenuController.deleteGame();
             System.out.println(result.getMessage());

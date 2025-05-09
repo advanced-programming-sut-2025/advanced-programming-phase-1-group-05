@@ -22,6 +22,10 @@ public class MainMenu implements org.example.views.AppMenu {
             Result result = menuController.enterMenu(menuName);
             System.out.println(result.getMessage());
         }
+        else if (input.equalsIgnoreCase("user logout")){
+            Result result = menuController.logoutUser();
+            System.out.println(result.getMessage());
+        }
         else {
             System.out.println("Invalid Command!");
         }
