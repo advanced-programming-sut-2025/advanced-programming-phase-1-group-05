@@ -1,7 +1,7 @@
 package org.example.models.Enums;
 
 public enum FishingPoleType {
-    Normal("Normal", 25, 8),
+    Training("Training", 25, 8),
     Bamboo("Bamboo",500, 8),
     FiberGlass("FiberGlass",1800, 6),
     Iridium("Iridium",7500, 4);
@@ -15,6 +15,24 @@ public enum FishingPoleType {
         this.energyUsage = energyUsage;
     }
 
+    public static FishingPoleType fromString (String input) {
+        input = input.toLowerCase();
+        switch (input) {
+            case "training rod" -> {
+                return Training;
+            }
+            case "bamboo pole" -> {
+                return Bamboo;
+            }
+            case "fiberglass rod" -> {
+                return FiberGlass;
+            }
+            case "iridium rod" -> {
+                return Iridium;
+            }
+        }
+        return null;
+    }
     public String getName() {
         return name;
     }

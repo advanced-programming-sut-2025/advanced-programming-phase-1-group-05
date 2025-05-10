@@ -24,6 +24,7 @@ public enum GameMenuCommands {
     AddItemCC("cheat add item -n (?<item_name>.+) -c (?<count>\\d+)"),
     BuildAnimalHouse("build\\s+-a\\s+(?<buildingName>\\S+)\\s+-l\\s+(?<x>\\d+)\\s+(?<y>\\d+)"),
     CollectProduce("collect\\s+produce\\s+-n\\s+(?<name>\\S+)"),
+    StartFishing("fishing\\s+-p\\s+(?<fishingPole>.+?)"),
     Gift("gift\\s+-u\\s+(?<username>\\S+)\\s+-i\\s+(?<itemName>.+?)\\s+-a\\s+(?<amount>\\d+)"),
     GiftHistory("gift\\s+history\\s+-u\\s+(?<username>.+?)"),
     RateGift("gift\\s+rate\\s+-i\\s+(?<giftNumber>\\d+?)\\s+-r\\s+(?<rate>\\d+?)"),

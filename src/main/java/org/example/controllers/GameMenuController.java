@@ -1,6 +1,7 @@
 package org.example.controllers;
 
 import org.example.models.*;
+import org.example.models.Enums.FishingPoleType;
 import org.example.models.Enums.TileType;
 import org.example.models.Tool.Tool;
 
@@ -346,6 +347,13 @@ public class GameMenuController extends MenuController {
         products.clear();
         return new Result(true, "collected successfully");
 
+    }
+
+    public Result startFishing(Matcher m) {
+        String poleName = m.group("fishingPole");
+        FishingPoleType pole = FishingPoleType.fromString(poleName);
+        if (pole ==null) return Result.error("invalid pole type.");
+        return Result.success("");
     }
     public Result cheatAddMoney(int amount){
         Player player = Game.getCurrentPlayer();
