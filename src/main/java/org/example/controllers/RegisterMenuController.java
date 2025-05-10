@@ -69,17 +69,23 @@ public class RegisterMenuController {
             return new Result(false, "Username already exists!");
         }
 
+        createUser(username,password,nickname,email,gender);
+
+
+        return new Result(true, "User registered successfully!");
+    }
+
+    public static void createUser(String username,String password,String nickname
+                                    ,String email,String gender) {
         User newUser = new User();
         newUser.setUsername(username);
         newUser.setPassword(password);
         newUser.setNickName(nickname);
         newUser.setEmail(email);
         newUser.setGender(gender);
-
-        this.currentUser = newUser;
-        UserDatabase.addUser(newUser);
-
-        return new Result(true, "User registered successfully!");
+        DBController.saveUsers();
+        RegisterMenuController.currentUser = newUser;
+        DBController.saveCurrentUser();
     }
 
     public String generateRandomPassword() {

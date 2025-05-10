@@ -50,8 +50,8 @@ public class App {
     public static void setCurrentGame(Game currentGame) {
 
     }
-    public static Map<String, User> getAllUsers() {
-        return UserDatabase.getAllUsers();
-    }
+//    public static Map<String, User> getAllUsers() {
+//        return UserDatabase.getAllUsers();
+//    }
 
 }
