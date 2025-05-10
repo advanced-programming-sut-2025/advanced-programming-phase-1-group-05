@@ -128,7 +128,7 @@ public class GameMenuController extends MenuController {
                 }
             }
         }
-        if (Game.haveSavedGame) {
+        if (User.haveSavedGame) {
             //TODO : پیاده سازی لود بازی
             return Result.success("Game loaded successfully :)");
         }
@@ -362,16 +362,19 @@ public class GameMenuController extends MenuController {
         if (currentPlayer.isMarriedTo(targetPlayer)) {
             currentPlayer.increaseEnergy(50);
         }
-        return new Result(true, (targetPlayer.getName()) + "! A little birdie dropped off a message-check your inbox!");
+        return new Result(true, (targetPlayer.getName()) +
+                        "! A little birdie dropped off a message-check your inbox!");
     }
 
     public Result talkHistory(String input) {
         int uIndex = input.indexOf('u');
         input = input.substring(uIndex + 1).trim();
         Player player = Game.getPlayerByUsername(input);
-        if (player == null) return new Result(false, "Talking to ghosts again? That player isn't real.");
+        if (player == null) return new Result(false,
+                "Talking to ghosts again? That player isn't real.");
         List<Message> messages = Game.getMessages(player, Game.getCurrentPlayer());
-        if (messages.isEmpty()) return new Result(false, "Looks like you two haven't broken the ice yet");
+        if (messages.isEmpty()) return new Result(false,
+                "Looks like you two haven't broken the ice yet");
 
         StringBuilder output = new StringBuilder();
         output.append("Talk history with ").append(input);
@@ -388,7 +391,8 @@ public class GameMenuController extends MenuController {
         Player currentPlayer = Game.getCurrentPlayer();
         Player targetPlayer = Game.getPlayerByUsername(username);
         if (targetPlayer == null) return Result.error("Invisible friends don't accept gifts, you know!");
-        if (Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1 || Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1)
+        if (Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1 ||
+                Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1)
             return Result.error("You can't just throw gifts across the valley... get closer first!");
         if (currentPlayer.getItemQuantity(item) < amount)
             return Result.error("You hold out your gift... and reality holds out a calculator.");
@@ -397,7 +401,8 @@ public class GameMenuController extends MenuController {
         currentPlayer.getBackPack().getInventory().remove(item, amount);
         targetPlayer.getBackPack().getInventory().put(item, amount);
         Game.addGift(new Gift(currentPlayer, targetPlayer, item, amount));
-        return new Result(true, targetPlayer.getName() + "! You've been gifted! Hope it's not rocks again.");
+        return new Result(true, targetPlayer.getName() +
+                "! You've been gifted! Hope it's not rocks again.");
     }
 
     public Result showGiftList() {
@@ -419,7 +424,8 @@ public class GameMenuController extends MenuController {
         Gift gift = Game.getGiftById(giftNumber);
         Player currentPlayer = Game.getCurrentPlayer();
         if (gift == null || !gift.getReceiver().equals(currentPlayer))
-            return new Result(false, "You stare into your empty hands and give it a " + rating + ". Interesting.");
+            return new Result(false,
+                    "You stare into your empty hands and give it a " + rating + ". Interesting.");
         Player targetPlayer = gift.getSender();
         currentPlayer.changeFriendshipXP(((rating - 3) * 30 + 15), targetPlayer);
         return new Result(true, "");
@@ -441,8 +447,10 @@ public class GameMenuController extends MenuController {
         Player targetPlayer = Game.getPlayerByUsername(username);
         Player currentPlayer = Game.getCurrentPlayer();
         if (targetPlayer == null)
-            return new Result(false, "You open your arms wide... but there's no one by that name to recieve it");
-        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
+            return new Result(false,
+                    "You open your arms wide... but there's no one by that name to recieve it");
+        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 ||
+                Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
             return new Result(false, "They're not here to catch your hug. Maybe next time!");
         currentPlayer.changeFriendshipXP(60, targetPlayer);
         return new Result(true, "You hugged them tight. Even the cows felt the love.");
@@ -454,14 +462,17 @@ public class GameMenuController extends MenuController {
         Item bouquet = Game.getDatabase().getItem("bouquet");
         if (targetPlayer == null)
             return Result.error("Bouquet in hand, heart full of hope... too bad that player doesn't even exist.");
-        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
-            return Result.error("You wave the bouquet around like a romantic maniac, but there's no one nearby to impress");
+        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 ||
+                Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
+            return Result.error
+                    ("You wave the bouquet around like a romantic maniac, but there's no one nearby to impress");
         if (currentPlayer.getItemQuantity(bouquet) < 1)
             return Result.error("You reach for the bouquet... but your inventory says 'not today, Romeo'.");
         currentPlayer.getBackPack().getInventory().remove(bouquet, 1);
         targetPlayer.getBackPack().getInventory().put(bouquet, 1);
         targetPlayer.changeLevel(currentPlayer, 3);
-        return new Result(true, "They accepted the bouquet! Quick, act cool before your face turns red.");
+        return new Result(true,
+                "They accepted the bouquet! Quick, act cool before your face turns red.");
     }
 
     public Result askMarriage(Matcher m) {
@@ -469,15 +480,18 @@ public class GameMenuController extends MenuController {
         Player targetPlayer = Game.getPlayerByUsername(username);
         Item ring = Game.getDatabase().getItem("Wedding Ring");
         Player currentPlayer = Game.getCurrentPlayer();
-        if (targetPlayer == null) return new Result(false, "Imaginary partners don't make great spouses.");
-        if (Math.abs(currentPlayer.getX() - targetPlayer.getX()) > 1 || Math.abs(currentPlayer.getY() - targetPlayer.getY()) > 1)
+        if (targetPlayer == null) return new Result(false,
+                "Imaginary partners don't make great spouses.");
+        if (Math.abs(currentPlayer.getX() - targetPlayer.getX()) > 1 ||
+                Math.abs(currentPlayer.getY() - targetPlayer.getY()) > 1)
             return new Result(false, "Your love might be strong, but your range isn't. Get closer!");
         if (ring == null || currentPlayer.getItemQuantity(ring) == 0)
             return new Result(false, "You reach for the ring... but your pockets are full of nothing");
         if (!currentPlayer.canAskMarriage(targetPlayer))
             return new Result(false, "Slow down, lovebird-you're still just friendly acquaintances");
         if (!currentPlayer.getGender().equals("boy"))
-            return new Result(false, "Only the boys can propose... for now. Rules of the valley, not mine!");
+            return new Result(false,
+                    "Only the boys can propose... for now. Rules of the valley, not mine!");
 
         currentPlayer.proposed(targetPlayer);
         return new Result(true, "Now we wait...");
@@ -521,7 +535,8 @@ public class GameMenuController extends MenuController {
         Player currentPlayer = Game.getCurrentPlayer();
         builder.append("friendship status with NPCs: ");
         for (NPC npc : Game.getAllNPCs()) {
-            builder.append("\n").append(npc.getName()).append(" friendship level: ").append(npc.getFriendshipLevel(currentPlayer))
+            builder.append("\n").append(npc.getName())
+                    .append(" friendship level: ").append(npc.getFriendshipLevel(currentPlayer))
                     .append(" friendship points: ").append(npc.getFriendshipPoints(currentPlayer));
         }
         return new Result(true, builder.toString());
@@ -547,13 +562,16 @@ public class GameMenuController extends MenuController {
         Player player = Game.getCurrentPlayer();
         npc.recieveGift(item, player);
         if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1)
-            return new Result(false, "Nice thought! But you can’t give a gift to thin air. Find " + npcName + " first!");
+            return new Result(false,
+                    "Nice thought! But you can’t give a gift to thin air. Find " + npcName + " first!");
         if (item instanceof Tool<?>)
-            return new Result(false, "Gifting your old tools? What’s next—handing out used socks?");
+            return new Result(false,
+                    "Gifting your old tools? What’s next—handing out used socks?");
 
         if (npc.isFavorite(item)) {
             npc.addFriendShipPoints(player, 200);
-            return new Result(true, "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
+            return new Result(true,
+                    "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
         }
         npc.addFriendShipPoints(player, 50);
         return new Result(true, "Oh, a " + itemName + " ? Thanks, " + player.getName());
@@ -567,7 +585,8 @@ public class GameMenuController extends MenuController {
         int index = 0;
         for (Map.Entry<Item, Integer> entry : lastNPC.getRequests().entrySet()) {
             index++;
-            output.append("\n").append(index).append(". ").append(entry.getValue()).append(" ").append(entry.getKey().getName()).append("(s)");
+            output.append("\n").append(index).append(". ")
+                    .append(entry.getValue()).append(" ").append(entry.getKey().getName()).append("(s)");
             if (index == lastNPC.getNumOfUnlockedQuests(player)) break;
         }
 
@@ -589,16 +608,21 @@ public class GameMenuController extends MenuController {
         if (quest == null) return new Result(false, "Quest not found");
         Player player = Game.getCurrentPlayer();
         if (Math.abs(player.getX() - lastNPC.getX()) > 1 || Math.abs(player.getY() - lastNPC.getY()) > 1) {
-            return new Result(false, "You can't wrap this up from here. Get back to " + lastNPC.getName() + " first!");
+            return new Result(false,
+                    "You can't wrap this up from here. Get back to " + lastNPC.getName() + " first!");
         }
         if (lastNPC.isCompleted(questIndex)) {
-            return new Result(false, "Another farmer's already taken care of that one. Why not lend a hand elsewhere?");
+            return new Result(false,
+                    "Another farmer's already taken care of that one. Why not lend a hand elsewhere?");
         }
         if (player.getItemQuantity(quest.getKey()) < quest.getValue()) {
-            return new Result(false, "Whoops! You're still a few shy of the total. Harvest more and pop back over!");
+            return new Result(false,
+                    "Whoops! You're still a few shy of the total. Harvest more and pop back over!");
         }
         Map.Entry<Item, Integer> reward = lastNPC.finishQuest(player, questIndex);
-        return new Result(true, "You got " + reward.getValue() + " " + reward.getKey().getName() + "(s) from " + lastNPC.getName() + " for finishing this quest.");
+        return new Result(true,
+                "You got " + reward.getValue() + " " + reward.getKey().getName() +
+                        "(s) from " + lastNPC.getName() + " for finishing this quest.");
     }
 
 
@@ -610,7 +634,8 @@ public class GameMenuController extends MenuController {
         if (tile == null) return new Result(false, "Tile not found");
         if (tile.getTileType() != TileType.Soil)
             return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
-        if (!tile.isTileValidForPlanting()) return new Result(false, "You can't plant cause the tile is occupied!");
+        if (!tile.isTileValidForPlanting()) return new Result(false,
+                "You can't plant cause the tile is occupied!");
         boolean successful = Game.getCurrentPlayer().getFarmingSkill().plantSeed(new Seed(seed), tile);
         if (successful) return new Result(true, "Successfully planted " + seed);
         else return new Result(false, "That's not a valid seed!");
@@ -656,7 +681,8 @@ public class GameMenuController extends MenuController {
         }
         if (item == null) return new Result(false, "No such item in your inventory");
         else if (directions == null) return new Result(false, "Invalid direction");
-        Map.Entry<Integer, Integer> newCoordinates = new AbstractMap.SimpleEntry<>(item.getCoordinates().getKey() + directions[0],
+        Map.Entry<Integer, Integer> newCoordinates = new AbstractMap.SimpleEntry<>
+                (item.getCoordinates().getKey() + directions[0],
                 item.getCoordinates().getValue() + directions[1]);
         item.setCoordinates(newCoordinates);
         return new Result(true, "Item placed successfully");

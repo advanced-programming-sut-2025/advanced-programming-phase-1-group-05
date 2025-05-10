@@ -13,6 +13,7 @@ public class User {
 
     private String securityQuestion;
     private String securityAnswer;
+    public static boolean haveSavedGame = false;
 
     private List<String> friends = new ArrayList<>();
 

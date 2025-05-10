@@ -33,7 +33,7 @@ public class Game {
     public static List<Player> getAllPlayers() {
         return players;
     }
-    public static boolean haveSavedGame = false;
+
 //    public static void startTheGame() {
 //        database.initializeStoresAndItems();
 //        database.initializePlantDatabase();

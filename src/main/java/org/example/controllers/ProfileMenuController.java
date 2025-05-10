@@ -50,7 +50,7 @@ public class ProfileMenuController extends MenuController {
                 );
             }
         }
-        else if (input.trim().equals("show my info")) {
+        else if (input.trim().equals("user info")) {
             return showUserInfo();
         }
         else if (input.startsWith("change gender")) return Result.error("Oops!You can't change this one ;)");
@@ -138,7 +138,7 @@ public class ProfileMenuController extends MenuController {
     private Result showUserInfo() {
         StringBuilder info = new StringBuilder();
         info.append("Username: ").append(currentUser.getUsername()).append("\n");
-        info.append("Nickname: ").append(currentUser.getNickName());
+        info.append("Nickname: ").append(currentUser.getNickName()).append("\n");
         info.append("Games played: ").append(currentUser.getGamesPlayed()).append("\n");
 //        info.append("Highest score: ").append(currentUser.getHighestScore());
         // TODO: Highest score
