@@ -155,8 +155,30 @@ public class GameMenuController extends MenuController {
         return Result.error("You can't exit the game!");
     }
 
+    private void advanceToNextPlayer() {
+        currentPlayerIndex++;
+        if (currentPlayerIndex >= selectedPlayers.size()) {
+            currentPlayerIndex = 0;
+            GameManager.getGameClock().advanceTime(60);
+        }
+        currentPlayer = selectedPlayers.get(currentPlayerIndex);
+    }
+
+
     public Result nextTurn() {
-        return null;
+        if (pendingGame == null || !User.haveSavedGame) {
+            return Result.error("There is no active game.");
+        }
+
+        if (!currentUser.getUsername().equals(currentPlayer.getUsername())) {
+            return Result.error("It's not your turn.");
+        }
+
+        currentPlayer.increaseEnergy(-50);
+
+        advanceToNextPlayer();
+
+        return Result.success("Now it's " + currentPlayer.getUsername() + "'s turn.");
     }
 
     public Result deleteGame() {

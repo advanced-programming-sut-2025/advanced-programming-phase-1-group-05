@@ -30,6 +30,10 @@ public class GameManager {
         }
     }
 
+    public static TimeAndDate getGameClock() {
+        return gameClock;
+    }
+
     public static void resetEnergy() {
         for (Player player : Game.getAllPlayers()) {
             if (player.getProposalRejectionDaysLeft() > 0) {
