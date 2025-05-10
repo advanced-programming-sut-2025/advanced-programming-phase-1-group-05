@@ -29,66 +29,6 @@ public class GameMenuController extends MenuController {
     }
 
     private NPC lastNPC = null;
-
-//    public Result newGame(String input) {
-////        Pattern pattern = Pattern.compile
-////                ("^game new( -u(?<username>[\\w-]+))" +
-////                        "( -u(?<username2>[\\w-]+))?( -u(?<username3>[\\w-]+))?(?<extra> -u[\\w-]+)*$");
-//        Pattern pattern = Pattern.compile(
-//                "^game new( -u (?<username>[\\w-]+))" +
-//                        "( -u (?<username2>[\\w-]+))?" +
-//                        "( -u (?<username3>[\\w-]+))?$"
-//        );
-//        Matcher matcher = pattern.matcher(input);
-//
-//        if (!matcher.find()) {
-//            return Result.error("Maximum 3 usernames allowed!");
-//        }
-//
-//        if (matcher.group("username") == null) {
-//            return Result.error("At least one username must be provided!");
-//        }
-//
-//
-////        if (matcher.group("extra") != null) {
-////            return Result.error("Maximum 3 usernames allowed!");
-////        }
-//
-//        selectedPlayers = new ArrayList<>();
-//        selectedPlayers.add(new Player(currentUser));
-//
-//        for (int i = 1; i <= 3; i++) {
-//            String username = matcher.group("username" + i);
-//            if (username != null) {
-//                User user = UserDatabase.getUserByUsername(username);
-//                if (user == null) {
-//                    return Result.error("User '" + username + "' not found!");
-//                }
-//                if (UserDatabase.isUserInGame(username)) {
-//                    return Result.error("User '" + username + "' is already in another game!");
-//                }
-//                Player player = new Player(user);
-//                selectedPlayers.add(player);
-//                currentUser.addFriend(username);
-//                user.incrementGamesPlayed();
-//                UserDatabase.updateUser(user);
-//            }
-//        }
-//        canChooseMap = true;
-//        canExitGame = new boolean[selectedPlayers.size()];
-//        for (int i = 0; i < selectedPlayers.size(); i++) {
-//            canExitGame[i] = false;
-//        }
-//        for (Player player : selectedPlayers) {
-//            UserDatabase.setUserInGame(player.getUsername(), true);
-//        }
-//        currentPlayerIndex = 0;
-//        playerMapChoices.clear();
-//        Game.getAllPlayers().addAll(selectedPlayers);
-//        return Result.success(selectedPlayers.get(0).getUsername() +
-//                ", please choose your map (1-4):");
-//    }
-
     public Result newGame(String input) {
         Pattern pattern = Pattern.compile(
                 "^game new(?: -u (?<username>[\\w-]+))" +
@@ -209,6 +149,7 @@ public class GameMenuController extends MenuController {
                 currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())|| done) {
             pendingGame = null;
             canLoadGame = true;
+            User.haveSavedGame = true;
             DBController.saveGameState();
             return Result.success("Exited Game successfully!");
         }
@@ -226,13 +167,13 @@ public class GameMenuController extends MenuController {
 
 
     public Result nextTurn() {
-        if (pendingGame == null || !User.haveSavedGame) {
-            return Result.error("There is no active game.");
-        }
+//        if (pendingGame == null || !User.haveSavedGame) {
+//            return Result.error("There is no active game.");
+//        }
 
-        if (!currentUser.getUsername().equals(currentPlayer.getUsername())) {
-            return Result.error("It's not your turn.");
-        }
+//        if (!currentUser.getUsername().equals(currentPlayer.getUsername())) {
+//            return Result.error("It's not your turn.");
+//        }
 
         currentPlayer.increaseEnergy(-50);
 
