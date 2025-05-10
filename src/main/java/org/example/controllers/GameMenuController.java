@@ -90,21 +90,22 @@ public class GameMenuController extends MenuController {
 //    }
 
     public Result newGame(String input) {
-        // الگوی اصلاح شده با قابلیت تشخیص دقیق
         Pattern pattern = Pattern.compile(
                 "^game new(?: -u (?<username>[\\w-]+))" +
                         "(?: -u (?<username2>[\\w-]+))?" +
-                        "(?: -u (?<username3>[\\w-]+))?$"
+                        "(?: -u (?<username3>[\\w-]+))?" +
+                        "(?<extra> -u [\\w-]+)*$"
         );
 
         Matcher matcher = pattern.matcher(input.trim());
 
-        // ابتدا بررسی تطابق کلی
         if (!matcher.matches()) {
             return Result.error("Invalid command format! Correct format: 'game new -u <username> [-u <username2>] [-u <username3>]'");
         }
+        if (matcher.group("extra") != null) {
+            return Result.error("Maximum 3 usernames allowed!");
+        }
 
-        // بررسی وجود حداقل یک کاربر
         if (matcher.group("username") == null) {
             return Result.error("At least one username must be provided!");
         }
@@ -112,7 +113,6 @@ public class GameMenuController extends MenuController {
         selectedPlayers = new ArrayList<>();
         selectedPlayers.add(new Player(currentUser));
 
-        // پردازش کاربران
         for (int i = 1; i <= 3; i++) {
             String username = matcher.group("username" + (i == 1 ? "" : i));
             if (username != null) {
@@ -131,7 +131,6 @@ public class GameMenuController extends MenuController {
             }
         }
 
-        // آماده‌سازی بازی
         canChooseMap = true;
         canExitGame = new boolean[selectedPlayers.size()];
         Arrays.fill(canExitGame, false);
@@ -169,10 +168,6 @@ public class GameMenuController extends MenuController {
         } else {
             canChooseMap = false;
             pendingGame = new Game();
-            for (int i = 0; i < selectedPlayers.size(); i++) {
-//                pendingGame.setPlayerMap(selectedPlayers.get(i), playerMapChoices.get(i));
-                // TODO: map for players :)
-            }
             Result startResult = Game.startTheGame();
             if (startResult.isSuccess()) {
                 activeGames.put(currentUser.getUsername(), pendingGame);

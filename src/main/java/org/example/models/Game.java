@@ -42,10 +42,10 @@ public class Game {
 //    }
     public static Result startTheGame() {
         try {
-            database.initializeStoresAndItems();
-            database.initializePlantDatabase();
-            database.loadNPCs();
-            Player.initializeFriendships(players);
+//            database.initializeStoresAndItems();
+//            database.initializePlantDatabase();
+//            database.loadNPCs();
+//            Player.initializeFriendships(players);
 
             if (!players.isEmpty()) {
                 currentPlayer = players.get(0);
