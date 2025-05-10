@@ -2,7 +2,7 @@ package org.example.models.Enums;
 
 
 public enum ItemLevel {
-    Normal("Normal", 5, 40, 0, 1),
+    Normal("Training", 5, 40, 0, 1),
     Brass("Brass", 4, 55, 0.15, 1.25),
     Iron("Iron",3, 70,0.3, 1.25),
     Gold("Gold",2, 85,0.45, 1.5),

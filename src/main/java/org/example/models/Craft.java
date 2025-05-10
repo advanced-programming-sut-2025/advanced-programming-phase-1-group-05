@@ -1,28 +1,26 @@
 package org.example.models;
 
+import org.example.models.Enums.CraftType;
+import org.example.models.Enums.Material;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 public class Craft implements Item {
     private Map.Entry<Integer,Integer> coordinates;
-    private String name;
-    private int price;
-    private List<Item> ingredients;
-    private String source;
-    public Craft(int price, String name, List<Item> ingredients, String source) {
-        this.price = price;
-        this.name = name;
-        this.ingredients = ingredients;
-        this.source = source;
+    private final CraftType type;
+
+    public Craft(CraftType type) {
+        this.type = type;
     }
 
-    public List<Item> getIngredients() {
-        return ingredients;
+    public Map<Material, Integer> getIngredients() {
+        return type.getIngredients();
     }
 
     public String getSource() {
-        return source;
+        return type.getSource();
     }
 
     public Map.Entry<Integer,Integer> getCoordinates() {
@@ -31,11 +29,11 @@ public class Craft implements Item {
 
     @Override
     public String getName() {
-        return name;
+        return type.getName();
     }
     @Override
     public int getPrice() {
-        return price;
+        return type.getPrice();
     }
     @Override
     public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {

@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FishingPole implements Tool<FishingPoleType> {
-    FishingPoleType level = FishingPoleType.Normal;
+    FishingPoleType level = FishingPoleType.Training;
 
     @Override
     public String getName() {

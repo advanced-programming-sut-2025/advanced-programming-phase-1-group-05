@@ -15,9 +15,8 @@ public class Farming implements Skill{
     int level = 0;
     int capacity = 0;
 
-    //شخم زدن
     public void plowTile(GameTile tile, Hoe hoe) {}
-    //کاشتن دانه
+
     public boolean plantSeed(Seed seed, GameTile tile) {
         if(getSeedType(seed) == null) return false;
         else if(getSeedType(seed) == "crop") {

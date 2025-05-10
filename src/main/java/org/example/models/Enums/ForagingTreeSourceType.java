@@ -2,7 +2,7 @@ package org.example.models.Enums;
 
 import java.util.List;
 
-public enum ForagingTreeSourceType {
+public enum ForagingTreeSourceType implements Material {
     Acorns("Acorns", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER)),
     MapleSeeds("Maple Seeds", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER)),
     PineCones("Pine Cones", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER)),

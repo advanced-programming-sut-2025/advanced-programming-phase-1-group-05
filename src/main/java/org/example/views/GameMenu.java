@@ -65,6 +65,9 @@ public class GameMenu implements org.example.views.AppMenu {
         else if ((matcher = GameMenuCommands.CollectProduce.getMatcher(input)) != null) {
             System.out.println(gameMenuController.collectProduce(matcher));
         }
+        else if ((matcher = GameMenuCommands.StartFishing.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.startFishing(matcher));
+        }
         else if ((matcher = GameMenuCommands.Purchase.getMatcher(input)) != null) {
             System.out.println(storeController.purchase(matcher));
         } else if ((matcher = GameMenuCommands.CheatAddMoney.getMatcher(input)) != null) {
@@ -139,7 +142,10 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(gameMenuController.showCraftInfo(matcher.group("name")));
         } else if ((matcher = GameMenuCommands.UseTool.getMatcher(input)) != null) {
             System.out.println(gameMenuController.useTool(matcher.group("direction")));
-        } else {
+        } else if((matcher = GameMenuCommands.ShowCraftInfo.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.showCraftInfo(matcher.group("craftName")));
+        }
+        else {
             System.out.println("Invalid Command!");
         }
     }

@@ -1,7 +1,7 @@
 package org.example.models.Enums;
 
 public enum BackPackType {
-    Normal("Normal", 12),
+    Normal("Training", 12),
     Big("Big", 24),
     Deluxe("Deluxe", 1000000);
 

@@ -1,6 +1,6 @@
 package org.example.models.Enums;
 
-public enum MineralType {
+public enum MineralType implements Material {
     Quartz("Quartz","A clear crystal commonly found in caves and mines.", 25),
     EarthCrystal("Earth Crystal","A resinous substance found near the surface.", 50),
     FrozenTear("Frozen Tear", "A crystal fabled to be the frozen tears of a yeti.", 75),
@@ -17,7 +17,10 @@ public enum MineralType {
     Iron("Iron", "A fairly common ore that can be smelted into bars.", 10),
     Gold("Gold", "A precious ore that can be smelted into bars.", 25),
     Iridium("Iridium", "An exotic ore with many curious properties. Can be smelted into bars.", 100),
-    Coal("Coal", "A combustible rock that is useful for crafting and smelting.", 15);
+    Coal("Coal", "A combustible rock that is useful for crafting and smelting.", 15),
+    Wood("Wood", "", 0),
+    Stone("Stone", "", 0),
+    Fiber("Fiber","",0);
 
     private final String name;
     private final String description;

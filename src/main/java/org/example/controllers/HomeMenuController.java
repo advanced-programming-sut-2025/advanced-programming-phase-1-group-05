@@ -2,14 +2,16 @@ package org.example.controllers;
 
 import org.example.models.*;
 import org.example.models.Craft;
+import org.example.models.Enums.Material;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HomeMenuController {
 
-    //show all crafting recipes
+  //  show all crafting recipes
     public Result showAllRecipes() {
         ArrayList<Craft> recipes = Game.getDatabase().getCraftingRecipeDatabase();
         StringBuilder output = new StringBuilder();
@@ -21,7 +23,7 @@ public class HomeMenuController {
             if (!Game.getCurrentPlayer().getBackPack().getLearntRecipes().contains(r))
                 output.append(error1).append("\n");
             else {
-                for (Item item : r.getIngredients()) {
+                for (Material item : r.getIngredients().keySet()) {
                     if (!Game.getCurrentPlayer().getBackPack().getInventory().containsKey(item)) {
                         output.append(error2).append("\n");
                         break;
