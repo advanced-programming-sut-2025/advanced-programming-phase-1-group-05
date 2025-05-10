@@ -38,6 +38,7 @@ public class LoginMenuController extends MenuController {
             // پیاده‌سازی منطق ذخیره وضعیت ورود
         }
         this.currentUser = user;
+        RegisterMenuController.currentUser = user;
         return new Result(true, "Logged in successfully!");
 
     }

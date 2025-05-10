@@ -2,16 +2,17 @@ package org.example.models;
 
 import org.example.controllers.DBController;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class UserDatabase {
     private static final Map<String, User> users = new HashMap<>();
     private static final Map<String, Boolean> userInGameStatus = new HashMap<>();
 
     public static void addUser(User user) {
-        users.put(user.getUsername().toLowerCase(), user);
-        userInGameStatus.put(user.getUsername().toLowerCase(), false);
+        String usernameKey = user.getUsername().toLowerCase();
+        users.put(usernameKey, user);
+        userInGameStatus.put(usernameKey, false);
+
         DBController.saveUsers();
         DBController.saveCurrentUser();
     }
@@ -21,7 +22,8 @@ public class UserDatabase {
     }
 
     public static void updateUser(User user) {
-        users.put(user.getUsername().toLowerCase(), user);
+        String usernameKey = user.getUsername().toLowerCase();
+        users.put(usernameKey, user);
         DBController.saveUsers();
         DBController.saveCurrentUser();
     }
@@ -38,7 +40,13 @@ public class UserDatabase {
         userInGameStatus.put(username.toLowerCase(), inGame);
     }
 
-    public static Map<String, User> getAllUsers() {
-        return new HashMap<>(users); // Return a copy to prevent external modification
+    public static List<User> getAllUsers() {
+        return new ArrayList<>(users.values());
+    }
+
+
+    public static void clear() {
+        users.clear();
+        userInGameStatus.clear();
     }
 }

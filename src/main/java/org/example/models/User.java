@@ -85,4 +85,16 @@ public class User {
     public void incrementGamesPlayed() {
         this.gamesPlayed++;
     }
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", nickname='" + nickName + '\'' +
+                ", gamesPlayed='" + gamesPlayed + '\'' +
+                ", securityQuestion='" + securityQuestion + '\'' +
+                ", securityAnswer='" + securityAnswer + '\'' +
+                ", haveSavedGame='" + haveSavedGame + '\'' +
+                '}';
+    }
 }
