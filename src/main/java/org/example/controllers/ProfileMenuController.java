@@ -1,8 +1,7 @@
 package org.example.controllers;
 
-import org.example.models.Result;
-import org.example.models.User;
-import org.example.models.UserDatabase;
+import org.example.models.*;
+
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -139,9 +138,14 @@ public class ProfileMenuController extends MenuController {
         StringBuilder info = new StringBuilder();
         info.append("Username: ").append(currentUser.getUsername()).append("\n");
         info.append("Nickname: ").append(currentUser.getNickName()).append("\n");
+        for (Player player : Game.getAllPlayers()) {
+            if (player.getUsername().equals(currentUser.getUsername())) {
+                info.append("Money: ").append(player.getGold()).append("\n");
+            } else {
+                info.append("This user hadn't any game!\n");
+            }
+        }
         info.append("Games played: ").append(currentUser.getGamesPlayed()).append("\n");
-//        info.append("Highest score: ").append(currentUser.getHighestScore());
-        // TODO: Highest score
         return Result.success(info.toString());
     }
 

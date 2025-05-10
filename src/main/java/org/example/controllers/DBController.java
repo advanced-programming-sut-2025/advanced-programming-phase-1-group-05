@@ -1,15 +1,14 @@
 package org.example.controllers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import org.example.models.App;
-import org.example.models.User;
-import org.example.models.UserDatabase;
+import org.example.models.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DBController {
     private static final String USERS_FILE = "src/main/resources/users.json";
@@ -53,6 +52,64 @@ public class DBController {
             System.err.println("Error saving users: " + e.getMessage());
         }
     }
+
+    public static void saveGameState() {
+        try {
+            Map<String, Object> gameState = new HashMap<>();
+
+            gameState.put("ownerUsername", RegisterMenuController.currentUser.getUsername());
+
+            List<Map<String, Object>> playersInfo = new ArrayList<>();
+            for (Player player : GameMenuController.selectedPlayers) {
+                Map<String, Object> playerInfo = new HashMap<>();
+                playerInfo.put("username", player.getUsername());
+                playerInfo.put("energy", player.getEnergy());
+                playersInfo.add(playerInfo);
+            }
+
+            gameState.put("players", playersInfo);
+
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String json = gson.toJson(gameState);
+            FileController.writeTextToFile(json, "src/main/resources/game_state.json");
+
+        } catch (Exception e) {
+            System.err.println("Error saving game state: " + e.getMessage());
+        }
+    }
+
+    public static void loadGameState() {
+        try {
+            String json = FileController.getTextOfFile("src/main/resources/game_state.json");
+            if (json == null || json.trim().isEmpty()) return;
+
+            Gson gson = new Gson();
+            JsonObject gameState = JsonParser.parseString(json).getAsJsonObject();
+
+            String ownerUsername = gameState.get("ownerUsername").getAsString();
+            JsonArray playersArray = gameState.getAsJsonArray("players");
+
+            for (JsonElement element : playersArray) {
+                JsonObject playerObj = element.getAsJsonObject();
+                String username = playerObj.get("username").getAsString();
+                int energy = playerObj.get("energy").getAsInt();
+
+                Player player = Game.getPlayerByUsername(username);
+                if (player != null) {
+                    player.setEnergy(energy);
+                    // اگه نیاز بود لیست بازیکنان رو دوباره بسازی:
+                    if (!GameMenuController.selectedPlayers.contains(player))
+                        GameMenuController.selectedPlayers.add(player);
+                }
+            }
+
+            GameMenuController.currentPlayer = Game.getPlayerByUsername(ownerUsername);
+
+        } catch (Exception e) {
+            System.err.println("Error loading game state: " + e.getMessage());
+        }
+    }
+
 
 
     public static void loadCurrentUser() {

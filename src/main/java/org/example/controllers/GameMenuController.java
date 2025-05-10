@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class GameMenuController extends MenuController {
     public static User currentUser;
-    private static List<Player> selectedPlayers;
+    public static List<Player> selectedPlayers;
     private static Map<String, Game> activeGames = new HashMap<>();
     private Game pendingGame;
     private static int currentPlayerIndex = 0;
@@ -129,7 +129,7 @@ public class GameMenuController extends MenuController {
             }
         }
         if (User.haveSavedGame) {
-            //TODO : پیاده سازی لود بازی
+            DBController.loadGameState();
             return Result.success("Game loaded successfully :)");
         }
         return Result.error("There is no Game to continue!");
@@ -146,12 +146,11 @@ public class GameMenuController extends MenuController {
         }
         if (currentUser.getUsername().equals(currentPlayer.getUsername()) ||
                 currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())|| done) {
-            // TODO
             pendingGame = null;
             canLoadGame = true;
+            DBController.saveGameState();
             return Result.success("Exited Game successfully!");
         }
-        // TODO
         return Result.error("You can't exit the game!");
     }
 
