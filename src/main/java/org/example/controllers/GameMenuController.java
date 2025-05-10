@@ -30,29 +30,91 @@ public class GameMenuController extends MenuController {
 
     private NPC lastNPC = null;
 
-    public Result newGame(String input) {
-        Pattern pattern = Pattern.compile
-                ("^game new( -u(?<username>[\\w-]+))" +
-                        "( -u(?<username2>[\\w-]+))?( -u(?<username3>[\\w-]+))?(?<extra> -u[\\w-]+)*$");
-        Matcher matcher = pattern.matcher(input);
+//    public Result newGame(String input) {
+////        Pattern pattern = Pattern.compile
+////                ("^game new( -u(?<username>[\\w-]+))" +
+////                        "( -u(?<username2>[\\w-]+))?( -u(?<username3>[\\w-]+))?(?<extra> -u[\\w-]+)*$");
+//        Pattern pattern = Pattern.compile(
+//                "^game new( -u (?<username>[\\w-]+))" +
+//                        "( -u (?<username2>[\\w-]+))?" +
+//                        "( -u (?<username3>[\\w-]+))?$"
+//        );
+//        Matcher matcher = pattern.matcher(input);
+//
+//        if (!matcher.find()) {
+//            return Result.error("Maximum 3 usernames allowed!");
+//        }
+//
+//        if (matcher.group("username") == null) {
+//            return Result.error("At least one username must be provided!");
+//        }
+//
+//
+////        if (matcher.group("extra") != null) {
+////            return Result.error("Maximum 3 usernames allowed!");
+////        }
+//
+//        selectedPlayers = new ArrayList<>();
+//        selectedPlayers.add(new Player(currentUser));
+//
+//        for (int i = 1; i <= 3; i++) {
+//            String username = matcher.group("username" + i);
+//            if (username != null) {
+//                User user = UserDatabase.getUserByUsername(username);
+//                if (user == null) {
+//                    return Result.error("User '" + username + "' not found!");
+//                }
+//                if (UserDatabase.isUserInGame(username)) {
+//                    return Result.error("User '" + username + "' is already in another game!");
+//                }
+//                Player player = new Player(user);
+//                selectedPlayers.add(player);
+//                currentUser.addFriend(username);
+//                user.incrementGamesPlayed();
+//                UserDatabase.updateUser(user);
+//            }
+//        }
+//        canChooseMap = true;
+//        canExitGame = new boolean[selectedPlayers.size()];
+//        for (int i = 0; i < selectedPlayers.size(); i++) {
+//            canExitGame[i] = false;
+//        }
+//        for (Player player : selectedPlayers) {
+//            UserDatabase.setUserInGame(player.getUsername(), true);
+//        }
+//        currentPlayerIndex = 0;
+//        playerMapChoices.clear();
+//        Game.getAllPlayers().addAll(selectedPlayers);
+//        return Result.success(selectedPlayers.get(0).getUsername() +
+//                ", please choose your map (1-4):");
+//    }
 
-        if (!matcher.find()) {
-            return Result.error("Invalid command format!");
+    public Result newGame(String input) {
+        // الگوی اصلاح شده با قابلیت تشخیص دقیق
+        Pattern pattern = Pattern.compile(
+                "^game new(?: -u (?<username>[\\w-]+))" +
+                        "(?: -u (?<username2>[\\w-]+))?" +
+                        "(?: -u (?<username3>[\\w-]+))?$"
+        );
+
+        Matcher matcher = pattern.matcher(input.trim());
+
+        // ابتدا بررسی تطابق کلی
+        if (!matcher.matches()) {
+            return Result.error("Invalid command format! Correct format: 'game new -u <username> [-u <username2>] [-u <username3>]'");
         }
 
+        // بررسی وجود حداقل یک کاربر
         if (matcher.group("username") == null) {
             return Result.error("At least one username must be provided!");
-        }
-
-        if (matcher.group("extra") != null) {
-            return Result.error("Maximum 3 usernames allowed!");
         }
 
         selectedPlayers = new ArrayList<>();
         selectedPlayers.add(new Player(currentUser));
 
+        // پردازش کاربران
         for (int i = 1; i <= 3; i++) {
-            String username = matcher.group("username" + i);
+            String username = matcher.group("username" + (i == 1 ? "" : i));
             if (username != null) {
                 User user = UserDatabase.getUserByUsername(username);
                 if (user == null) {
@@ -68,17 +130,20 @@ public class GameMenuController extends MenuController {
                 UserDatabase.updateUser(user);
             }
         }
+
+        // آماده‌سازی بازی
         canChooseMap = true;
         canExitGame = new boolean[selectedPlayers.size()];
-        for (int i = 0; i < selectedPlayers.size(); i++) {
-            canExitGame[i] = false;
-        }
+        Arrays.fill(canExitGame, false);
+
         for (Player player : selectedPlayers) {
             UserDatabase.setUserInGame(player.getUsername(), true);
         }
+
         currentPlayerIndex = 0;
         playerMapChoices.clear();
         Game.getAllPlayers().addAll(selectedPlayers);
+
         return Result.success(selectedPlayers.get(0).getUsername() +
                 ", please choose your map (1-4):");
     }
