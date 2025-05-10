@@ -2,7 +2,7 @@ package org.example.models.Enums;
 
 import java.util.List;
 
-public enum ForagingSeedType {
+public enum ForagingSeedType implements Material {
     JazzSeeds("Jazz Seeds", List.of(Season.SPRING)),
     CarrotSeeds("Carrot Seeds", List.of(Season.SPRING)),
     CauliflowerSeeds("Cauliflower Seeds", List.of(Season.SPRING)),

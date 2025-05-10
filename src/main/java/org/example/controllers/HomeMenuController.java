@@ -10,27 +10,27 @@ import java.util.List;
 public class HomeMenuController {
 
     //show all crafting recipes
-    public Result showAllRecipes() {
-        ArrayList<Craft> recipes = Game.getDatabase().getCraftingRecipeDatabase();
-        StringBuilder output = new StringBuilder();
-        String error1 = "(you haven't learned this recipe yet)";
-        String error2 = "(you don't have enough ingredients)";
-
-        for (Craft r : recipes) {
-            output.append(r.getName()).append(" ");
-            if (!Game.getCurrentPlayer().getBackPack().getLearntRecipes().contains(r))
-                output.append(error1).append("\n");
-            else {
-                for (Item item : r.getIngredients()) {
-                    if (!Game.getCurrentPlayer().getBackPack().getInventory().containsKey(item)) {
-                        output.append(error2).append("\n");
-                        break;
-                    }
-                }
-            }
-        }
-        return new Result(true, output.toString());
-    }
+//    public Result showAllRecipes() {
+//        ArrayList<Craft> recipes = Game.getDatabase().getCraftingRecipeDatabase();
+//        StringBuilder output = new StringBuilder();
+//        String error1 = "(you haven't learned this recipe yet)";
+//        String error2 = "(you don't have enough ingredients)";
+//
+//        for (Craft r : recipes) {
+//            output.append(r.getName()).append(" ");
+//            if (!Game.getCurrentPlayer().getBackPack().getLearntRecipes().contains(r))
+//                output.append(error1).append("\n");
+//            else {
+//                for (Item item : r.getIngredients()) {
+//                    if (!Game.getCurrentPlayer().getBackPack().getInventory().containsKey(item)) {
+//                        output.append(error2).append("\n");
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//        return new Result(true, output.toString());
+//    }
 
     //show crafting recipes
     public Result showCraftingRecipes() {

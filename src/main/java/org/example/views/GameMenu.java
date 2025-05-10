@@ -139,7 +139,10 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(gameMenuController.showCraftInfo(matcher.group("name")));
         } else if ((matcher = GameMenuCommands.UseTool.getMatcher(input)) != null) {
             System.out.println(gameMenuController.useTool(matcher.group("direction")));
-        } else {
+        } else if((matcher = GameMenuCommands.ShowCraftInfo.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.showCraftInfo(matcher.group("craftName")));
+        }
+        else {
             System.out.println("Invalid Command!");
         }
     }

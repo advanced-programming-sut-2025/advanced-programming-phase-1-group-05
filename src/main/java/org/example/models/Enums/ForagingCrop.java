@@ -2,7 +2,7 @@ package org.example.models.Enums;
 
 import java.util.List;
 
-public enum ForagingCrop {
+public enum ForagingCrop implements Material {
     CommonMushroom("Common Mushroom", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER), 40, 38),
     Daffodil("Daffodil", List.of(Season.SPRING), 30, 0),
     Leek("Leek", List.of(Season.SPRING), 60, 40),
