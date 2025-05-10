@@ -497,8 +497,8 @@ public class GameMenuController extends MenuController {
                 "They accepted the bouquet! Quick, act cool before your face turns red.");
     }
 
-    public Result askMarriage(String input) {
-        String username = "";
+    public Result askMarriage(Matcher m) {
+        String username = m.group("username");
         Player targetPlayer = Game.getPlayerByUsername(username);
         Item ring = Game.getDatabase().getItem("Wedding Ring");
         Player currentPlayer = Game.getCurrentPlayer();

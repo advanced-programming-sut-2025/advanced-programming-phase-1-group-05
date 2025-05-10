@@ -94,7 +94,11 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(gameMenuController.hugPlayer(matcher.group("username")));
         } else if ((matcher = GameMenuCommands.GiveBouquet.getMatcher(input)) != null) {
             System.out.println(gameMenuController.giveBouquet(matcher.group("username")));
-        } else if (input.matches("respond\\s+(-accept|-reject)\\s+-u\\s+.*")) {
+        }
+        else if ((matcher = GameMenuCommands.AskMarriage.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.askMarriage(matcher));
+        }
+        else if (input.matches("respond\\s+(-accept|-reject)\\s+-u\\s+.*")) {
             System.out.println(gameMenuController.respondToProposal(input));
         } else if (input.equals("start trade")) {
             menuController.enterMenu("trade");
