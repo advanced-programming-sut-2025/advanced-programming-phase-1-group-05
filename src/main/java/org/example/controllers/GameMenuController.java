@@ -354,9 +354,15 @@ public class GameMenuController extends MenuController {
     }
 
     public Result feedHay(Matcher m) {
-        String animalName = "";
-        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        String animalName = m.group("animalName");
+        Player player = Game.getCurrentPlayer();
+        Animal animal = player.getAnimal(animalName);
+        if (animal == null) return Result.error("animal doesn't exist or isn't yours");
+        animal.setFeedingStatus(true);
+        player.getBackPack().removeFromInventory(Game.getDatabase().getItem("Hay"), 1);
         animal.adjustFriendshipPoints(8);
+        return Result.success("You offer food. The animal accepts. A bond is forged through snacks.");
+
     }
     public Result collectProduce(Matcher m) {
         String animalName = m.group("name");
@@ -373,6 +379,20 @@ public class GameMenuController extends MenuController {
         animal.adjustFriendshipPoints(5);
         return new Result(true, "collected successfully");
 
+    }
+
+    public Result sellAnimal(Matcher m) {
+        String animalName = m.group("animalName");
+        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        if (animal == null)
+            return Result.error("Selected animal doesn't exist or isn't yours");
+
+        int basePrice = Game.getDatabase().getItem(animal.getType().toString()).getPrice();
+        int price = (int) (basePrice * ((animal.getFriendshipPoints()/1000) + 0.3));
+        Player player = Game.getCurrentPlayer();
+        player.addGold(price);
+        player.removeAnimal(animal);
+        return Result.success("Your animal looked back one last time before leaving… but you were already gone.");
     }
 
     public Result startFishing(Matcher m) {

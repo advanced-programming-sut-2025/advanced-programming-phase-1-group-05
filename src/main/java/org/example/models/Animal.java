@@ -94,10 +94,17 @@ public class Animal {
         friendshipPoints += amount;
     }
 
+    public int getFriendshipPoints() {
+        return friendshipPoints;
+    }
+
     public void setFriendshipPoints(int amount) {
         friendshipPoints = Math.min(1000, amount);
     }
     public List<Product> getUnCollectedProducts() {
         return unCollectedProducts;
+    }
+    public void setFeedingStatus(boolean wasFed) {
+        this.wasFed = wasFed;
     }
 }

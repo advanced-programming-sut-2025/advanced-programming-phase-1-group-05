@@ -220,6 +220,14 @@ public class Player {
         }
         return animal;
     }
+    public void removeAnimal(Animal animal) {
+        for (AnimalHouse house : coopAndBarns) {
+            if (house.contains(animal)) {
+                house.removeAnimal(animal);
+                break;
+            }
+        }
+    }
     private static class Friendship {
         private final Player player1;
         private final Player player2;

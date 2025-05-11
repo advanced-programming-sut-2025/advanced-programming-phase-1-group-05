@@ -65,8 +65,14 @@ public class GameMenu implements org.example.views.AppMenu {
         else if ((matcher = GameMenuCommands.SetFriendshipCC.getMatcher(input)) != null) {
             System.out.println(gameMenuController.cheatSetFriendship(matcher));
         }
+        else if ((matcher = GameMenuCommands.FeedHay.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.feedHay(matcher));
+        }
         else if ((matcher = GameMenuCommands.CollectProduce.getMatcher(input)) != null) {
             System.out.println(gameMenuController.collectProduce(matcher));
+        }
+        else if ((matcher = GameMenuCommands.SellAnimal.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.sellAnimal(matcher));
         }
         else if ((matcher = GameMenuCommands.StartFishing.getMatcher(input)) != null) {
             System.out.println(gameMenuController.startFishing(matcher));
