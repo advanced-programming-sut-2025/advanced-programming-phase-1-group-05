@@ -20,8 +20,18 @@ public enum Weather {
         return null;
     }
 
+//    @Override
+//    public String toString() {
+//        return super.toString();
+//    }
     @Override
     public String toString() {
-        return super.toString().toLowerCase();
+        return switch (this) {
+            case Sunny -> "Sunny ☀️";
+            case Rain -> "Rain 🌧️";
+            case Storm -> "Storm ⛈️";
+            case Snow -> "Snow ❄️";
+        };
     }
+
 }

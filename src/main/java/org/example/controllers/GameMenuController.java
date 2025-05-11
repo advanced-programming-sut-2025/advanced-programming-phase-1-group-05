@@ -2,7 +2,9 @@ package org.example.controllers;
 
 import org.example.models.*;
 import org.example.models.Enums.FishingPoleType;
+import org.example.models.Enums.Season;
 import org.example.models.Enums.TileType;
+import org.example.models.Enums.Weather;
 import org.example.models.Tool.Tool;
 
 import javax.swing.plaf.PanelUI;
@@ -110,7 +112,10 @@ public class GameMenuController extends MenuController {
             pendingGame = new Game();
             Result startResult = Game.startTheGame();
             if (startResult.isSuccess()) {
-                activeGames.put(currentUser.getUsername(), pendingGame);
+//                activeGames.put(currentUser.getUsername(), pendingGame);
+                for (Player player : selectedPlayers) {
+                    activeGames.put(player.getUsername(), pendingGame);
+                }
                 currentPlayer = selectedPlayers.get(0);
             }
             currentPlayer = selectedPlayers.get(0);
@@ -159,19 +164,21 @@ public class GameMenuController extends MenuController {
     }
 
     private void advanceToNextPlayer() {
+        int previousIndex = currentPlayerIndex;
         currentPlayerIndex = (currentPlayerIndex + 1) % selectedPlayers.size();
-        if (currentPlayerIndex >= selectedPlayers.size()) {
-            currentPlayerIndex = 0;
-            GameManager.getGameClock().advanceTime(60);
+        if (currentPlayerIndex == 0 && previousIndex == selectedPlayers.size() - 1) {
+            GameManager.getGameClock().advanceTime(60); // یک ساعت جلو برو
         }
         currentPlayer = selectedPlayers.get(currentPlayerIndex);
     }
 
 
     public Result nextTurn() {
-        if (pendingGame == null) {
+        Game game = activeGames.get(currentUser.getUsername());
+        if (game == null) {
             return Result.error("There is no active game.");
         }
+        pendingGame = game;
 
         if (!currentUser.getUsername().equals(currentPlayer.getUsername())) {
             return Result.error("It's not your turn.");
@@ -783,4 +790,22 @@ public class GameMenuController extends MenuController {
         if (str == null || str.isEmpty()) return str;
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
+
+    public Result showSeason() {
+        Season currentSeason = GameManager.getGameClock().getCurrentSeason();
+        return Result.success("Current season: " + currentSeason.name());
+    }
+
+
+    public Result showWeather() {
+        Weather currentWeather = Game.getCurrentWeather();
+        return Result.success("Current weather: " + currentWeather.toString());
+    }
+
+
+    public Result weatherForecast() {
+        Weather forecast = Game.getForecastedWeather();
+        return Result.success("Forecasted weather for tomorrow: " + forecast.toString());
+    }
+
 }

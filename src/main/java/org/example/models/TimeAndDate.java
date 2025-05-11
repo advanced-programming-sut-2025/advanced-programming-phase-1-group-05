@@ -11,6 +11,8 @@ public class TimeAndDate {
     Season season;
     int hour;
     int minute;
+    private int minutes;
+
     public void nextDay() {}
     public TimeAndDate() {
         this.day = 1;
@@ -47,9 +49,9 @@ public class TimeAndDate {
     public void changeSeason(Season season) {}
 
     public void advanceTime(int minutes){
-        minutes += minutes;
-        while (minutes >= 60) {
-            minutes -= 60;
+        this.minutes += minutes;
+        while (this.minutes >= 60) {
+            this.minutes -= 60;
             hour ++;
         }
         if (hour >= 24) {
@@ -66,6 +68,7 @@ public class TimeAndDate {
         }
         Game.getGameMap().growPlants();
         GameManager.nextDay();
+        Game.setForecastedWeatherBySeason(season);
     }
     public Season getCurrentSeason() { return season; }
     public int getDay() { return day; }

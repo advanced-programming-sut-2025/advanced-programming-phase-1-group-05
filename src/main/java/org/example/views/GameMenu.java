@@ -90,23 +90,42 @@ public class GameMenu implements org.example.views.AppMenu {
                     System.out.println("Time advanced by " + hours + " hours.");
                 }
             } catch (Exception e) {
-                System.out.println("Invalid format. Use: cheat advance time <X>h (e.g. cheat advance time 5h)");
+                System.out.println("Invalid format.");
             }
         }
         else if (input.startsWith("cheat advance date")) {
+            Pattern pattern = Pattern.compile("^cheat advance date (\\d+)d$");
+            matcher = pattern.matcher(input.trim());
 
+            if (matcher.matches()) {
+                int days = Integer.parseInt(matcher.group(1));
+                if (days <= 0) {
+                    System.out.println("Error: Number of days must be positive.");
+                    return;
+                }
+                for (int i = 0; i < days; i++) {
+                    GameManager.getGameClock().advanceDay();
+                }
+                System.out.println("Advanced " + days + " day(s).");
+            } else {
+                System.out.println("Invalid format! Use: cheat advance date <X>d");
+            }
         }
-        else if (input.equals("season")) {
 
+        else if (input.equals("season")) {
+            Result result = gameMenuController.showSeason();
+            System.out.println(result.getMessage());
         }
         else if (input.startsWith("cheat Thor")) {
 
         }
         else if (input.equals("weather")) {
-
+            Result result = gameMenuController.showWeather();
+            System.out.println(result.getMessage());
         }
         else if (input.equals("weather forecast")) {
-
+            Result result = gameMenuController.weatherForecast();
+            System.out.println(result.getMessage());
         }
         else if (input.startsWith("cheat weather set")) {
 

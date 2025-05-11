@@ -4,10 +4,7 @@ import org.example.controllers.GameManager;
 import org.example.models.Enums.Season;
 import org.example.models.Enums.Weather;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Game {
     private static GameMap gameMap = new GameMap();
@@ -16,6 +13,7 @@ public class Game {
     private static List<Message> messages = new ArrayList<>();
     private static List<Gift> gifts = new ArrayList<>();
     private static Weather currentWeather = Weather.Sunny;
+    private static Weather forecastedWeather = Weather.Sunny;
     private static final Database database = new Database();
     public static Map<Player, Item> soldItems = new HashMap<>();
     // TODO a method for changing the weather
@@ -36,7 +34,23 @@ public class Game {
         return players;
     }
 
-//    public static void startTheGame() {
+    public static void setForecastedWeatherBySeason(Season season) {
+        List<Weather> possibleWeathers = switch (season) {
+            case SPRING -> List.of(Weather.Sunny, Weather.Rain, Weather.Storm);
+            case SUMMER -> List.of(Weather.Sunny, Weather.Storm);
+            case FALL -> List.of(Weather.Sunny, Weather.Rain);
+            case WINTER -> List.of(Weather.Snow, Weather.Storm, Weather.Sunny);
+        };
+        Random random = new Random();
+        forecastedWeather = possibleWeathers.get(random.nextInt(possibleWeathers.size()));
+    }
+
+    public static Weather getForecastedWeather() {
+        return forecastedWeather;
+    }
+
+
+    //    public static void startTheGame() {
 //        database.initializeStoresAndItems();
 //        database.initializePlantDatabase();
 //        database.loadNPCs();
