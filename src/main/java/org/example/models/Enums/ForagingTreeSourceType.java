@@ -21,4 +21,12 @@ public enum ForagingTreeSourceType implements Material {
     public List<Season> getSeasons() {
         return seasons;
     }
+    public static ForagingTreeSourceType fromString(String name){
+        for (ForagingTreeSourceType sourceType : ForagingTreeSourceType.values()) {
+            if (sourceType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+                return sourceType;
+            }
+        }
+        return null;
+    }
 }

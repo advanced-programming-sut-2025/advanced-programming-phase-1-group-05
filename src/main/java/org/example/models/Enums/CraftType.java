@@ -1,5 +1,7 @@
 package org.example.models.Enums;
 
+import org.example.models.Craft;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +56,13 @@ public enum CraftType implements Material {
     public int getPrice() {
         return price;
     }
-    
+    public static CraftType fromString(String name){
+        for (CraftType craftType : CraftType.values()) {
+            if (craftType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+                return craftType;
+            }
+        }
+        return null;
+    }
 
 }

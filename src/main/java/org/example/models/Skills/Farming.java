@@ -17,16 +17,16 @@ public class Farming implements Skill{
 
     public void plowTile(GameTile tile, Hoe hoe) {}
 
-    public boolean plantSeed(Seed seed, GameTile tile) {
-        if(getSeedType(seed) == null) return false;
-        else if(getSeedType(seed) == "crop") {
-            Game.getGameMap().addPlant(getFruitType(seed));
-        } else if(getSeedType(seed) == "tree") {
-            Game.getGameMap().addTree(getTreeType(seed));
-        }
-        increaseCapacity();
-        return true;
-    }
+//    public boolean plantSeed(Seed seed, GameTile tile) {
+//        if(getSeedType(seed) == null) return false;
+//        else if(getSeedType(seed) == "crop") {
+//            Game.getGameMap().addPlant(getFruitType(seed));
+//        } else if(getSeedType(seed) == "tree") {
+//            Game.getGameMap().addTree(getTreeType(seed));
+//        }
+//        increaseCapacity();
+//        return true;
+//    }
 
     //fertilize crop
     public boolean fertilizeCrop(Map.Entry<Integer, Integer> coordinantes, String fertilizer) {
@@ -64,39 +64,39 @@ public class Farming implements Skill{
     }
 
     //seed type
-    public String getSeedType(Seed seed){
-        for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
-            if(f.getSeed().equals(seed.getName())){
-                return "crop";
-            }
-        }
-        for (Tree tree: Game.getDatabase().getTreeDatabase()) {
-            if(tree.getTreeType().getSeed().equals(seed.getName())){
-                return "tree";
-            }
-        }
-        return null;
-    }
+//    public String getSeedType(Seed seed){
+//        for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
+//            if(f.getSeed().equals(seed.getName())){
+//                return "crop";
+//            }
+//        }
+//        for (Tree tree: Game.getDatabase().getTreeDatabase()) {
+//            if(tree.getTreeType().getSeed().equals(seed.getName())){
+//                return "tree";
+//            }
+//        }
+//        return null;
+//    }
 
     //get fruit type from database
-    public FruitAndVegetable getFruitType(Seed seed) {
-        for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
-            if(f.getSeed().equals(seed.getName())){
-                return f;
-            }
-        }
-        return null;
-    }
+//    public FruitAndVegetable getFruitType(Seed seed) {
+//        for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
+//            if(f.getSeed().equals(seed.getName())){
+//                return f;
+//            }
+//        }
+//        return null;
+//    }
 
     //get tree type from database
-    public Tree getTreeType(Seed seed) {
-        for(Tree tree: Game.getDatabase().getTreeDatabase()){
-            if(tree.getTreeType().getSeed().equals(seed.getName())){
-                return tree;
-            }
-        }
-        return null;
-    }
+//    public Tree getTreeType(Seed seed) {
+//        for(Tree tree: Game.getDatabase().getTreeDatabase()){
+//            if(tree.getTreeType().getSeed().equals(seed.getName())){
+//                return tree;
+//            }
+//        }
+//        return null;
+//    }
 
     @Override
     public ItemLevel getLevel() {
