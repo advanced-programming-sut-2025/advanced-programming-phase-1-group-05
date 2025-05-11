@@ -333,6 +333,14 @@ public class GameMenuController extends MenuController {
         return new Result(true, "");
     }
 
+    public Result cheatSetFriendship(Matcher m) {
+        String animalName = m.group("animalName");
+        int amount = Integer.parseInt(m.group("amount"));
+        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        if (animal == null ) return Result.error("animal doesn't exist or isn't yours");
+        animal.setFriendshipPoints(amount);
+        return Result.success("Friendship boosted! Nothing says ‘bonding’ like a little… code magic. Your animal is now contractually obligated to adore you");
+    }
     public Result collectProduce(Matcher m) {
         String animalName = m.group("name");
         Animal animal = Game.getCurrentPlayer().getAnimal(animalName);

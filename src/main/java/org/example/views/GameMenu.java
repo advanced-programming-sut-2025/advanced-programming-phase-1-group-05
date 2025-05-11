@@ -62,6 +62,9 @@ public class GameMenu implements org.example.views.AppMenu {
         else if ((matcher = GameMenuCommands.BuildAnimalHouse.getMatcher(input)) != null) {
             System.out.println(storeController.buildAnimalHouse(matcher));
         }
+        else if ((matcher = GameMenuCommands.SetFriendshipCC.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.cheatSetFriendship(matcher));
+        }
         else if ((matcher = GameMenuCommands.CollectProduce.getMatcher(input)) != null) {
             System.out.println(gameMenuController.collectProduce(matcher));
         }
