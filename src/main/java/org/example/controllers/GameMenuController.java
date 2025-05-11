@@ -111,6 +111,7 @@ public class GameMenuController extends MenuController {
             Result startResult = Game.startTheGame();
             if (startResult.isSuccess()) {
                 activeGames.put(currentUser.getUsername(), pendingGame);
+                currentPlayer = selectedPlayers.get(0);
             }
             return startResult;
         }

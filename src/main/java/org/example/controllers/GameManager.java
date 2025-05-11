@@ -8,10 +8,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class GameManager {
-    private static TimeAndDate gameClock;
-    public GameManager(){
-        gameClock = new TimeAndDate();
-    }
+    private static TimeAndDate gameClock = new TimeAndDate();
 
     public static void nextDay(){
         resetEnergy();
