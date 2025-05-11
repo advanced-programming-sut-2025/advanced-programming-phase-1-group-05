@@ -36,8 +36,8 @@ public class Cooking implements Skill{
     public void consumeFood(String food, Player player) {}
 
     @Override
-    public ItemLevel getLevel() {
-        return null;
+    public int getLevel() {
+        return level;
     }
 
     @Override

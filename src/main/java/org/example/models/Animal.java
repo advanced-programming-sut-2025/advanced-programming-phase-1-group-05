@@ -23,19 +23,22 @@ public class Animal {
         initializeAnimal();
     }
 
+    public AnimalType getType() {
+        return type;
+    }
 
     public void produce() {
         if (wasFed) {
             Random random = new Random();
             int index = 0;
             if (friendshipPoints > 100) {
-                int chance = (int) ((friendshipPoints + (150 * (random.nextDouble(1)+0.5))) / 1500);
+                int chance = (int) (friendshipPoints + (150 * (0.5 + random.nextDouble())) / 1500);
                 if (random.nextInt(100) > chance) index = 1;
             }
             Item item = products.get(index);
             Product product = new Product(item.getName(), item.getPrice(), 0, null, null, null);
             unCollectedProducts.add(product);
-            int levelValue = (int) ((friendshipPoints/1000) * (0.5 + 0.5*random.nextDouble(1)));
+            int levelValue = (int) ((friendshipPoints/1000) * (0.5 + random.nextDouble()));
             ItemLevel level;
             if (levelValue < 0.5) level = ItemLevel.Normal;
             else if (levelValue >= 05 && levelValue < 0.7) level = ItemLevel.Iron;
@@ -85,6 +88,10 @@ public class Animal {
             }
 
         }
+    }
+
+    public void adjustFriendshipPoints (int amount) {
+        friendshipPoints += amount;
     }
 
     public void setFriendshipPoints(int amount) {

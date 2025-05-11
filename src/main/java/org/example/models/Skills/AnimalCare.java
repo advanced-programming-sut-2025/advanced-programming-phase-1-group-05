@@ -29,8 +29,8 @@ public class AnimalCare implements Skill{
     }
 
     @Override
-    public ItemLevel getLevel() {
-        return null;
+    public int getLevel() {
+        return level;
     }
 
     @Override

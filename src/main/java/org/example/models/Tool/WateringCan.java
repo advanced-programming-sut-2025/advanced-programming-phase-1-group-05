@@ -56,7 +56,7 @@ public class WateringCan implements Tool<ItemLevel> {
         return 0;
     }
     @Override
-    public void reduceEnergy(int amount){
+    public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
         Game.getCurrentPlayer().increaseEnergy(-amount);
     }

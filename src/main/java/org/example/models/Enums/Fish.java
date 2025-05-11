@@ -37,7 +37,7 @@ public enum Fish {
         this.season = season;
         this.legendary = legendary;
     }
-    public boolean canBeCaught(Season currentSeason, int fishingSkill) {
+    private boolean canBeCaught(Season currentSeason, int fishingSkill) {
         if (legendary) return fishingSkill == 4;
         return season.equals(currentSeason);
     }

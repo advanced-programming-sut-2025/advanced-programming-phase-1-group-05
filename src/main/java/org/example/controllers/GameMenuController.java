@@ -1,6 +1,7 @@
 package org.example.controllers;
 
 import org.example.models.*;
+import org.example.models.Enums.AnimalType;
 import org.example.models.Enums.FishingPoleType;
 import org.example.models.Enums.TileType;
 import org.example.models.Tool.Tool;
@@ -337,6 +338,12 @@ public class GameMenuController extends MenuController {
         return new Result(true, "");
     }
 
+    public Result petAnimal(Matcher m) {
+        String animalName = "";
+        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        animal.adjustFriendshipPoints(15);
+        return Result.success("");
+    }
     public Result cheatSetFriendship(Matcher m) {
         String animalName = m.group("animalName");
         int amount = Integer.parseInt(m.group("amount"));
@@ -344,6 +351,12 @@ public class GameMenuController extends MenuController {
         if (animal == null ) return Result.error("animal doesn't exist or isn't yours");
         animal.setFriendshipPoints(amount);
         return Result.success("Friendship boosted! Nothing says ‘bonding’ like a little… code magic. Your animal is now contractually obligated to adore you");
+    }
+
+    public Result feedHay(Matcher m) {
+        String animalName = "";
+        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        animal.adjustFriendshipPoints(8);
     }
     public Result collectProduce(Matcher m) {
         String animalName = m.group("name");
@@ -357,6 +370,7 @@ public class GameMenuController extends MenuController {
             Game.getCurrentPlayer().getBackPack().addToInventory(product, 1);
         }
         products.clear();
+        animal.adjustFriendshipPoints(5);
         return new Result(true, "collected successfully");
 
     }

@@ -43,7 +43,7 @@ public class FishingPole implements Tool<FishingPoleType> {
     }
 
     @Override
-    public void reduceEnergy(int amount){
+    public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
         Game.getCurrentPlayer().increaseEnergy(-amount);
     }

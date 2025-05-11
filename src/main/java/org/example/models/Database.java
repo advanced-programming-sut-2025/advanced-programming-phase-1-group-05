@@ -104,8 +104,9 @@ public class Database {
                     }
                     costs.put(item, quantity);
                 }
-                products.add(new Product(productName, price, limit, BuildingType.valueOf(buildingType), seasonsInStock, costs));
-                itemDatabase.add(new BasicItem(productName, price));
+                Product product = new Product(productName, price, limit, BuildingType.valueOf(buildingType), seasonsInStock, costs);
+                products.add(product);
+                itemDatabase.add(new BasicItem(productName, product.getPrice()));
             }
             stores.add(new Store(storeName, products, xStart, xEnd, yStart, yEnd, openingTime, closingTime));
         }
