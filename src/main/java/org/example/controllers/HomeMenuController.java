@@ -64,41 +64,41 @@ public class HomeMenuController {
     }
 
     //put or pick from refrigerator
-    public Result putOrPickRefrigerator(String action, String itemName) {
-        HashMap<Food, Integer> refrigeratedFoods = Game.getCurrentPlayer().getFarm().getRefrigeratedFoods();
-        switch (action) {
-            case "pick": {
-                if(Game.getCurrentPlayer().getBackPack().isInventoryFull())
-                    return new Result(false, "Inventory is full");
-
-                Food food = getFoodByName(itemName);
-                if(food == null) return new Result(false, "No food with that name");
-
-                Game.getCurrentPlayer().getBackPack().addToInventory(food, 1);
-                Game.getCurrentPlayer().getFarm().removeRefrigeratedFood(food, 1);
-                return new Result(true, "Selected food is now in your inventory");
-            }
-            case "put": {
-                Food food = getFoodByName(itemName);
-                if(food == null) return new Result(false, "No food with that name");
-
-                Game.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
-                Game.getCurrentPlayer().getFarm().addRefrigeratedFood(food, 1);
-                return new Result(true, "Selected food is now in your refrigerator");
-            }
-        }
-        return new Result(false, "Action is invalid");
-    }
+//    public Result putOrPickRefrigerator(String action, String itemName) {
+//        HashMap<Food, Integer> refrigeratedFoods = Game.getCurrentPlayer().getFarm().getRefrigeratedFoods();
+//        switch (action) {
+//            case "pick": {
+//                if(Game.getCurrentPlayer().getBackPack().isInventoryFull())
+//                    return new Result(false, "Inventory is full");
+//
+//                Food food = getFoodByName(itemName);
+//                if(food == null) return new Result(false, "No food with that name");
+//
+//                Game.getCurrentPlayer().getBackPack().addToInventory(food, 1);
+//                Game.getCurrentPlayer().getFarm().removeRefrigeratedFood(food, 1);
+//                return new Result(true, "Selected food is now in your inventory");
+//            }
+//            case "put": {
+//                Food food = getFoodByName(itemName);
+//                if(food == null) return new Result(false, "No food with that name");
+//
+//                Game.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
+//                Game.getCurrentPlayer().getFarm().addRefrigeratedFood(food, 1);
+//                return new Result(true, "Selected food is now in your refrigerator");
+//            }
+//        }
+//        return new Result(false, "Action is invalid");
+//    }
 
     //get food by name
-    public Food getFoodByName(String foodName) {
-        for(Food food : Game.getDatabase().getFoodDatabase()) {
-            if(food.getName().equals(foodName)) {
-                return food;
-            }
-        }
-        return null;
-    }
+//    public Food getFoodByName(String foodName) {
+//        for(Food food : Game.getDatabase().getFoodDatabase()) {
+//            if(food.getName().equals(foodName)) {
+//                return food;
+//            }
+//        }
+//        return null;
+//    }
 
     //show learnt recipes
     public Result showLearntRecipes() {
@@ -111,21 +111,21 @@ public class HomeMenuController {
     }
 
     //prepare food
-    public Result prepareFood(String foodName) {
-        Food food = getFoodByName(foodName);
-        //errors
-        if(food == null) return new Result(false, "No food with that name");
-        if(!Game.getCurrentPlayer().getCookingSkill().getLearntRecipes().contains(food))
-            return new Result(false, "Aww you don't know how to cook this food");
-        for(Food f : food.getIngredients().keySet()) {
-            if(!Game.getCurrentPlayer().getBackPack().getInventory().containsKey(f))
-                return new Result(false, "You don't have all the ingredients in your inventory");
-        }
-        if(Game.getCurrentPlayer().getBackPack().isInventoryFull())
-            return new Result(false, "Inventory is full");
-
-        Game.getCurrentPlayer().getCookingSkill().cookFood(food);
-        return new Result(true, "Your food is cooked and ready!");
-    }
+//    public Result prepareFood(String foodName) {
+//        Food food = getFoodByName(foodName);
+//        //errors
+//        if(food == null) return new Result(false, "No food with that name");
+//        if(!Game.getCurrentPlayer().getCookingSkill().getLearntRecipes().contains(food))
+//            return new Result(false, "Aww you don't know how to cook this food");
+//        for(Food f : food.getIngredients().keySet()) {
+//            if(!Game.getCurrentPlayer().getBackPack().getInventory().containsKey(f))
+//                return new Result(false, "You don't have all the ingredients in your inventory");
+//        }
+//        if(Game.getCurrentPlayer().getBackPack().isInventoryFull())
+//            return new Result(false, "Inventory is full");
+//
+//        Game.getCurrentPlayer().getCookingSkill().cookFood(food);
+//        return new Result(true, "Your food is cooked and ready!");
+//    }
 
 }

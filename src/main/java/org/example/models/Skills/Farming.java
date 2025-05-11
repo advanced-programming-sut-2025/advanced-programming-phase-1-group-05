@@ -64,39 +64,39 @@ public class Farming implements Skill{
     }
 
     //seed type
-    public String getSeedType(Seed seed){
-        for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
-            if(f.getSeed().equals(seed.getName())){
-                return "crop";
-            }
-        }
-        for (Tree tree: Game.getDatabase().getTreeDatabase()) {
-            if(tree.getTreeType().getSeed().equals(seed.getName())){
-                return "tree";
-            }
-        }
-        return null;
-    }
+//    public String getSeedType(Seed seed){
+//        for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
+//            if(f.getSeed().equals(seed.getName())){
+//                return "crop";
+//            }
+//        }
+//        for (Tree tree: Game.getDatabase().getTreeDatabase()) {
+//            if(tree.getTreeType().getSeed().equals(seed.getName())){
+//                return "tree";
+//            }
+//        }
+//        return null;
+//    }
 
     //get fruit type from database
-    public FruitAndVegetable getFruitType(Seed seed) {
-        for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
-            if(f.getSeed().equals(seed.getName())){
-                return f;
-            }
-        }
-        return null;
-    }
+//    public FruitAndVegetable getFruitType(Seed seed) {
+//        for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
+//            if(f.getSeed().equals(seed.getName())){
+//                return f;
+//            }
+//        }
+//        return null;
+//    }
 
     //get tree type from database
-    public Tree getTreeType(Seed seed) {
-        for(Tree tree: Game.getDatabase().getTreeDatabase()){
-            if(tree.getTreeType().getSeed().equals(seed.getName())){
-                return tree;
-            }
-        }
-        return null;
-    }
+//    public Tree getTreeType(Seed seed) {
+//        for(Tree tree: Game.getDatabase().getTreeDatabase()){
+//            if(tree.getTreeType().getSeed().equals(seed.getName())){
+//                return tree;
+//            }
+//        }
+//        return null;
+//    }
 
     @Override
     public ItemLevel getLevel() {
