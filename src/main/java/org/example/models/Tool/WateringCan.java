@@ -1,11 +1,9 @@
 package org.example.models.Tool;
 
+import org.example.models.*;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.TileType;
-import org.example.models.Game;
-import org.example.models.GameMap;
-import org.example.models.GameTile;
-import org.example.models.Result;
+import org.example.models.Skills.Farming;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,23 +16,26 @@ public class WateringCan implements Tool<ItemLevel> {
     public Result use(Map.Entry<Integer, Integer> coordinates){
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
-        ItemLevel farmingLevel = Game.getCurrentPlayer().getFarmingSkill().getLevel();
+        Farming farming = Game.getCurrentPlayer().getFarmingSkill();
         int energyUsage = level.getEnergyUsage();
 
-        if(tile.getTileType() == TileType.Plant) {
-            if(farmingLevel.isMaxLevel()) energyUsage --;
-            reduceEnergy(energyUsage);
-            Game.getCurrentPlayer().getFarmingSkill().waterCrop(tile);
-            if(waterlevel - 1 < 9) waterlevel = 0;
-            else waterlevel--;
-        } else if(tile.getTileType() == TileType.Water) {
-            if(farmingLevel.isMaxLevel()) energyUsage --;
-            reduceEnergy(energyUsage);
-            waterlevel = level.getWateringcanCapacity();
+        Item item = tile.getItemOnTile();
+        if(item == null){
+            if(tile.getTileType() == TileType.Water){
+                if(farming.isMaxLevel()) energyUsage --;
+                if(!reduceEnergy(energyUsage))
+                    return new Result(false, "You don't have enough energy");
+                waterlevel = level.getWateringcanCapacity();
+            } else return new Result(false, "Nothing to water!");
         } else {
-            if(farmingLevel.isMaxLevel()) energyUsage --;
-            reduceEnergy(energyUsage - 1);
-            return new Result(false, "You can't use the watering can on this tile");
+            if(item instanceof FruitAndVegetable) {
+                if(farming.isMaxLevel()) energyUsage --;
+                if(!reduceEnergy(energyUsage))
+                    return new Result(false, "You don't have enough energy");
+                Game.getCurrentPlayer().getFarmingSkill().waterCrop((FruitAndVegetable)item);
+                if(waterlevel - 1 < 9) waterlevel = 0;
+                else waterlevel--;
+            }
         }
         return new Result(true, "");
     }
@@ -58,7 +59,9 @@ public class WateringCan implements Tool<ItemLevel> {
     @Override
     public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
+        if(Game.getCurrentPlayer().getEnergy() - amount < 0)return false;
         Game.getCurrentPlayer().increaseEnergy(-amount);
+        return true;
     }
     @Override
     public ItemLevel getLevel() {

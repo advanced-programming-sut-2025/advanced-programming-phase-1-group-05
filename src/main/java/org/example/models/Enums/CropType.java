@@ -115,4 +115,11 @@ public enum CropType implements Material {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return "Name :" + name + "\n" + "Source :" + source + "\n" + "Stages :" + stages + "\n" + "Total Harvest Time :" + totalHarvestTime +
+                "\n" + "One Time :" + oneTime + "\n" + "Regrowth Time :" + regrowthTime + "\n" + "Base Sell Price :" + price + "\n" +
+                "Is Edible :" + isEdible + "\n" + "Base Energy :" + energy + "\n" + "Season :" + seasons.toString() + "\n" + "Can Become Giant :" + canBecomeGiant + "\n";
+    }
+
 }

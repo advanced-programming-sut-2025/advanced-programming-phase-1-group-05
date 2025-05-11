@@ -2,9 +2,7 @@ package org.example.controllers;
 
 import org.example.models.*;
 import org.example.models.Building.AnimalHouse;
-import org.example.models.Enums.AnimalHouseLevel;
-import org.example.models.Enums.EnclosureType;
-import org.example.models.Enums.TileType;
+import org.example.models.Enums.*;
 import org.example.models.Tool.Tool;
 
 import java.util.Map;
@@ -82,7 +80,29 @@ public class StoreController {
         }
 
         player.addGold(-product.getPrice()*count);
-        player.getBackPack().addToInventory(product, count);
+
+        //change backpack capacity
+        if(productName.contains("Pack")) {
+            if(productName.equals("Large Pack")) {
+                Game.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Big);
+            } else if(productName.equals("Deluxe Pack")) {
+                Game.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Deluxe);
+            }
+            //change trash can
+        } else if(productName.contains("Trash Can")) {
+            if(productName.equals("Copper Trash Can")) {
+                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Brass);
+            } else if(productName.equals("Steel Trash Can")) {
+                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iron);
+            } else if(productName.equals("Gold Trash Can")) {
+                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Gold);
+            } else if(productName.equals("Iridium Trash Can")) {
+                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iridium);
+            }
+        } else {
+            player.getBackPack().addToInventory(product, count);
+        }
+
         return Result.success("Purchased " + productName + " successfully!");
     }
 

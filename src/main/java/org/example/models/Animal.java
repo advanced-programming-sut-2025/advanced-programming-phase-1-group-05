@@ -6,9 +6,10 @@ import org.example.models.Enums.ItemLevel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
-public class Animal {
+public class Animal implements Item{
     private String name;
     private EnclosureType enclosureType;
     private List<Item> products = new ArrayList<>();
@@ -49,6 +50,21 @@ public class Animal {
     }
     public String getName() {
         return name;
+    }
+
+    @Override
+    public int getPrice() {
+        return 0;
+    }
+
+    @Override
+    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
+
+    }
+
+    @Override
+    public Map.Entry<Integer, Integer> getCoordinates() {
+        return null;
     }
 
     private void initializeAnimal() {

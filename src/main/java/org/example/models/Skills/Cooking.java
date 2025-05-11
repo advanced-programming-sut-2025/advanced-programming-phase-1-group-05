@@ -61,4 +61,9 @@ public class Cooking implements Skill{
     public void increaseCapacity() {
 
     }
+
+    @Override
+    public boolean isMaxLevel() {
+        return level == 4;
+    }
 }

@@ -42,24 +42,14 @@ public class Farming implements Skill{
     }
 
     //water crop
-    public void waterCrop(GameTile tile) {
-        GameMap map = Game.getGameMap();
-        for(FruitAndVegetable f : map.getPlants()) {
-            if(map.getTile(f.getCoordinates().getKey(), f.getCoordinates().getValue()) == tile) {
-                f.waterCrop();
-            }
-        }
+    public void waterCrop(FruitAndVegetable crop) {
+        crop.waterCrop();
     }
 
     //harvest crop
     public void harvestCrop(GameTile tile) {
-        GameMap map = Game.getGameMap();
-        for(FruitAndVegetable f : map.getPlants()) {
-            if(map.getTile(f.getCoordinates().getKey(), f.getCoordinates().getValue()) == tile) {
-                Game.getCurrentPlayer().getBackPack().addToInventory(f, 1);
-                map.getPlants().remove(f);
-            }
-        }
+        Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
+        tile.setItemOnTile(null);
         increaseCapacity();
     }
 
@@ -102,7 +92,10 @@ public class Farming implements Skill{
     public int getLevel() {
         return level;
     }
-
+    @Override
+    public boolean isMaxLevel() {
+        return level == 10;
+    }
     @Override
     public void setLevel(int level) {
         this.level = level;

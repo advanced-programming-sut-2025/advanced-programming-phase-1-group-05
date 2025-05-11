@@ -1,9 +1,7 @@
 package org.example.controllers;
 
 import org.example.models.*;
-import org.example.models.Enums.AnimalType;
-import org.example.models.Enums.FishingPoleType;
-import org.example.models.Enums.TileType;
+import org.example.models.Enums.*;
 import org.example.models.Tool.Tool;
 
 import javax.swing.plaf.PanelUI;
@@ -324,10 +322,16 @@ public class GameMenuController extends MenuController {
 
     //show craft info
     public Result showCraftInfo(String name) {
-        FruitAndVegetable plant = Game.getDatabase().getFruitAndVegetable(name);
-        if (plant == null) return new Result(true, "Couldn’t find the plant you're looking for");
-        else plant.showCropInformation();
-        return new Result(true, "");
+        CropType cropType = CropType.fromString(name);
+        TreeType treeType = TreeType.fromString(name);
+        ForagingTreeSourceType foragingTreeSourceType = ForagingTreeSourceType.fromString(name);
+        ForagingCrop foragingCrop = ForagingCrop.fromString(name);
+        if(cropType != null) return new Result(true, cropType.getName());
+        else if(treeType != null ) return new Result(true, treeType.toString());
+        else if(foragingTreeSourceType != null ) return new Result(true, foragingTreeSourceType.toString());
+        else if(foragingCrop != null ) return new Result(true, foragingCrop.toString());
+
+        return new Result(true, "Couldn’t find the craft you're looking for");
     }
 
     public Result petAnimal(Matcher m) {

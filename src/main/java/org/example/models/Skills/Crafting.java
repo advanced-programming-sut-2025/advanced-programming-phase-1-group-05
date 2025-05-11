@@ -40,4 +40,9 @@ public class Crafting implements Skill{
 
     }
 
+    @Override
+    public boolean isMaxLevel() {
+        return level == 4;
+    }
+
 }
