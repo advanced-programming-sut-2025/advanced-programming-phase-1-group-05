@@ -119,15 +119,15 @@ public class RegisterMenuController {
     }
 
     public void saveSecurityQuestion(String questionNumber, String answer) {
-        if (this.currentUser == null) {
+        if (currentUser == null) {
             throw new IllegalStateException("No user is currently being registered");
         }
 
         String questionText = getQuestionText(questionNumber);
-        this.currentUser.setSecurityQuestion(questionText);
-        this.currentUser.setSecurityAnswer(answer.toLowerCase().trim());
+        currentUser.setSecurityQuestion(questionText);
+        currentUser.setSecurityAnswer(answer.trim());
 
-        UserDatabase.addUser(this.currentUser);
+        UserDatabase.addUser(currentUser);
     }
 
     private String getQuestionText(String questionNumber) {
@@ -285,7 +285,7 @@ public class RegisterMenuController {
         System.out.println("Do you want to use this password? (yes/no)");
 
         while (true) {
-            String response = scanner.nextLine().trim().toLowerCase();
+            String response = scanner.nextLine().trim();
             if (response.equals("yes")) {
                 String updatedCommand = updatePasswordInCommand(originalCommand,
                         "-p " + randomPassword + " " + randomPassword);

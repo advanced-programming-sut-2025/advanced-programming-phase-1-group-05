@@ -1,5 +1,7 @@
 package org.example.models;
 
+import org.example.controllers.GameManager;
+import org.example.models.Enums.Season;
 import org.example.models.Enums.Weather;
 
 import java.util.ArrayList;
@@ -47,6 +49,10 @@ public class Game {
 //            database.loadNPCs();
 //            Player.initializeFriendships(players);
 
+            GameManager.getGameClock().setDay(1);
+            GameManager.getGameClock().setSeason(Season.SPRING);
+            GameManager.getGameClock().setHour(9);
+            GameManager.getGameClock().setMinute(0);
             if (!players.isEmpty()) {
                 currentPlayer = players.get(0);
             }

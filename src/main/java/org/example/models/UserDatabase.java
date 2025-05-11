@@ -9,7 +9,7 @@ public class UserDatabase {
     private static final Map<String, Boolean> userInGameStatus = new HashMap<>();
 
     public static void addUser(User user) {
-        String usernameKey = user.getUsername().toLowerCase();
+        String usernameKey = user.getUsername();
         users.put(usernameKey, user);
         userInGameStatus.put(usernameKey, false);
 
@@ -18,26 +18,26 @@ public class UserDatabase {
     }
 
     public static User getUserByUsername(String username) {
-        return users.get(username.toLowerCase());
+        return users.get(username);
     }
 
     public static void updateUser(User user) {
-        String usernameKey = user.getUsername().toLowerCase();
+        String usernameKey = user.getUsername();
         users.put(usernameKey, user);
         DBController.saveUsers();
         DBController.saveCurrentUser();
     }
 
     public static boolean usernameExists(String username) {
-        return users.containsKey(username.toLowerCase());
+        return users.containsKey(username);
     }
 
     public static boolean isUserInGame(String username) {
-        return userInGameStatus.getOrDefault(username.toLowerCase(), false);
+        return userInGameStatus.getOrDefault(username, false);
     }
 
     public static void setUserInGame(String username, boolean inGame) {
-        userInGameStatus.put(username.toLowerCase(), inGame);
+        userInGameStatus.put(username, inGame);
     }
 
     public static List<User> getAllUsers() {

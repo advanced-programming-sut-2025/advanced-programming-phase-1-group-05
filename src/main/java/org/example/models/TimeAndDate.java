@@ -7,11 +7,41 @@ import java.sql.Time;
 import java.util.Date;
 
 public class TimeAndDate {
-    int day = 1;
+    int day;
     Season season;
-    int hour = 9;
-    int minute = 0;
+    int hour;
+    int minute;
     public void nextDay() {}
+    public TimeAndDate() {
+        this.day = 1;
+        this.season = Season.SPRING; // مقداردهی پیش‌فرض فصل
+        this.hour = 9;
+        this.minute = 0;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public void setSeason(Season season) {
+        this.season = season;
+    }
+
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
+    }
+
+    public Season getSeason() {
+        return season;
+    }
+
+    public int getMinute() {
+        return minute;
+    }
 
     //every 28 days
     public void changeSeason(Season season) {}

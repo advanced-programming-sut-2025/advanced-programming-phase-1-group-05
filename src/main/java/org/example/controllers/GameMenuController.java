@@ -755,4 +755,32 @@ public class GameMenuController extends MenuController {
     }
 
 
+    public Result showDatetime() {
+        int hour = GameManager.getCurrentHour();
+        int day = GameManager.getDay();
+        String season = GameManager.getSeason().name().toLowerCase();
+        return Result.success("Current date and time: Day " + day + " of " + capitalize(season) +
+                ", " + String.format("%02d:00", hour));
+    }
+
+    public Result showDate() {
+        int day = GameManager.getDay();
+        String season = GameManager.getSeason().name().toLowerCase();
+        return Result.success("Current date: Day " + day + " of " + capitalize(season));
+    }
+
+    public Result showTime() {
+        int hour = GameManager.getCurrentHour();
+        return Result.success("Current time: " + String.format("%02d:00", hour));
+    }
+
+    public Result showDayOfTheWeek() {
+        String dayOfWeek = GameManager.getDayOfTheWeek();
+        return Result.success("Today is: " + dayOfWeek);
+    }
+
+    private String capitalize(String str) {
+        if (str == null || str.isEmpty()) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
 }

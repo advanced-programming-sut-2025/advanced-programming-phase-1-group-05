@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DBController {
-    private static final String USERS_FILE = "src/main/resources/users.json";
+    private static final String USERS_FILE = "src/main/resources/saveusers.json";
     private static final String CURRENT_USER_FILE = "src/main/resources/current_user.json";
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -123,9 +123,14 @@ public class DBController {
 //        }
 //    }
     public static void saveUsers() {
-        List<User> allUsers = UserDatabase.getAllUsers();
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        FileController.writeTextToFile(gson.toJson(allUsers) , USERS_FILE);
+        try {
+            List<User> allUsers = UserDatabase.getAllUsers();
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String json = gson.toJson(allUsers);
+            FileController.writeTextToFile(json, "src/main/resources/users.json");
+        } catch (Exception e) {
+            System.err.println("Error saving users: " + e.getMessage());
+        }
     }
 
     public static void saveGameState() {

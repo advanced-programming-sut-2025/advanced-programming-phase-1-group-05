@@ -1,10 +1,12 @@
 package org.example.views;
 
+import org.example.controllers.GameManager;
 import org.example.controllers.GameMenuController;
 import org.example.controllers.MenuController;
 import org.example.controllers.StoreController;
 import org.example.models.Enums.GameMenuCommands;
 import org.example.models.Result;
+import org.example.models.TimeAndDate;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,6 +60,56 @@ public class GameMenu implements org.example.views.AppMenu {
         else if (input.startsWith("delete game")) {
             Result result = gameMenuController.deleteGame();
             System.out.println(result.getMessage());
+        }
+        else if (input.equals("time")) {
+            Result result = gameMenuController.showTime();
+            System.out.println(result.getMessage());
+        }
+        else if (input.equals("date")) {
+            Result result = gameMenuController.showDate();
+            System.out.println(result.getMessage());
+        }
+        else if (input.equals("datetime")) {
+            Result result = gameMenuController.showDatetime();
+            System.out.println(result.getMessage());
+        }
+        else if (input.equals("day of the week")) {
+            Result result = gameMenuController.showDayOfTheWeek();
+            System.out.println(result.getMessage());
+
+        }
+        else if (input.startsWith("cheat advance time")) {
+            try {
+                String[] parts = input.split(" ");
+                String hoursPart = parts[3];
+                int hours = Integer.parseInt(hoursPart.replace("h", ""));
+                if (hours < 0) {
+                    System.out.println("Error: You cannot go back in time.");
+                } else {
+                    GameManager.getGameClock().advanceTime(hours * 60);
+                    System.out.println("Time advanced by " + hours + " hours.");
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid format. Use: cheat advance time <X>h (e.g. cheat advance time 5h)");
+            }
+        }
+        else if (input.startsWith("cheat advance date")) {
+
+        }
+        else if (input.equals("season")) {
+
+        }
+        else if (input.startsWith("cheat Thor")) {
+
+        }
+        else if (input.equals("weather")) {
+
+        }
+        else if (input.equals("weather forecast")) {
+
+        }
+        else if (input.startsWith("cheat weather set")) {
+
         }
         else if ((matcher = GameMenuCommands.BuildAnimalHouse.getMatcher(input)) != null) {
             System.out.println(storeController.buildAnimalHouse(matcher));
