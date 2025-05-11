@@ -55,4 +55,9 @@ public class AnimalCare implements Skill{
         this.capacity += 5;
     }
 
+    @Override
+    public boolean isMaxLevel() {
+        return level == 10;
+    }
+
 }
