@@ -54,7 +54,7 @@ public class TimeAndDate {
             this.minutes -= 60;
             hour ++;
         }
-        if (hour >= 24) {
+        if (hour >= 22) {
             hour = 9;
             minute = 0;
             advanceDay();

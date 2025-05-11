@@ -808,4 +808,28 @@ public class GameMenuController extends MenuController {
         return Result.success("Forecasted weather for tomorrow: " + forecast.toString());
     }
 
+    public Result cheatWeatherSet(String input) {
+        try {
+            String[] tokens = input.trim().split("\\s+");
+            if (tokens.length != 4) {
+                return Result.error("Invalid format. Usage: cheat weather set <Type>");
+            }
+
+            String weatherType = tokens[3].toUpperCase();
+
+            Weather newForecastedWeather;
+            try {
+                newForecastedWeather = Weather.valueOf(weatherType);
+            } catch (IllegalArgumentException e) {
+                return Result.error("Invalid weather type. Valid types: SUNNY, RAIN, STORM, SNOW");
+            }
+
+            Game.setForecastedWeather(newForecastedWeather);
+            return Result.success("Forecasted weather for tomorrow set to: " + newForecastedWeather);
+
+        } catch (Exception e) {
+            return Result.error("Error while setting forecasted weather: " + e.getMessage());
+        }
+    }
+
 }

@@ -126,5 +126,7 @@ public class Game {
     }
 
 
-
+    public static void setForecastedWeather(Weather forecastedWeather) {
+        Game.forecastedWeather = forecastedWeather;
+    }
 }
