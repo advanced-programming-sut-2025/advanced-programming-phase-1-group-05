@@ -9,7 +9,9 @@ public class Fishing implements Skill {
     int capacity = 0;
 
     public void fishing (GameTile tile, FishingPole pole) {
-
+        //TODO implement fishing
+        //if successful
+        increaseCapacity();
     }
 
     @Override

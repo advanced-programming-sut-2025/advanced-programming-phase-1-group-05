@@ -24,7 +24,6 @@ public class Farming implements Skill{
 //        } else if(getSeedType(seed) == "tree") {
 //            Game.getGameMap().addTree(getTreeType(seed));
 //        }
-//        increaseCapacity();
 //        return true;
 //    }
 
@@ -61,6 +60,7 @@ public class Farming implements Skill{
                 map.getPlants().remove(f);
             }
         }
+        increaseCapacity();
     }
 
     //seed type

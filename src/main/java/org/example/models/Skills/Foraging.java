@@ -1,6 +1,9 @@
 package org.example.models.Skills;
 
 import org.example.models.Enums.ItemLevel;
+import org.example.models.Game;
+import org.example.models.GameTile;
+import org.example.models.Item;
 import org.example.models.Seed;
 import org.example.models.Tool.Axe;
 import org.example.models.Tool.Pickaxe;
@@ -8,15 +11,15 @@ import org.example.models.Tool.Pickaxe;
 public class Foraging implements Skill{
     int level = 0;
     int capacity = 0;
-    public void spawnDailyForagingItems() {}
 
-    public void placeSeedsOnEmptyTiles() {}
-
-    public void spawnMineralsInMine() {}
+    //TODO add tool
+    public void forageItem(GameTile tile) {
+        Item item = tile.getItemOnTile();
+        Game.getCurrentPlayer().getBackPack().addToInventory(item, 1);
+        increaseCapacity();
+    }
 
     public void chopTree(String treeType, Axe axe) {}
-
-    public void mineRock(String rockType, Pickaxe pickaxe) {}
 
     public Seed getRandomSeedFromWildTree() { return null; }
 

@@ -23,7 +23,8 @@ public class Hoe implements Tool <ItemLevel> {
     }
     @Override
     public Result use(HashMap.Entry<Integer, Integer> coordinates){
-        reduceEnergy(level.getEnergyUsage());
+        if(!reduceEnergy(level.getEnergyUsage()))
+            return new Result(false, "You don't have enough energy.");
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         if(tile.getTileType() == TileType.Flat) {
@@ -31,12 +32,14 @@ public class Hoe implements Tool <ItemLevel> {
         } else {
             return new Result(false, "You can't use the hoe on this tile");
         }
-        return new Result(true, "");
+        return new Result(true, "Tile plowed successfully.");
     }
     @Override
-    public void reduceEnergy(int amount){
+    public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
+        if(Game.getCurrentPlayer().getEnergy() - amount < 0)return false;
         Game.getCurrentPlayer().increaseEnergy(-amount);
+        return true;
     }
     @Override
     public ItemLevel getLevel() {

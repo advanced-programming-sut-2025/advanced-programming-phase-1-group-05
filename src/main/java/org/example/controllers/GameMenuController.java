@@ -177,6 +177,10 @@ public class GameMenuController extends MenuController {
         currentPlayer.increaseEnergy(-50);
 
         advanceToNextPlayer();
+        //reset energy for next turn??
+        if(!currentPlayer.isEnergyUnlimited()) {
+            currentPlayer.resetEnergy();
+        }
 
         return Result.success("Now it's " + currentPlayer.getUsername() + "'s turn.");
     }
@@ -664,19 +668,19 @@ public class GameMenuController extends MenuController {
 
 
     //plant seed on a specific tile
-    public Result plantSeed(String seed, Map.Entry<Integer, Integer> coordinates) {
-        GameMap map = Game.getGameMap();
-        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
-        //errors
-        if (tile == null) return new Result(false, "Tile not found");
-        if (tile.getTileType() != TileType.Soil)
-            return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
-        if (!tile.isTileValidForPlanting()) return new Result(false,
-                "You can't plant cause the tile is occupied!");
-        boolean successful = Game.getCurrentPlayer().getFarmingSkill().plantSeed(new Seed(seed), tile);
-        if (successful) return new Result(true, "Successfully planted " + seed);
-        else return new Result(false, "That's not a valid seed!");
-    }
+//    public Result plantSeed(String seed, Map.Entry<Integer, Integer> coordinates) {
+//        GameMap map = Game.getGameMap();
+//        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
+//        //errors
+//        if (tile == null) return new Result(false, "Tile not found");
+//        if (tile.getTileType() != TileType.Soil)
+//            return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
+//        if (!tile.isTileValidForPlanting()) return new Result(false,
+//                "You can't plant cause the tile is occupied!");
+//        boolean successful = Game.getCurrentPlayer().getFarmingSkill().plantSeed(new Seed(seed), tile);
+//        if (successful) return new Result(true, "Successfully planted " + seed);
+//        else return new Result(false, "That's not a valid seed!");
+//    }
 
     //show the plant on a specific tile
     public Result showPlant(Map.Entry<Integer, Integer> coordinates) {

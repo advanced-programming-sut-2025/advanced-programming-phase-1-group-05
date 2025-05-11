@@ -35,6 +35,7 @@ public class TimeAndDate {
             season = season.next();
         }
         Game.getGameMap().growPlants();
+        if(!Game.getCurrentPlayer().isEnergyUnlimited()) Game.getCurrentPlayer().resetEnergy();
         GameManager.nextDay();
     }
     public Season getCurrentSeason() { return season; }

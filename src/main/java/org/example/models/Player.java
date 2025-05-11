@@ -67,7 +67,7 @@ public class Player {
         //TODO use time controller
         TimeAndDate timeAndDate = new TimeAndDate();
         timeAndDate.advanceDay();
-        //TODO waking up in the same spot
+        //TODO waking up in the same spot // wait for map mechanism
         energy = energy *3/2;
     }
 
@@ -76,6 +76,13 @@ public class Player {
         energy += amount;
         if(energy >= 200) energy = 200;
         if (energy <= 0) faint();
+    }
+    //reset energy every day
+    public void resetEnergy() {
+        energy = 200;
+    }
+    public boolean isEnergyUnlimited() {
+        return unlimitedEnergy;
     }
     public int getEnergy() {return energy;}
     public boolean hasEnoughEnergy(int required) {
