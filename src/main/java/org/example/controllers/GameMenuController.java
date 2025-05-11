@@ -16,13 +16,11 @@ public class GameMenuController extends MenuController {
     public static List<Player> selectedPlayers;
     private static Map<String, Game> activeGames = new HashMap<>();
     private Game pendingGame;
-    private static int currentPlayerIndex = 0;
     public static boolean canChooseMap = false;
     public static boolean canDeleteGame = false;
     public static boolean canLoadGame = false;
     public static boolean[] canExitGame;
     private static Map<Integer, Integer> playerMapChoices = new HashMap<>();
-    public static Player currentPlayer;
 
     public GameMenuController(Scanner scanner, User currentUser) {
         super(scanner);
@@ -77,7 +75,7 @@ public class GameMenuController extends MenuController {
         for (Player player : selectedPlayers) {
             UserDatabase.setUserInGame(player.getUsername(), true);
         }
-        currentPlayerIndex = 0;
+        Game.currentPlayerIndex = 0;
         playerMapChoices.clear();
         Game.getAllPlayers().addAll(selectedPlayers);
         return Result.success(selectedPlayers.get(0).getUsername() +
@@ -94,13 +92,13 @@ public class GameMenuController extends MenuController {
             return Result.error("Map num must be 1-4!");
         }
         int mapNumber = Integer.parseInt(matcher.group("mapNumber"));
-        currentPlayer = selectedPlayers.get(currentPlayerIndex);
 
-        playerMapChoices.put(currentPlayerIndex, mapNumber);
+        Game.setCurrentPlayer(selectedPlayers.get(Game.currentPlayerIndex));
+        playerMapChoices.put(Game.currentPlayerIndex, mapNumber);
 
-        currentPlayerIndex++;
-        if (currentPlayerIndex < selectedPlayers.size()) {
-            return Result.success("Player " + selectedPlayers.get(currentPlayerIndex).getUsername() +
+        Game.currentPlayerIndex++;
+        if (Game.currentPlayerIndex < selectedPlayers.size()) {
+            return Result.success("Player " + selectedPlayers.get(Game.currentPlayerIndex).getUsername() +
                     ", please choose your map (1-4):");
         } else {
             canChooseMap = false;
@@ -122,7 +120,7 @@ public class GameMenuController extends MenuController {
         if (!canLoadGame) {
             return Result.error("You should first exit pending Game!");
         }
-        if (!currentUser.getUsername().equals(currentPlayer.getUsername())
+        if (!currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername())
                 || !currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())) {
             for (int i = 0; i < selectedPlayers.size(); i++) {
                 if (currentUser.getUsername().equals(selectedPlayers.get(i).getUsername())) {
@@ -146,7 +144,7 @@ public class GameMenuController extends MenuController {
                 }
             }
         }
-        if (currentUser.getUsername().equals(currentPlayer.getUsername()) ||
+        if (currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername()) ||
                 currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())|| done) {
             pendingGame = null;
             canLoadGame = true;
@@ -156,14 +154,7 @@ public class GameMenuController extends MenuController {
         return Result.error("You can't exit the game!");
     }
 
-    private void advanceToNextPlayer() {
-        currentPlayerIndex++;
-        if (currentPlayerIndex >= selectedPlayers.size()) {
-            currentPlayerIndex = 0;
-            GameManager.getGameClock().advanceTime(60);
-        }
-        currentPlayer = selectedPlayers.get(currentPlayerIndex);
-    }
+
 
 
     public Result nextTurn() {
@@ -171,19 +162,20 @@ public class GameMenuController extends MenuController {
             return Result.error("There is no active game.");
         }
 
-        if (!currentUser.getUsername().equals(currentPlayer.getUsername())) {
+        if (!currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername())) {
             return Result.error("It's not your turn.");
         }
 
-        currentPlayer.increaseEnergy(-50);
+        Game.getCurrentPlayer().increaseEnergy(-50);
 
-        advanceToNextPlayer();
+        Game.advanceToNextPlayer();
         //reset energy for next turn??
-        if(!currentPlayer.isEnergyUnlimited()) {
-            currentPlayer.resetEnergy();
+        if(!Game.getCurrentPlayer().isEnergyUnlimited()) {
+            Game.getCurrentPlayer().resetEnergy();
         }
 
-        return Result.success("Now it's " + currentPlayer.getUsername() + "'s turn.");
+        return Result.success("Now it's " + Game.getCurrentPlayer().getName() + "'s turn." +
+                Game.getCurrentPlayer().getNotifications());
     }
 
     public Result deleteGame() {
@@ -216,7 +208,7 @@ public class GameMenuController extends MenuController {
 
             selectedPlayers.clear();
             canChooseMap = false;
-            currentPlayerIndex = 0;
+            Game.currentPlayerIndex = 0;
             canDeleteGame = false;
 
             Game.getAllPlayers().clear();

@@ -93,6 +93,7 @@ public class TradingController {
             }
             trades.add(new Trade(Game.getCurrentPlayer(), targetPlayer, type, item, amount, null, targetItem, targetAmount));
         }
+        targetPlayer.addNotification("You've got a new offer from "+ Game.getCurrentPlayer().getName() +"! Check your requests to respond.");
         return new Result(false, "invalid input");
     }
 

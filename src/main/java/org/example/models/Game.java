@@ -1,5 +1,6 @@
 package org.example.models;
 
+import org.example.controllers.GameManager;
 import org.example.models.Enums.Weather;
 
 import java.util.ArrayList;
@@ -16,30 +17,45 @@ public class Game {
     private static Weather currentWeather = Weather.Sunny;
     private static final Database database = new Database();
     public static Map<Player, Item> soldItems = new HashMap<>();
+    public static int currentPlayerIndex = 0;
+
     // TODO a method for changing the weather
     // TODO make the game methods nonstatic
     public static Player getCurrentPlayer() {
         return currentPlayer;
     }
+
     public static void setCurrentPlayer(Player currentPlayer) {
         Game.currentPlayer = currentPlayer;
     }
+
     public static void addPlayer(Player player) {
         players.add(player);
     }
+
     public static GameMap getGameMap() {
         return gameMap;
     }
+
     public static List<Player> getAllPlayers() {
         return players;
     }
 
-//    public static void startTheGame() {
+    //    public static void startTheGame() {
 //        database.initializeStoresAndItems();
 //        database.initializePlantDatabase();
 //        database.loadNPCs();
 //        Player.initializeFriendships(players);
 //    }
+    public static void advanceToNextPlayer() {
+        currentPlayerIndex++;
+        if (currentPlayerIndex >= players.size()) {
+            currentPlayerIndex = 0;
+            GameManager.getGameClock().advanceTime(60);
+        }
+        currentPlayer = players.get(currentPlayerIndex);
+    }
+
     public static Result startTheGame() {
         try {
             database.initializeStoresAndItems();
@@ -57,6 +73,7 @@ public class Game {
             return Result.error("Failed to start game: " + e.getMessage());
         }
     }
+
     public static List<NPC> getAllNPCs() {
         List<NPC> allNPCs = new ArrayList<>();
         for (Map.Entry<String, NPC> entry : database.getNPCs().entrySet()) {
@@ -64,29 +81,35 @@ public class Game {
         }
         return allNPCs;
     }
+
     public static NPC getNPCByName(String npcName) {
         return database.getNPCs().get(npcName);
     }
+
     public static Weather getCurrentWeather() {
         return currentWeather;
     }
-    public static Player getPlayerByUsername(String username){
-        for (Player player : players){
+
+    public static Player getPlayerByUsername(String username) {
+        for (Player player : players) {
             if (player.getUsername().equals(username)) return player;
         }
         return null;
     }
+
     public static Database getDatabase() {
         return database;
     }
+
     public static void addMessage(Message message) {
         messages.add(message);
     }
+
     public static List<Message> getMessages(Player player1, Player player2) {
         List<Message> commonMessages = new ArrayList<>();
         for (Message message : messages) {
             if ((message.getSender().equals(player1) && message.getReceiver().equals(player2))
-            || (message.getSender().equals(player2) && message.getReceiver().equals(player1)) )
+                    || (message.getSender().equals(player2) && message.getReceiver().equals(player1)))
                 commonMessages.add(message);
         }
         return commonMessages;
@@ -95,16 +118,17 @@ public class Game {
     public static void addGift(Gift gift) {
         gifts.add(gift);
     }
-    public static Gift getGiftById(int id){
-        for (Gift gift : gifts){
+
+    public static Gift getGiftById(int id) {
+        for (Gift gift : gifts) {
             if (gift.Id == id) return gift;
         }
         return null;
     }
-    public static List<Gift> getAllGifts(){
+
+    public static List<Gift> getAllGifts() {
         return gifts;
     }
-
 
 
 }
