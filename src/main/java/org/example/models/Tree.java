@@ -44,7 +44,7 @@ public class Tree implements Item{
             GameMap map = Game.getGameMap();
             GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
             //turn to coal
-            tile.setTileType(TileType.Coal);
+            //tile.setTileType(TileType.Coal);
             map.getTrees().remove(this);
         }
 

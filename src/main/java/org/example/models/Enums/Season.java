@@ -3,14 +3,16 @@ package org.example.models.Enums;
 import java.util.List;
 
 public enum Season {
-    SPRING(List.of("Cauliflower", "Parsnip", "Potato", "Blue Jazz", "Tulip")),
-    SUMMER(List.of("Corn", "Hot Pepper", "Radish", "Wheat", "Poppy", "Sunflower", "Summer Spangle")),
-    FALL(List.of("Artichoke", "Corn", "Eggplant", "Pumpkin", "Sunflower", "Fairy Rose")),
-    WINTER(List.of("Powdermelon"));
+    SPRING("Spring",List.of(CropType.Cauliflower, CropType.Parsnip, CropType.Potato, CropType.BlueJazz, CropType.Tulip)),
+    SUMMER("Summer",List.of(CropType.Corn, CropType.HotPepper, CropType.Radish, CropType.Wheat, CropType.Poppy, CropType.Sunflower, CropType.SummerSpangle)),
+    FALL("Fall",List.of(CropType.Artichoke, CropType.Corn, CropType.Eggplant, CropType.Pumpkin, CropType.Sunflower, CropType.FairyRose)),
+    WINTER("Winter",List.of(CropType.PowderMelon));
 
-    private final List<String> possibleSeeds;
+    private final String name;
+    private final List<CropType> possibleSeeds;
 
-    Season(List<String> possibleSeeds) {
+    Season(String name, List<CropType> possibleSeeds) {
+        this.name = name;
         this.possibleSeeds = possibleSeeds;
     }
     public Season next() {
@@ -20,5 +22,9 @@ public enum Season {
             case FALL ->  WINTER;
             default ->  SPRING;
         };
+    }
+    @Override
+    public String toString() {
+        return name;
     }
 }
