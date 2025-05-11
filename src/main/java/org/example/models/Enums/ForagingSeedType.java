@@ -60,4 +60,12 @@ public enum ForagingSeedType implements Material {
         return seasons;
     }
 
+    public static ForagingSeedType fromString(String name){
+        for (ForagingSeedType seedType : ForagingSeedType.values()) {
+            if (seedType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+                return seedType;
+            }
+        }
+        return null;
+    }
 }

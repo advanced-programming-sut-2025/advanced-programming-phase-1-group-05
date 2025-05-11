@@ -17,16 +17,16 @@ public class Farming implements Skill{
 
     public void plowTile(GameTile tile, Hoe hoe) {}
 
-    public boolean plantSeed(Seed seed, GameTile tile) {
-        if(getSeedType(seed) == null) return false;
-        else if(getSeedType(seed) == "crop") {
-            Game.getGameMap().addPlant(getFruitType(seed));
-        } else if(getSeedType(seed) == "tree") {
-            Game.getGameMap().addTree(getTreeType(seed));
-        }
-        increaseCapacity();
-        return true;
-    }
+//    public boolean plantSeed(Seed seed, GameTile tile) {
+//        if(getSeedType(seed) == null) return false;
+//        else if(getSeedType(seed) == "crop") {
+//            Game.getGameMap().addPlant(getFruitType(seed));
+//        } else if(getSeedType(seed) == "tree") {
+//            Game.getGameMap().addTree(getTreeType(seed));
+//        }
+//        increaseCapacity();
+//        return true;
+//    }
 
     //fertilize crop
     public boolean fertilizeCrop(Map.Entry<Integer, Integer> coordinantes, String fertilizer) {

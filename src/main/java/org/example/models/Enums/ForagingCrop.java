@@ -52,4 +52,13 @@ public enum ForagingCrop implements Material {
     public int getEnergy() {
         return energy;
     }
+
+    public static ForagingCrop fromString(String name){
+        for (ForagingCrop cropType : ForagingCrop.values()) {
+            if (cropType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+                return cropType;
+            }
+        }
+        return null;
+    }
 }

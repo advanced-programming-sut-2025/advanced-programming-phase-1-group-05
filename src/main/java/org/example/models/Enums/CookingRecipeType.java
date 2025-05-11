@@ -59,4 +59,12 @@ public enum CookingRecipeType implements Material{
     public String Source() {
         return source;
     }
+    public static CookingRecipeType fromString(String name){
+        for (CookingRecipeType recipeType : CookingRecipeType.values()) {
+            if (recipeType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+                return recipeType;
+            }
+        }
+        return null;
+    }
 }

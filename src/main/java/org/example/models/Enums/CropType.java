@@ -106,4 +106,13 @@ public enum CropType implements Material {
         return canBecomeGiant;
     }
 
+    public static CropType fromString(String name){
+        for (CropType cropType : CropType.values()) {
+            if (cropType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+                return cropType;
+            }
+        }
+        return null;
+    }
+
 }
