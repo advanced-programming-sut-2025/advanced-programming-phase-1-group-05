@@ -1,12 +1,9 @@
 package org.example.models.Skills;
 
-import org.example.models.Enums.ItemLevel;
 import org.example.models.Game;
 import org.example.models.GameTile;
 import org.example.models.Item;
-import org.example.models.Seed;
 import org.example.models.Tool.Axe;
-import org.example.models.Tool.Pickaxe;
 
 public class Foraging implements Skill{
     int level = 0;

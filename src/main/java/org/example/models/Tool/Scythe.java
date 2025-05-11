@@ -32,6 +32,8 @@ public class Scythe implements Tool<ItemLevel> {
             return new Result(false, "You can't use the scythe on this tile");
         } else {
             if(item instanceof FruitAndVegetable){
+                if(!((FruitAndVegetable) item).isFullyGrown())
+                    return new Result(false, "The crop isn't ready for harvest");
                 Game.getCurrentPlayer().getFarmingSkill().harvestCrop(tile);
             } else if(item == database.getItem("Fiber")) {
                 Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);

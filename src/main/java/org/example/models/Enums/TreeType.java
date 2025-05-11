@@ -82,4 +82,12 @@ public enum TreeType {
         }
         return null;
     }
+    public static TreeType getSeedType(String seed){
+        for (TreeType treeType : TreeType.values()) {
+            if(treeType.getSeed().equals(seed)){
+                return treeType;
+            }
+        }
+        return null;
+    }
 }

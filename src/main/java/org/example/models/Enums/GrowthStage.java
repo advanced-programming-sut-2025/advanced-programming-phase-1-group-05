@@ -5,7 +5,8 @@ public enum GrowthStage {
     SPROUT(2),
     JUVENILE(3),
     MATURE(4),
-    BLOOMING(5);
+    BLOOMING(5),
+    REGROWTH(6);
 
     private final int stageNumber;
     GrowthStage(int stageNumber) {

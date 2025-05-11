@@ -26,31 +26,19 @@ public class FruitAndVegetable implements Item {
         int stageIndex = 1;
         String[]growthStages = type.getStages().split("-");
         for(String gs : growthStages) {
-            //i have no idea what im doing
             growthTimeline.add(new GrowthStep(GrowthStage.valueOf(String.valueOf(stageIndex)), Integer.parseInt(gs)));
+            stageIndex++;
         }
         this.age = 0;
     }
 
-    public void showCropInformation(){
-        System.out.println("crop name : " + type.getName());
-        System.out.println("crop source : " + type.getSource());
-        System.out.println("growth stages : " + type.getStages());
-        System.out.println("total harvest time : " + type.getTotalHarvestTime());
-        System.out.println("one time : " + type.isOneTime());
-        if(type.getRegrowthTime() == 0)System.out.println("regrowth time : ");
-        else System.out.println("regrowth time : " + type.getRegrowthTime());
-        System.out.println("base sell price : " + type.getPrice());
-        System.out.println("is edible : " + type.isEdible());
-        System.out.println("base energy : " + type.getEnergy());
-        System.out.printf("seasons : ");
-        for(Season season : type.getSeasons()) {
-            System.out.printf("%s ", season);
-        }
-        System.out.println();
-        System.out.println("can become giant : " + type.canBecomeGiant());
+    public void setRegrowth(){
+        isFullyGrown = false;
+        currentGrowthStage = getRegrowthTime();
     }
-
+    public boolean isFullyGrown() {
+        return fullyGrown;
+    }
     public Map.Entry<Integer,Integer> getCoordinates() {
         return coordinates;
     }
@@ -90,20 +78,11 @@ public class FruitAndVegetable implements Item {
     //mixed seed
     public FruitAndVegetable mixedSeedPlant(){
         Season currentSeason = new TimeAndDate().getCurrentSeason();
-        ArrayList<FruitAndVegetable> possiblePlants = new ArrayList<>();
-        FruitAndVegetable selectedPlant = null;
-        //plants should be from another json file but for now
-//        for(FruitAndVegetable plant : Game.getDatabase().getFruitAndVegetables()) {
-//            for(Season season : plant.getSeasons()) {
-//                if(season == currentSeason) {
-//                    possiblePlants.add(plant);
-//               }
-//            }
-//        }
+        List<CropType> possiblePlants = currentSeason.getPossibleSeeds();
 
         Random random = new Random();
-        selectedPlant = possiblePlants.get(random.nextInt(possiblePlants.size()));
-        return selectedPlant;
+        CropType selectedType = possiblePlants.get(random.nextInt(possiblePlants.size()));
+        return new FruitAndVegetable(selectedType);
     }
 
     public String getSeed(){
@@ -128,9 +107,6 @@ public class FruitAndVegetable implements Item {
         return type.getSeasons();
     }
 
-    public void plant(Map.Entry<Integer,Integer> coordinates){
-        this.coordinates = coordinates;
-    }
     public void waterCrop(){
         hasBeenWatered = true;
     }

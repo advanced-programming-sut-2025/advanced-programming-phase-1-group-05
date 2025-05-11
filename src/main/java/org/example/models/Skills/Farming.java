@@ -1,14 +1,17 @@
 package org.example.models.Skills;
 
 import org.example.models.*;
+import org.example.models.Enums.CropType;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.TileType;
+import org.example.models.Enums.TreeType;
 import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Scythe;
 import org.example.models.Tool.WateringCan;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Farming implements Skill{
@@ -17,15 +20,23 @@ public class Farming implements Skill{
 
     public void plowTile(GameTile tile, Hoe hoe) {}
 
-//    public boolean plantSeed(Seed seed, GameTile tile) {
-//        if(getSeedType(seed) == null) return false;
-//        else if(getSeedType(seed) == "crop") {
-//            Game.getGameMap().addPlant(getFruitType(seed));
-//        } else if(getSeedType(seed) == "tree") {
-//            Game.getGameMap().addTree(getTreeType(seed));
-//        }
-//        return true;
-//    }
+    //plant seed
+    public boolean plantSeed(String seed, GameTile tile) {
+        CropType cropType = CropType.getSeedType(seed);
+        TreeType treeType = TreeType.getSeedType(seed);
+        if(cropType != null) {
+            FruitAndVegetable crop = new FruitAndVegetable(cropType);
+            tile.setItemOnTile(crop);
+            if(crop.canBecomeGiant(Game.getCurrentPlayer().getFarm().getCrops())) {
+                crop.expandToGiant(Game.getCurrentPlayer().getFarm().getCrops());
+            }
+            return true;
+        } else if (treeType != null) {
+            tile.setItemOnTile(new Tree(treeType));
+            return true;
+        }
+        return false;
+    }
 
     //fertilize crop
     public boolean fertilizeCrop(Map.Entry<Integer, Integer> coordinantes, String fertilizer) {
@@ -48,45 +59,15 @@ public class Farming implements Skill{
 
     //harvest crop
     public void harvestCrop(GameTile tile) {
+        Item crop = tile.getItemOnTile();
         Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
-        tile.setItemOnTile(null);
+        if(((FruitAndVegetable) crop).isOneTime()) tile.setItemOnTile(null);
+        else {
+            ((FruitAndVegetable) crop).setRegrowth();
+        }
         increaseCapacity();
     }
 
-    //seed type
-//    public String getSeedType(Seed seed){
-//        for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
-//            if(f.getSeed().equals(seed.getName())){
-//                return "crop";
-//            }
-//        }
-//        for (Tree tree: Game.getDatabase().getTreeDatabase()) {
-//            if(tree.getTreeType().getSeed().equals(seed.getName())){
-//                return "tree";
-//            }
-//        }
-//        return null;
-//    }
-
-    //get fruit type from database
-//    public FruitAndVegetable getFruitType(Seed seed) {
-//        for(FruitAndVegetable f: Game.getDatabase().getFruitAndVegetables()){
-//            if(f.getSeed().equals(seed.getName())){
-//                return f;
-//            }
-//        }
-//        return null;
-//    }
-
-    //get tree type from database
-//    public Tree getTreeType(Seed seed) {
-//        for(Tree tree: Game.getDatabase().getTreeDatabase()){
-//            if(tree.getTreeType().getSeed().equals(seed.getName())){
-//                return tree;
-//            }
-//        }
-//        return null;
-//    }
 
     @Override
     public int getLevel() {

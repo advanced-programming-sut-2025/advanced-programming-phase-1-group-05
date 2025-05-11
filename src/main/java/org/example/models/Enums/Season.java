@@ -27,4 +27,7 @@ public enum Season {
     public String toString() {
         return name;
     }
+    public List<CropType> getPossibleSeeds() {
+        return possibleSeeds;
+    }
 }
