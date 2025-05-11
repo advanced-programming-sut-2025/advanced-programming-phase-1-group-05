@@ -113,6 +113,7 @@ public class GameMenuController extends MenuController {
                 activeGames.put(currentUser.getUsername(), pendingGame);
                 currentPlayer = selectedPlayers.get(0);
             }
+            currentPlayer = selectedPlayers.get(0);
             return startResult;
         }
     }
@@ -158,7 +159,7 @@ public class GameMenuController extends MenuController {
     }
 
     private void advanceToNextPlayer() {
-        currentPlayerIndex++;
+        currentPlayerIndex = (currentPlayerIndex + 1) % selectedPlayers.size();
         if (currentPlayerIndex >= selectedPlayers.size()) {
             currentPlayerIndex = 0;
             GameManager.getGameClock().advanceTime(60);
@@ -168,13 +169,13 @@ public class GameMenuController extends MenuController {
 
 
     public Result nextTurn() {
-//        if (pendingGame == null || !User.haveSavedGame) {
-//            return Result.error("There is no active game.");
-//        }
+        if (pendingGame == null) {
+            return Result.error("There is no active game.");
+        }
 
-//        if (!currentUser.getUsername().equals(currentPlayer.getUsername())) {
-//            return Result.error("It's not your turn.");
-//        }
+        if (!currentUser.getUsername().equals(currentPlayer.getUsername())) {
+            return Result.error("It's not your turn.");
+        }
 
         currentPlayer.increaseEnergy(-50);
 
