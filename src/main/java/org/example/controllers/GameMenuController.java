@@ -28,28 +28,31 @@ public class GameMenuController extends MenuController {
     private NPC lastNPC = null;
 
     public Result newGame(String input) {
-        Pattern pattern = Pattern.compile
-                ("^game new( -u(?<username>[\\w-]+))" +
-                        "( -u(?<username2>[\\w-]+))?( -u(?<username3>[\\w-]+))?(?<extra> -u[\\w-]+)*$");
-        Matcher matcher = pattern.matcher(input);
+        Pattern pattern = Pattern.compile(
+                "^game new(?: -u (?<username>[\\w-]+))" +
+                        "(?: -u (?<username2>[\\w-]+))?" +
+                        "(?: -u (?<username3>[\\w-]+))?" +
+                        "(?<extra> -u [\\w-]+)*$"
+        );
 
-        if (!matcher.find()) {
-            return Result.error("Invalid command format!");
+        Matcher matcher = pattern.matcher(input.trim());
+
+        if (!matcher.matches()) {
+            return Result.error("Invalid command format! Correct format: 'game new -u <username> [-u <username2>] [-u <username3>]'");
+        }
+        if (matcher.group("extra") != null) {
+            return Result.error("Maximum 3 usernames allowed!");
         }
 
         if (matcher.group("username") == null) {
             return Result.error("At least one username must be provided!");
         }
 
-        if (matcher.group("extra") != null) {
-            return Result.error("Maximum 3 usernames allowed!");
-        }
-
         selectedPlayers = new ArrayList<>();
         selectedPlayers.add(new Player(currentUser));
 
         for (int i = 1; i <= 3; i++) {
-            String username = matcher.group("username" + i);
+            String username = matcher.group("username" + (i == 1 ? "" : i));
             if (username != null) {
                 User user = UserDatabase.getUserByUsername(username);
                 if (user == null) {
@@ -65,21 +68,22 @@ public class GameMenuController extends MenuController {
                 UserDatabase.updateUser(user);
             }
         }
+
         canChooseMap = true;
         canExitGame = new boolean[selectedPlayers.size()];
-        for (int i = 0; i < selectedPlayers.size(); i++) {
-            canExitGame[i] = false;
-        }
+        Arrays.fill(canExitGame, false);
+
         for (Player player : selectedPlayers) {
             UserDatabase.setUserInGame(player.getUsername(), true);
         }
+
         Game.currentPlayerIndex = 0;
         playerMapChoices.clear();
         Game.getAllPlayers().addAll(selectedPlayers);
+
         return Result.success(selectedPlayers.get(0).getUsername() +
                 ", please choose your map (1-4):");
     }
-
     public Result chooseMap(String input) {
         if (!canChooseMap) {
             return Result.error("Not in map selection phase!");
@@ -101,14 +105,15 @@ public class GameMenuController extends MenuController {
         } else {
             canChooseMap = false;
             pendingGame = new Game();
-            for (int i = 0; i < selectedPlayers.size(); i++) {
-//                pendingGame.setPlayerMap(selectedPlayers.get(i), playerMapChoices.get(i));
-                // TODO: map for players :)
-            }
             Result startResult = Game.startTheGame();
             if (startResult.isSuccess()) {
-                activeGames.put(currentUser.getUsername(), pendingGame);
+//                activeGames.put(currentUser.getUsername(), pendingGame);
+                for (Player player : selectedPlayers) {
+                    activeGames.put(player.getUsername(), pendingGame);
+                }
+                Game.setCurrentPlayer(selectedPlayers.get(0));
             }
+            Game.setCurrentPlayer(selectedPlayers.get(0));
             return startResult;
         }
     }
@@ -154,11 +159,12 @@ public class GameMenuController extends MenuController {
 
 
 
-
     public Result nextTurn() {
-        if (pendingGame == null || !User.haveSavedGame) {
+        Game game = activeGames.get(currentUser.getUsername());
+        if (game == null) {
             return Result.error("There is no active game.");
         }
+        pendingGame = game;
 
         if (!currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername())) {
             return Result.error("It's not your turn.");
@@ -793,5 +799,102 @@ public class GameMenuController extends MenuController {
         return new Result(true, "** " + count + " of " + name + " added to your inventory **");
     }
 
+
+    public Result showDatetime() {
+        int hour = GameManager.getCurrentHour();
+        int day = GameManager.getDay();
+        String season = GameManager.getSeason().name().toLowerCase();
+        return Result.success("Current date and time: Day " + day + " of " + capitalize(season) +
+                ", " + String.format("%02d:00", hour));
+    }
+
+    public Result showDate() {
+        int day = GameManager.getDay();
+        String season = GameManager.getSeason().name().toLowerCase();
+        return Result.success("Current date: Day " + day + " of " + capitalize(season));
+    }
+
+    public Result showTime() {
+        int hour = GameManager.getCurrentHour();
+        return Result.success("Current time: " + String.format("%02d:00", hour));
+    }
+
+    public Result showDayOfTheWeek() {
+        String dayOfWeek = GameManager.getDayOfTheWeek();
+        return Result.success("Today is: " + dayOfWeek);
+    }
+
+    private String capitalize(String str) {
+        if (str == null || str.isEmpty()) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public Result showSeason() {
+        Season currentSeason = GameManager.getGameClock().getCurrentSeason();
+        return Result.success("Current season: " + currentSeason.name());
+    }
+
+
+    public Result showWeather() {
+        Weather currentWeather = Game.getCurrentWeather();
+        return Result.success("Current weather: " + currentWeather.toString());
+    }
+
+
+    public Result weatherForecast() {
+        Weather forecast = Game.getForecastedWeather();
+        return Result.success("Forecasted weather for tomorrow: " + forecast.toString());
+    }
+
+    public Result cheatWeatherSet(String input) {
+        try {
+            String[] tokens = input.trim().split("\\s+");
+            if (tokens.length != 4) {
+                return Result.error("Invalid format. Usage: cheat weather set <Type>");
+            }
+
+            String weatherType = tokens[3].toUpperCase();
+
+            Weather newForecastedWeather;
+            try {
+                newForecastedWeather = Weather.valueOf(weatherType);
+            } catch (IllegalArgumentException e) {
+                return Result.error("Invalid weather type. Valid types: SUNNY, RAIN, STORM, SNOW");
+            }
+
+            Game.setForecastedWeather(newForecastedWeather);
+            return Result.success("Forecasted weather for tomorrow set to: " + newForecastedWeather);
+
+        } catch (Exception e) {
+            return Result.error("Error while setting forecasted weather: " + e.getMessage());
+        }
+    }
+
+    public Result printMap(Matcher matcher) {
+        GameMap map = Game.getGameMap();  // فرض بر اینه که Game singleton یا staticه
+
+        try {
+            if (matcher.group("x") != null && matcher.group("y") != null && matcher.group("s") != null) {
+                int x = Integer.parseInt(matcher.group("x"));
+                int y = Integer.parseInt(matcher.group("y"));
+                int size = Integer.parseInt(matcher.group("s"));
+
+                // بررسی معتبر بودن
+                if (!map.isInBounds(x, y)) {
+                    return new Result(false, "Coordinates out of map bounds.");
+                }
+
+                System.out.println("Printing map section at (" + x + "," + y + ") with size " + size + ":");
+                map.printMapSection(x, y, size);
+                return new Result(true, "Map section printed.");
+            } else {
+                System.out.println("Printing full map:");
+                map.printFullMap();
+                return new Result(true, "Full map printed.");
+            }
+        } catch (Exception e) {
+            return new Result(false, "Invalid input format for map printing.");
+        }
+    }
 
 }

@@ -54,12 +54,12 @@ public class GameTile {
 
     @Override
     public String toString() {
-        if (itemOnTile != null) return "🍎"; // آیتم
-        if (building != null) return "🏠";   // ساختمان
+        if (itemOnTile != null) return "🍎";
+        if (building != null) return "🏠";
         if (tileType == TileType.Water) return "🌊";
         if (tileType == TileType.Soil) return "🟫";
         if (tileType == TileType.Flat) return "🟩";
-        return "⬛"; // پیش‌فرض
+        return "⬛";
     }
 
 }

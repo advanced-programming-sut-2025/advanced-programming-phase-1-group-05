@@ -131,6 +131,9 @@ public class GameMenu implements org.example.views.AppMenu {
             Result result = gameMenuController.cheatWeatherSet(input);
             System.out.println(result.getMessage());
         }
+        else if ((matcher = GameMenuCommands.PrintMap.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.printMap(matcher));
+        }
         else if ((matcher = GameMenuCommands.BuildAnimalHouse.getMatcher(input)) != null) {
             System.out.println(storeController.buildAnimalHouse(matcher));
         }

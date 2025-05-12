@@ -18,7 +18,7 @@ import java.util.Random;
 
 
 public class GameMap {
-    GameTile[][] map;
+    GameTile[][] map = new GameTile[100][100];
     // TODO initialize this!!
     ArrayList<FruitAndVegetable> plants = new ArrayList<>();
     ArrayList<Tree> trees = new ArrayList<>();
@@ -111,10 +111,15 @@ public class GameMap {
             t.growTree();
         }
     }
-    public GameMap(int width, int height) {
-        map = new GameTile[height][width];
-        initEmptyMap(TileType.Flat);
+    public GameMap() {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                map[i][j] = new GameTile(i + 1, j + 1, TileType.Flat); // یا هر TileType پیش‌فرض
+            }
+        }
     }
+
+
 
     public void initEmptyMap(TileType defaultType) {
         for (int i = 0; i < map.length; i++) {
