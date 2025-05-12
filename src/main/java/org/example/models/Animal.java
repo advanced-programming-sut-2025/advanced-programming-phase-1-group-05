@@ -107,7 +107,7 @@ public class Animal implements Item{
     }
 
     public void adjustFriendshipPoints (int amount) {
-        friendshipPoints += amount;
+        friendshipPoints = Math.min(1000, friendshipPoints + amount);
     }
 
     public int getFriendshipPoints() {
@@ -116,6 +116,10 @@ public class Animal implements Item{
 
     public void setFriendshipPoints(int amount) {
         friendshipPoints = Math.min(1000, amount);
+    }
+
+    public boolean wasFed() {
+        return  wasFed;
     }
     public List<Product> getUnCollectedProducts() {
         return unCollectedProducts;

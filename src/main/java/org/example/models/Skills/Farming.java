@@ -12,7 +12,9 @@ public class Farming implements Skill{
     int level = 0;
     int capacity = 0;
 
-    public void plowTile(GameTile tile, Hoe hoe) {}
+    public void plowTile(GameTile tile, Hoe hoe) {
+        tile.setTileType(TileType.Soil);
+    }
 
     //plant seed
     public boolean plantSeed(String seed, GameTile tile) {
@@ -47,7 +49,7 @@ public class Farming implements Skill{
     //mixed seed
     public FruitAndVegetable mixedSeedPlant(){
         Season currentSeason = new TimeAndDate().getCurrentSeason();
-        List<CropType> possiblePlants = currentSeason.getPossibleSeeds();
+        List<CropType> possiblePlants = PossibleSeed.getPossibleSeeds(currentSeason);
 
         Random random = new Random();
         CropType selectedType = possiblePlants.get(random.nextInt(possiblePlants.size()));

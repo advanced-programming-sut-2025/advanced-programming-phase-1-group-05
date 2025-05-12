@@ -16,10 +16,10 @@ public enum GameMenuCommands {
     UpgradeTool("upgrade tool (?<toolName>\\.+)"),
     UseTool("use tool -d (?<direction>\\S+)"),
     ShowCraftInfo("show craft info -n (?<craftName>\\S+)"),
-    Plant("plant -s (?<seed>\\S+) -d (?<direction>\\S+)"),
-    ShowPlant("show plant -l (?<x, y>\\S+)"),
+    Plant("plant -s (?<seed>\\S+) -d (?<x>\\d+) (?<y>\\d+)"),
+    ShowPlant("show plant -l (?<x>\\d+) (?<y>\\d+)"),
     FertilizeCrop("fertilize -f (?<fertilizer>\\S+) -d (?<direction>\\S+)"),
-    WaterCrop("how much water"),
+    HowMuchWater("how much water"),
     ShowCraftingRecipes("show crafting recipes"),
     PlaceItem("place item -n (?<item_name>.+?) -d (?<direction>\\S+)"),
     AddItemCC("cheat add item -n (?<item_name>.+?) -c (?<count>\\d+)"),
@@ -37,7 +37,8 @@ public enum GameMenuCommands {
     CheatAddMoney("cheat\\s+add\\s+(?<count>\\d+?)\\s+dollars"),
     Sell("sell\\s+(<?productName>.+?)(?:\\s+-n\\s+(?<count>\\d+))?"),
     GiveBouquet("flower\\s+-u\\s+(?<username>\\S+)"),
-    Hug("hug\\s+-u\\s+(?<username>\\S+)");
+    Hug("hug\\s+-u\\s+(?<username>\\S+)"),
+    PlowTile("plow tile (?<x>\\d+) (?<y>\\d+)");
 
     private final String pattern;
     GameMenuCommands(String pattern) {
