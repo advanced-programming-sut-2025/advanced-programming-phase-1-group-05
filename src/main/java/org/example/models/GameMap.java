@@ -88,9 +88,11 @@ public class GameMap {
                 if (chosen % 2 == 0) {
                     item = new BasicItem(ForagingTreeSourceType
                             .getRandomForagingTreeType(GameManager.getSeason()).getName(), 0);
+                    tile.setItemOnTile(item);
                 } else {
                     item = new BasicItem(ForagingSeedType
                             .getRandomForagingSeedType(GameManager.getSeason()).getName(), 0);
+                    tile.setItemOnTile(item);
                 }
             }
         }
@@ -100,15 +102,15 @@ public class GameMap {
     public void setForagingMinerals(){
         //TODO mining area
     }
-
-
-//    public GameTile getTile(int x, int y) {
-//        return map[x-1][y-1];
-//    }
-
     public void growPlants(){
         for(FruitAndVegetable f: plants){
-            f.grow();
+            if(f.isAlive()) f.grow();
+            else {
+                //remove dead plants
+                GameTile tile = Game.getGameMap().getTile(f.getCoordinates().getKey(), f.getCoordinates().getValue());
+                tile.setItemOnTile(null);
+                Game.getGameMap().getPlants().remove(f);
+            }
         }
         for(Tree t: trees){
             t.growTree();
@@ -153,6 +155,7 @@ public class GameMap {
             }
         }
     }
+
     public void spreadRandomItemsInFarm(int startX, int startY, int width, int height) {
         Random random = new Random();
         int count = 50;
@@ -185,10 +188,6 @@ public class GameMap {
     private boolean insideRect(int i, int j, int x, int y, int w, int h) {
         return i >= x && i < x + h && j >= y && j < y + w;
     }
-
-
-
-
 
 
     public void initEmptyMap(TileType defaultType) {

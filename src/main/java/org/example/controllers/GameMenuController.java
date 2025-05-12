@@ -746,9 +746,20 @@ public class GameMenuController extends MenuController {
     //fertilize crop
     public Result fertilizeCrop(String fertilizer, Map.Entry<Integer, Integer> coordinates) {
         GameMap map = Game.getGameMap();
-        boolean successful = Game.getCurrentPlayer().getFarmingSkill().fertilizeCrop(coordinates, fertilizer);
-        if (successful) return new Result(true, "Successfully fertilized with " + fertilizer);
-        else return new Result(false, "You don't have that kind of fertilizer");
+        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
+        Item item = tile.getItemOnTile();
+        if(item == null) {
+            tile.fertilze(fertilizer);
+            return new Result(false, "Fertilized tile successfully!");
+        }
+        else if(item instanceof FruitAndVegetable) {
+            FruitAndVegetable fruit = (FruitAndVegetable) item;
+            if(fruit.getAge() == 0) {
+                boolean successful = Game.getCurrentPlayer().getFarmingSkill().fertilizeCrop(coordinates, fertilizer);
+                if (successful) return new Result(true, "Successfully fertilized with " + fertilizer);
+                else return new Result(false, "You don't have that kind of fertilizer");
+            } else return new Result(false, "You can only fertilize tile before or the day of planting!");
+        } else return new Result(false, "Can't fertilize this tile");
     }
 
     //how much water left

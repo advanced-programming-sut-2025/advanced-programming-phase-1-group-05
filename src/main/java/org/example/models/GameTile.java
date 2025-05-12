@@ -9,6 +9,8 @@ public class GameTile {
     private BuildingType building;
     private boolean occupied = false;
     private Item itemOnTile = null;
+    private boolean hasBeenFertilized = false;
+    private String fertilizer = "";
     // can't be walked over if it's occupied
 
     public GameTile(int x, int y, TileType tileType) {
@@ -51,6 +53,18 @@ public class GameTile {
     }
     public int getY() {
         return y;
+    }
+
+    public void fertilze(String fertilizer) {
+        this.fertilizer = fertilizer;
+        hasBeenFertilized = true;
+    }
+
+    public boolean hasBeenFertilized() {
+        return hasBeenFertilized;
+    }
+    public String getFertilizer() {
+        return fertilizer;
     }
 
     @Override

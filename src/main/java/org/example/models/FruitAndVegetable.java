@@ -13,6 +13,8 @@ public class FruitAndVegetable implements Item {
     private boolean protectedByScareCrow;
     private boolean hasBeenWatered;
     private boolean hasBeenFertilized;
+    private boolean isSpeedGro;
+    private boolean isRetainingSoil;
     private int age;
     private List<GrowthStep> growthTimeline;
     private int currentGrowthStage;
@@ -103,15 +105,32 @@ public class FruitAndVegetable implements Item {
     public void waterCrop(){
         hasBeenWatered = true;
     }
-    public void fertilize(){
+    public void fertilize(String fertilizer) {
         hasBeenFertilized = true;
+        if(fertilizer.equals("Speed-Gro")) {
+            isSpeedGro = true;
+        } else if(fertilizer.equals("Retaining-Soil")) {
+            isRetainingSoil = true;
+        }
     }
 
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public int getAge(){
+        return age;
+    }
     public void grow(){
         if(!hasBeenWatered) daysNoWater++;
         if(daysNoWater == 2) alive = false;
         if(hasBeenWatered && currentGrowthStage < growthTimeline.size()) {
             GrowthStep currentStage = growthTimeline.get(currentGrowthStage);
+            if(hasBeenFertilized) {
+                if(isSpeedGro) {
+                    age++;
+                }
+            }
             age++;
 
             if(age > currentStage.getDays()) {
@@ -120,15 +139,15 @@ public class FruitAndVegetable implements Item {
                     isFullyGrown = true;
                 }
             } else if (hasBeenWatered && isHarvested && getRegrowthTime() != 0) {
-            regrowthCounter++;
-            if (regrowthCounter >= getRegrowthTime()) {
-                isHarvested = false;
-                isFullyGrown = true;
-                regrowthCounter = 0;
+                regrowthCounter++;
+                if (regrowthCounter >= getRegrowthTime()) {
+                    isHarvested = false;
+                    isFullyGrown = true;
+                    regrowthCounter = 0;
+                }
             }
-        }
 
-        hasBeenWatered = false;
+            hasBeenWatered = hasBeenFertilized && isRetainingSoil;
         }
     }
     public void setHarvested(boolean harvested){

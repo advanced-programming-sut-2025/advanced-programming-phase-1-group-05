@@ -241,7 +241,11 @@ public class GameMenu implements org.example.views.AppMenu {
                     Integer.parseInt(matcher.group("y")))));
         } else if((matcher = GameMenuCommands.HowMuchWater.getMatcher(input)) != null) {
             System.out.println(gameMenuController.howMuchWaterLeft());
-        } else {
+        } else if((matcher = GameMenuCommands.FertilizeCrop.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.fertilizeCrop(matcher.group("fertilizer"),
+                    new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y")))));
+        }
+        else {
             System.out.println("Invalid Command!");
         }
     }

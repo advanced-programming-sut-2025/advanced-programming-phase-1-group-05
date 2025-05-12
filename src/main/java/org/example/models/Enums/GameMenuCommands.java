@@ -18,7 +18,7 @@ public enum GameMenuCommands {
     ShowCraftInfo("show craft info -n (?<craftName>\\S+)"),
     Plant("plant -s (?<seed>\\S+) -d (?<x>\\d+) (?<y>\\d+)"),
     ShowPlant("show plant -l (?<x>\\d+) (?<y>\\d+)"),
-    FertilizeCrop("fertilize -f (?<fertilizer>\\S+) -d (?<direction>\\S+)"),
+    FertilizeCrop("fertilize -f (?<fertilizer>\\S+) -d (?<x>\\d+) (?<y>\\d+)"),
     HowMuchWater("how much water"),
     ShowCraftingRecipes("show crafting recipes"),
     PlaceItem("place item -n (?<item_name>.+?) -d (?<direction>\\S+)"),

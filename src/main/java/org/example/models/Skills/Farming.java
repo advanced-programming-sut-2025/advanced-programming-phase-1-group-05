@@ -33,6 +33,9 @@ public class Farming implements Skill{
             FruitAndVegetable crop = new FruitAndVegetable(cropType);
             tile.setItemOnTile(crop);
             Game.getGameMap().addPlant(crop);
+            if(tile.hasBeenFertilized()) {
+                crop.fertilize(tile.getFertilizer());
+            }
             if(crop.canBecomeGiant(Game.getCurrentPlayer().getFarm().getCrops())) {
                 crop.expandToGiant(Game.getCurrentPlayer().getFarm().getCrops());
             }
