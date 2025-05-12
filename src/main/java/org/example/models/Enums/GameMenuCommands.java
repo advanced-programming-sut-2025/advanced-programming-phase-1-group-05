@@ -24,6 +24,7 @@ public enum GameMenuCommands {
     PlaceItem("place item -n (?<item_name>.+?) -d (?<direction>\\S+)"),
     AddItemCC("cheat add item -n (?<item_name>.+?) -c (?<count>\\d+)"),
     BuildAnimalHouse("build\\s+-a\\s+(?<buildingName>\\S+)\\s+-l\\s+(?<x>\\d+)\\s+(?<y>\\d+)"),
+    BuyAnimal("buy\\s+animal\\s+-a\\s+(?<animalType>\\S+)\\s+-n\\s+(?<animalName>.+?>"),
     SetFriendshipCC("cheat\\s+set\\s+friendship\\s+-n\\s+(?<animalName>.+?>\\s+-c\\s+(?<amount>\\d+)"),
     FeedHay("feed\\s+hay\\s+-n\\s+(?<animalName>.+?)"),
     CollectProduce("collect\\s+produce\\s+-n\\s+(?<name>\\S+)"),

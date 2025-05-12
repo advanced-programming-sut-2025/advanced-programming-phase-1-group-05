@@ -3,6 +3,8 @@ package org.example.models;
 import org.example.controllers.GameManager;
 import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.BackPackType;
+import org.example.models.Enums.BuildingType;
+import org.example.models.Enums.EnclosureType;
 import org.example.models.Skills.*;
 import org.example.models.Tool.*;
 
@@ -97,6 +99,18 @@ public class Player {
     public void resetEnergy() {
         energy = 200;
     }
+
+
+    public AnimalHouse hasThisEnclosureType(BuildingType enclosureType) {
+        for (AnimalHouse animalHouse : coopAndBarns) {
+            if (animalHouse.getType().equals(enclosureType) &&
+                    animalHouse.getAnimals().size() < animalHouse.getCapacity()) {
+                return animalHouse;
+            }
+        }
+        return null;
+    }
+
 
     public boolean isEnergyUnlimited() {
         return unlimitedEnergy;

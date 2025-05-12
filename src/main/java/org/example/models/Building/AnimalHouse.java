@@ -24,6 +24,9 @@ public class AnimalHouse extends Building{
         animals.add(animal);
     }
 
+    public int getCapacity() {
+        return capacity;
+    }
     public boolean contains(Animal animal) {
         return animals.contains(animal);
     }

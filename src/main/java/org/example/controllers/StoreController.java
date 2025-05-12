@@ -127,6 +127,35 @@ public class StoreController {
         return Result.success("You will receive the gold tomorrow morning!");
     }
 
+    public Result buyAnimal(Matcher m) {
+        Store store = getCurrentStore();
+        if (store == null || !store.getStoreName().equalsIgnoreCase("marnie's ranch")) {
+            return Result.error("You can only do this in the carpenter's shop");
+        }
+
+        Product product = store.getProduct(m.group("animalType"));
+        if (product == null) {
+            return Result.error("Can't find animal type " + m.group("animalType"));
+        }
+        Player player = Game.getCurrentPlayer();
+        if (player.getGold() < product.getPrice()) {
+            return Result.error("You do not have enough money to buy this animal!");
+        }
+        EnclosureType enclosureType = EnclosureType.fromString(product.getBuildingType().toString());
+
+        if (enclosureType == null) {
+            return Result.error("This shouldn't happen");
+        }
+        AnimalHouse animalHouse = player.hasThisEnclosureType(product.getBuildingType());
+        if (animalHouse == null) {
+            return Result.error("You don't have an empty " + enclosureType);
+        }
+        AnimalType type = AnimalType.fromString(m.group("animalType"));
+        animalHouse.addAnimal(new Animal(m.group("name"), type));
+        player.addGold(-product.getPrice());
+        return Result.success("animal bought successfully!");
+    }
+
     public Result buildAnimalHouse(Matcher m) {
         Store store = getCurrentStore();
         if (store == null || !store.getStoreName().equals("Carpenter's shop")) {

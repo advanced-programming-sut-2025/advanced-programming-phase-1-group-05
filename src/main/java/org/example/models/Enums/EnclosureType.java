@@ -18,4 +18,13 @@ public enum EnclosureType {
     public int getColumns() {
         return columns;
     }
+
+    public static EnclosureType fromString(String enclosureType) {
+        for (EnclosureType type : EnclosureType.values()) {
+            if (type.name().equalsIgnoreCase(enclosureType)) {
+                return type;
+            }
+        }
+        return null;
+    }
 }

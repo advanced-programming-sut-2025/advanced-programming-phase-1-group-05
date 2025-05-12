@@ -43,6 +43,10 @@ public class Product implements Item {
         }
 
     }
+
+    public BuildingType getBuildingType() {
+        return buildingType;
+    }
     public void setItemLevel(ItemLevel itemLevel) {
         this.itemLevel = itemLevel;
     }
