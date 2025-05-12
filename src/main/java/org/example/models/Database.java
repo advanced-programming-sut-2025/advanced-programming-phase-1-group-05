@@ -3,9 +3,9 @@ package org.example.models;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import org.example.models.Enums.BuildingType;
+import org.example.models.Enums.CropType;
 import org.example.models.Enums.Season;
 import org.example.models.BasicItem;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -17,12 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Database {
-    ArrayList<FruitAndVegetable> plantDatabase = new ArrayList<>();
-    ArrayList<Tree> treeDatabase = new ArrayList<>();
     ArrayList<Item> itemDatabase = new ArrayList<>();
-    ArrayList<Seed> seedDatabase = new ArrayList<>();
     ArrayList<Craft> craftingRecipeDatabase = new ArrayList<>();
-    ArrayList<Food> foodDatabase = new ArrayList<>();
     List<Store> stores = new ArrayList<>();
     Map<String, NPC> NPCs = new HashMap<>();
 
@@ -47,16 +43,7 @@ public class Database {
 
     public FruitAndVegetable getFruitAndVegetable(String name) {
         FruitAndVegetable plant = null;
-        for (FruitAndVegetable f : plantDatabase) {
-            if (f.getName().equals(name)) {
-                plant = f;
-            }
-        }
         return plant;
-    }
-
-    public ArrayList<FruitAndVegetable> getFruitAndVegetables() {
-        return plantDatabase;
     }
 
 
@@ -117,8 +104,9 @@ public class Database {
                     }
                     costs.put(item, quantity);
                 }
-                products.add(new Product(productName, price, limit, BuildingType.valueOf(buildingType), seasonsInStock, costs));
-                itemDatabase.add(new BasicItem(productName, price));
+                Product product = new Product(productName, price, limit, BuildingType.valueOf(buildingType), seasonsInStock, costs);
+                products.add(product);
+                itemDatabase.add(new BasicItem(productName, product.getPrice()));
             }
             stores.add(new Store(storeName, products, xStart, xEnd, yStart, yEnd, openingTime, closingTime));
         }
@@ -132,13 +120,6 @@ public class Database {
         return null;
     }
 
-    public ArrayList<Tree> getTreeDatabase() {
-        return treeDatabase;
-    }
-
-    public ArrayList<Seed> getSeedDatabase() {
-        return seedDatabase;
-    }
 
 
     public ArrayList<Craft> getCraftingRecipeDatabase() {
@@ -199,7 +180,4 @@ public class Database {
         return NPCs;
     }
 
-    public ArrayList<Food> getFoodDatabase() {
-        return foodDatabase;
-    }
 }

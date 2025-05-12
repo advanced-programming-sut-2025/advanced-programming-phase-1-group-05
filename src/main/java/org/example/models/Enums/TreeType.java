@@ -74,4 +74,20 @@ public enum TreeType {
         return seasons;
     }
 
+    public static TreeType fromString(String name){
+        for (TreeType treeType : TreeType.values()) {
+            if (treeType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+                return treeType;
+            }
+        }
+        return null;
+    }
+    public static TreeType getSeedType(String seed){
+        for (TreeType treeType : TreeType.values()) {
+            if(treeType.getSeed().equals(seed)){
+                return treeType;
+            }
+        }
+        return null;
+    }
 }

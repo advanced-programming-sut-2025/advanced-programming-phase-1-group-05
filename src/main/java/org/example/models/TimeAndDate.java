@@ -7,13 +7,12 @@ import java.sql.Time;
 import java.util.Date;
 
 public class TimeAndDate {
-    int day;
+    int day = 1;
     Season season;
-    int hour;
-    int minute;
-    private int minutes;
-
+    int hour = 9;
+    int minute = 0;
     public void nextDay() {}
+
     public TimeAndDate() {
         this.day = 1;
         this.season = Season.SPRING; // مقداردهی پیش‌فرض فصل
@@ -44,14 +43,13 @@ public class TimeAndDate {
     public int getMinute() {
         return minute;
     }
-
     //every 28 days
     public void changeSeason(Season season) {}
 
     public void advanceTime(int minutes){
-        this.minutes += minutes;
-        while (this.minutes >= 60) {
-            this.minutes -= 60;
+        minute += minutes;
+        while (minute >= 60) {
+            minute -= 60;
             hour ++;
         }
         if (hour >= 22) {
@@ -67,8 +65,12 @@ public class TimeAndDate {
             season = season.next();
         }
         Game.getGameMap().growPlants();
-        GameManager.nextDay();
+        Game.getGameMap().setForagingItems();
+        //TODO implement
+        Game.getGameMap().setForagingMinerals();
+        if(!Game.getCurrentPlayer().isEnergyUnlimited()) Game.getCurrentPlayer().resetEnergy();
         Game.setForecastedWeatherBySeason(season);
+        GameManager.nextDay();
     }
     public Season getCurrentSeason() { return season; }
     public int getDay() { return day; }

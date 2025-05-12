@@ -21,16 +21,16 @@ public class AnimalCare implements Skill{
     public void sellAnimal(Animal animal) {}
 
     public String collectProduct(Animal animal) { return null; }
-    public void milkAnimal(GameTile tile) {
+    public void milkAnimal(Animal animal) {
         //milk the animal on the tile
     }
-    public void shaveAnimal(GameTile tile) {
+    public void shaveAnimal(Animal animal) {
         //shave sheep
     }
 
     @Override
-    public ItemLevel getLevel() {
-        return null;
+    public int getLevel() {
+        return level;
     }
 
     @Override
@@ -53,6 +53,11 @@ public class AnimalCare implements Skill{
     @Override
     public void increaseCapacity() {
         this.capacity += 5;
+    }
+
+    @Override
+    public boolean isMaxLevel() {
+        return level == 10;
     }
 
 }

@@ -36,8 +36,8 @@ public class Cooking implements Skill{
     public void consumeFood(String food, Player player) {}
 
     @Override
-    public ItemLevel getLevel() {
-        return null;
+    public int getLevel() {
+        return level;
     }
 
     @Override
@@ -60,5 +60,10 @@ public class Cooking implements Skill{
     @Override
     public void increaseCapacity() {
 
+    }
+
+    @Override
+    public boolean isMaxLevel() {
+        return level == 4;
     }
 }

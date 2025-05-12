@@ -1,11 +1,10 @@
 package org.example.models.Tool;
 
+import org.example.models.*;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.TileType;
-import org.example.models.Game;
-import org.example.models.GameMap;
-import org.example.models.GameTile;
-import org.example.models.Result;
+import org.example.models.Skills.Mining;
+import org.example.models.Skills.Skill;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,33 +24,33 @@ public class Pickaxe implements Tool <ItemLevel> {
     public Result use(HashMap.Entry<Integer, Integer> coordinates){
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
-        ItemLevel miningLevel = Game.getCurrentPlayer().getMiningSkill().getLevel();
+        Skill mining = Game.getCurrentPlayer().getMiningSkill();
         int energyUsage = level.getEnergyUsage();
-        //or just set to flat
-        if(tile.getTileType() == TileType.Stone) {
-            if(miningLevel.isMaxLevel()) energyUsage --;
-            reduceEnergy(energyUsage);
-            tile.setTileType(TileType.Flat);
-        } else if(tile.getTileType() == TileType.Soil) {
-            if(miningLevel.isMaxLevel()) energyUsage --;
-            reduceEnergy(level.getEnergyUsage());
-            tile.setTileType(TileType.Flat);
-        } else if(tile.getTileType() == TileType.Object) {
-            if(miningLevel.isMaxLevel()) energyUsage --;
-            reduceEnergy(level.getEnergyUsage());
-            tile.setTileType(TileType.Flat);
-        } else {
-            if(miningLevel.isMaxLevel()) energyUsage --;
-            reduceEnergy(energyUsage - 1);
+
+        Item item = tile.getItemOnTile();
+        if(item == null && tile.getTileType() == TileType.Soil){
+            if(mining.isMaxLevel()) energyUsage --;
+            if(!reduceEnergy(energyUsage))
+                return new Result(false, "You don't have enough energy");
+            tile.setTileType(TileType.Soil);
+        } else if(item == null && tile.getTileType() == TileType.Water){
             return new Result(false, "You can't use the pickaxe on this tile");
+        } else if(item != null) {
+            if(mining.isMaxLevel()) energyUsage --;
+            if(!reduceEnergy(energyUsage))
+                return new Result(false, "You don't have enough energy");
+            ((Mining) mining).mine(tile, this);
         }
+
         return new Result(true, "");
     }
 
     @Override
-    public void reduceEnergy(int amount){
+    public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
+        if(Game.getCurrentPlayer().getEnergy() - amount < 0)return false;
         Game.getCurrentPlayer().increaseEnergy(-amount);
+        return true;
     }
     @Override
     public ItemLevel getLevel() {

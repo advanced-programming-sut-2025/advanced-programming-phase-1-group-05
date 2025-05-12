@@ -1,6 +1,11 @@
 package org.example.models.Enums;
 
-public enum MineralType implements Material {
+import org.example.models.Item;
+
+import java.util.Map;
+import java.util.Random;
+
+public enum MineralType implements Material, Item {
     Quartz("Quartz","A clear crystal commonly found in caves and mines.", 25),
     EarthCrystal("Earth Crystal","A resinous substance found near the surface.", 50),
     FrozenTear("Frozen Tear", "A crystal fabled to be the frozen tears of a yeti.", 75),
@@ -38,6 +43,22 @@ public enum MineralType implements Material {
     }
     public int getPrice() {
         return price;
+    }
+
+    public static MineralType getRandomMineralType() {
+        Random random = new Random();
+        MineralType[] types = MineralType.values();
+        return types[random.nextInt(types.length)];
+    }
+
+    @Override
+    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
+        //
+    }
+
+    @Override
+    public Map.Entry<Integer, Integer> getCoordinates() {
+        return null;
     }
 
 }

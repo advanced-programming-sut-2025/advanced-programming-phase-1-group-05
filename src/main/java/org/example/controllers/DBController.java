@@ -183,7 +183,7 @@ public class DBController {
                 }
             }
 
-            GameMenuController.currentPlayer = Game.getPlayerByUsername(ownerUsername);
+            Game.setCurrentPlayer(Game.getPlayerByUsername(ownerUsername));
 
         } catch (Exception e) {
             System.err.println("Error loading game state: " + e.getMessage());

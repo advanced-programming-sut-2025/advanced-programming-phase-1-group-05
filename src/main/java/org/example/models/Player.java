@@ -32,6 +32,7 @@ public class Player {
     private SharedWallet sharedWallet = null;
     private Map.Entry<Integer, Integer> coordinates;
     private List<AnimalHouse> coopAndBarns = new ArrayList<>();
+    private List<String> notifications = new ArrayList<>();
 
     public Player(User user) {
         this.user = user;
@@ -41,6 +42,20 @@ public class Player {
         backPack.getInventory().put(new Pickaxe(), 1);
         backPack.getInventory().put(new Scythe(), 1);
         farm = new Farm(this);
+    }
+
+    public void addNotification(String message) {
+        notifications.add(message);
+    }
+
+    public String getNotifications () {
+        StringBuilder builder = new StringBuilder();
+        builder.append("\n Your notifications: ");
+        for (String notification : notifications) {
+            builder.append(notification).append("\n");
+        }
+        notifications.clear();
+        return builder.toString();
     }
 
     public void setEnergy(int energy) {
@@ -59,7 +74,7 @@ public class Player {
         coopAndBarns.add(animalHouse);
     }
 
-    public String getGender(){
+    public String getGender() {
         return user.gender;
     }
 
@@ -67,32 +82,66 @@ public class Player {
         //TODO use time controller
         TimeAndDate timeAndDate = new TimeAndDate();
         timeAndDate.advanceDay();
-        //TODO waking up in the same spot
-        energy = energy *3/2;
+        //TODO waking up in the same spot // wait for map mechanism
+        energy = energy * 3 / 2;
     }
 
     public void increaseEnergy(int amount) {
-        if(amount < 0 && unlimitedEnergy) return;
+        if (amount < 0 && unlimitedEnergy) return;
         energy += amount;
-        if(energy >= 200) energy = 200;
+        if (energy >= 200) energy = 200;
         if (energy <= 0) faint();
     }
-    public int getEnergy() {return energy;}
+
+    //reset energy every day
+    public void resetEnergy() {
+        energy = 200;
+    }
+
+    public boolean isEnergyUnlimited() {
+        return unlimitedEnergy;
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
     public boolean hasEnoughEnergy(int required) {
         return false;
     }
-    public Result waterTile(GameTile tile) {return null;}
-    public Crafting getCraftingSkill() {return craftingSkill;}
-    public Cooking getCookingSkill() {return cookingSkill;}
-    public Farming getFarmingSkill() {return farmingSkill;}
-    public Foraging getForagingSkill() {return foragingSkill;}
-    public Fishing getFishingSkill() {return fishingSkill;}
+
+    public Result waterTile(GameTile tile) {
+        return null;
+    }
+
+    public Crafting getCraftingSkill() {
+        return craftingSkill;
+    }
+
+    public Cooking getCookingSkill() {
+        return cookingSkill;
+    }
+
+    public Farming getFarmingSkill() {
+        return farmingSkill;
+    }
+
+    public Foraging getForagingSkill() {
+        return foragingSkill;
+    }
+
+    public Fishing getFishingSkill() {
+        return fishingSkill;
+    }
+
     public Mining getMiningSkill() {
         return miningSkill;
     }
+
     public Map.Entry<Integer, Integer> getCoordinate() {
         return new AbstractMap.SimpleEntry<>(x, y);
     }
+
     public void setCoordinate(int x, int y) {
         this.x = x;
         this.y = y;
@@ -101,41 +150,62 @@ public class Player {
     public int getItemQuantity(Item item) {
         return backPack.getInventory().getOrDefault(item, 0);
     }
+
     public void addGold(int amount) {
         if (sharedWallet == null)
             gold += amount;
         else sharedWallet.addGold(amount);
     }
+
     public int getGold() {
-        if (sharedWallet == null )
+        if (sharedWallet == null)
             return gold;
         return sharedWallet.getGold();
     }
+
     public void setUnlimitedEnergy() {
         unlimitedEnergy = true;
     }
+
     public void setCurrentItem(Item item) {
         currentItem = item;
     }
-    public Item getCurrentItem() {return currentItem;}
-    public AnimalCare getAnimalCare() {return animalCare;}
-    public TrashCan getTrashCan() {return trashCan;}
-    public BackPack getBackPack() {return backPack;}
+
+    public Item getCurrentItem() {
+        return currentItem;
+    }
+
+    public AnimalCare getAnimalCare() {
+        return animalCare;
+    }
+
+    public TrashCan getTrashCan() {
+        return trashCan;
+    }
+
+    public BackPack getBackPack() {
+        return backPack;
+    }
 
     public String getName() {
         return user.nickName;
     }
-    public String getUsername(){
-        return  user.getUsername();
+
+    public String getUsername() {
+        return user.getUsername();
     }
-    public WateringCan getWateringCan() {return wateringCan;}
+
+    public WateringCan getWateringCan() {
+        return wateringCan;
+    }
 
     public List<AnimalHouse> getCoopsAndBarns() {
         return coopAndBarns;
     }
-      public static void initializeFriendships(List<Player> players){
-        for (int i = 0; i< players.size(); i++){
-            for (int j = i +1; j < players.size(); j++){
+
+    public static void initializeFriendships(List<Player> players) {
+        for (int i = 0; i < players.size(); i++) {
+            for (int j = i + 1; j < players.size(); j++) {
                 Player a = players.get(i);
                 Player b = players.get(j);
                 friendships.add(new Friendship(a, b));
@@ -145,10 +215,11 @@ public class Player {
 
     private Friendship getFriendship(Player a, Player b) {
         for (Friendship f : friendships) {
-            if(f.containsPlayer(a) && f.containsPlayer(b)) return f;
+            if (f.containsPlayer(a) && f.containsPlayer(b)) return f;
         }
         return null;
     }
+
     public int getFriendshipLevel(Player a) {
         Friendship friendship = getFriendship(this, a);
         if (friendship == null) return 0;
@@ -168,16 +239,19 @@ public class Player {
         this.sharedWallet = wallet;
         spouse.sharedWallet = wallet;
     }
-    public boolean isMarriedTo(Player a){
+
+    public boolean isMarriedTo(Player a) {
         if (spouse == null) return false;
-        return  spouse.equals(a);
+        return spouse.equals(a);
     }
-    public boolean canAskMarriage(Player a){
+
+    public boolean canAskMarriage(Player a) {
         Friendship friendship = getFriendship(a, this);
-        if( friendship != null ) return friendship.canAskMarriage();
+        if (friendship != null) return friendship.canAskMarriage();
         return false;
     }
-    public void changeFriendshipXP(int xp, Player a){
+
+    public void changeFriendshipXP(int xp, Player a) {
         Friendship friendship = getFriendship(this, a);
         if (friendship != null) friendship.addPoints(xp);
     }
@@ -192,72 +266,88 @@ public class Player {
 
     public void proposed(Player player) {
         Friendship friendship = getFriendship(this, player);
-        if (friendship!= null) friendship.Proposed();
+        if (friendship != null) friendship.Proposed();
     }
+
     public void decrementProposalRejectionDaysLeft() {
         proposalRejectionDaysLeft--;
     }
+
     public boolean hasProposed(Player player) {
         Friendship friendship = getFriendship(this, player);
         if (friendship == null) return false;
         return friendship.hasProposed;
     }
-    public Farm getFarm(){
+
+    public Farm getFarm() {
         return farm;
     }
+
     public Animal getAnimal(String name) {
         Animal animal = null;
         for (AnimalHouse house : coopAndBarns) {
             animal = house.getAnimal(name);
-            if (animal!=null) break;
+            if (animal != null) break;
         }
         return animal;
     }
+
+    public void removeAnimal(Animal animal) {
+        for (AnimalHouse house : coopAndBarns) {
+            if (house.contains(animal)) {
+                house.removeAnimal(animal);
+                break;
+            }
+        }
+    }
+
     private static class Friendship {
         private final Player player1;
         private final Player player2;
         private int xpPoints = 0;
         private int friendshipLevel = 0;
         private boolean hasProposed = false;
+
         public Friendship(Player player1, Player player2) {
             this.player1 = player1;
             this.player2 = player2;
         }
 
-        public boolean containsPlayer(Player a){
-            return  player1.equals(a) && player2.equals(a);
+        public boolean containsPlayer(Player a) {
+            return player1.equals(a) && player2.equals(a);
         }
 
-        public int getFriendshipLevel(){
+        public int getFriendshipLevel() {
             return friendshipLevel;
         }
 
-        public void addPoints(int amount){
+        public void addPoints(int amount) {
             xpPoints += amount;
             if (xpPoints > 300) friendshipLevel = 2;
             else if (xpPoints > 100) friendshipLevel = 1;
         }
-        public boolean canHug(){
+
+        public boolean canHug() {
             return friendshipLevel >= 2;
         }
 
-        public void setLevel(int level){
+        public void setLevel(int level) {
             friendshipLevel = level;
         }
 
-        public boolean canGiveBouquet(){
+        public boolean canGiveBouquet() {
             return xpPoints >= 600;
         }
 
-        public boolean canGift(){
+        public boolean canGift() {
             return friendshipLevel >= 1;
         }
 
-        public boolean canAskMarriage(){
+        public boolean canAskMarriage() {
             return xpPoints >= 1000;
         }
 
-        public void Proposed(){
+        public void Proposed() {
             hasProposed = true;
         }
 
@@ -265,17 +355,19 @@ public class Player {
             return hasProposed;
         }
     }
+
     private static class SharedWallet {
         private int gold;
-        public SharedWallet(int gold1, int gold2){
+
+        public SharedWallet(int gold1, int gold2) {
             gold = gold1 + gold2;
         }
 
-        public int getGold(){
+        public int getGold() {
             return gold;
         }
 
-        public void addGold(int amount){
+        public void addGold(int amount) {
             gold += amount;
         }
 

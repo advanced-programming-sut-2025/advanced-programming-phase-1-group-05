@@ -1,6 +1,7 @@
 package org.example.models;
 
 import org.example.GrowthStep;
+import org.example.models.Enums.CropType;
 import org.example.models.Enums.GrowthStage;
 import org.example.models.Enums.Season;
 
@@ -8,17 +9,7 @@ import java.util.*;
 
 public class FruitAndVegetable implements Item {
     private Map.Entry<Integer,Integer> coordinates;
-    private final String name;
-    private int price;
-    private final String seed;
-    private boolean fullyGrown;
-    private final int totalHarvestTime;
-    private final boolean oneTime;
-    private final int regrowthTime;
-    private final boolean isEdible;
-    private final int energy;
-    private List<Season> seasons = new ArrayList<>();
-    private final boolean canBecomeGiant;
+    private final CropType type;
     private boolean protectedByScareCrow;
     private boolean hasBeenWatered;
     private boolean hasBeenFertilized;
@@ -26,56 +17,26 @@ public class FruitAndVegetable implements Item {
     private List<GrowthStep> growthTimeline;
     private int currentGrowthStage;
     private boolean isFullyGrown;
-    private final String growthStage;
+    private boolean isHarvested;
+    private int regrowthCounter;
 
 
-    public FruitAndVegetable(String name, int price, String seed, String growthStage, int totalHarvestTime, boolean oneTime, int regrowthTime, boolean isEdible,
-                             int energy, String seasons, boolean canBecomeGiant) {
-        this.name = name;
-        this.price = price;
-        this.seed = seed;
-        this.growthStage = growthStage;
+    public FruitAndVegetable(CropType type) {
+        this.type = type;
         this.growthTimeline = new ArrayList<>();
         int stageIndex = 1;
-        String[]growthStages = growthStage.split("-");
+        String[]growthStages = type.getStages().split("-");
         for(String gs : growthStages) {
-            //i have no idea what im doing
             growthTimeline.add(new GrowthStep(GrowthStage.valueOf(String.valueOf(stageIndex)), Integer.parseInt(gs)));
+            stageIndex++;
         }
-        this.totalHarvestTime = totalHarvestTime;
-        this.oneTime = oneTime;
-        this.regrowthTime = regrowthTime;
-        this.isEdible = isEdible;
-        this.energy = energy;
-
-        String[] seasonNames = seasons.split("& ");
-        List<Season> seasonList = new ArrayList<>();
-        seasonList.add(Season.valueOf(seasonNames[0]));
-        this.seasons = seasonList;
-
-        this.canBecomeGiant = canBecomeGiant;
         this.age = 0;
+        this.regrowthCounter = 0;
     }
 
-    public void showCropInformation(){
-        System.out.println("crop name : " + name);
-        System.out.println("crop source : " + seed);
-        System.out.println("growth stages : " + growthStage);
-        System.out.println("total harvest time : " + totalHarvestTime);
-        System.out.println("one time : " + oneTime);
-        if(regrowthTime == 0)System.out.println("regrowth time : ");
-        else System.out.println("regrowth time : " + regrowthTime);
-        System.out.println("base sell price : " + price);
-        System.out.println("is edible : " + isEdible);
-        System.out.println("base energy : " + energy);
-        System.out.printf("seasons : ");
-        for(Season season : seasons){
-            System.out.printf("%s ", season);
-        }
-        System.out.println();
-        System.out.println("can become giant : " + canBecomeGiant);
+    public boolean isFullyGrown() {
+        return isFullyGrown;
     }
-
     public Map.Entry<Integer,Integer> getCoordinates() {
         return coordinates;
     }
@@ -84,7 +45,7 @@ public class FruitAndVegetable implements Item {
 
     //when planting a fruit or vegetable
     public boolean canBecomeGiant(List<FruitAndVegetable> plants) {
-        if(!canBecomeGiant) return false;
+        if(!type.canBecomeGiant()) return false;
         int x = coordinates.getKey();
         int y = coordinates.getValue();
         int adjacentCount = 0;
@@ -103,7 +64,7 @@ public class FruitAndVegetable implements Item {
 
 
     public void expandToGiant(List<FruitAndVegetable> plants) {
-        if (canBecomeGiant && canBecomeGiant(plants)) {
+        if (type.canBecomeGiant() && canBecomeGiant(plants)) {
             int x = coordinates.getKey();
             int y = coordinates.getValue();
 
@@ -112,50 +73,31 @@ public class FruitAndVegetable implements Item {
         }
     }
 
-    //mixed seed
-    public FruitAndVegetable mixedSeedPlant(){
-        Season currentSeason = new TimeAndDate().getCurrentSeason();
-        ArrayList<FruitAndVegetable> possiblePlants = new ArrayList<>();
-        FruitAndVegetable selectedPlant = null;
-        //plants should be from another json file but for now
-        for(FruitAndVegetable plant : Game.getDatabase().getFruitAndVegetables()) {
-            for(Season season : plant.getSeasons()) {
-                if(season == currentSeason) {
-                    possiblePlants.add(plant);
-               }
-            }
-        }
-
-        Random random = new Random();
-        selectedPlant = possiblePlants.get(random.nextInt(possiblePlants.size()));
-        return selectedPlant;
+    public boolean isProtectedByScareCrow() {
+        return protectedByScareCrow;
     }
-
     public String getSeed(){
-        return seed;
+        return type.getSource();
     }
     public String getGrowthStage(){
-        return growthStage;
+        return type.getStages();
     }
     public int getTotalHarvestTime(){
-        return totalHarvestTime;
+        return type.getTotalHarvestTime();
     }
     public int getRegrowthTime(){
-        return regrowthTime;
+        return type.getRegrowthTime();
     }
     public boolean isOneTime(){
-        return oneTime;
+        return type.isOneTime();
     }
     public int getEnergy(){
-        return energy;
+        return type.getEnergy();
     }
     public List<Season> getSeasons(){
-        return seasons;
+        return type.getSeasons();
     }
 
-    public void plant(Map.Entry<Integer,Integer> coordinates){
-        this.coordinates = coordinates;
-    }
     public void waterCrop(){
         hasBeenWatered = true;
     }
@@ -173,22 +115,33 @@ public class FruitAndVegetable implements Item {
                 if(currentGrowthStage >= growthTimeline.size()) {
                     isFullyGrown = true;
                 }
+            } else if (hasBeenWatered && isHarvested && getRegrowthTime() != 0) {
+            regrowthCounter++;
+            if (regrowthCounter >= getRegrowthTime()) {
+                isHarvested = false;
+                isFullyGrown = true;
+                regrowthCounter = 0;
             }
-            hasBeenWatered = false;
         }
+
+        hasBeenWatered = false;
+        }
+    }
+    public void setHarvested(boolean harvested){
+        isHarvested = harvested;
     }
     @Override
     public String getName() {
-        return name;
+        return type.getName();
     }
 
     @Override
     public int getPrice() {
-        return price;
+        return type.getPrice();
     }
     @Override
     public String toString() {
-        return "Name: " + name + "\n" + "Seed: " + seed + "\n" +"Growth stage: " + growthStage + "\n" +
+        return "Name: " + type.getName() + "\n" + "Seed: " + type.getSource() + "\n" +"Growth stage: " + type.getStages() + "\n" +
                 "Has been watered today: " + hasBeenWatered +"\n" + "Has been fertilized: " + hasBeenFertilized;
     }
 }

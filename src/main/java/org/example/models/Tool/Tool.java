@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface Tool<T extends Enum<T>> extends Item {
     Result use(Map.Entry<Integer, Integer> coordinates);
-    void reduceEnergy(int amount);
+    boolean reduceEnergy(int amount);
     T getLevel();
     void upgradeLevel();
     //TODO upgrade level system

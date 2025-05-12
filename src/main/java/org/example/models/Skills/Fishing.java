@@ -9,14 +9,19 @@ public class Fishing implements Skill {
     int capacity = 0;
 
     public void fishing (GameTile tile, FishingPole pole) {
-
+        //TODO implement fishing
+        //if successful
+        increaseCapacity();
     }
 
     @Override
-    public ItemLevel getLevel() {
-        return null;
+    public int getLevel() {
+        return level;
     }
-
+    @Override
+    public boolean isMaxLevel() {
+        return level == 10;
+    }
     @Override
     public void setLevel(int level) {
         this.level = level;

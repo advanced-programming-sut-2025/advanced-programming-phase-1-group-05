@@ -3,6 +3,8 @@ package org.example.models;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.example.models.Building.GreenHouse;
+import org.example.models.Enums.ForagingSeedType;
+import org.example.models.Enums.ForagingTreeSourceType;
 import org.example.models.Enums.Season;
 import org.example.models.Enums.TileType;
 
@@ -36,7 +38,7 @@ public class GameMap {
 
     //crow damage during the night with 25% probability
     public Result crowDamage() {
-        //nothing from the greenhouse
+        //TODO nothing from greenhouse
         int groupOf16 = (plants.size() + trees.size()) / 16;
         Random random = new Random();
         for (int i = 0; i < groupOf16; i++) {
@@ -45,17 +47,26 @@ public class GameMap {
 
                 if (targetPlant && !plants.isEmpty()) {
                     int index = random.nextInt(plants.size());
-                    FruitAndVegetable removed = plants.remove(index);
+                    FruitAndVegetable fruitAndVegetable = plants.get(index);
+                    if(fruitAndVegetable.isProtectedByScareCrow())
+                        return new Result(false, "Your plant was protected by scare crow.");
+                    GameTile tile = this.getTile(fruitAndVegetable.getCoordinates().getKey(),
+                            fruitAndVegetable.getCoordinates().getValue());
+                    tile.setItemOnTile(null);
+                    plants.remove(index);
                     return new Result(true, "A crow destroyed your plant during the night");
-                } else if (!trees.isEmpty()) {
+                } else if (targetPlant && !trees.isEmpty()) {
                     int index = random.nextInt(trees.size());
-                    Tree removed = trees.remove(index);
-                    return new Result(true, "A crow destroyed your tree during the night");
+                    Tree tree = trees.get(index);
+                    if(tree.isProtectedByScareCrow()) return new Result(false,"The tree was protected by scare crow.");
+                    tree.setFruitGrowthCounter(0);
+                   return new Result(true, "A crow destroyed your tree during the night");
                 }
             }
         }
         return new Result(false, "");
     }
+
 
     //set a random foraging item on some tiles after the end of each day
     public void setForagingItems() {
@@ -68,12 +79,14 @@ public class GameMap {
             int col = chosen % map[0].length;
 
             GameTile tile = map[row][col];
-            if (tile != null && tile.getTileType() == TileType.Soil) {
-                if (random.nextBoolean()) {
-                    //tile.plantSeed();
+            Item item;
+            if (tile != null && tile.getTileType() == TileType.Soil && tile.getItemOnTile() == null) {
+                if (chosen % 2 == 0) {
+                    item = new BasicItem(ForagingTreeSourceType
+                            .getRandomForagingTreeType(TimeAndDate.getCurrentSeason()).getName(), 0);
                 } else {
-                    //tile.plantCrop();
-
+                    item = new BasicItem(ForagingSeedType
+                            .getRandomForagingSeedType(TimeAndDate.getCurrentSeason()).getName(), 0);
                 }
             }
         }
@@ -81,31 +94,20 @@ public class GameMap {
 
     //spawn foraging minerals
     public void setForagingMinerals(){
-        //in the mining area
+        //TODO mining area
     }
 
-    //get fruit type that's planted
-    public FruitAndVegetable getPlantedFruit(Map.Entry<Integer, Integer> coordinates) {
-        for(FruitAndVegetable f: plants ){
-            if(f.getCoordinates().getKey() == coordinates.getKey() &&
-                    f.getCoordinates().getValue() == coordinates.getValue()){
-                return f;
-            }
-        }
-        return null;
-    }
 
     public GameTile getTile(int x, int y) {
         return map[x-1][y-1];
     }
 
-    public void placeItemOnTile(Item item, int x, int y) {}
-
-    public void removeItemFromTile(int x, int y) {}
-
     public void growPlants(){
         for(FruitAndVegetable f: plants){
             f.grow();
+        }
+        for(Tree t: trees){
+            t.growTree();
         }
     }
 }

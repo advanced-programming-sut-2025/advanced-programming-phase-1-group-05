@@ -17,18 +17,30 @@ public class BackPack implements Tool <BackPackType>{
     private final HashMap<Item, Integer> inventory = new HashMap<>();
     private final HashMap<Item, Integer> foragingItems = new HashMap<>();
     private final ArrayList<Craft> learntRecipes = new ArrayList<>();
+    private boolean isStorageUnlimited = false;
 
+    public void setBackPackType(BackPackType type) {
+        this.level = type;
+        if(type == BackPackType.Deluxe) isStorageUnlimited = true;
+    }
     public HashMap<Item, Integer> getInventory() {
         return inventory;
     }
 
     public Result addToInventory(Item item, int amount) {
-        if(getInventoryCapacity() + amount <= level.getCapacity()) {
+        if(isStorageUnlimited) {
             if(!inventory.containsKey(item)) inventory.put(item, inventory.getOrDefault(item, 0) + amount);
             else inventory.put(item, inventory.get(item) + amount);
             return new Result(true, item.getName() + " successfully added to your inventory");
+
         } else {
-            return new Result(false, "You're backpack is full! Upgrade to store more items");
+            if (getInventoryCapacity() + amount <= level.getCapacity()) {
+                if (!inventory.containsKey(item)) inventory.put(item, inventory.getOrDefault(item, 0) + amount);
+                else inventory.put(item, inventory.get(item) + amount);
+                return new Result(true, item.getName() + " successfully added to your inventory");
+            } else {
+                return new Result(false, "You're backpack is full! Upgrade to store more items");
+            }
         }
     }
 
@@ -45,6 +57,7 @@ public class BackPack implements Tool <BackPackType>{
     }
 
     public int getInventoryCapacity() {
+        if(isStorageUnlimited) return level.getCapacity();
         int capacity = 0;
         for(Item i : inventory.keySet()) {
             if(inventory.get(i) > 0) {
@@ -55,6 +68,7 @@ public class BackPack implements Tool <BackPackType>{
     }
 
     public boolean isInventoryFull() {
+        if(isStorageUnlimited) return false;
         return getInventoryCapacity() == level.getCapacity();
     }
 
@@ -84,9 +98,8 @@ public class BackPack implements Tool <BackPackType>{
         return new Result(true, "");
     }
     @Override
-    public void reduceEnergy(int amount){
-        if(amount < 0) amount = 0;
-        Game.getCurrentPlayer().increaseEnergy(-amount);
+    public boolean reduceEnergy(int amount){
+        return true;
     }
     @Override
     public BackPackType getLevel() {

@@ -1,10 +1,7 @@
 package org.example.controllers;
 
 import org.example.models.*;
-import org.example.models.Enums.FishingPoleType;
-import org.example.models.Enums.Season;
-import org.example.models.Enums.TileType;
-import org.example.models.Enums.Weather;
+import org.example.models.Enums.*;
 import org.example.models.Tool.Tool;
 
 import javax.swing.plaf.PanelUI;
@@ -17,13 +14,11 @@ public class GameMenuController extends MenuController {
     public static List<Player> selectedPlayers;
     private static Map<String, Game> activeGames = new HashMap<>();
     private Game pendingGame;
-    private static int currentPlayerIndex = 0;
     public static boolean canChooseMap = false;
     public static boolean canDeleteGame = false;
     public static boolean canLoadGame = false;
     public static boolean[] canExitGame;
     private static Map<Integer, Integer> playerMapChoices = new HashMap<>();
-    public static Player currentPlayer;
 
     public GameMenuController(Scanner scanner, User currentUser) {
         super(scanner);
@@ -31,32 +26,30 @@ public class GameMenuController extends MenuController {
     }
 
     private NPC lastNPC = null;
+
     public Result newGame(String input) {
-        Pattern pattern = Pattern.compile(
-                "^game new(?: -u (?<username>[\\w-]+))" +
-                        "(?: -u (?<username2>[\\w-]+))?" +
-                        "(?: -u (?<username3>[\\w-]+))?" +
-                        "(?<extra> -u [\\w-]+)*$"
-        );
+        Pattern pattern = Pattern.compile
+                ("^game new( -u(?<username>[\\w-]+))" +
+                        "( -u(?<username2>[\\w-]+))?( -u(?<username3>[\\w-]+))?(?<extra> -u[\\w-]+)*$");
+        Matcher matcher = pattern.matcher(input);
 
-        Matcher matcher = pattern.matcher(input.trim());
-
-        if (!matcher.matches()) {
-            return Result.error("Invalid command format! Correct format: 'game new -u <username> [-u <username2>] [-u <username3>]'");
-        }
-        if (matcher.group("extra") != null) {
-            return Result.error("Maximum 3 usernames allowed!");
+        if (!matcher.find()) {
+            return Result.error("Invalid command format!");
         }
 
         if (matcher.group("username") == null) {
             return Result.error("At least one username must be provided!");
         }
 
+        if (matcher.group("extra") != null) {
+            return Result.error("Maximum 3 usernames allowed!");
+        }
+
         selectedPlayers = new ArrayList<>();
         selectedPlayers.add(new Player(currentUser));
 
         for (int i = 1; i <= 3; i++) {
-            String username = matcher.group("username" + (i == 1 ? "" : i));
+            String username = matcher.group("username" + i);
             if (username != null) {
                 User user = UserDatabase.getUserByUsername(username);
                 if (user == null) {
@@ -72,19 +65,17 @@ public class GameMenuController extends MenuController {
                 UserDatabase.updateUser(user);
             }
         }
-
         canChooseMap = true;
         canExitGame = new boolean[selectedPlayers.size()];
-        Arrays.fill(canExitGame, false);
-
+        for (int i = 0; i < selectedPlayers.size(); i++) {
+            canExitGame[i] = false;
+        }
         for (Player player : selectedPlayers) {
             UserDatabase.setUserInGame(player.getUsername(), true);
         }
-
-        currentPlayerIndex = 0;
+        Game.currentPlayerIndex = 0;
         playerMapChoices.clear();
         Game.getAllPlayers().addAll(selectedPlayers);
-
         return Result.success(selectedPlayers.get(0).getUsername() +
                 ", please choose your map (1-4):");
     }
@@ -99,26 +90,25 @@ public class GameMenuController extends MenuController {
             return Result.error("Map num must be 1-4!");
         }
         int mapNumber = Integer.parseInt(matcher.group("mapNumber"));
-        currentPlayer = selectedPlayers.get(currentPlayerIndex);
 
-        playerMapChoices.put(currentPlayerIndex, mapNumber);
+        Game.setCurrentPlayer(selectedPlayers.get(Game.currentPlayerIndex));
+        playerMapChoices.put(Game.currentPlayerIndex, mapNumber);
 
-        currentPlayerIndex++;
-        if (currentPlayerIndex < selectedPlayers.size()) {
-            return Result.success("Player " + selectedPlayers.get(currentPlayerIndex).getUsername() +
+        Game.currentPlayerIndex++;
+        if (Game.currentPlayerIndex < selectedPlayers.size()) {
+            return Result.success("Player " + selectedPlayers.get(Game.currentPlayerIndex).getUsername() +
                     ", please choose your map (1-4):");
         } else {
             canChooseMap = false;
             pendingGame = new Game();
+            for (int i = 0; i < selectedPlayers.size(); i++) {
+//                pendingGame.setPlayerMap(selectedPlayers.get(i), playerMapChoices.get(i));
+                // TODO: map for players :)
+            }
             Result startResult = Game.startTheGame();
             if (startResult.isSuccess()) {
-//                activeGames.put(currentUser.getUsername(), pendingGame);
-                for (Player player : selectedPlayers) {
-                    activeGames.put(player.getUsername(), pendingGame);
-                }
-                currentPlayer = selectedPlayers.get(0);
+                activeGames.put(currentUser.getUsername(), pendingGame);
             }
-            currentPlayer = selectedPlayers.get(0);
             return startResult;
         }
     }
@@ -128,7 +118,7 @@ public class GameMenuController extends MenuController {
         if (!canLoadGame) {
             return Result.error("You should first exit pending Game!");
         }
-        if (!currentUser.getUsername().equals(currentPlayer.getUsername())
+        if (!currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername())
                 || !currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())) {
             for (int i = 0; i < selectedPlayers.size(); i++) {
                 if (currentUser.getUsername().equals(selectedPlayers.get(i).getUsername())) {
@@ -152,43 +142,38 @@ public class GameMenuController extends MenuController {
                 }
             }
         }
-        if (currentUser.getUsername().equals(currentPlayer.getUsername()) ||
+        if (currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername()) ||
                 currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())|| done) {
             pendingGame = null;
             canLoadGame = true;
-            User.haveSavedGame = true;
             DBController.saveGameState();
             return Result.success("Exited Game successfully!");
         }
         return Result.error("You can't exit the game!");
     }
 
-    private void advanceToNextPlayer() {
-        int previousIndex = currentPlayerIndex;
-        currentPlayerIndex = (currentPlayerIndex + 1) % selectedPlayers.size();
-        if (currentPlayerIndex == 0 && previousIndex == selectedPlayers.size() - 1) {
-            GameManager.getGameClock().advanceTime(60); // یک ساعت جلو برو
-        }
-        currentPlayer = selectedPlayers.get(currentPlayerIndex);
-    }
+
 
 
     public Result nextTurn() {
-        Game game = activeGames.get(currentUser.getUsername());
-        if (game == null) {
+        if (pendingGame == null || !User.haveSavedGame) {
             return Result.error("There is no active game.");
         }
-        pendingGame = game;
 
-        if (!currentUser.getUsername().equals(currentPlayer.getUsername())) {
+        if (!currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername())) {
             return Result.error("It's not your turn.");
         }
 
-        currentPlayer.increaseEnergy(-50);
+        Game.getCurrentPlayer().increaseEnergy(-50);
 
-        advanceToNextPlayer();
+        Game.advanceToNextPlayer();
+        //reset energy for next turn??
+        if(!Game.getCurrentPlayer().isEnergyUnlimited()) {
+            Game.getCurrentPlayer().resetEnergy();
+        }
 
-        return Result.success("Now it's " + currentPlayer.getUsername() + "'s turn.");
+        return Result.success("Now it's " + Game.getCurrentPlayer().getName() + "'s turn." +
+                Game.getCurrentPlayer().getNotifications());
     }
 
     public Result deleteGame() {
@@ -221,7 +206,7 @@ public class GameMenuController extends MenuController {
 
             selectedPlayers.clear();
             canChooseMap = false;
-            currentPlayerIndex = 0;
+            Game.currentPlayerIndex = 0;
             canDeleteGame = false;
 
             Game.getAllPlayers().clear();
@@ -337,12 +322,44 @@ public class GameMenuController extends MenuController {
 
     //show craft info
     public Result showCraftInfo(String name) {
-        FruitAndVegetable plant = Game.getDatabase().getFruitAndVegetable(name);
-        if (plant == null) return new Result(true, "Couldn’t find the plant you're looking for");
-        else plant.showCropInformation();
-        return new Result(true, "");
+        CropType cropType = CropType.fromString(name);
+        TreeType treeType = TreeType.fromString(name);
+        ForagingTreeSourceType foragingTreeSourceType = ForagingTreeSourceType.fromString(name);
+        ForagingCrop foragingCrop = ForagingCrop.fromString(name);
+        if(cropType != null) return new Result(true, cropType.getName());
+        else if(treeType != null ) return new Result(true, treeType.toString());
+        else if(foragingTreeSourceType != null ) return new Result(true, foragingTreeSourceType.toString());
+        else if(foragingCrop != null ) return new Result(true, foragingCrop.toString());
+
+        return new Result(true, "Couldn’t find the craft you're looking for");
     }
 
+    public Result petAnimal(Matcher m) {
+        String animalName = "";
+        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        animal.adjustFriendshipPoints(15);
+        return Result.success("");
+    }
+    public Result cheatSetFriendship(Matcher m) {
+        String animalName = m.group("animalName");
+        int amount = Integer.parseInt(m.group("amount"));
+        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        if (animal == null ) return Result.error("animal doesn't exist or isn't yours");
+        animal.setFriendshipPoints(amount);
+        return Result.success("Friendship boosted! Nothing says ‘bonding’ like a little… code magic. Your animal is now contractually obligated to adore you");
+    }
+
+    public Result feedHay(Matcher m) {
+        String animalName = m.group("animalName");
+        Player player = Game.getCurrentPlayer();
+        Animal animal = player.getAnimal(animalName);
+        if (animal == null) return Result.error("animal doesn't exist or isn't yours");
+        animal.setFeedingStatus(true);
+        player.getBackPack().removeFromInventory(Game.getDatabase().getItem("Hay"), 1);
+        animal.adjustFriendshipPoints(8);
+        return Result.success("You offer food. The animal accepts. A bond is forged through snacks.");
+
+    }
     public Result collectProduce(Matcher m) {
         String animalName = m.group("name");
         Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
@@ -355,8 +372,23 @@ public class GameMenuController extends MenuController {
             Game.getCurrentPlayer().getBackPack().addToInventory(product, 1);
         }
         products.clear();
+        animal.adjustFriendshipPoints(5);
         return new Result(true, "collected successfully");
 
+    }
+
+    public Result sellAnimal(Matcher m) {
+        String animalName = m.group("animalName");
+        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        if (animal == null)
+            return Result.error("Selected animal doesn't exist or isn't yours");
+
+        int basePrice = Game.getDatabase().getItem(animal.getType().toString()).getPrice();
+        int price = (int) (basePrice * ((animal.getFriendshipPoints()/1000) + 0.3));
+        Player player = Game.getCurrentPlayer();
+        player.addGold(price);
+        player.removeAnimal(animal);
+        return Result.success("Your animal looked back one last time before leaving… but you were already gone.");
     }
 
     public Result startFishing(Matcher m) {
@@ -675,7 +707,7 @@ public class GameMenuController extends MenuController {
             return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
         if (!tile.isTileValidForPlanting()) return new Result(false,
                 "You can't plant cause the tile is occupied!");
-        boolean successful = Game.getCurrentPlayer().getFarmingSkill().plantSeed(new Seed(seed), tile);
+        boolean successful = Game.getCurrentPlayer().getFarmingSkill().plantSeed(seed, tile);
         if (successful) return new Result(true, "Successfully planted " + seed);
         else return new Result(false, "That's not a valid seed!");
     }
@@ -684,9 +716,9 @@ public class GameMenuController extends MenuController {
     public Result showPlant(Map.Entry<Integer, Integer> coordinates) {
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
-        if (tile.isTileValidForPlanting()) return new Result(true, "Nothing planted on this tile");
-
-        FruitAndVegetable plant = Game.getGameMap().getPlantedFruit(coordinates);
+        Item item = tile.getItemOnTile();
+        if(item == null) return new Result(false, "Nothing planted on this tile");
+        FruitAndVegetable plant = (FruitAndVegetable) item;
         StringBuilder output = new StringBuilder();
         output.append("** plant information **\n")
                 .append(plant.toString());
@@ -761,75 +793,5 @@ public class GameMenuController extends MenuController {
         return new Result(true, "** " + count + " of " + name + " added to your inventory **");
     }
 
-
-    public Result showDatetime() {
-        int hour = GameManager.getCurrentHour();
-        int day = GameManager.getDay();
-        String season = GameManager.getSeason().name().toLowerCase();
-        return Result.success("Current date and time: Day " + day + " of " + capitalize(season) +
-                ", " + String.format("%02d:00", hour));
-    }
-
-    public Result showDate() {
-        int day = GameManager.getDay();
-        String season = GameManager.getSeason().name().toLowerCase();
-        return Result.success("Current date: Day " + day + " of " + capitalize(season));
-    }
-
-    public Result showTime() {
-        int hour = GameManager.getCurrentHour();
-        return Result.success("Current time: " + String.format("%02d:00", hour));
-    }
-
-    public Result showDayOfTheWeek() {
-        String dayOfWeek = GameManager.getDayOfTheWeek();
-        return Result.success("Today is: " + dayOfWeek);
-    }
-
-    private String capitalize(String str) {
-        if (str == null || str.isEmpty()) return str;
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
-    }
-
-    public Result showSeason() {
-        Season currentSeason = GameManager.getGameClock().getCurrentSeason();
-        return Result.success("Current season: " + currentSeason.name());
-    }
-
-
-    public Result showWeather() {
-        Weather currentWeather = Game.getCurrentWeather();
-        return Result.success("Current weather: " + currentWeather.toString());
-    }
-
-
-    public Result weatherForecast() {
-        Weather forecast = Game.getForecastedWeather();
-        return Result.success("Forecasted weather for tomorrow: " + forecast.toString());
-    }
-
-    public Result cheatWeatherSet(String input) {
-        try {
-            String[] tokens = input.trim().split("\\s+");
-            if (tokens.length != 4) {
-                return Result.error("Invalid format. Usage: cheat weather set <Type>");
-            }
-
-            String weatherType = tokens[3].toUpperCase();
-
-            Weather newForecastedWeather;
-            try {
-                newForecastedWeather = Weather.valueOf(weatherType);
-            } catch (IllegalArgumentException e) {
-                return Result.error("Invalid weather type. Valid types: SUNNY, RAIN, STORM, SNOW");
-            }
-
-            Game.setForecastedWeather(newForecastedWeather);
-            return Result.success("Forecasted weather for tomorrow set to: " + newForecastedWeather);
-
-        } catch (Exception e) {
-            return Result.error("Error while setting forecasted weather: " + e.getMessage());
-        }
-    }
 
 }

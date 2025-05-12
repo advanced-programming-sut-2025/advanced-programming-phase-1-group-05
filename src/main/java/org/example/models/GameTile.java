@@ -7,11 +7,19 @@ public class GameTile {
     private int x, y;
     private TileType tileType;
     private BuildingType building;
-    private boolean occupied = false; // can't be walked over if it's occupied
+    private boolean occupied = false;
+    private Item itemOnTile = null;
+    // can't be walked over if it's occupied
 
     public GameTile(int x, int y, TileType tileType) {
         this.x = x;
         this.y = y;
+    }
+    public Item getItemOnTile() {
+        return itemOnTile;
+    }
+    public void setItemOnTile(Item itemOnTile) {
+        this.itemOnTile = itemOnTile;
     }
     public TileType getTileType() {
         return tileType;
@@ -36,6 +44,12 @@ public class GameTile {
             }
         }
         return false;
+    }
+    public int getX() {
+        return x;
+    }
+    public int getY() {
+        return y;
     }
 
 }

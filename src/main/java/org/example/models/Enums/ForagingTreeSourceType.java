@@ -1,6 +1,8 @@
 package org.example.models.Enums;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public enum ForagingTreeSourceType implements Material {
     Acorns("Acorns", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER)),
@@ -20,5 +22,25 @@ public enum ForagingTreeSourceType implements Material {
     }
     public List<Season> getSeasons() {
         return seasons;
+    }
+    public static ForagingTreeSourceType fromString(String name){
+        for (ForagingTreeSourceType sourceType : ForagingTreeSourceType.values()) {
+            if (sourceType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+                return sourceType;
+            }
+        }
+        return null;
+    }
+    public static ForagingTreeSourceType getRandomForagingTreeType (Season currentSeason) {
+        Random random = new Random();
+        List<ForagingTreeSourceType> foragingTreeTypes = new ArrayList<>();
+        for (ForagingTreeSourceType f : ForagingTreeSourceType.values()) {
+            if (f.getSeasons().contains(currentSeason)) foragingTreeTypes.add(f);
+        }
+        while (true){
+            int rand = random.nextInt(foragingTreeTypes.size());
+            ForagingTreeSourceType f = foragingTreeTypes.get(rand);
+            return f;
+        }
     }
 }

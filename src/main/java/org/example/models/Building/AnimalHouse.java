@@ -24,6 +24,12 @@ public class AnimalHouse extends Building{
         animals.add(animal);
     }
 
+    public boolean contains(Animal animal) {
+        return animals.contains(animal);
+    }
+    public void removeAnimal(Animal animal) {
+        animals.remove(animal);
+    }
     public BuildingType getType() {
         return BuildingType.valueOf(Type.name());
     }

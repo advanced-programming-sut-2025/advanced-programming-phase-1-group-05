@@ -13,8 +13,8 @@ public class Crafting implements Skill{
     public void placeItemOnGround(String item, GameTile tile) {}
 
     @Override
-    public ItemLevel getLevel() {
-        return null;
+    public int getLevel() {
+        return level;
     }
 
     //    public void addItemToInventory(String item, Inventory inventory) {}
@@ -38,6 +38,11 @@ public class Crafting implements Skill{
     @Override
     public void increaseCapacity() {
 
+    }
+
+    @Override
+    public boolean isMaxLevel() {
+        return level == 4;
     }
 
 }

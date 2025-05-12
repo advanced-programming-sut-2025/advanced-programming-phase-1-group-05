@@ -6,9 +6,10 @@ import org.example.models.Enums.ItemLevel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
-public class Animal {
+public class Animal implements Item{
     private String name;
     private EnclosureType enclosureType;
     private List<Item> products = new ArrayList<>();
@@ -23,19 +24,22 @@ public class Animal {
         initializeAnimal();
     }
 
+    public AnimalType getType() {
+        return type;
+    }
 
     public void produce() {
         if (wasFed) {
             Random random = new Random();
             int index = 0;
             if (friendshipPoints > 100) {
-                int chance = (int) ((friendshipPoints + (150 * (random.nextDouble(1)+0.5))) / 1500);
+                int chance = (int) (friendshipPoints + (150 * (0.5 + random.nextDouble())) / 1500);
                 if (random.nextInt(100) > chance) index = 1;
             }
             Item item = products.get(index);
             Product product = new Product(item.getName(), item.getPrice(), 0, null, null, null);
             unCollectedProducts.add(product);
-            int levelValue = (int) ((friendshipPoints/1000) * (0.5 + 0.5*random.nextDouble(1)));
+            int levelValue = (int) ((friendshipPoints/1000) * (0.5 + random.nextDouble()));
             ItemLevel level;
             if (levelValue < 0.5) level = ItemLevel.Normal;
             else if (levelValue >= 05 && levelValue < 0.7) level = ItemLevel.Iron;
@@ -46,6 +50,21 @@ public class Animal {
     }
     public String getName() {
         return name;
+    }
+
+    @Override
+    public int getPrice() {
+        return 0;
+    }
+
+    @Override
+    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
+
+    }
+
+    @Override
+    public Map.Entry<Integer, Integer> getCoordinates() {
+        return null;
     }
 
     private void initializeAnimal() {
@@ -87,7 +106,21 @@ public class Animal {
         }
     }
 
+    public void adjustFriendshipPoints (int amount) {
+        friendshipPoints += amount;
+    }
+
+    public int getFriendshipPoints() {
+        return friendshipPoints;
+    }
+
+    public void setFriendshipPoints(int amount) {
+        friendshipPoints = Math.min(1000, amount);
+    }
     public List<Product> getUnCollectedProducts() {
         return unCollectedProducts;
+    }
+    public void setFeedingStatus(boolean wasFed) {
+        this.wasFed = wasFed;
     }
 }

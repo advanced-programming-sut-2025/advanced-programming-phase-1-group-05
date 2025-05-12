@@ -22,6 +22,9 @@ public class TrashCan implements Tool <ItemLevel> {
         }
     }
 
+    public void setLevel(ItemLevel level){
+        this.level = level;
+    }
     @Override
     public String getName() {
         return "Trash Can";
@@ -36,9 +39,8 @@ public class TrashCan implements Tool <ItemLevel> {
         return new Result(false, "");
     }
     @Override
-    public void reduceEnergy(int amount){
-        if(amount < 0) amount = 0;
-        Game.getCurrentPlayer().increaseEnergy(-amount);
+    public boolean reduceEnergy(int amount){
+        return true;
     }
     @Override
     public ItemLevel getLevel() {
