@@ -2,6 +2,7 @@ package org.example.controllers;
 
 import org.example.models.*;
 import org.example.models.Enums.*;
+import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Tool;
 
 import javax.swing.plaf.PanelUI;
@@ -797,6 +798,16 @@ public class GameMenuController extends MenuController {
         if (item == null) return new Result(false, "** No item with that name exists **");
         Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
         return new Result(true, "** " + count + " of " + name + " added to your inventory **");
+    }
+
+    //plow tile
+    public Result plowTile(int x, int y) {
+        GameMap map = Game.getGameMap();
+        GameTile tile = map.getTile(x, y);
+        Item hoe = Game.getCurrentPlayer().getBackPack().getToolFromInventory("Hoe");
+        if(tile.getTileType().equals(TileType.Flat))
+            Game.getCurrentPlayer().getFarmingSkill().plowTile(tile, (Hoe)hoe);
+        return new Result(true, "Plowed " + tile.getTileType());
     }
 
 

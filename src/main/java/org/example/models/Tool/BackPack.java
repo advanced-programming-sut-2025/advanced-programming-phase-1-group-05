@@ -67,6 +67,13 @@ public class BackPack implements Tool <BackPackType>{
         return capacity;
     }
 
+    public Item getToolFromInventory(String name) {
+        for(Item i : inventory.keySet()) {
+            if(i.getName().equals(name)) return i;
+        }
+        return null;
+    }
+
     public boolean isInventoryFull() {
         if(isStorageUnlimited) return false;
         return getInventoryCapacity() == level.getCapacity();

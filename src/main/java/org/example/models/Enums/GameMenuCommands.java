@@ -37,7 +37,8 @@ public enum GameMenuCommands {
     CheatAddMoney("cheat\\s+add\\s+(?<count>\\d+?)\\s+dollars"),
     Sell("sell\\s+(<?productName>.+?)(?:\\s+-n\\s+(?<count>\\d+))?"),
     GiveBouquet("flower\\s+-u\\s+(?<username>\\S+)"),
-    Hug("hug\\s+-u\\s+(?<username>\\S+)");
+    Hug("hug\\s+-u\\s+(?<username>\\S+)"),
+    PlowTile("plow tile (?<x>\\d+) (?<y>\\d+)");
 
     private final String pattern;
     GameMenuCommands(String pattern) {

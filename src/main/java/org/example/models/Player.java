@@ -13,7 +13,7 @@ public class Player {
     private Player spouse;
     private int x, y;
     private WateringCan wateringCan = new WateringCan();
-    private Farming farmingSkill;
+    private final Farming farmingSkill = new Farming();
     private int energy;
     private int gold;
     private final AnimalCare animalCare = new AnimalCare();

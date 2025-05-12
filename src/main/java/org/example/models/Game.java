@@ -1,24 +1,22 @@
 package org.example.models;
 
 import org.example.controllers.GameManager;
-import org.example.controllers.GameMenuController;
 import org.example.models.Enums.Season;
-import org.example.models.Enums.TileType;
 import org.example.models.Enums.Weather;
 
 import java.util.*;
 
 public class Game {
-    private static GameMap gameMap = new GameMap();
-    private static Player currentPlayer = null;
+    private static GameMap gameMap = new GameMap(100,100);
+    private static Player currentPlayer;
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static List<Message> messages = new ArrayList<>();
     private static List<Gift> gifts = new ArrayList<>();
     private static Weather currentWeather = Weather.Sunny;
     private static Weather forecastedWeather = Weather.Sunny;
     private static final Database database = new Database();
-    public static Map<Player, Item> soldItems = new HashMap<>();
     public static int currentPlayerIndex = 0;
+    public static Map<Player, Item> soldItems = new HashMap<>();
     // TODO a method for changing the weather
     // TODO make the game methods nonstatic
     public static Player getCurrentPlayer() {
@@ -59,24 +57,14 @@ public class Game {
 //        database.loadNPCs();
 //        Player.initializeFriendships(players);
 //    }
-
-//    public static void advanceToNextPlayer() {
-//        currentPlayerIndex++;
-//        if (currentPlayerIndex >= players.size()) {
-//            currentPlayerIndex = 0;
-//            GameManager.getGameClock().advanceTime(60);
-//        }
-//        currentPlayer = players.get(currentPlayerIndex);
-//    }
-public static void advanceToNextPlayer() {
-    int previousIndex = Game.currentPlayerIndex;
-    Game.currentPlayerIndex = (Game.currentPlayerIndex + 1) % GameMenuController.selectedPlayers.size();
-    if (Game.currentPlayerIndex == 0 && previousIndex == GameMenuController.selectedPlayers.size() - 1) {
-        GameManager.getGameClock().advanceTime(60); // یک ساعت جلو برو
+    public static void advanceToNextPlayer() {
+        currentPlayerIndex++;
+        if (currentPlayerIndex >= players.size()) {
+            currentPlayerIndex = 0;
+            GameManager.getGameClock().advanceTime(60);
+        }
+        currentPlayer = players.get(currentPlayerIndex);
     }
-    Game.setCurrentPlayer(GameMenuController.selectedPlayers.get(Game.currentPlayerIndex));
-}
-
 
     public static Result startTheGame() {
         try {
@@ -85,11 +73,10 @@ public static void advanceToNextPlayer() {
 //            database.loadNPCs();
 //            Player.initializeFriendships(players);
 
-//            GameManager.getGameClock().setDay(1);
-//            GameManager.getGameClock().setSeason(Season.SPRING);
-//            GameManager.getGameClock().setHour(9);
-//            GameManager.getGameClock().setMinute(0);
-            gameMap.initEmptyMap(TileType.Flat);
+            GameManager.getGameClock().setDay(1);
+            GameManager.getGameClock().setSeason(Season.SPRING);
+            GameManager.getGameClock().setHour(9);
+            GameManager.getGameClock().setMinute(0);
             if (!players.isEmpty()) {
                 currentPlayer = players.get(0);
             }
