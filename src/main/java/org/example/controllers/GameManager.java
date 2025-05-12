@@ -21,8 +21,11 @@ public class GameManager {
     public static void getAnimalProducts() {
         for (Player player : Game.getAllPlayers()) {
             for (AnimalHouse animalHouse : player.getCoopsAndBarns()) {
-                for (Animal animal : animalHouse.getAnimals())
-                    animal.produce();
+                for (Animal animal : animalHouse.getAnimals()) {
+                     if (animal.wasFed())
+                         animal.produce();
+                    animal.setFeedingStatus(false);
+                }
             }
         }
     }
