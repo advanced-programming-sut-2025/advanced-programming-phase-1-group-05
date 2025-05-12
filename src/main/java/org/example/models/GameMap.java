@@ -160,11 +160,27 @@ public class GameMap {
         for (int k = 0; k < count; k++) {
             int i = startX + random.nextInt(height);
             int j = startY + random.nextInt(width);
+
+            GameTile tile = map[i][j];
+
+            if (tile.getTileType() == TileType.Water) {
+                continue;
+            }
+
             TileType[] candidates = {TileType.Tree, TileType.Stone, TileType.Building};
             TileType randomType = candidates[random.nextInt(candidates.length)];
-            setTile(i, j, new GameTile(i, j, randomType));
+
+            if (randomType == TileType.Tree) {
+                setTile(i, j, new GameTile(i, j, TileType.Tree));
+            } else if (randomType == TileType.Stone) {
+                setTile(i, j, new GameTile(i, j, TileType.Stone));
+            } else if (randomType == TileType.Building) {
+                setTile(i, j, new GameTile(i, j, TileType.Building));
+            }
         }
     }
+
+
 
     private boolean insideRect(int i, int j, int x, int y, int w, int h) {
         return i >= x && i < x + h && j >= y && j < y + w;

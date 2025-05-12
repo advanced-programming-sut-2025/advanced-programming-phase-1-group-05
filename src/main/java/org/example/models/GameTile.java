@@ -60,6 +60,8 @@ public class GameTile {
         if (tileType == TileType.Water) return "🌊";
         if (tileType == TileType.Soil) return "🟫";
         if (tileType == TileType.Flat) return "🟩";
+        if (tileType == TileType.Tree) return "\uD83C\uDF33";
+        if (tileType == TileType.Stone) return "\uD83E\uDEA8";
         return "⬛";
     }
 
