@@ -402,6 +402,17 @@ public class GameMenuController extends MenuController {
         String poleName = m.group("fishingPole");
         FishingPoleType pole = FishingPoleType.fromString(poleName);
         if (pole ==null) return Result.error("invalid pole type.");
+        Player player = Game.getCurrentPlayer();
+        if (player.getItemQuantity(Game.getDatabase().getItem(poleName)) <= 0)
+            return Result.error("You don't have that pole in your inventory");
+        int fishingLevel = player.getFishingSkill().getLevel();
+        Fish caughtFish = Fish.getRandomFish(GameManager.getSeason(), fishingLevel);
+        if (caughtFish == null) return Result.error("Your bobber danced, your hopes rose… and then? Nothing. The fish must be laughing underwater.");
+        Random rand = new Random();
+        double weatherCoefficient = Game.getCurrentWeather().getFishingCoefficient();
+        int numOfFish =Math.min((int) (rand.nextDouble() * weatherCoefficient * (fishingLevel + 2)), 6) ;
+
+
         return Result.success("");
     }
     public Result cheatAddMoney(int amount){

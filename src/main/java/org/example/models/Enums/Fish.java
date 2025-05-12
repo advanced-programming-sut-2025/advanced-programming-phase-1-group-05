@@ -56,10 +56,13 @@ public enum Fish {
         for (Fish fish : Fish.values()) {
             if (fish.season == currentSeason) fishInSeason.add(fish);
         }
-        while (true){
+        int tries = 10;
+        while (tries > 0){
             int rand = random.nextInt(fishInSeason.size());
             Fish fish = fishInSeason.get(rand);
             if (fish.canBeCaught(currentSeason, fishingSkill)) return fish;
+            tries --;
         }
+        return null;
     }
 }

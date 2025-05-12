@@ -39,4 +39,7 @@ public enum Weather {
         };
     }
 
+    public double getFishingCoefficient() {
+        return fishingCoefficient;
+    }
 }
