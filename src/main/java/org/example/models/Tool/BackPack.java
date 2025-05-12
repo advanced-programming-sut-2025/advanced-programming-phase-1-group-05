@@ -2,6 +2,7 @@ package org.example.models.Tool;
 
 import org.example.models.Craft;
 import org.example.models.Enums.BackPackType;
+import org.example.models.Enums.CraftType;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Game;
 import org.example.models.Item;
@@ -16,7 +17,7 @@ public class BackPack implements Tool <BackPackType>{
     BackPackType level = BackPackType.Normal;
     private final HashMap<Item, Integer> inventory = new HashMap<>();
     private final HashMap<Item, Integer> foragingItems = new HashMap<>();
-    private final ArrayList<Craft> learntRecipes = new ArrayList<>();
+    private final ArrayList<CraftType> learntRecipes = new ArrayList<>();
     private boolean isStorageUnlimited = false;
 
     public void setBackPackType(BackPackType type) {
@@ -84,11 +85,11 @@ public class BackPack implements Tool <BackPackType>{
         foragingItems.put(item, amount);
     }
 
-    public ArrayList<Craft> getLearntRecipes() {
+    public ArrayList<CraftType> getLearntRecipes() {
         return learntRecipes;
     }
 
-    public void addLearntRecipe(Craft recipe) {
+    public void addLearntRecipe(CraftType recipe) {
         learntRecipes.add(recipe);
     }
 

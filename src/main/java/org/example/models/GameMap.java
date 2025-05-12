@@ -236,6 +236,12 @@ public class GameMap {
         }
     }
 
+    public String whereAmI() {
+        String location ="";
+        //TODO implement
+        return location;
+    }
+
 
 
 }

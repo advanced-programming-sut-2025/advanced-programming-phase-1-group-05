@@ -1,29 +1,32 @@
 package org.example.models;
 
+import org.example.models.Enums.CookingRecipeType;
+import org.example.models.Enums.Material;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Food implements Item{
-    private String name;
-    private HashMap<Food, Integer> ingredients;
-    private int energy;
-    //buff??
-    private int price;
+    private CookingRecipeType recipeType;
 
-    public HashMap<Food, Integer> getIngredients() {
-        return ingredients;
+    public Food(CookingRecipeType cookingRecipeType) {
+        this.recipeType = cookingRecipeType;
+    }
+
+    public Map<Material, Integer> getIngredients() {
+        return recipeType.getIngredients();
     }
     public int getEnergy() {
-        return energy;
+        return recipeType.Energy();
     }
     @Override
     public String getName() {
-        return name;
+        return recipeType.getName();
     }
     @Override
     public int getPrice() {
-        return price;
+        return 0;
     }
     @Override
     public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {

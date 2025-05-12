@@ -4,7 +4,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum HomeMenuCommands {
-    Crafting("crafting"),
     CraftingRecipes("crafting show recipes"),
     CraftItem("crafting item <item_name>"),
     CookingRefrigerator("cooking refrigerator (?<action>\\S+) (?<item>\\S+)"),

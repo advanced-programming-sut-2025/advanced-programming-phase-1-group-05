@@ -27,6 +27,10 @@ public class Craft implements Item {
         return coordinates;
     }
 
+    public void useCraft(){
+        //TODO implement
+    }
+    
     @Override
     public String getName() {
         return type.getName();
