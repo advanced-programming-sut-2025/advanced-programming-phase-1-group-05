@@ -8,6 +8,7 @@ import org.example.models.Enums.GameMenuCommands;
 import org.example.models.Result;
 import org.example.models.TimeAndDate;
 
+import java.util.AbstractMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,7 +77,6 @@ public class GameMenu implements org.example.views.AppMenu {
         else if (input.equals("day of the week")) {
             Result result = gameMenuController.showDayOfTheWeek();
             System.out.println(result.getMessage());
-
         }
         else if (input.startsWith("cheat advance time")) {
             try {
@@ -228,8 +228,17 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(gameMenuController.useTool(matcher.group("direction")));
         } else if((matcher = GameMenuCommands.ShowCraftInfo.getMatcher(input)) != null) {
             System.out.println(gameMenuController.showCraftInfo(matcher.group("craftName")));
-        }
-        else {
+        } else if((matcher = GameMenuCommands.PlowTile.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.plowTile(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y"))));
+        } else if((matcher = GameMenuCommands.Plant.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.plantSeed(matcher.group("seed"),
+                    new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y")))));
+        } else if((matcher = GameMenuCommands.ShowPlant.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.showPlant(new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")),
+                    Integer.parseInt(matcher.group("y")))));
+        } else if((matcher = GameMenuCommands.HowMuchWater.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.howMuchWaterLeft());
+        } else {
             System.out.println("Invalid Command!");
         }
     }

@@ -7,7 +7,7 @@ import org.example.models.Enums.Weather;
 import java.util.*;
 
 public class Game {
-    private static GameMap gameMap = new GameMap(100,100);
+    private static GameMap gameMap = new GameMap();
     private static Player currentPlayer;
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static List<Message> messages = new ArrayList<>();

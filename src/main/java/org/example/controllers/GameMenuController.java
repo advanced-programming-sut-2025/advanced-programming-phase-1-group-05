@@ -807,7 +807,7 @@ public class GameMenuController extends MenuController {
         Item hoe = Game.getCurrentPlayer().getBackPack().getToolFromInventory("Hoe");
         if(tile.getTileType().equals(TileType.Flat))
             Game.getCurrentPlayer().getFarmingSkill().plowTile(tile, (Hoe)hoe);
-        return new Result(true, "Plowed " + tile.getTileType());
+        return new Result(true, "Tile plowed successfully");
     }
 
 

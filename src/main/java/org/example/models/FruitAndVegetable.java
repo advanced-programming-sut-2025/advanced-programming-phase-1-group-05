@@ -19,6 +19,8 @@ public class FruitAndVegetable implements Item {
     private boolean isFullyGrown;
     private boolean isHarvested;
     private int regrowthCounter;
+    private int daysNoWater;
+    private boolean alive = true;
 
 
     public FruitAndVegetable(CropType type) {
@@ -106,6 +108,8 @@ public class FruitAndVegetable implements Item {
     }
 
     public void grow(){
+        if(!hasBeenWatered) daysNoWater++;
+        if(daysNoWater == 2) alive = false;
         if(hasBeenWatered && currentGrowthStage < growthTimeline.size()) {
             GrowthStep currentStage = growthTimeline.get(currentGrowthStage);
             age++;
