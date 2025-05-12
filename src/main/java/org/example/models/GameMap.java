@@ -2,6 +2,7 @@ package org.example.models;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.example.controllers.GameManager;
 import org.example.models.Building.GreenHouse;
 import org.example.models.Enums.ForagingSeedType;
 import org.example.models.Enums.ForagingTreeSourceType;
@@ -83,10 +84,10 @@ public class GameMap {
             if (tile != null && tile.getTileType() == TileType.Soil && tile.getItemOnTile() == null) {
                 if (chosen % 2 == 0) {
                     item = new BasicItem(ForagingTreeSourceType
-                            .getRandomForagingTreeType(TimeAndDate.getCurrentSeason()).getName(), 0);
+                            .getRandomForagingTreeType(GameManager.getSeason()).getName(), 0);
                 } else {
                     item = new BasicItem(ForagingSeedType
-                            .getRandomForagingSeedType(TimeAndDate.getCurrentSeason()).getName(), 0);
+                            .getRandomForagingSeedType(GameManager.getSeason()).getName(), 0);
                 }
             }
         }
@@ -98,9 +99,9 @@ public class GameMap {
     }
 
 
-    public GameTile getTile(int x, int y) {
-        return map[x-1][y-1];
-    }
+//    public GameTile getTile(int x, int y) {
+//        return map[x-1][y-1];
+//    }
 
     public void growPlants(){
         for(FruitAndVegetable f: plants){
@@ -110,4 +111,57 @@ public class GameMap {
             t.growTree();
         }
     }
+    public GameMap(int width, int height) {
+        map = new GameTile[height][width];
+        initEmptyMap(TileType.Flat);
+    }
+
+    public void initEmptyMap(TileType defaultType) {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                map[i][j] = new GameTile(i + 1, j + 1, defaultType);
+            }
+        }
+    }
+
+    public GameTile getTile(int x, int y) {
+        if (isInBounds(x, y)) {
+            return map[x - 1][y - 1];
+        }
+        return null;
+    }
+
+    public void setTile(int x, int y, GameTile tile) {
+        if (isInBounds(x, y)) {
+            map[x - 1][y - 1] = tile;
+        }
+    }
+
+    public boolean isInBounds(int x, int y) {
+        return x > 0 && y > 0 && x <= map.length && y <= map[0].length;
+    }
+    public void printFullMap() {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                System.out.print(map[i][j].toString() + " ");
+            }
+            System.out.println();
+        }
+    }
+    public void printMapSection(int centerX, int centerY, int size) {
+        int half = size / 2;
+        for (int i = centerX - half; i <= centerX + half; i++) {
+            for (int j = centerY - half; j <= centerY + half; j++) {
+                if (isInBounds(i, j)) {
+                    System.out.print(getTile(i, j).toString() + " ");
+                } else {
+                    System.out.print("⬛ ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+
+
 }
