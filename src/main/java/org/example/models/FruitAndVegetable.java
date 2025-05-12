@@ -73,7 +73,9 @@ public class FruitAndVegetable implements Item {
         }
     }
 
-
+    public boolean isProtectedByScareCrow() {
+        return protectedByScareCrow;
+    }
     public String getSeed(){
         return type.getSource();
     }

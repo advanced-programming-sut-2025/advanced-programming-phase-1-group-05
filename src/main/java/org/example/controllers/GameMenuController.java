@@ -716,9 +716,9 @@ public class GameMenuController extends MenuController {
     public Result showPlant(Map.Entry<Integer, Integer> coordinates) {
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
-        if (tile.isTileValidForPlanting()) return new Result(true, "Nothing planted on this tile");
-
-        FruitAndVegetable plant = Game.getGameMap().getPlantedFruit(coordinates);
+        Item item = tile.getItemOnTile();
+        if(item == null) return new Result(false, "Nothing planted on this tile");
+        FruitAndVegetable plant = (FruitAndVegetable) item;
         StringBuilder output = new StringBuilder();
         output.append("** plant information **\n")
                 .append(plant.toString());

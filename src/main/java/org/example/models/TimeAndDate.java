@@ -8,7 +8,7 @@ import java.util.Date;
 
 public class TimeAndDate {
     int day = 1;
-    Season season;
+    private static Season season;
     int hour = 9;
     int minute = 0;
     public void nextDay() {}
@@ -35,10 +35,13 @@ public class TimeAndDate {
             season = season.next();
         }
         Game.getGameMap().growPlants();
+        Game.getGameMap().setForagingItems();
+        //TODO implement
+        Game.getGameMap().setForagingMinerals();
         if(!Game.getCurrentPlayer().isEnergyUnlimited()) Game.getCurrentPlayer().resetEnergy();
         GameManager.nextDay();
     }
-    public Season getCurrentSeason() { return season; }
+    public static Season getCurrentSeason() { return season; }
     public int getDay() { return day; }
     public int getHour() { return hour; }
 }

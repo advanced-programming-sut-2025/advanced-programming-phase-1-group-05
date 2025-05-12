@@ -1,6 +1,6 @@
 package org.example.models.Enums;
 
-import org.example.models.Result;
+import org.example.models.*;
 
 public enum Weather {
     Sunny(1, 1.5),
@@ -16,7 +16,12 @@ public enum Weather {
     }
 
     public Result thunder(int x, int y){
-        //change tile type to soil
+        GameMap map = Game.getGameMap();
+        GameTile tile = map.getTile(x, y);
+        Item item = tile.getItemOnTile();
+        if(item instanceof Tree) {
+            ((Tree) item).thunderEffect();
+        }
         return null;
     }
 

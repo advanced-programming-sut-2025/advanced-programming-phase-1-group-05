@@ -59,9 +59,9 @@ public class Farming implements Skill{
         HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
         for(Item item : items.keySet()) {
             if(item.getName().equals(fertilizer)) {
-                FruitAndVegetable fruit = Game.getGameMap().getPlantedFruit(coordinantes);
+              //  FruitAndVegetable fruit = Game.getGameMap().getPlantedFruit(coordinantes);
                 // idk the details
-                fruit.fertilize();
+               // fruit.fertilize();
                 return true;
             }
         }
@@ -75,10 +75,20 @@ public class Farming implements Skill{
 
     //harvest crop
     public void harvestCrop(GameTile tile) {
-        Item crop = tile.getItemOnTile();
-        Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
-        if(((FruitAndVegetable) crop).isOneTime()) tile.setItemOnTile(null);
-        ((FruitAndVegetable) crop).setHarvested(true);
+        Item item = tile.getItemOnTile();
+        if(item instanceof FruitAndVegetable) {
+            Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
+            if (((FruitAndVegetable) item).isOneTime()) tile.setItemOnTile(null);
+            ((FruitAndVegetable) item).setHarvested(true);
+        } else if(item instanceof Tree) {
+            String fruitName = ((Tree) item).getTreeType().getFruit();
+            int fruitPrice = ((Tree) item).getTreeType().getFruitPrice();
+            Item fruit = new BasicItem(fruitName, fruitPrice);
+            Random rand = new Random();
+            int randomNum = rand.nextInt(5);
+            Game.getCurrentPlayer().getBackPack().addToInventory(fruit, randomNum);
+            ((Tree)item).harvestFruit();
+        }
         increaseCapacity();
     }
 

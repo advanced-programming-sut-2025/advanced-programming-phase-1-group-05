@@ -1,6 +1,8 @@
 package org.example.models.Enums;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public enum ForagingSeedType implements Material {
     JazzSeeds("Jazz Seeds", List.of(Season.SPRING)),
@@ -67,5 +69,18 @@ public enum ForagingSeedType implements Material {
             }
         }
         return null;
+    }
+
+    public static ForagingSeedType getRandomForagingSeedType (Season currentSeason) {
+        Random random = new Random();
+        List<ForagingSeedType> foragingSeedTypes = new ArrayList<>();
+        for (ForagingSeedType f : ForagingSeedType.values()) {
+            if (f.getSeasons().contains(currentSeason)) foragingSeedTypes.add(f);
+        }
+        while (true){
+            int rand = random.nextInt(foragingSeedTypes.size());
+            ForagingSeedType f = foragingSeedTypes.get(rand);
+            return f;
+        }
     }
 }
