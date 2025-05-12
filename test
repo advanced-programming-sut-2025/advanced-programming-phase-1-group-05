@@ -1,0 +1,68 @@
+register -u Nil-a11 -p Nil3333a%11 Nil3333a%11 -n nilalllala -e Nila.-a11@gma-il.com -g female
+pick question -q 2 -a Tehran -c Tehran
+menu enter Main
+menu enter Register
+register -u Melika-a11 -p Nil3333a%11 Nil3333a%11 -n nilalllala -e Nila.-a11@gma-il.com -g female
+pick question -q 2 -a Tehran -c Tehran
+login -u Nil-a11 -p Nil3333a%11
+menu enter Game
+game new -u Melika-a11
+game map 1
+game map2
+game map 2
+exit game
+load game
+delete game
+1
+0
+delete game
+1
+1
+****
+
+register -u Nil-a11 -p Nil3333a%11 Nil3333a%11 -n nilalllala -e Nila.-a11@gma-il.com -g female
+User registered successfully!
+Please select a security question:
+1. What was your first pet's name?
+2. What city were you born in?
+3. What is your favorite color?
+pick question -q 2 -a Tehran -c Tehran
+Registration completed successfully!
+menu enter Main
+Entered Main menu
+menu enter Register
+Entered Register menu
+register -u Melika-a11 -p Nil3333a%11 Nil3333a%11 -n nilalllala -e Nila.-a11@gma-il.com -g female
+User registered successfully!
+Please select a security question:
+1. What was your first pet's name?
+2. What city were you born in?
+3. What is your favorite color?
+pick question -q 2 -a Tehran -c Tehran
+Registration completed successfully!
+login -u Nil-a11 -p Nil3333a%11
+Logged in successfully!
+menu enter Game
+Entered Game menu
+game new -u Melika-a11
+Nil-a11, please choose your map (1-4):
+game map 1
+Player Melika-a11, please choose your map (1-4):
+game map 2
+Game started successfully! Current player: Nil-a11
+next turn
+Now it's Melika-a11's turn.
+menu enter Main
+Entered Main menu
+userlogout
+Invalid Command!
+user logout
+Logged out successfully! Redirected to login menu.
+login -u Melika-a11 -p Nil3333a%11
+Logged in successfully!
+menu enter Game
+Entered Game menu
+next turn
+Now it's Nil-a11's turn.
+time
+Current time: 11:00
