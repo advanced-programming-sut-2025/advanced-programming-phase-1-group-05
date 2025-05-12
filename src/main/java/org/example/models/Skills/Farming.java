@@ -1,18 +1,12 @@
 package org.example.models.Skills;
 
 import org.example.models.*;
-import org.example.models.Enums.CropType;
-import org.example.models.Enums.ItemLevel;
-import org.example.models.Enums.TileType;
-import org.example.models.Enums.TreeType;
+import org.example.models.Enums.*;
 import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Scythe;
 import org.example.models.Tool.WateringCan;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Farming implements Skill{
     int level = 0;
@@ -24,18 +18,40 @@ public class Farming implements Skill{
     public boolean plantSeed(String seed, GameTile tile) {
         CropType cropType = CropType.getSeedType(seed);
         TreeType treeType = TreeType.getSeedType(seed);
+        if(seed.equals("Mixed Seeds")) {
+            FruitAndVegetable newCrop = mixedSeedPlant();
+            tile.setItemOnTile(newCrop);
+            Game.getGameMap().addPlant(newCrop);
+            //can become giant
+            if(newCrop.canBecomeGiant(Game.getCurrentPlayer().getFarm().getCrops())) {
+                newCrop.expandToGiant(Game.getCurrentPlayer().getFarm().getCrops());
+            }
+        }
         if(cropType != null) {
             FruitAndVegetable crop = new FruitAndVegetable(cropType);
             tile.setItemOnTile(crop);
+            Game.getGameMap().addPlant(crop);
             if(crop.canBecomeGiant(Game.getCurrentPlayer().getFarm().getCrops())) {
                 crop.expandToGiant(Game.getCurrentPlayer().getFarm().getCrops());
             }
             return true;
         } else if (treeType != null) {
-            tile.setItemOnTile(new Tree(treeType));
+            Tree tree = new Tree(treeType);
+            tile.setItemOnTile(tree);
+            Game.getGameMap().addTree(tree);
             return true;
         }
         return false;
+    }
+
+    //mixed seed
+    public FruitAndVegetable mixedSeedPlant(){
+        Season currentSeason = new TimeAndDate().getCurrentSeason();
+        List<CropType> possiblePlants = currentSeason.getPossibleSeeds();
+
+        Random random = new Random();
+        CropType selectedType = possiblePlants.get(random.nextInt(possiblePlants.size()));
+        return new FruitAndVegetable(selectedType);
     }
 
     //fertilize crop
@@ -62,9 +78,7 @@ public class Farming implements Skill{
         Item crop = tile.getItemOnTile();
         Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
         if(((FruitAndVegetable) crop).isOneTime()) tile.setItemOnTile(null);
-        else {
-            ((FruitAndVegetable) crop).setRegrowth();
-        }
+        ((FruitAndVegetable) crop).setHarvested(true);
         increaseCapacity();
     }
 

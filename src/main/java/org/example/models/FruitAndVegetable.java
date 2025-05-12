@@ -10,7 +10,6 @@ import java.util.*;
 public class FruitAndVegetable implements Item {
     private Map.Entry<Integer,Integer> coordinates;
     private final CropType type;
-    private boolean fullyGrown;
     private boolean protectedByScareCrow;
     private boolean hasBeenWatered;
     private boolean hasBeenFertilized;
@@ -18,6 +17,8 @@ public class FruitAndVegetable implements Item {
     private List<GrowthStep> growthTimeline;
     private int currentGrowthStage;
     private boolean isFullyGrown;
+    private boolean isHarvested;
+    private int regrowthCounter;
 
 
     public FruitAndVegetable(CropType type) {
@@ -30,12 +31,9 @@ public class FruitAndVegetable implements Item {
             stageIndex++;
         }
         this.age = 0;
+        this.regrowthCounter = 0;
     }
 
-    public void setRegrowth(){
-        isFullyGrown = false;
-        currentGrowthStage = getRegrowthTime();
-    }
     public boolean isFullyGrown() {
         return fullyGrown;
     }
@@ -75,15 +73,6 @@ public class FruitAndVegetable implements Item {
         }
     }
 
-    //mixed seed
-    public FruitAndVegetable mixedSeedPlant(){
-        Season currentSeason = new TimeAndDate().getCurrentSeason();
-        List<CropType> possiblePlants = currentSeason.getPossibleSeeds();
-
-        Random random = new Random();
-        CropType selectedType = possiblePlants.get(random.nextInt(possiblePlants.size()));
-        return new FruitAndVegetable(selectedType);
-    }
 
     public String getSeed(){
         return type.getSource();
@@ -124,9 +113,20 @@ public class FruitAndVegetable implements Item {
                 if(currentGrowthStage >= growthTimeline.size()) {
                     isFullyGrown = true;
                 }
+            } else if (hasBeenWatered && isHarvested && getRegrowthTime() != 0) {
+            regrowthCounter++;
+            if (regrowthCounter >= getRegrowthTime()) {
+                isHarvested = false;
+                isFullyGrown = true;
+                regrowthCounter = 0;
             }
-            hasBeenWatered = false;
         }
+
+        hasBeenWatered = false;
+        }
+    }
+    public void setHarvested(boolean harvested){
+        isHarvested = harvested;
     }
     @Override
     public String getName() {
