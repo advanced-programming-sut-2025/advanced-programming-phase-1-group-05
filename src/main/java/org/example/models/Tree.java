@@ -51,7 +51,7 @@ public class Tree implements Item{
         public Result cutDownTree(){
             Random rand = new Random();
             int randomNum = rand.nextInt(2) + 1;
-            Game.getCurrentPlayer().getBackPack().getInventory().put(new Seed(this.treeType.getSeed()),randomNum);
+            //Game.getCurrentPlayer().getBackPack().getInventory().put(,randomNum);
             return new Result(true, "The tree was cut down, giving you " + randomNum + " of its seeds!");
         }
 

@@ -18,7 +18,7 @@ public class Foraging implements Skill{
 
     public void chopTree(String treeType, Axe axe) {}
 
-    public Seed getRandomSeedFromWildTree() { return null; }
+    //public Seed getRandomSeedFromWildTree() { return null; }
 
     @Override
     public void setLevel(int level) {

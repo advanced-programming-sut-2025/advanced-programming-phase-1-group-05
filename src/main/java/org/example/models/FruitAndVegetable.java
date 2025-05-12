@@ -35,7 +35,7 @@ public class FruitAndVegetable implements Item {
     }
 
     public boolean isFullyGrown() {
-        return fullyGrown;
+        return isFullyGrown;
     }
     public Map.Entry<Integer,Integer> getCoordinates() {
         return coordinates;
