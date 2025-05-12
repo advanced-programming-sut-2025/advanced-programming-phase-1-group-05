@@ -18,7 +18,10 @@ import java.util.Random;
 
 
 public class GameMap {
-    GameTile[][] map = new GameTile[100][100];
+    public static final int MAP_WIDTH = 100;
+    public static final int MAP_HEIGHT = 100;
+    private GameTile[][] map = new GameTile[MAP_HEIGHT][MAP_WIDTH];
+
     // TODO initialize this!!
     ArrayList<FruitAndVegetable> plants = new ArrayList<>();
     ArrayList<Tree> trees = new ArrayList<>();
@@ -112,12 +115,63 @@ public class GameMap {
         }
     }
     public GameMap() {
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map[0].length; j++) {
-                map[i][j] = new GameTile(i + 1, j + 1, TileType.Flat); // یا هر TileType پیش‌فرض
+        initEmptyMap(TileType.Flat);
+        generateFarm(0, 0, 30, 30, 1);          // Farm A
+        generateFarm(0, 70, 30, 30, 2);         // Farm B
+        generateFarm(70, 0, 30, 30, 3);         // Farm C
+        generateFarm(70, 70, 30, 30, 4);        // Farm D
+        generateVillageCenter();               // وسط
+
+        spreadRandomItemsInFarm(0, 0, 30, 30);
+        spreadRandomItemsInFarm(0, 70, 30, 30);
+        spreadRandomItemsInFarm(70, 0, 30, 30);
+        spreadRandomItemsInFarm(70, 70, 30, 30);
+    }
+
+    private void generateVillageCenter() {
+        int centerX = MAP_HEIGHT / 2;
+        int centerY = MAP_WIDTH / 2;
+        for (int i = centerX - 5; i <= centerX + 5; i++) {
+            for (int j = centerY - 5; j <= centerY + 5; j++) {
+                setTile(i, j, new GameTile(i, j, TileType.Building));
             }
         }
     }
+
+    private void generateFarm(int startX, int startY, int width, int height, int farmType) {
+        for (int i = startX; i < startX + height; i++) {
+            for (int j = startY; j < startY + width; j++) {
+                setTile(i, j, new GameTile(i, j, TileType.Soil)); // پیش‌فرض خاک
+
+                // بسته به نوع مزرعه، آیتم خاصی بذار
+                if (farmType == 1 && insideRect(i, j, startX+5, startY+5, 10, 6)) {
+                    setTile(i, j, new GameTile(i, j, TileType.Water)); // دریاچه
+                } else if (farmType == 2 && insideRect(i, j, startX+2, startY+2, 8, 5)) {
+                    setTile(i, j, new GameTile(i, j, TileType.Stone)); // معدن
+                }
+                // و ... بقیه موارد ثابت مثل کلبه (4x4) یا گلخانه (5x6)
+            }
+        }
+    }
+    public void spreadRandomItemsInFarm(int startX, int startY, int width, int height) {
+        Random random = new Random();
+        int count = 50;
+
+        for (int k = 0; k < count; k++) {
+            int i = startX + random.nextInt(height);
+            int j = startY + random.nextInt(width);
+            TileType[] candidates = {TileType.Tree, TileType.Stone, TileType.Building};
+            TileType randomType = candidates[random.nextInt(candidates.length)];
+            setTile(i, j, new GameTile(i, j, randomType));
+        }
+    }
+
+    private boolean insideRect(int i, int j, int x, int y, int w, int h) {
+        return i >= x && i < x + h && j >= y && j < y + w;
+    }
+
+
+
 
 
 

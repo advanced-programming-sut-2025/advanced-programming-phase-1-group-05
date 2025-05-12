@@ -4,5 +4,7 @@ public enum TileType {
     Water,
     Soil,
     Flat,
+    Stone,
+    Tree,
     Building;
 }

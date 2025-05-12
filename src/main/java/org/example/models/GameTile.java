@@ -14,6 +14,7 @@ public class GameTile {
     public GameTile(int x, int y, TileType tileType) {
         this.x = x;
         this.y = y;
+        this.tileType = tileType;
     }
     public Item getItemOnTile() {
         return itemOnTile;

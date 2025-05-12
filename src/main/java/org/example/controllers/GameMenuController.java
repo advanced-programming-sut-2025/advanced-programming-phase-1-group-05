@@ -885,10 +885,10 @@ public class GameMenuController extends MenuController {
         GameMap map = Game.getGameMap();  // فرض بر اینه که Game singleton یا staticه
 
         try {
-            if (matcher.group("x") != null && matcher.group("y") != null && matcher.group("s") != null) {
+            if (matcher.group("x") != null && matcher.group("y") != null && matcher.group("size") != null) {
                 int x = Integer.parseInt(matcher.group("x"));
                 int y = Integer.parseInt(matcher.group("y"));
-                int size = Integer.parseInt(matcher.group("s"));
+                int size = Integer.parseInt(matcher.group("size"));
 
                 // بررسی معتبر بودن
                 if (!map.isInBounds(x, y)) {
