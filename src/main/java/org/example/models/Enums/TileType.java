@@ -7,5 +7,6 @@ public enum TileType {
     Stone,
     Tree,
     Mine,
+    CheatThor,
     Building;
 }

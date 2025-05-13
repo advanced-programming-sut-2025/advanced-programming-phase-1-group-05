@@ -20,6 +20,7 @@ public class GameMenuController extends MenuController {
     public static boolean canLoadGame = false;
     public static boolean[] canExitGame;
     private static Map<Integer, Integer> playerMapChoices = new HashMap<>();
+    private GameMap map = Game.getGameMap();
 
     public GameMenuController(Scanner scanner, User currentUser) {
         super(scanner);
@@ -908,7 +909,7 @@ public class GameMenuController extends MenuController {
     }
 
     public Result printMap(Matcher matcher) {
-        GameMap map = Game.getGameMap();
+//        GameMap map = Game.getGameMap();
 
         try {
             if (matcher.group("x") != null && matcher.group("y") != null && matcher.group("size") != null) {
@@ -957,5 +958,22 @@ public class GameMenuController extends MenuController {
         System.out.println("Tree :" + "\uD83C\uDF33");
         System.out.println("Stone :" + "\uD83E\uDEA8");
         System.out.println("Mine :" + "⛰\uFE0F");
+        System.out.println("Cheat Thor :" + "O");
+    }
+
+    public Result cheatThor(Matcher matcher) {
+        System.out.println("HI");
+        try {
+            if (matcher.group("x") != null && matcher.group("y") != null) {
+                int x = Integer.parseInt(matcher.group("x"));
+                int y = Integer.parseInt(matcher.group("y"));
+                System.out.println(x + "   " + y);
+                Game.getGameMap().getTile(x,y).setTileType(TileType.CheatThor);
+                System.out.println("HI");
+            }
+        } catch (Exception e) {
+            return new Result(false, "Invalid input format.");
+        }
+        return new Result(true, "Cheat Thor :)");
     }
 }

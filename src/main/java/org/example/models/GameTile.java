@@ -77,6 +77,7 @@ public class GameTile {
         if (tileType == TileType.Tree) return "\uD83C\uDF33";
         if (tileType == TileType.Stone) return "\uD83E\uDEA8";
         if (tileType == TileType.Mine) return "⛰\uFE0F";
+        if (tileType == TileType.CheatThor) return "O";
         return "🟫";
     }
 
