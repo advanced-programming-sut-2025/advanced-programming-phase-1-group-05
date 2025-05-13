@@ -962,18 +962,18 @@ public class GameMenuController extends MenuController {
     }
 
     public Result cheatThor(Matcher matcher) {
-        System.out.println("HI");
+        int i = 0,j = 0;
         try {
             if (matcher.group("x") != null && matcher.group("y") != null) {
                 int x = Integer.parseInt(matcher.group("x"));
                 int y = Integer.parseInt(matcher.group("y"));
-                System.out.println(x + "   " + y);
+                i = x;
+                j = y;
                 Game.getGameMap().getTile(x,y).setTileType(TileType.CheatThor);
-                System.out.println("HI");
             }
         } catch (Exception e) {
             return new Result(false, "Invalid input format.");
         }
-        return new Result(true, "Cheat Thor :)");
+        return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
     }
 }

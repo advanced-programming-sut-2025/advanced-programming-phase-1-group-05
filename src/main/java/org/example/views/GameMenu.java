@@ -117,9 +117,6 @@ public class GameMenu implements org.example.views.AppMenu {
             Result result = gameMenuController.showSeason();
             System.out.println(result.getMessage());
         }
-        else if (input.startsWith("cheat Thor")) {
-
-        }
         else if (input.equals("weather")) {
             Result result = gameMenuController.showWeather();
             System.out.println(result.getMessage());
