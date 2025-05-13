@@ -969,6 +969,7 @@ public class GameMenuController extends MenuController {
                 int y = Integer.parseInt(matcher.group("y"));
                 i = x;
                 j = y;
+                //todo: اگر گلخانه بود تاثیر نداره
                 Game.getGameMap().getTile(x,y).setTileType(TileType.CheatThor);
             }
         } catch (Exception e) {
