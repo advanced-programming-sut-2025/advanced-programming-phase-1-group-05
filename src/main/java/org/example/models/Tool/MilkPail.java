@@ -19,15 +19,6 @@ public class MilkPail implements Tool<ItemLevel> {
         return 0;
     }
 
-    @Override
-    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
-
-    }
-
-    @Override
-    public Map.Entry<Integer, Integer> getCoordinates() {
-        return null;
-    }
 
     @Override
     public Result use(HashMap.Entry<Integer, Integer> coordinates){

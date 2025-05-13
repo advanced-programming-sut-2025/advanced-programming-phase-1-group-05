@@ -781,10 +781,9 @@ public class GameMenuController extends MenuController {
         }
         if (item == null) return new Result(false, "No such item in your inventory");
         else if (directions == null) return new Result(false, "Invalid direction");
-        Map.Entry<Integer, Integer> newCoordinates = new AbstractMap.SimpleEntry<>
-                (item.getCoordinates().getKey() + directions[0],
-                item.getCoordinates().getValue() + directions[1]);
-        item.setCoordinates(newCoordinates);
+        GameMap map = Game.getGameMap();
+        GameTile tile = map.getTile(directions[0], directions[1]);
+        tile.setItemOnTile(item);
         return new Result(true, "Item placed successfully");
     }
 

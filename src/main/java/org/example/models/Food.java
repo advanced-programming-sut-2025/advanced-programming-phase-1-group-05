@@ -28,12 +28,4 @@ public class Food implements Item{
     public int getPrice() {
         return 0;
     }
-    @Override
-    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
-        return;
-    }
-    @Override
-    public Map.Entry<Integer, Integer> getCoordinates() {
-        return null;
-    }
 }

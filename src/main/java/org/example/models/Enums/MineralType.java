@@ -58,14 +58,5 @@ public enum MineralType implements Material, Item {
         return false;
     }
 
-    @Override
-    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
-        //
-    }
-
-    @Override
-    public Map.Entry<Integer, Integer> getCoordinates() {
-        return null;
-    }
 
 }

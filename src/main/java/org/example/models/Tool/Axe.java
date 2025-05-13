@@ -83,11 +83,4 @@ public class Axe implements Tool <ItemLevel>{
             System.out.println(getName() + " upgraded to " + level.getName());
         }
     }
-    @Override
-    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
-    }
-    @Override
-    public Map.Entry<Integer, Integer> getCoordinates() {
-        return null;
-    }
 }

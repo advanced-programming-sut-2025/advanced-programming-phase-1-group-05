@@ -151,9 +151,6 @@ public class Craft extends BasicItem implements Item {
     public int getPrice() {
         return type.getPrice();
     }
-    @Override
-    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
-        this.coordinates = coordinates;
-    }
+
 
 }

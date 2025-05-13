@@ -24,14 +24,14 @@ public class Cooking implements Skill{
         return learntRecipes;
     }
 
-    public void cookFood(Food food) {
-        for(Food f : food.getIngredients().keySet()) {
-            Game.getCurrentPlayer().getBackPack().removeFromInventory
-                    (f, Game.getCurrentPlayer().getBackPack().getInventory().get(f));
-        }
-        Game.getCurrentPlayer().increaseEnergy(-3);
-        Game.getCurrentPlayer().getBackPack().addToInventory(food, 1);
-    }
+//    public void cookFood(Food food) {
+//        for(Food f : food.getIngredients().keySet()) {
+//            Game.getCurrentPlayer().getBackPack().removeFromInventory
+//                    (f, Game.getCurrentPlayer().getBackPack().getInventory().get(f));
+//        }
+//        Game.getCurrentPlayer().increaseEnergy(-3);
+//        Game.getCurrentPlayer().getBackPack().addToInventory(food, 1);
+//    }
 
     public void consumeFood(String food, Player player) {}
 

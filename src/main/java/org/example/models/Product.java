@@ -68,15 +68,6 @@ public class Product implements Item {
         }
         return true;
     }
-    @Override
-    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
-        //booooo not necessary
-    }
-
-    @Override
-    public Map.Entry<Integer, Integer> getCoordinates() {
-        return null;
-    }
 
 
     public void setSoldToday(int soldToday) {

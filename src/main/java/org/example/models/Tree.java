@@ -105,10 +105,6 @@ public class Tree implements Item{
         public int getPrice() {
             return price;
         }
-    @Override
-    public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
-        this.coordinates = coordinates;
-    }
 
 
     }
