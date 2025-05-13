@@ -9,6 +9,7 @@ import org.example.models.Enums.ForagingTreeSourceType;
 import org.example.models.Enums.Season;
 import org.example.models.Enums.TileType;
 
+import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -124,10 +125,6 @@ public class GameMap {
         generateFarm(70, 70, 30, 30, 4);        // Farm D
         generateVillageCenter();               // وسط
 
-        spreadRandomItemsInFarm(0, 0, 30, 30);
-        spreadRandomItemsInFarm(0, 70, 30, 30);
-        spreadRandomItemsInFarm(70, 0, 30, 30);
-        spreadRandomItemsInFarm(70, 70, 30, 30);
     }
 
     private void generateVillageCenter() {
@@ -135,53 +132,106 @@ public class GameMap {
         int centerY = MAP_WIDTH / 2;
         for (int i = centerX - 5; i <= centerX + 5; i++) {
             for (int j = centerY - 5; j <= centerY + 5; j++) {
-                setTile(i, j, new GameTile(i, j, TileType.Building));
+                setTile(i, j, new GameTile(i, j, TileType.Soil));
             }
         }
     }
+    private void placeRandomDecorations(int startX, int startY, int width, int height,
+                                        int treeCount, int stoneCount,
+                                        List<Rectangle> occupiedAreas, Random random) {
+        int placedTrees = 0;
+        int placedStones = 0;
+        int maxAttempts = (treeCount + stoneCount) * 2;
 
-    private void generateFarm(int startX, int startY, int width, int height, int farmType) {
-        for (int i = startX; i < startX + height; i++) {
-            for (int j = startY; j < startY + width; j++) {
-                setTile(i, j, new GameTile(i, j, TileType.Soil)); // پیش‌فرض خاک
-
-                // بسته به نوع مزرعه، آیتم خاصی بذار
-                if (farmType == 1 && insideRect(i, j, startX+5, startY+5, 10, 6)) {
-                    setTile(i, j, new GameTile(i, j, TileType.Water)); // دریاچه
-                } else if (farmType == 2 && insideRect(i, j, startX+2, startY+2, 8, 5)) {
-                    setTile(i, j, new GameTile(i, j, TileType.Stone)); // معدن
-                }
-                // و ... بقیه موارد ثابت مثل کلبه (4x4) یا گلخانه (5x6)
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+            if (placedTrees >= treeCount && placedStones >= stoneCount) {
+                break;
             }
-        }
-    }
 
-    public void spreadRandomItemsInFarm(int startX, int startY, int width, int height) {
-        Random random = new Random();
-        int count = 50;
+            int x = startX + random.nextInt(height);
+            int y = startY + random.nextInt(width);
 
-        for (int k = 0; k < count; k++) {
-            int i = startX + random.nextInt(height);
-            int j = startY + random.nextInt(width);
-
-            GameTile tile = map[i][j];
-
-            if (tile.getTileType() == TileType.Water) {
+            if (!isInBounds(x, y)) {
                 continue;
             }
 
-            TileType[] candidates = {TileType.Tree, TileType.Stone, TileType.Building};
-            TileType randomType = candidates[random.nextInt(candidates.length)];
+            GameTile tile = getTile(x, y);
+            if (tile == null || tile.getTileType() != TileType.Soil) {
+                continue;
+            }
 
-            if (randomType == TileType.Tree) {
-                setTile(i, j, new GameTile(i, j, TileType.Tree));
-            } else if (randomType == TileType.Stone) {
-                setTile(i, j, new GameTile(i, j, TileType.Stone));
-            } else if (randomType == TileType.Building) {
-                setTile(i, j, new GameTile(i, j, TileType.Building));
+            Rectangle point = new Rectangle(x, y, 1, 1);
+            if (isAreaOccupied(point, occupiedAreas)) {
+                continue;
+            }
+
+            TileType decorationType;
+            if (placedTrees >= treeCount) {
+                decorationType = TileType.Stone;
+            } else if (placedStones >= stoneCount) {
+                decorationType = TileType.Tree;
+            } else {
+                decorationType = random.nextBoolean() ? TileType.Tree : TileType.Stone;
+            }
+
+            setTile(x, y, new GameTile(x, y, decorationType));
+
+            occupiedAreas.add(point);
+
+            if (decorationType == TileType.Tree) {
+                placedTrees++;
+            } else {
+                placedStones++;
             }
         }
+
     }
+
+    private void placeRandomMine(int startX, int startY, int width, int height,
+                                 List<Rectangle> occupiedAreas, Random random) {
+        int maxAttempts = 100;
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+            int x = startX + random.nextInt(height - 3);
+            int y = startY + random.nextInt(width - 1);
+
+            Rectangle mineArea = new Rectangle(x, y, 2, 4);
+
+            if (!isAreaOccupied(mineArea, occupiedAreas) && isAreaValid(mineArea, TileType.Mine)) {
+                setTile(x, y, new GameTile(x, y, TileType.Mine));
+                setTile(x, y+1, new GameTile(x, y+1, TileType.Mine));
+                setTile(x+1, y, new GameTile(x+1, y, TileType.Mine));
+                setTile(x+1, y+1, new GameTile(x+1, y+1, TileType.Mine));
+                setTile(x+2, y, new GameTile(x+2, y, TileType.Mine));
+                setTile(x+3, y, new GameTile(x+3, y, TileType.Mine));
+
+                occupiedAreas.add(mineArea);
+                return;
+            }
+        }
+        System.out.println("Warning: Could not place mine");
+    }
+
+    private boolean isAreaOccupied(Rectangle area, List<Rectangle> occupiedAreas) {
+        for (Rectangle rect : occupiedAreas) {
+            if (area.intersects(rect)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isAreaValid(Rectangle area, TileType type) {
+        for (int i = area.x; i < area.x + area.height; i++) {
+            for (int j = area.y; j < area.y + area.width; j++) {
+                GameTile tile = getTile(i, j);
+                if (tile == null || tile.getTileType() != TileType.Soil) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
 
 
@@ -222,7 +272,47 @@ public class GameMap {
             System.out.println();
         }
     }
-    public void printMapSection(int centerX, int centerY, int size) {
+    public void printMapSection1(int centerX, int centerY, int size) {
+        int half = size / 2;
+        for (int i = 0; i < centerX - half; i++) {
+            for (int j = 0; j < centerY - half; j++) {
+                if (isInBounds(i, j)) {
+                    System.out.print(getTile(i, j).toString() + " ");
+                } else {
+                    System.out.print("⬛ ");
+                }
+            }
+            System.out.println();
+        }
+    }
+    public void printMapSection2(int centerX, int centerY, int size) {
+        int half = size / 2;
+        for (int i = centerX - half; i <= centerX + half; i++) {
+            for (int j = 0; j < centerY - half; j++) {
+                if (isInBounds(i, j)) {
+                    System.out.print(getTile(i, j).toString() + " ");
+                } else {
+                    System.out.print("⬛ ");
+                }
+            }
+            System.out.println();
+        }
+    }
+    public void printMapSection3(int centerX, int centerY, int size) {
+        int half = size / 2;
+        for (int i = 0; i < centerX - half; i++) {
+            for (int j = centerY - half; j <= centerY + half; j++) {
+                if (isInBounds(i, j)) {
+                    System.out.print(getTile(i, j).toString() + " ");
+                } else {
+                    System.out.print("⬛ ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public void printMapSection4(int centerX, int centerY, int size) {
         int half = size / 2;
         for (int i = centerX - half; i <= centerX + half; i++) {
             for (int j = centerY - half; j <= centerY + half; j++) {
@@ -233,6 +323,59 @@ public class GameMap {
                 }
             }
             System.out.println();
+        }
+    }
+
+    private void generateFarm(int startX, int startY, int width, int height, int farmType) {
+        for (int i = startX; i < startX + height; i++) {
+            for (int j = startY; j < startY + width; j++) {
+                if (isInBounds(i, j)) {
+                    setTile(i, j, new GameTile(i, j, TileType.Soil));
+                }
+            }
+        }
+
+        switch (farmType) {
+            case 1: // مزرعه نوع 1
+                placeFixedFeature(startX+1, startY+1, 3, 2, TileType.Mine, "mine");
+                placeFixedFeature(startX+5, startY+5, 3, 2, TileType.Water, "lake");
+                placeFixedFeature(startX+10, startY+10, 4, 4, TileType.Building, "builing");
+                break;
+
+            case 2: // مزرعه نوع 2
+                placeFixedFeature(startX+20, startY+20, 3, 2, TileType.Water, "lake");
+
+                placeFixedFeature(startX+4, startY+4, 3, 2, TileType.Mine, "mine");
+
+
+                placeFixedFeature(startX+10, startY+10, 4, 4, TileType.Building, "builing");
+                break;
+
+            case 3: // مزرعه نوع 3
+//                placeFixedFeature(startX+10, startY+10, 5, 6, TileType.Building, "greenhouse");
+                placeFixedFeature(startX+2, startY+2, 3, 2, TileType.Mine, "mine");
+                placeFixedFeature(startX+10, startY+11, 3, 2, TileType.Water, "lake");
+                placeFixedFeature(startX+15, startY+20, 4, 4, TileType.Building, "builing");
+                break;
+
+            case 4: // مزرعه نوع 4
+                placeFixedFeature(startX+4, startY+2, 3, 2, TileType.Mine, "mine");
+                placeFixedFeature(startX+15, startY+11, 3, 2, TileType.Water, "lake");
+                placeFixedFeature(startX+19, startY+20, 4, 4, TileType.Building, "builing");
+                break;
+        }
+
+        placeRandomDecorations(startX, startY, width, height, 15, 10, new ArrayList<>(), new Random());
+    }
+
+    private void placeFixedFeature(int startX, int startY, int width, int height,
+                                   TileType type, String featureName) {
+        for (int i = startX; i < startX + height; i++) {
+            for (int j = startY; j < startY + width; j++) {
+                if (isInBounds(i, j)) {
+                    setTile(i, j, new GameTile(i, j, type));
+                }
+            }
         }
     }
 

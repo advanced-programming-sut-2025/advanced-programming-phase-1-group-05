@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum GameMenuCommands {
-    PrintMap("print map -l (?<x>\\d+) (?<y>\\d+) -s (?<size>\\d+)"),
+    PrintMap("print map(?: -l (?<x>\\d+) (?<y>\\d+) -s (?<size>\\d+))?"),
     ShowEnergy("show energy"),
     EnergySetCC("set energy -v (?<value>\\d+)"),
     EnergyUnlimitedCC("unlimited energy"),

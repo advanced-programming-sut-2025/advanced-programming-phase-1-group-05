@@ -70,13 +70,14 @@ public class GameTile {
     @Override
     public String toString() {
         if (itemOnTile != null) return "🍎";
-        if (building != null) return "🏠";
+        if (tileType == TileType.Building) return "🏠";
         if (tileType == TileType.Water) return "🌊";
         if (tileType == TileType.Soil) return "🟫";
         if (tileType == TileType.Flat) return "🟩";
         if (tileType == TileType.Tree) return "\uD83C\uDF33";
         if (tileType == TileType.Stone) return "\uD83E\uDEA8";
-        return "⬛";
+        if (tileType == TileType.Mine) return "⛰\uFE0F";
+        return "🟫";
     }
 
 }

@@ -96,6 +96,9 @@ public class GameMenuController extends MenuController {
         }
         int mapNumber = Integer.parseInt(matcher.group("mapNumber"));
 
+        Player currentPlayer = selectedPlayers.get(Game.currentPlayerIndex);
+        currentPlayer.setMapNum(mapNumber);
+
         Game.setCurrentPlayer(selectedPlayers.get(Game.currentPlayerIndex));
         playerMapChoices.put(Game.currentPlayerIndex, mapNumber);
 
@@ -918,7 +921,10 @@ public class GameMenuController extends MenuController {
                 }
 
                 System.out.println("Printing map section at (" + x + "," + y + ") with size " + size + ":");
-                map.printMapSection(x, y, size);
+                map.printMapSection1(x,y,size);
+                map.printMapSection2(x,y,size);
+                map.printMapSection3(x,y,size);
+                map.printMapSection4(x, y, size);
                 return new Result(true, "Map section printed.");
             } else {
                 System.out.println("Printing full map:");
@@ -943,4 +949,13 @@ public class GameMenuController extends MenuController {
     }
 
 
+    public void helpReadingMap() {
+        System.out.println("Building :" + "🏠");
+        System.out.println("Lake :" + "🌊");
+        System.out.println("Soil :" + "🟫");
+        System.out.println("Flat :" + "🟩");
+        System.out.println("Tree :" + "\uD83C\uDF33");
+        System.out.println("Stone :" + "\uD83E\uDEA8");
+        System.out.println("Mine :" + "⛰\uFE0F");
+    }
 }

@@ -35,6 +35,15 @@ public class Player {
     private Map.Entry<Integer, Integer> coordinates;
     private List<AnimalHouse> coopAndBarns = new ArrayList<>();
     private List<String> notifications = new ArrayList<>();
+    private static int mapNum;
+
+    public void setMapNum(int mapNum) {
+        this.mapNum = mapNum;
+    }
+
+    public int getMapNum() {
+        return this.mapNum;
+    }
 
     public Player(User user) {
         this.user = user;

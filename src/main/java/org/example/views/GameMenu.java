@@ -135,6 +135,9 @@ public class GameMenu implements org.example.views.AppMenu {
         else if ((matcher = GameMenuCommands.PrintMap.getMatcher(input)) != null) {
             System.out.println(gameMenuController.printMap(matcher));
         }
+        else if (input.equals("help reading map")) {
+            gameMenuController.helpReadingMap();
+        }
         else if ((matcher = GameMenuCommands.ShowEnergy.getMatcher(input)) != null) {
             System.out.println(gameMenuController.showEnergy().getMessage());
         } else if ((matcher = GameMenuCommands.EnergySetCC.getMatcher(input)) != null) {

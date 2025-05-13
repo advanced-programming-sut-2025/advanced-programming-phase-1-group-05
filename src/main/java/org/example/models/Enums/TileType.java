@@ -6,5 +6,6 @@ public enum TileType {
     Flat,
     Stone,
     Tree,
+    Mine,
     Building;
 }
