@@ -245,14 +245,16 @@ public class GameMenuController extends MenuController {
     public Result showInventory() {
         HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
         StringBuilder output = new StringBuilder();
+        if (items.isEmpty()) return new Result(false, "Inventory is empty");
         for (Item item : items.keySet()) {
             if (items.get(item) != 0)
                 output.append(items.get(item)).append(" of ")
                         .append(item.getName())
                         .append("\n");
-            return new Result(true, output.toString());
+
         }
-        return new Result(false, "Inventory is empty");
+        return new Result(true, output.toString());
+
     }
 
     //removing from inventory

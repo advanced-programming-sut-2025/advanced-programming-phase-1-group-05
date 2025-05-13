@@ -49,7 +49,7 @@ public class Store {
     }
     public Product getProduct(String name) {
         for (Product product : products) {
-            if (product.getName().equals(name)) {
+            if (product.getName().equalsIgnoreCase(name)) {
                 return product;
             }
         }

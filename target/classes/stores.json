@@ -30,11 +30,6 @@
         "limit": -1
       },
       {
-        "name": "Coal",
-        "price": 150,
-        "limit": -1
-      },
-      {
         "name": "Copper Tool",
         "price": 2000,
         "limit": 1

@@ -7,10 +7,10 @@ import java.util.List;
 public class Farm {
     private List<Player> owner = new ArrayList<>();
     private HashMap<Food, Integer> refrigeratedFoods = new HashMap<>();
-    private final ShippingBin shippingBin = new ShippingBin();
     private final ArrayList<FruitAndVegetable> crops = new ArrayList<>();
     //TODO the shipping bin coordinates should be in the farm
     private final int startX = 10, startY = 10, endX = startX + 80, endY = startY + 50;
+    private final ShippingBin shippingBin = new ShippingBin(startY, endX);
     // TODO add the farm coordinates
     public Farm (Player player){
         owner.add(player);
@@ -49,12 +49,14 @@ public class Farm {
     }
 
     public static class ShippingBin {
-        int startX, startY, endX = startX + 2, endY = startY + 1;
+        int startX, startY, endX, endY;
 
-//        public ShippingBin(int farmStartY, int farmEndX) {
-//            startX = farmEndX - 10;
-//            startY = farmStartY - 5;
-//        }
+        public ShippingBin(int farmStartY, int farmEndX) {
+            startX = farmEndX - 10; // 80 to 82
+            startY = farmStartY - 5; // 5 to 6
+            endX = startX + 2;
+            endY = startY + 1;
+        }
         public boolean isNear(int x, int y) {
             boolean nearX = (x >= startX - 1 && x <= endX + 1);
             boolean nearY = (y >= startY - 1 && y <= endY + 1);

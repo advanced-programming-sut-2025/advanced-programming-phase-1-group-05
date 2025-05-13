@@ -75,9 +75,10 @@ public class StoreController {
         if (!product. isInSeason(store)) {
             return Result.error("This product isn't available in " + GameManager.getSeason() + " in this store.");
         }
-        if(product.getRemainingForToday() < count) {
+        if(product.getRemainingForToday() < count && product.getLimit() != -1) {
             return Result.error("Can't purchase any more of that. come back tomorrow!");
         }
+
 
         player.addGold(-product.getPrice()*count);
 
@@ -116,7 +117,7 @@ public class StoreController {
         else {
             player.getBackPack().addToInventory(product, count);
         }
-
+        product.addSold(count);
         return Result.success("Purchased " + productName + " successfully!");
     }
 

@@ -56,7 +56,7 @@ public class Product implements Item {
 
     @Override
     public int getPrice() {
-        if (!seasons.contains(GameManager.getSeason())) {
+        if (!seasons.isEmpty() && !seasons.contains(GameManager.getSeason())) {
             return (int) (price * 3 / 2.0 * itemLevel.getPriceCoefficient());
         }
         return (int) (price * itemLevel.getPriceCoefficient());
@@ -77,12 +77,20 @@ public class Product implements Item {
     public void addSold(int amount) {
         soldToday += amount;
     }
+
+    public int getSoldToday() {
+        return soldToday;
+    }
+
     public int getRemainingForToday(){
         return limit - soldToday;
     }
 
+    public int getLimit() {
+        return limit;
+    }
     public boolean isAvailable(){
-        return getRemainingForToday() > 0;
+        return limit == -1 || getRemainingForToday() > 0;
     }
 
     public Map<String, Integer> getCosts() {

@@ -255,11 +255,15 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(gameMenuController.finishQuest(input).getMessage());
         }
         else if (input.startsWith("set coordinates *")) {
-            input = input.substring(input.indexOf('*' + 1)).trim();
+            input = input.substring(input.indexOf('*') + 1).trim();
             String[] coordinates = input.split(" ");
             int x = Integer.parseInt(coordinates[0]), y = Integer.parseInt(coordinates[1]);
             Game.getCurrentPlayer().setCoordinate(x, y);
             System.out.println("set player coordinates to " + x + ", " + y);
+        }
+        else if (input.startsWith("cheat add gold *")) {
+            input = input.substring(input.indexOf('*') + 1).trim();
+            Game.getCurrentPlayer().addGold(Integer.parseInt(input));
         }
         else {
             System.out.println("Invalid Command!");
