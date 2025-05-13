@@ -184,7 +184,7 @@ public class GameMenuController extends MenuController {
     }
 
     public Result deleteGame() {
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = Game.getScanner();
         int[] OK = new int[selectedPlayers.size()];
         System.out.println("Vote to delete the game (1 for yes, 0 for no):");
         for (int i = 0 ; i < selectedPlayers.size(); i++) {
@@ -288,7 +288,7 @@ public class GameMenuController extends MenuController {
     public Result showAvailableTools() {
         boolean found = false;
         StringBuilder output = new StringBuilder();
-        for (Item i : App.getCurrentPlayer().getBackPack().getInventory().keySet()) {
+        for (Item i : Game.getCurrentPlayer().getBackPack().getInventory().keySet()) {
             if (i instanceof Tool) {
                 output.append("* ").append(i.getName()).append("\n");
                 found = true;
@@ -301,7 +301,7 @@ public class GameMenuController extends MenuController {
     //upgrade tool
     public Result upgradeTool(String name) {
         //TODO blacksmith stuff??
-        HashMap<Item, Integer> items = App.getCurrentPlayer().getBackPack().getInventory();
+        HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
         for (Item item : items.keySet()) {
             if (item.getName().equals(name)) {
                 if (item instanceof Tool) {
@@ -938,5 +938,6 @@ public class GameMenuController extends MenuController {
         }
         else return new Result(false, "That's...not edible.");
     }
+
 
 }

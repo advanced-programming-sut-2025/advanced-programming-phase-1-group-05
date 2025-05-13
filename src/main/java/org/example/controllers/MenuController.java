@@ -15,14 +15,13 @@ public class MenuController {
     private final Scanner scanner;
 
     public MenuController(Scanner scanner) {
-        menuController = this;
         this.scanner = scanner;
         RegisterMenuController registerController = new RegisterMenuController(scanner);
         this.currentMenu = new RegisterMenu(this, registerController, this.getScanner());
     }
 
     public static MenuController getController() {
-        if (menuController == null) return new MenuController(new Scanner(System.in));
+        if (menuController == null) menuController =  new MenuController(Game.getScanner());
         return menuController;
     }
 

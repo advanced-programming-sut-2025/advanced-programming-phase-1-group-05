@@ -5,6 +5,7 @@ import org.example.controllers.GameMenuController;
 import org.example.controllers.MenuController;
 import org.example.controllers.StoreController;
 import org.example.models.Enums.GameMenuCommands;
+import org.example.models.Game;
 import org.example.models.Result;
 import org.example.models.TimeAndDate;
 
@@ -252,6 +253,13 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(gameMenuController.showAllQuests().getMessage());
         } else if (input.matches("quests\\s+finish\\s+-i\\s+\\d+")) {
             System.out.println(gameMenuController.finishQuest(input).getMessage());
+        }
+        else if (input.startsWith("set coordinates *")) {
+            input = input.substring(input.indexOf('*' + 1)).trim();
+            String[] coordinates = input.split(" ");
+            int x = Integer.parseInt(coordinates[0]), y = Integer.parseInt(coordinates[1]);
+            Game.getCurrentPlayer().setCoordinate(x, y);
+            System.out.println("set player coordinates to " + x + ", " + y);
         }
         else {
             System.out.println("Invalid Command!");
