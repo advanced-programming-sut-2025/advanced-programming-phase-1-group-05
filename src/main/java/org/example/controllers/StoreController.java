@@ -107,6 +107,10 @@ public class StoreController {
                 Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
             } else if(productName.equals("Fish Smoker Recipe")) {
                 Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
+            } else {
+                String name = productName.replace("Recipe", "");
+                CookingRecipeType type = CookingRecipeType.fromString(name);
+                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
             }
         }
         else {

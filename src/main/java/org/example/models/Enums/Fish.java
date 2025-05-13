@@ -1,38 +1,41 @@
 package org.example.models.Enums;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public enum Fish {
+public enum Fish implements Material {
 
-    Salmon(75, Season.FALL, false),
-    Sardine(40, Season.FALL, false),
-    Shad(60, Season.FALL, false),
-    BlueDiscus(120, Season.FALL, false),
-    MidnightCarp(150, Season.WINTER, false),
-    Squid(80, Season.WINTER, false),
-    Tuna(100, Season.WINTER, false),
-    Perch(55, Season.WINTER, false),
-    Flounder(100, Season.SPRING, false),
-    Lionfish(100, Season.SPRING, false),
-    Herring(30, Season.SPRING, false),
-    GhostFish(45, Season.SPRING, false),
-    Tilapia(75, Season.SUMMER, false),
-    Dorado(100, Season.SUMMER, false),
-    Sunfish(30, Season.SUMMER, false),
-    RainbowTrout(65, Season.SUMMER, false),
-    Legend(5000, Season.SPRING, true),
-    GlacierFish(100, Season.WINTER, true),
-    Angler(900, Season.FALL, true),
-    CrimsonFish(1500, Season.SUMMER, true)
+    Salmon("Salmon",75, Season.FALL, false),
+    Sardine("Sardin",40, Season.FALL, false),
+    Shad("Shad",60, Season.FALL, false),
+    BlueDiscus("Blue Discus",120, Season.FALL, false),
+    MidnightCarp("Midnight Carp",150, Season.WINTER, false),
+    Squid("Squid",80, Season.WINTER, false),
+    Tuna("Tuna",100, Season.WINTER, false),
+    Perch("Perch",55, Season.WINTER, false),
+    Flounder("Flounder",100, Season.SPRING, false),
+    Lionfish("Lion Fish",100, Season.SPRING, false),
+    Herring("Herring",30, Season.SPRING, false),
+    GhostFish("Ghost Fish",45, Season.SPRING, false),
+    Tilapia("Tilapia", 75, Season.SUMMER, false),
+    Dorado("Dorado",100, Season.SUMMER, false),
+    Sunfish("Sun Fish",30, Season.SUMMER, false),
+    RainbowTrout("Rainbow Trout",65, Season.SUMMER, false),
+    Legend("Legend",5000, Season.SPRING, true),
+    GlacierFish("Glacier Fish",100, Season.WINTER, true),
+    Angler("Angler",900, Season.FALL, true),
+    CrimsonFish("Crimson Fish",1500, Season.SUMMER, true)
    ;
 
+    private final String name;
     private final int price;
     private final Season season;
     private final boolean legendary;
-    Fish(int price, Season season, boolean legendary) {
+    Fish(String name, int price, Season season, boolean legendary) {
+        this.name = name;
         this.price = price;
         this.season = season;
         this.legendary = legendary;
@@ -64,5 +67,10 @@ public enum Fish {
             tries --;
         }
         return null;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

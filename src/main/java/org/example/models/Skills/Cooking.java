@@ -1,5 +1,6 @@
 package org.example.models.Skills;
 
+import org.example.models.Enums.CookingRecipeType;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Food;
 import org.example.models.Game;
@@ -11,18 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Cooking implements Skill{
-    private List<Food> learntRecipes = new ArrayList<>();
+    private List<CookingRecipeType> learntRecipes = Game.getCurrentPlayer().getBackPack().getLearntCookingRecipe();
     int level = 0;
     int capacity = 0;
 
-
-    public void learnRecipe(Food food) {
-        learntRecipes.add(food);
-    }
-
-    public List<Food> getLearntRecipes() {
-        return learntRecipes;
-    }
 
 //    public void cookFood(Food food) {
 //        for(Food f : food.getIngredients().keySet()) {

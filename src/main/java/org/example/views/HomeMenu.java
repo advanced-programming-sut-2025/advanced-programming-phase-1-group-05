@@ -27,6 +27,8 @@ public class HomeMenu implements AppMenu {
             System.out.println(controller.craftItem(matcher.group("item_name")));
         } else if((matcher = HomeMenuCommands.CookingRefrigerator.getMatcher(input)) != null) {
             System.out.println(controller.putOrPickRefrigerator(matcher.group("action"), matcher.group("item")));
+        } else if((matcher = HomeMenuCommands.ShowCookingRecipes.getMatcher(input)) != null) {
+            System.out.println(controller.showLearntRecipes());
         }
     }
 

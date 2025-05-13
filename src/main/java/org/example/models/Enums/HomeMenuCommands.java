@@ -7,7 +7,8 @@ public enum HomeMenuCommands {
     CraftingRecipes("crafting show recipes"),
     CraftItem("crafting item <item_name>"),
     CookingRefrigerator("cooking refrigerator (?<action>\\S+) (?<item>\\S+)"),
-    CookingPrepare("cooking prepare (?<recipe_name>\\S+)");
+    CookingPrepare("cooking prepare (?<recipe_name>\\S+)"),
+    ShowCookingRecipes("cooking show recipes");
 
     private final String pattern;
     HomeMenuCommands(String pattern) {

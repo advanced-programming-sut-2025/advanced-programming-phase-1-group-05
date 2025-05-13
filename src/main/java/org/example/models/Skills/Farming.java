@@ -134,6 +134,7 @@ public class Farming implements Skill{
             case 1: {
                 Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Sprinkler);
                 Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.BeeHouse);
+                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.FarmersLunch);
                 break;
             }
             case 2: {

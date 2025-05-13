@@ -1,6 +1,7 @@
 package org.example.models.Skills;
 
 import org.example.models.*;
+import org.example.models.Enums.CookingRecipeType;
 import org.example.models.Enums.CraftType;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.MineralType;
@@ -58,6 +59,7 @@ public class Mining implements Skill{
         switch(level){
             case 1: {
                 Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.CherryBomb);
+                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.MinersTreat);
                 break;
             }
             case 2: {

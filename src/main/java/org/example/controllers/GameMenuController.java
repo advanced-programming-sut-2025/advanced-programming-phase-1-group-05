@@ -783,6 +783,8 @@ public class GameMenuController extends MenuController {
         else if (directions == null) return new Result(false, "Invalid direction");
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(directions[0], directions[1]);
+        if(tile.getItemOnTile() != null)
+            return new Result(false,"The tile is already occupied.");
         tile.setItemOnTile(item);
         return new Result(true, "Item placed successfully");
     }
@@ -809,13 +811,10 @@ public class GameMenuController extends MenuController {
 
     //add item cheat code
     public Result addItemCheatCode(String name, int count) {
-        List<Item> items = Game.getDatabase().getItemDatabase();
         Item item = null;
-        for (Item i : items) {
-            if (i.getName().equals(name)) {
-                item = i;
-            }
-        }
+        if(Game.getDatabase().getItem(name) != null) item = Game.getDatabase().getItem(name);
+        if(ItemRegistry.findItemByName(name) != null) item = ItemRegistry.findItemByName(name);
+
         if (item == null) return new Result(false, "** No item with that name exists **");
         Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
         return new Result(true, "** " + count + " of " + name + " added to your inventory **");

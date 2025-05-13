@@ -14,6 +14,9 @@ public class Food implements Item{
         this.recipeType = cookingRecipeType;
     }
 
+    public CookingRecipeType getRecipeType() {
+        return recipeType;
+    }
     public Map<Material, Integer> getIngredients() {
         return recipeType.getIngredients();
     }

@@ -5,6 +5,7 @@ import org.example.models.Craft;
 import org.example.models.Enums.CookingRecipeType;
 import org.example.models.Enums.CraftType;
 import org.example.models.Enums.Material;
+import org.example.models.Skills.Cooking;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,7 +79,6 @@ public class HomeMenuController {
 
     //put or pick from refrigerator
     public Result putOrPickRefrigerator(String action, String itemName) {
-        HashMap<Food, Integer> refrigeratedFoods = Game.getCurrentPlayer().getFarm().getRefrigeratedFoods();
         switch (action) {
             case "pick": {
                 if(Game.getCurrentPlayer().getBackPack().isInventoryFull())
@@ -119,7 +119,7 @@ public class HomeMenuController {
     public Result showLearntRecipes() {
         StringBuilder output = new StringBuilder();
         output.append("** Your Learnt Recipes **\n");
-        for(Food recipe : Game.getCurrentPlayer().getCookingSkill().getLearntRecipes()) {
+        for(CookingRecipeType recipe : Game.getCurrentPlayer().getBackPack().getLearntCookingRecipe()) {
             output.append(recipe.getName()).append("\n");
         }
         return new Result(true, output.toString());
@@ -130,10 +130,10 @@ public class HomeMenuController {
 //        Food food = getFoodByName(foodName);
 //        //errors
 //        if(food == null) return new Result(false, "No food with that name");
-//        if(!Game.getCurrentPlayer().getCookingSkill().getLearntRecipes().contains(food))
+//        if(!Game.getCurrentPlayer().getBackPack().getLearntCookingRecipe().contains(food.))
 //            return new Result(false, "Aww you don't know how to cook this food");
-//        for(Food f : food.getIngredients().keySet()) {
-//            if(!Game.getCurrentPlayer().getBackPack().getInventory().containsKey(f))
+//        for(CookingRecipeType f : food.getIngredients().keySet()) {
+//            if(!Game.getCurrentPlayer().getBackPack().getInventory().containsKey(f.))
 //                return new Result(false, "You don't have all the ingredients in your inventory");
 //        }
 //        if(Game.getCurrentPlayer().getBackPack().isInventoryFull())

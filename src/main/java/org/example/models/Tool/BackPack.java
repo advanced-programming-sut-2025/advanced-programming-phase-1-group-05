@@ -20,6 +20,11 @@ public class BackPack implements Tool <BackPackType>{
     private final HashMap<Item, Integer> foragingItems = new HashMap<>();
     private final ArrayList<CraftType> learntRecipes = new ArrayList<>();
     private final ArrayList<CookingRecipeType> learntCookingRecipe = new ArrayList<>();
+    {
+        learntCookingRecipe.add(CookingRecipeType.FriedEgg);
+        learntCookingRecipe.add(CookingRecipeType.BakedFish);
+        learntCookingRecipe.add(CookingRecipeType.Salad);
+    }
     private boolean isStorageUnlimited = false;
 
     public void setBackPackType(BackPackType type) {

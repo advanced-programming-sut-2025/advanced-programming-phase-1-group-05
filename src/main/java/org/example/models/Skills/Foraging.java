@@ -1,5 +1,6 @@
 package org.example.models.Skills;
 
+import org.example.models.Enums.CookingRecipeType;
 import org.example.models.Enums.CraftType;
 import org.example.models.Game;
 import org.example.models.GameTile;
@@ -53,9 +54,23 @@ public class Foraging implements Skill{
     }
     @Override
     public void handleLevelChangeTrophies(int level){
-        if(level == 1) Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.CharcoalKlin);
-        else if(level == 4) {
-            Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.MysticTreeSeed);
+        switch (level) {
+            case 1: {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.CharcoalKlin);
+                break;
+            }
+            case 2: {
+                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.VegetableMedley);
+                break;
+            }
+            case 3: {
+                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.SurvivalBurger);
+                break;
+            }
+            case 4: {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.MysticTreeSeed);
+                break;
+            }
         }
     }
 }
