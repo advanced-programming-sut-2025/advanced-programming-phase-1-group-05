@@ -1,7 +1,9 @@
 package org.example.models.Skills;
 
+import org.example.models.BasicItem;
 import org.example.models.Enums.CookingRecipeType;
 import org.example.models.Enums.ItemLevel;
+import org.example.models.Enums.Material;
 import org.example.models.Food;
 import org.example.models.Game;
 import org.example.models.Player;
@@ -17,16 +19,15 @@ public class Cooking implements Skill{
     int capacity = 0;
 
 
-//    public void cookFood(Food food) {
-//        for(Food f : food.getIngredients().keySet()) {
-//            Game.getCurrentPlayer().getBackPack().removeFromInventory
-//                    (f, Game.getCurrentPlayer().getBackPack().getInventory().get(f));
-//        }
-//        Game.getCurrentPlayer().increaseEnergy(-3);
-//        Game.getCurrentPlayer().getBackPack().addToInventory(food, 1);
-//    }
+    public void cookFood(Food food) {
+        for(Material f : food.getIngredients().keySet()) {
+            Game.getCurrentPlayer().getBackPack().removeFromInventory
+                    (new BasicItem(f.getName(), f.getPrice()), Game.getCurrentPlayer().getBackPack().getInventory().get(f));
+        }
+        Game.getCurrentPlayer().increaseEnergy(-3);
+        Game.getCurrentPlayer().getBackPack().addToInventory(food, 1);
+    }
 
-    public void consumeFood(String food, Player player) {}
 
     @Override
     public int getLevel() {

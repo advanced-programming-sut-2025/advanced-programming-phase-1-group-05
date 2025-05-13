@@ -73,4 +73,8 @@ public enum Fish implements Material {
     public String getName() {
         return name;
     }
+    @Override
+    public int getPrice() {
+        return price;
+    }
 }

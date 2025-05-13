@@ -902,7 +902,7 @@ public class GameMenuController extends MenuController {
     }
 
     public Result printMap(Matcher matcher) {
-        GameMap map = Game.getGameMap();  // فرض بر اینه که Game singleton یا staticه
+        GameMap map = Game.getGameMap();
 
         try {
             if (matcher.group("x") != null && matcher.group("y") != null && matcher.group("size") != null) {
@@ -910,7 +910,6 @@ public class GameMenuController extends MenuController {
                 int y = Integer.parseInt(matcher.group("y"));
                 int size = Integer.parseInt(matcher.group("size"));
 
-                // بررسی معتبر بودن
                 if (!map.isInBounds(x, y)) {
                     return new Result(false, "Coordinates out of map bounds.");
                 }
@@ -926,6 +925,18 @@ public class GameMenuController extends MenuController {
         } catch (Exception e) {
             return new Result(false, "Invalid input format for map printing.");
         }
+    }
+
+    public Result eatFood(String foodName){
+        Item food = Game.getCurrentPlayer().getBackPack().getFromInventory(foodName);
+        if (food == null) return new Result(false, "You don't have that food in your inventory.");
+        else if(food instanceof Food){
+            int energy = ((Food)food).getEnergy();
+            Game.getCurrentPlayer().increaseEnergy(energy);
+            Game.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
+            return new Result(true, "You consumed the food successfully!");
+        }
+        else return new Result(false, "That's...not edible.");
     }
 
 }

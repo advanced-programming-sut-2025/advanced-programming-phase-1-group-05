@@ -18,6 +18,7 @@ public class HomeMenu implements AppMenu {
             //no logic in view
             int selectedOption = Game.getScanner().nextInt();
             if(selectedOption == 1) controller.showAllRecipes();
+            else if(selectedOption == 2) controller.showAllCookingRecipes();
         }
         if(!Game.getGameMap().whereAmI().equals("Home"))
             System.out.println("You can only use that command when you're in your home!");
@@ -29,6 +30,10 @@ public class HomeMenu implements AppMenu {
             System.out.println(controller.putOrPickRefrigerator(matcher.group("action"), matcher.group("item")));
         } else if((matcher = HomeMenuCommands.ShowCookingRecipes.getMatcher(input)) != null) {
             System.out.println(controller.showLearntRecipes());
+        } else if((matcher = HomeMenuCommands.CookingPrepare.getMatcher(input)) != null) {
+            System.out.println(controller.prepareFood(matcher.group("recipe_name")));
+        } else {
+            System.out.println("Invalid Command!");
         }
     }
 

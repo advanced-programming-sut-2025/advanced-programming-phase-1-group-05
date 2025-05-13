@@ -115,6 +115,27 @@ public class HomeMenuController {
         }
     }
 
+    //show all recipes
+    public Result showAllCookingRecipes() {
+        StringBuilder output = new StringBuilder();
+        String error1 = "(you haven't learned this recipe yet)";
+        String error2 = "(you don't have enough ingredients)";
+
+        for (CookingRecipeType c : CookingRecipeType.values()) {
+            output.append(c.getName()).append(" ");
+            if (!Game.getCurrentPlayer().getBackPack().getLearntCookingRecipe().contains(c))
+                output.append(error1).append("\n");
+            else {
+                for (Material item : c.getIngredients().keySet()) {
+                    if (!Game.getCurrentPlayer().getBackPack().getInventory().containsKey(item)) {
+                        output.append(error2).append("\n");
+                        break;
+                    }
+                }
+            }
+        }
+        return new Result(true, output.toString());
+    }
     //show learnt recipes
     public Result showLearntRecipes() {
         StringBuilder output = new StringBuilder();
@@ -126,21 +147,21 @@ public class HomeMenuController {
     }
 
     //prepare food
-//    public Result prepareFood(String foodName) {
-//        Food food = getFoodByName(foodName);
-//        //errors
-//        if(food == null) return new Result(false, "No food with that name");
-//        if(!Game.getCurrentPlayer().getBackPack().getLearntCookingRecipe().contains(food.))
-//            return new Result(false, "Aww you don't know how to cook this food");
-//        for(CookingRecipeType f : food.getIngredients().keySet()) {
-//            if(!Game.getCurrentPlayer().getBackPack().getInventory().containsKey(f.))
-//                return new Result(false, "You don't have all the ingredients in your inventory");
-//        }
-//        if(Game.getCurrentPlayer().getBackPack().isInventoryFull())
-//            return new Result(false, "Inventory is full");
-//
-//        Game.getCurrentPlayer().getCookingSkill().cookFood(food);
-//        return new Result(true, "Your food is cooked and ready!");
-//    }
+    public Result prepareFood(String foodName) {
+        Food food = getFoodByName(foodName);
+        //errors
+        if(food == null) return new Result(false, "No food with that name");
+        if(!Game.getCurrentPlayer().getBackPack().getLearntCookingRecipe().contains(food.getRecipeType()))
+            return new Result(false, "Aww you don't know how to cook this food");
+        for(Material f : food.getIngredients().keySet()) {
+            if(!Game.getCurrentPlayer().getBackPack().getInventory().containsKey(f))
+                return new Result(false, "You don't have all the ingredients in your inventory");
+        }
+        if(Game.getCurrentPlayer().getBackPack().isInventoryFull())
+            return new Result(false, "Inventory is full");
+
+        Game.getCurrentPlayer().getCookingSkill().cookFood(food);
+        return new Result(true, "Your food is cooked and ready!");
+    }
 
 }

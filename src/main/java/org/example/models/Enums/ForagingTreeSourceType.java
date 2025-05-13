@@ -43,4 +43,8 @@ public enum ForagingTreeSourceType implements Material {
             return f;
         }
     }
+    @Override
+    public int getPrice() {
+        return 0;
+    }
 }

@@ -69,4 +69,8 @@ public enum CookingRecipeType implements Material{
         }
         return null;
     }
+    @Override
+    public int getPrice() {
+        return price;
+    }
 }

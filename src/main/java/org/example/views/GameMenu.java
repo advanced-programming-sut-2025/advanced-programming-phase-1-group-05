@@ -249,6 +249,8 @@ public class GameMenu implements org.example.views.AppMenu {
         } else if((matcher = GameMenuCommands.AddItemCC.getMatcher(input)) != null) {
             System.out.println(gameMenuController.addItemCheatCode(matcher.group("item_name"),
                     Integer.parseInt(matcher.group("count"))));
+        } else if((matcher = GameMenuCommands.EatFood.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.eatFood(matcher.group("food_name")));
         }
         else {
             System.out.println("Invalid Command!");
