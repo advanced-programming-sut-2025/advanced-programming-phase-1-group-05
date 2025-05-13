@@ -7,6 +7,7 @@ import org.example.models.Enums.Weather;
 import java.util.*;
 
 public class Game {
+    private static Scanner scanner = new Scanner(System.in);
     private static GameMap gameMap = new GameMap();
     private static Player currentPlayer;
     private static ArrayList<Player> players = new ArrayList<Player>();
@@ -121,7 +122,9 @@ public class Game {
         }
         return commonMessages;
     }
-
+    public static Scanner getScanner() {
+        return scanner;
+    }
     public static void addGift(Gift gift) {
         gifts.add(gift);
     }

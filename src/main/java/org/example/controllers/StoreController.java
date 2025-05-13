@@ -99,7 +99,17 @@ public class StoreController {
             } else if(productName.equals("Iridium Trash Can")) {
                 Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iridium);
             }
-        } else {
+            //add craft recipes to learnt recipes
+        } else if(productName.contains("Recipe")) {
+            if(productName.equals("Dehydrator Recipe")) {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
+            } else if(productName.equals("Grass Starter Recipe")) {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
+            } else if(productName.equals("Fish Smoker Recipe")) {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
+            }
+        }
+        else {
             player.getBackPack().addToInventory(product, count);
         }
 

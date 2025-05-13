@@ -4,11 +4,12 @@ import java.util.Scanner;
 
 import org.example.controllers.DBController;
 import org.example.controllers.MenuController;
+import org.example.models.Game;
 
 public class Main {
     public static void main(String[] args) {
 //        DBController.loadUsers();
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = Game.getScanner();
         MenuController menuController = new MenuController(scanner);
         menuController.run();
     }

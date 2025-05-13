@@ -113,6 +113,7 @@ public class Farming implements Skill{
     @Override
     public void increaseLevel() {
         if(level < 4) this.level ++;
+        handleLevelChangeTrophies(level);
     }
     @Override
     public boolean canGoToNextLevel() {
@@ -126,5 +127,29 @@ public class Farming implements Skill{
     @Override
     public void increaseCapacity() {
         this.capacity += 5;
+    }
+    @Override
+    public void handleLevelChangeTrophies(int level){
+        switch(level) {
+            case 1: {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Sprinkler);
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.BeeHouse);
+                break;
+            }
+            case 2: {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.QualitySprinkler);
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.DeluxeScareCrow);
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.CheesePress);
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.PreservesJar);
+                break;
+            }
+            case 3: {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.IridiumSprinkler);
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Keg);
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Loom);
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.OilMaker);
+                break;
+            }
+        }
     }
 }

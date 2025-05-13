@@ -66,9 +66,14 @@ public class HomeMenuController {
         else if(Game.getCurrentPlayer().getBackPack().getLevel().getCapacity() ==
                 Game.getCurrentPlayer().getBackPack().getInventory().size())
             return new Result(false, "Your inventory is full");
-
-        Game.getCurrentPlayer().getBackPack().addToInventory(selectedRecipe, 1);
-        return new Result(true, "Item crafted successfully and ready to be used");
+        boolean success = false;
+        success = selectedRecipe.buildCraft();
+        if(success) {
+            Game.getCurrentPlayer().getBackPack().addToInventory(selectedRecipe, 1);
+            return new Result(true, "Item crafted successfully and ready to be used");
+        } else {
+            return new Result(false, "You don't have enough ingredients");
+        }
     }
 
     //put or pick from refrigerator

@@ -66,4 +66,8 @@ public class Cooking implements Skill{
     public boolean isMaxLevel() {
         return level == 4;
     }
+    @Override
+    public void handleLevelChangeTrophies(int level){
+
+    }
 }

@@ -1,6 +1,7 @@
 package org.example.models.Skills;
 
 import org.example.models.*;
+import org.example.models.Enums.CraftType;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.MineralType;
 import org.example.models.Tool.FishingPole;
@@ -36,6 +37,7 @@ public class Mining implements Skill{
     @Override
     public void increaseLevel() {
         if (level < 4) this.level++;
+        handleLevelChangeTrophies(level);
     }
 
     @Override
@@ -50,5 +52,22 @@ public class Mining implements Skill{
     @Override
     public void increaseCapacity() {
         this.capacity += 10;
+    }
+    @Override
+    public void handleLevelChangeTrophies(int level){
+        switch(level){
+            case 1: {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.CherryBomb);
+                break;
+            }
+            case 2: {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Bomb);
+                break;
+            }
+            case 3: {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.MegaBomb);
+                break;
+            }
+        }
     }
 }

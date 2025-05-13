@@ -9,5 +9,6 @@ public interface Skill {
     boolean canGoToNextLevel();
     void increaseCapacity();
     boolean isMaxLevel();
+    void handleLevelChangeTrophies(int level);
 
 }

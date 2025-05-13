@@ -15,6 +15,9 @@ public class HomeMenu implements AppMenu {
         if (!showedOptions) {
             controller.showOptions();
             showedOptions = true;
+            //no logic in view
+            int selectedOption = Game.getScanner().nextInt();
+            if(selectedOption == 1) controller.showAllRecipes();
         }
         if(!Game.getGameMap().whereAmI().equals("Home"))
             System.out.println("You can only use that command when you're in your home!");

@@ -84,6 +84,9 @@ public class Tree implements Item{
             Game.getCurrentPlayer().getBackPack().getInventory().put(Game.getDatabase().getItem(this.treeType.getSeed()),randomNum);
             return new Result(true, "The tree was cut down, giving you " + randomNum + " of its seeds!");
         }
+        public void setProtectedByScareCrow(boolean protectedByScareCrow) {
+            this.protectedByScareCrow = protectedByScareCrow;
+        }
 
         public Map.Entry<Integer,Integer> getCoordinates(){
             return coordinates;

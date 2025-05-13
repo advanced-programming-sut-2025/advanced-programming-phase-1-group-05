@@ -150,6 +150,10 @@ public class FruitAndVegetable implements Item {
             hasBeenWatered = hasBeenFertilized && isRetainingSoil;
         }
     }
+
+    public void setProtectedByScareCrow(boolean protectedByScareCrow) {
+        this.protectedByScareCrow = protectedByScareCrow;
+    }
     public void setHarvested(boolean harvested){
         isHarvested = harvested;
     }

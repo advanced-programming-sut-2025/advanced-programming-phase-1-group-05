@@ -43,4 +43,8 @@ public class Fishing implements Skill {
     public void increaseCapacity() {
         this.capacity += 10;
     }
+    @Override
+    public void handleLevelChangeTrophies(int level){
+
+    }
 }

@@ -59,5 +59,9 @@ public class AnimalCare implements Skill{
     public boolean isMaxLevel() {
         return level == 10;
     }
+    @Override
+    public void handleLevelChangeTrophies(int level) {
+
+    }
 
 }

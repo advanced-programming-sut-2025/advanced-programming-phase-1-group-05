@@ -51,6 +51,13 @@ public enum MineralType implements Material, Item {
         return types[random.nextInt(types.length)];
     }
 
+    public static boolean isMineral(Material m) {
+        for(MineralType t : MineralType.values()) {
+            if(m.equals(t)) return true;
+        }
+        return false;
+    }
+
     @Override
     public void setCoordinates(Map.Entry<Integer, Integer> coordinates) {
         //

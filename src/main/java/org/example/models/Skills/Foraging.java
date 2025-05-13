@@ -1,5 +1,6 @@
 package org.example.models.Skills;
 
+import org.example.models.Enums.CraftType;
 import org.example.models.Game;
 import org.example.models.GameTile;
 import org.example.models.Item;
@@ -27,6 +28,7 @@ public class Foraging implements Skill{
     @Override
     public void increaseLevel() {
         if(level < 4) this.level ++;
+        handleLevelChangeTrophies(level);
     }
     @Override
     public boolean canGoToNextLevel() {
@@ -48,5 +50,12 @@ public class Foraging implements Skill{
     @Override
     public boolean isMaxLevel() {
         return level == 10;
+    }
+    @Override
+    public void handleLevelChangeTrophies(int level){
+        if(level == 1) Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.CharcoalKlin);
+        else if(level == 4) {
+            Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.MysticTreeSeed);
+        }
     }
 }

@@ -45,4 +45,8 @@ public class Crafting implements Skill{
         return level == 4;
     }
 
+    @Override
+    public void handleLevelChangeTrophies(int level){
+
+    }
 }

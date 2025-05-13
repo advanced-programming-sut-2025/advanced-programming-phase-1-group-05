@@ -15,6 +15,10 @@ public class BasicItem implements Item {
         this.price = price;
     }
 
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
+
     public Material getMaterial() {
         return material;
     }

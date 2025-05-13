@@ -244,6 +244,11 @@ public class GameMenu implements org.example.views.AppMenu {
         } else if((matcher = GameMenuCommands.FertilizeCrop.getMatcher(input)) != null) {
             System.out.println(gameMenuController.fertilizeCrop(matcher.group("fertilizer"),
                     new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y")))));
+        } else if((matcher = GameMenuCommands.PlaceItem.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.placeItem(matcher.group("item_name"), matcher.group("direction")));
+        } else if((matcher = GameMenuCommands.AddItemCC.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.addItemCheatCode(matcher.group("item_name"),
+                    Integer.parseInt(matcher.group("count"))));
         }
         else {
             System.out.println("Invalid Command!");
