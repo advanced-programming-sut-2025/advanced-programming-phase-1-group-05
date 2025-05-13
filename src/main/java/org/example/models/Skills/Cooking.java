@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Cooking implements Skill{
-    private List<CookingRecipeType> learntRecipes = Game.getCurrentPlayer().getBackPack().getLearntCookingRecipe();
     int level = 0;
     int capacity = 0;
 

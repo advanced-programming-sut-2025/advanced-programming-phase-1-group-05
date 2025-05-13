@@ -10,7 +10,7 @@ public class TrashCan implements Tool <ItemLevel> {
     ItemLevel level = ItemLevel.Normal;
 
     public void removeFromInventory(String name, int quantity, boolean flag){
-        HashMap<Item, Integer> items = App.getCurrentPlayer().getBackPack().getInventory();
+        HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
         for(Item item : items.keySet()){
             if(!flag) quantity = items.get(item);
             if(item.getName().equals(name)){

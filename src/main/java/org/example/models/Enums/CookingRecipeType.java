@@ -24,9 +24,9 @@ public enum CookingRecipeType implements Material{
     Bread("Bread", Map.of(Game.getDatabase().getItem("Wheat Flour"), 1),50, "", "Stardrop Saloon", 60),
     SalmonDinner("Salmon Dinner", Map.of(Fish.Salmon, 1, CropType.Amaranth, 1, CropType.Kale, 1),125, "", "Leah Reward", 300),
     VegetableMedley("Vegetable Medley", Map.of(CropType.Tomato, 1, CropType.Beet, 1),165, "", "Foraging Level 2", 120),
-    FarmersLunch("Farmer's Lunch", Map.of(CookingRecipeType.Omelet, 1, CropType.Parsnip, 1),200, "Farming (5 hours)", "SFarming level 1", 150),
-    SurvivalBurger("Survival Burger", Map.of(CookingRecipeType.Bread, 1, CropType.Carrot, 1, CropType.Eggplant, 1),125, "Foraging (5 hours)", "Foraging level 3", 180),
-    DishOTheSea("Dish O' the Sea", Map.of(Fish.Sardine, 2, CookingRecipeType.HashBrowns, 1),150, "Fishing (5 hours)", "Fishing level 2", 220),
+    FarmersLunch("Farmer's Lunch", Map.of(CropType.HotPepper, 1, CropType.Parsnip, 1),200, "Farming (5 hours)", "SFarming level 1", 150),
+    SurvivalBurger("Survival Burger", Map.of(CropType.HotPepper, 1, CropType.Carrot, 1, CropType.Eggplant, 1),125, "Foraging (5 hours)", "Foraging level 3", 180),
+    DishOTheSea("Dish O' the Sea", Map.of(Fish.Sardine, 2, CropType.HotPepper, 1),150, "Fishing (5 hours)", "Fishing level 2", 220),
     SeaformPudding("Seaform Pudding", Map.of(Fish.Flounder, 1, Fish.MidnightCarp, 1),175, "Fishing (10 hours)", "Fishing level 3", 300),
     MinersTreat("Miner's Treat", Map.of(CropType.Carrot, 1, Game.getDatabase().getItem("Egg"), 1, Game.getDatabase().getItem("Milk"), 1),125, "Mining (5 hours)", "Mining level 1", 100);
 

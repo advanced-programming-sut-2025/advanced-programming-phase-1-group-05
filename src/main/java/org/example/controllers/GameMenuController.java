@@ -231,19 +231,19 @@ public class GameMenuController extends MenuController {
 
     //cheat code set energy
     public Result setEnergy(int value) {
-        App.getCurrentPlayer().increaseEnergy(value);
+        Game.getCurrentPlayer().increaseEnergy(value);
         return new Result(true, "** your energy got increased by " + value + " **");
     }
 
     //cheat code unlimited energy
     public Result unlimitedEnergy() {
-        App.getCurrentPlayer().setUnlimitedEnergy();
+        Game.getCurrentPlayer().setUnlimitedEnergy();
         return new Result(true, "** your energy is unlimited now **");
     }
 
     //showing the items in inventory
     public Result showInventory() {
-        HashMap<Item, Integer> items = App.getCurrentPlayer().getBackPack().getInventory();
+        HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
         StringBuilder output = new StringBuilder();
         for (Item item : items.keySet()) {
             if (items.get(item) != 0)
@@ -263,11 +263,11 @@ public class GameMenuController extends MenuController {
 
     //equip a certain tool
     public Result equipTool(String name) {
-        HashMap<Item, Integer> items = App.getCurrentPlayer().getBackPack().getInventory();
+        HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
         for (Item item : items.keySet()) {
             if (item.getName().equals(name)) {
                 items.put(item, items.get(item) - 1);
-                App.getCurrentPlayer().setCurrentItem(item);
+                Game.getCurrentPlayer().setCurrentItem(item);
                 return new Result(true, "You're now equipped with " + item.getName());
             }
         }
@@ -276,7 +276,7 @@ public class GameMenuController extends MenuController {
 
     //showing current tool
     public Result showCurrentTool() {
-        Item currentItem = App.getCurrentPlayer().getCurrentItem();
+        Item currentItem = Game.getCurrentPlayer().getCurrentItem();
         if (currentItem instanceof Tool) {
             return new Result(true, "You are equipped with " + currentItem.getName());
         } else {

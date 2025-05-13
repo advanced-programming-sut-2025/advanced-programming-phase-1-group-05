@@ -134,6 +134,53 @@ public class GameMenu implements org.example.views.AppMenu {
         else if ((matcher = GameMenuCommands.PrintMap.getMatcher(input)) != null) {
             System.out.println(gameMenuController.printMap(matcher));
         }
+        else if ((matcher = GameMenuCommands.ShowEnergy.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.showEnergy().getMessage());
+        } else if ((matcher = GameMenuCommands.EnergySetCC.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.setEnergy(Integer.parseInt(matcher.group("value"))).getMessage());
+        } else if ((matcher = GameMenuCommands.EnergyUnlimitedCC.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.unlimitedEnergy().getMessage());
+        } else if ((matcher = GameMenuCommands.ShowInventory.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.showInventory().getMessage());
+        } else if ((matcher = GameMenuCommands.InventoryTrash.getMatcher(input)) != null) {
+            //boolean hasFlag = matcher.group("-n") != null;
+            System.out.println(gameMenuController.removeFromInventory(matcher.group("itemName"),
+                    Integer.parseInt(matcher.group("number")), true));
+        } else if ((matcher = GameMenuCommands.EquipTool.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.equipTool(matcher.group("toolName")));
+        } else if ((matcher = GameMenuCommands.ShowCurrentTool.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.showCurrentTool());
+        } else if ((matcher = GameMenuCommands.ShowAvailableTools.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.showAvailableTools());
+        } else if ((matcher = GameMenuCommands.UpgradeTool.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.upgradeTool(matcher.group("toolName")));
+        } else if ((matcher = GameMenuCommands.ShowCraftInfo.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.showCraftInfo(matcher.group("craftName")));
+        } else if ((matcher = GameMenuCommands.UseTool.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.useTool(matcher.group("direction")));
+        } else if((matcher = GameMenuCommands.ShowCraftInfo.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.showCraftInfo(matcher.group("craftName")));
+        } else if((matcher = GameMenuCommands.PlowTile.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.plowTile(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y"))));
+        } else if((matcher = GameMenuCommands.Plant.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.plantSeed(matcher.group("seed"),
+                    new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y")))));
+        } else if((matcher = GameMenuCommands.ShowPlant.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.showPlant(new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")),
+                    Integer.parseInt(matcher.group("y")))));
+        } else if((matcher = GameMenuCommands.HowMuchWater.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.howMuchWaterLeft());
+        } else if((matcher = GameMenuCommands.FertilizeCrop.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.fertilizeCrop(matcher.group("fertilizer"),
+                    new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y")))));
+        } else if((matcher = GameMenuCommands.PlaceItem.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.placeItem(matcher.group("item_name"), matcher.group("direction")));
+        } else if((matcher = GameMenuCommands.AddItemCC.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.addItemCheatCode(matcher.group("itemName"),
+                    Integer.parseInt(matcher.group("count"))));
+        } else if((matcher = GameMenuCommands.EatFood.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.eatFood(matcher.group("food_name")));
+        }
         else if ((matcher = GameMenuCommands.BuildAnimalHouse.getMatcher(input)) != null) {
             System.out.println(storeController.buildAnimalHouse(matcher));
         }
@@ -205,52 +252,6 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(gameMenuController.showAllQuests().getMessage());
         } else if (input.matches("quests\\s+finish\\s+-i\\s+\\d+")) {
             System.out.println(gameMenuController.finishQuest(input).getMessage());
-        } else if ((matcher = GameMenuCommands.ShowEnergy.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.showEnergy().getMessage());
-        } else if ((matcher = GameMenuCommands.EnergySetCC.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.setEnergy(Integer.parseInt(matcher.group("value"))).getMessage());
-        } else if ((matcher = GameMenuCommands.EnergyUnlimitedCC.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.unlimitedEnergy().getMessage());
-        } else if ((matcher = GameMenuCommands.ShowInventory.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.showInventory().getMessage());
-        } else if ((matcher = GameMenuCommands.InventoryTrash.getMatcher(input)) != null) {
-            boolean hasFlag = matcher.group("-n") != null;
-            System.out.println(gameMenuController.removeFromInventory(matcher.group("itemName"),
-                    Integer.parseInt(matcher.group("number")), hasFlag));
-        } else if ((matcher = GameMenuCommands.EquipTool.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.equipTool(matcher.group("toolName")));
-        } else if ((matcher = GameMenuCommands.ShowCurrentTool.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.showCurrentTool());
-        } else if ((matcher = GameMenuCommands.ShowAvailableTools.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.showAvailableTools());
-        } else if ((matcher = GameMenuCommands.UpgradeTool.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.upgradeTool(matcher.group("toolName")));
-        } else if ((matcher = GameMenuCommands.ShowCraftInfo.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.showCraftInfo(matcher.group("name")));
-        } else if ((matcher = GameMenuCommands.UseTool.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.useTool(matcher.group("direction")));
-        } else if((matcher = GameMenuCommands.ShowCraftInfo.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.showCraftInfo(matcher.group("craftName")));
-        } else if((matcher = GameMenuCommands.PlowTile.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.plowTile(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y"))));
-        } else if((matcher = GameMenuCommands.Plant.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.plantSeed(matcher.group("seed"),
-                    new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y")))));
-        } else if((matcher = GameMenuCommands.ShowPlant.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.showPlant(new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")),
-                    Integer.parseInt(matcher.group("y")))));
-        } else if((matcher = GameMenuCommands.HowMuchWater.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.howMuchWaterLeft());
-        } else if((matcher = GameMenuCommands.FertilizeCrop.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.fertilizeCrop(matcher.group("fertilizer"),
-                    new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y")))));
-        } else if((matcher = GameMenuCommands.PlaceItem.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.placeItem(matcher.group("item_name"), matcher.group("direction")));
-        } else if((matcher = GameMenuCommands.AddItemCC.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.addItemCheatCode(matcher.group("item_name"),
-                    Integer.parseInt(matcher.group("count"))));
-        } else if((matcher = GameMenuCommands.EatFood.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.eatFood(matcher.group("food_name")));
         }
         else {
             System.out.println("Invalid Command!");
