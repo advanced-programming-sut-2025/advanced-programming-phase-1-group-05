@@ -18,12 +18,12 @@ public class Product implements Item {
     private int soldToday = 0;
     private final BuildingType buildingType;
     private final List<Season> seasons = new ArrayList<>();
-    private final Map<Item, Integer> costs = new HashMap<>();
+    private final Map<String, Integer> costs = new HashMap<>();
     private ItemLevel itemLevel = ItemLevel.Normal;
 
 
     public Product(String name, int price, int limit
-    , BuildingType buildingType, List<Season> seasons, Map<Item, Integer> costs) {
+    , BuildingType buildingType, List<Season> seasons, Map<String, Integer> costs) {
         this.name = name;
         this.price = price;
         this.limit = limit;
@@ -85,7 +85,7 @@ public class Product implements Item {
         return getRemainingForToday() > 0;
     }
 
-    public Map<Item, Integer> getCosts() {
+    public Map<String, Integer> getCosts() {
         return costs;
     }
 }

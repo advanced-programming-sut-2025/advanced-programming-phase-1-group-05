@@ -19,12 +19,6 @@ public class App {
     public static void addUser(User user) {
         users.put(user.getUsername(), user);
     }
-    public static Player getCurrentPlayer() {
-        return currentPlayer;
-    }
-    public static void setCurrentPlayer(Player currentPlayer) {
-        App.currentPlayer = currentPlayer;
-    }
 
     public static void setAllUsers(ArrayList<User> allusers) {
         allUsers = allusers;

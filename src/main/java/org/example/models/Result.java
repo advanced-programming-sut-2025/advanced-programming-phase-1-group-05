@@ -27,6 +27,6 @@ public class Result {
 
     @Override
     public String toString() {
-        return (success ? "[SUCCESS] " : "[ERROR] ") + message;
+        return message;
     }
 }

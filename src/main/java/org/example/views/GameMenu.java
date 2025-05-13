@@ -175,12 +175,12 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(gameMenuController.fertilizeCrop(matcher.group("fertilizer"),
                     new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y")))));
         } else if((matcher = GameMenuCommands.PlaceItem.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.placeItem(matcher.group("item_name"), matcher.group("direction")));
+            System.out.println(gameMenuController.placeItem(matcher.group("itemName"), matcher.group("direction")));
         } else if((matcher = GameMenuCommands.AddItemCC.getMatcher(input)) != null) {
             System.out.println(gameMenuController.addItemCheatCode(matcher.group("itemName"),
                     Integer.parseInt(matcher.group("count"))));
         } else if((matcher = GameMenuCommands.EatFood.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.eatFood(matcher.group("food_name")));
+            System.out.println(gameMenuController.eatFood(matcher.group("foodName")));
         }
         else if ((matcher = GameMenuCommands.BuildAnimalHouse.getMatcher(input)) != null) {
             System.out.println(storeController.buildAnimalHouse(matcher));

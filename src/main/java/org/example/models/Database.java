@@ -22,6 +22,11 @@ public class Database {
     List<Store> stores = new ArrayList<>();
     Map<String, NPC> NPCs = new HashMap<>();
 
+    public Database() {
+        //initializePlantDatabase();
+        initializeStoresAndItems();loadNPCs();
+    }
+
     //start when the game starts
     //put this somewhere where everything is initialized
     public void initializePlantDatabase() {
@@ -64,7 +69,7 @@ public class Database {
         itemDatabase.add(new BasicItem("Truffle", 625));
         String json;
         try {
-            json = new String(Files.readAllBytes(Paths.get("stores.json")));
+            json = new String(Files.readAllBytes(Paths.get("src/main/resources/stores.json")));
         } catch (IOException e) {
             System.out.println("can't get json.");
             return;
@@ -87,24 +92,27 @@ public class Database {
                 String productName = storeProductObject.get("name").getAsString();
                 int price = storeProductObject.get("price").getAsInt();
                 int limit = storeProductObject.get("limit").getAsInt();
-                String buildingType = storeProductObject.get("buildingType").getAsString();
-                JsonArray seasons = storeProductObject.get("seasons").getAsJsonArray();
-                Map<Item, Integer> costs = new HashMap<>();
+                String buildingType = safeGetAsString(storeProductObject, "buildingType");
+                JsonArray seasons = storeProductObject.has("seasons") && !storeProductObject.get("seasons").isJsonNull()
+                        ? storeProductObject.get("seasons").getAsJsonArray()
+                        : null;
+                Map<String, Integer> costs = new HashMap<>();
                 List<Season> seasonsInStock = new ArrayList<>();
-                for (JsonElement season : seasons) {
-                    seasonsInStock.add(Season.valueOf(season.getAsString()));
+                if (seasons != null) {
+                    for (JsonElement season : seasons) {
+                        seasonsInStock.add(Season.valueOf(season.getAsString()));
+                    }
                 }
                 JsonObject costObject = storeProductObject.getAsJsonObject("cost");
-                for (Map.Entry<String, JsonElement> entry : costObject.entrySet()) {
-                    String itemName = entry.getKey();
-                    int quantity = entry.getValue().getAsInt();
-                    Item item = Game.getDatabase().getItem(itemName);
-                    if (item == null) {
-                        continue;
+                if (costObject != null) {
+                    for (Map.Entry<String, JsonElement> entry : costObject.entrySet()) {
+                        String itemName = entry.getKey();
+                        int quantity = entry.getValue().getAsInt();
+
+                        costs.put(itemName, quantity);
                     }
-                    costs.put(item, quantity);
                 }
-                Product product = new Product(productName, price, limit, BuildingType.valueOf(buildingType), seasonsInStock, costs);
+                Product product = new Product(productName, price, limit, BuildingType.fromString(buildingType), seasonsInStock, costs);
                 products.add(product);
                 itemDatabase.add(new BasicItem(productName, product.getPrice()));
             }
@@ -136,7 +144,7 @@ public class Database {
     public void loadNPCs() {
         String json;
         try {
-            json = new String(Files.readAllBytes(Paths.get("npcInfos.json")));
+            json = new String(Files.readAllBytes(Paths.get("src/main/resources/npcInfos.json")));
         } catch (IOException e) {
             System.out.println("can't get json.");
             return;
@@ -152,21 +160,21 @@ public class Database {
             JsonObject requestsObject = npcObject.getAsJsonObject("requests");
             JsonObject rewardsObject = npcObject.getAsJsonObject("rewards");
 
-            List<Item> favorites = new ArrayList<>();
+            List<String> favorites = new ArrayList<>();
             for (JsonElement favoriteElement : favoritesArray) {
-                favorites.add(getItem(favoriteElement.getAsString()));
+                favorites.add(favoriteElement.getAsString());
             }
 
-            Map<Item, Integer> requests = new HashMap<>();
+            Map<String, Integer> requests = new HashMap<>();
             for (Map.Entry<String, JsonElement> entry : requestsObject.entrySet()) {
-                Item item = getItem(entry.getKey());
+                String item = entry.getKey();
                 int quantity = entry.getValue().getAsInt();
                 requests.put(item, quantity);
             }
 
-            Map<Item, Integer> rewards = new HashMap<>();
+            Map<String, Integer> rewards = new HashMap<>();
             for (Map.Entry<String, JsonElement> entry : rewardsObject.entrySet()) {
-                Item item = getItem(entry.getKey());
+                String item = entry.getKey();
                 int quantity = entry.getValue().getAsInt();
                 rewards.put(item, quantity);
             }
@@ -179,5 +187,12 @@ public class Database {
     public Map<String, NPC> getNPCs() {
         return NPCs;
     }
+
+    public static String safeGetAsString(JsonObject obj, String key) {
+        JsonElement el = obj.get(key);
+        return el != null && !el.isJsonNull() ? el.getAsString() : null;
+    }
+
+
 
 }

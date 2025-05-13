@@ -9,15 +9,15 @@ public class NPC {
     int x, y;
     private final String name;
     private Map<Player, Integer> friendshipPoints = new HashMap<>();
-    private final List<Item> favorites = new ArrayList<>();
-    private Map<Item, Integer> requests = new LinkedHashMap<>();
-    private Map<Item, Integer> rewards = new LinkedHashMap<>();
+    private final List<String> favorites = new ArrayList<>();
+    private Map<String, Integer> requests = new LinkedHashMap<>();
+    private Map<String, Integer> rewards = new LinkedHashMap<>();
     private Map<Integer, Boolean> questsStatus = new LinkedHashMap<>();
     private Building residence; // will implement this after the building class is done
     private Map<Player, Integer> unlockedQuests = new LinkedHashMap<>();
     private final int daysToUnlockThirdQuest;
-    public NPC(String name, List<Item> favorites, Map<Item, Integer> requests,
-               Map<Item, Integer> rewards) {
+    public NPC(String name, List<String> favorites, Map<String, Integer> requests,
+               Map<String, Integer> rewards) {
         this.name = name;
         this.favorites.addAll(favorites);
         this.requests.putAll(requests);
@@ -74,10 +74,10 @@ public class NPC {
     public int getFriendshipPoints(Player player){
         return friendshipPoints.get(player);
     }
-    public Map.Entry<Item, Integer> getQuest(int questIndex){
+    public Map.Entry<String, Integer> getQuest(int questIndex){
         questIndex --;
         int index = 0;
-        for (Map.Entry<Item, Integer> entry : requests.entrySet()) {
+        for (Map.Entry<String, Integer> entry : requests.entrySet()) {
             if (questIndex == index) return entry;
             index ++;
         }
@@ -87,8 +87,8 @@ public class NPC {
         questsStatus.put(questIndex, true);
         Item rewardItem = null;
         int quantity = 0;
-        for (Map.Entry<Item, Integer> entry : rewards.entrySet()) {
-            rewardItem = entry.getKey();
+        for (Map.Entry<String, Integer> entry : rewards.entrySet()) {
+            rewardItem = Game.getDatabase().getItem(entry.getKey());
             break;
         }
         if (rewardItem != null) {
@@ -99,12 +99,13 @@ public class NPC {
         }
         return new AbstractMap.SimpleEntry<>(rewardItem, quantity);
     }
-    public Map<Item, Integer> getRequests() {
+    public Map<String, Integer> getRequests() {
         return requests;
     }
     public void sendGift(Player player){
         Random rand = new Random();
-        Item gift = favorites.get(rand.nextInt(favorites.size()));
+        String giftName = favorites.get(rand.nextInt(favorites.size()));
+        Item gift = Game.getDatabase().getItem(giftName);
         player.getBackPack().addToInventory(gift, rand.nextInt(4)+1);
 
         int messageNumber = rand.nextInt(3);

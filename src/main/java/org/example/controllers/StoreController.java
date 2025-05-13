@@ -225,15 +225,15 @@ public class StoreController {
 
 
     private boolean canAfford(Product product) {
-        for (Map.Entry<Item, Integer> cost : product.getCosts().entrySet()) {
-            Item item = cost.getKey();
+        for (Map.Entry<String, Integer> cost : product.getCosts().entrySet()) {
+            Item item = Game.getDatabase().getItem(cost.getKey());
             int quantity = cost.getValue();
             if (Game.getCurrentPlayer().getItemQuantity(item) < quantity) {
                 return false;
             }
         }
-        for (Map.Entry<Item, Integer> cost : product.getCosts().entrySet()) {
-            Item item = cost.getKey();
+        for (Map.Entry<String, Integer> cost : product.getCosts().entrySet()) {
+            Item item = Game.getDatabase().getItem(cost.getKey());
             int quantity = cost.getValue();
             Player currentPlayer = Game.getCurrentPlayer();
             currentPlayer.getBackPack().getInventory().remove(item, quantity);

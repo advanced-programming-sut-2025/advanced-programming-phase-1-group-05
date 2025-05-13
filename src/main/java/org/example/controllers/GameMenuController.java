@@ -672,10 +672,10 @@ public class GameMenuController extends MenuController {
         if (lastNPC == null) return Result.error("No NPC chosen");
         output.append(lastNPC.getName()).append(" quests for you");
         int index = 0;
-        for (Map.Entry<Item, Integer> entry : lastNPC.getRequests().entrySet()) {
+        for (Map.Entry<String, Integer> entry : lastNPC.getRequests().entrySet()) {
             index++;
             output.append("\n").append(index).append(". ")
-                    .append(entry.getValue()).append(" ").append(entry.getKey().getName()).append("(s)");
+                    .append(entry.getValue()).append(" ").append(Game.getDatabase().getItem(entry.getKey()).getName()).append("(s)");
             if (index == lastNPC.getNumOfUnlockedQuests(player)) break;
         }
 
@@ -693,7 +693,7 @@ public class GameMenuController extends MenuController {
             return new Result(false, "Invalid quest index");
         }
         if (lastNPC == null) return Result.error("No NPC chosen");
-        Map.Entry<Item, Integer> quest = lastNPC.getQuest(questIndex);
+        Map.Entry<String, Integer> quest = lastNPC.getQuest(questIndex);
         if (quest == null) return new Result(false, "Quest not found");
         Player player = Game.getCurrentPlayer();
         if (Math.abs(player.getX() - lastNPC.getX()) > 1 || Math.abs(player.getY() - lastNPC.getY()) > 1) {
@@ -704,7 +704,8 @@ public class GameMenuController extends MenuController {
             return new Result(false,
                     "Another farmer's already taken care of that one. Why not lend a hand elsewhere?");
         }
-        if (player.getItemQuantity(quest.getKey()) < quest.getValue()) {
+        Item item = Game.getDatabase().getItem(quest.getKey());
+        if (player.getItemQuantity(item) < quest.getValue()) {
             return new Result(false,
                     "Whoops! You're still a few shy of the total. Harvest more and pop back over!");
         }

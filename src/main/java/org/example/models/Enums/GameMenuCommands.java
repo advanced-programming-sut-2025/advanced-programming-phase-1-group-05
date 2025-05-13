@@ -40,7 +40,7 @@ public enum GameMenuCommands {
     GiveBouquet("flower\\s+-u\\s+(?<username>\\S+)"),
     Hug("hug\\s+-u\\s+(?<username>\\S+)"),
     PlowTile("plow tile (?<x>\\d+) (?<y>\\d+)"),
-    EatFood("eat (?<food_name>\\S+)");
+    EatFood("eat (?<foodName>\\S+)");
 
     private final String pattern;
     GameMenuCommands(String pattern) {

@@ -1,5 +1,6 @@
 package org.example.models.Enums;
 
+import org.example.models.Game;
 import org.example.models.Item;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public class ItemRegistry {
     public static Item findItemByName(String name) {
         String upper = name.toUpperCase();
 
+        if (Game.getDatabase().getItem(name) != null)
+            return Game.getDatabase().getItem(name);
         for (Class<? extends Enum<?>> enumClass : itemEnums) {
             for (Enum<?> constant : enumClass.getEnumConstants()) {
                 if (constant.name().equalsIgnoreCase(upper)) {

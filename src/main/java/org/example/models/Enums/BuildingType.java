@@ -21,4 +21,13 @@ public enum BuildingType {
             return BuildingType.Barn;
         return null;
     }
+
+    public static BuildingType fromString(String name) {
+        if (name == null) return null;
+
+        for (BuildingType type : BuildingType.values()) {
+            if (type.toString().equalsIgnoreCase(name)) return type;
+        }
+        return null;
+    }
 }
