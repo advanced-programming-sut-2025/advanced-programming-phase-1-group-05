@@ -78,6 +78,12 @@ public class GameTile {
 
     @Override
     public String toString() {
+        Player currentPlayer = Game.getCurrentPlayer();
+        if (currentPlayer != null &&
+                currentPlayer.getX() == this.x &&
+                currentPlayer.getY() == this.y) {
+            return "🧍"; // Player character
+        }
         if (isOccupied) return "♥️";
         if (itemOnTile != null) {
             if(itemOnTile instanceof FruitAndVegetable) return "🍎";

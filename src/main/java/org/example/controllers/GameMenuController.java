@@ -924,6 +924,8 @@ public class GameMenuController extends MenuController {
                 }
 
                 System.out.println("Printing map section at (" + x + "," + y + ") with size " + size + ":");
+                int farmNum = Game.getCurrentPlayer().getMapNum();
+                GameMap.generatePlaceOfPlayer(farmNum);
                 map.printMapSection1(x,y,size);
                 map.printMapSection2(x,y,size);
                 map.printMapSection3(x,y,size);
@@ -931,6 +933,8 @@ public class GameMenuController extends MenuController {
                 return new Result(true, "Map section printed.");
             } else {
                 System.out.println("Printing full map:");
+                int farmNum = Game.getCurrentPlayer().getMapNum();
+                GameMap.generatePlaceOfPlayer(farmNum);
                 map.printFullMap();
                 return new Result(true, "Full map printed.");
             }
@@ -975,9 +979,9 @@ public class GameMenuController extends MenuController {
                 int y = Integer.parseInt(matcher.group("y"));
                 i = x;
                 j = y;
-                //todo: اگر گلخانه بود تاثیر نداره
                 if (Game.getGameMap().getTile(x,y).getTileType().equals(TileType.Tree)) {
                     Game.getGameMap().getTile(x,y).setTileType(TileType.Flat);
+                    //درخت هارو به فلت تبدیل میکنه رعد و برق
                 }
                 if (Game.getGameMap().getTile(x,y).getTileType().equals(TileType.GreenHouse)){
                     return new Result(false, "Cheat Thor failed!");
