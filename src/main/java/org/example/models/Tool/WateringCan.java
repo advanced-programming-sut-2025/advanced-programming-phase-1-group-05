@@ -49,7 +49,7 @@ public class WateringCan implements Tool<ItemLevel> {
     }
     @Override
     public String getName() {
-        return "";
+        return "Watering Can";
     }
 
     @Override
@@ -72,7 +72,6 @@ public class WateringCan implements Tool<ItemLevel> {
         //only in blacksmith
         if (!level.isMaxLevel()) {
             level = level.upgradeLevel();
-            System.out.println(getName() + " upgraded to " + level.getName());
         }
     }
 }

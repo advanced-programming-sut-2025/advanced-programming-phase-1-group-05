@@ -18,9 +18,10 @@ public class Foraging implements Skill{
         increaseCapacity();
     }
 
-    public void chopTree(String treeType, Axe axe) {}
+    public void cutDownTree(){
+        increaseCapacity();
+    }
 
-    //public Seed getRandomSeedFromWildTree() { return null; }
 
     @Override
     public void setLevel(int level) {

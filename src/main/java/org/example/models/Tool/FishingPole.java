@@ -45,6 +45,9 @@ public class FishingPole implements Tool<FishingPoleType> {
         return new Result(true, "");
     }
 
+    public void setFishingPoleType(FishingPoleType fishingPoleType) {
+        this.level = fishingPoleType;
+    }
     @Override
     public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
@@ -60,7 +63,6 @@ public class FishingPole implements Tool<FishingPoleType> {
     public void upgradeLevel(){
         if (!level.isMaxLevel()) {
             level = level.nextLevel();
-            System.out.println(getName() + " upgraded to " + level.getName());
         }
     }
 }

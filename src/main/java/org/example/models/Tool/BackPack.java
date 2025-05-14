@@ -129,7 +129,6 @@ public class BackPack implements Tool <BackPackType>{
     public void upgradeLevel(){
         if (!level.isMaxLevel()) {
             level = level.nextLevel();
-            System.out.println(getName() + " upgraded to " + level.getName());
         }
     }
 

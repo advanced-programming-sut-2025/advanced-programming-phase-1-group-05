@@ -38,6 +38,10 @@ public class Scythe implements Tool<ItemLevel> {
             } else if(item == database.getItem("Fiber")) {
                 Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
                 tile.setItemOnTile(null);
+            } else if(item instanceof ForagingItem) {
+                Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
+                tile.setItemOnTile(null);
+                return new Result(true, item.getName() + " harvested successfully");
             }
         }
         return new Result(true, "");
@@ -57,7 +61,6 @@ public class Scythe implements Tool<ItemLevel> {
     public void upgradeLevel(){
         if (!level.isMaxLevel()) {
             level = level.upgradeLevel();
-            System.out.println(getName() + " upgraded to " + level.getName());
         }
     }
 }

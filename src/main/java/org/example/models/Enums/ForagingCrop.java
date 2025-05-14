@@ -1,6 +1,8 @@
 package org.example.models.Enums;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public enum ForagingCrop implements Material {
     CommonMushroom("Common Mushroom", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER), 40, 38),
@@ -55,10 +57,22 @@ public enum ForagingCrop implements Material {
 
     public static ForagingCrop fromString(String name){
         for (ForagingCrop cropType : ForagingCrop.values()) {
-            if (cropType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+            if (cropType.getName().equals(name)) {
                 return cropType;
             }
         }
         return null;
+    }
+    public static ForagingCrop getRandomForagingCrop (Season currentSeason) {
+        Random random = new Random();
+        List<ForagingCrop> foragingTypes = new ArrayList<>();
+        for (ForagingCrop f : ForagingCrop.values()) {
+            if (f.getSeasons().contains(currentSeason)) foragingTypes.add(f);
+        }
+        while (true){
+            int rand = random.nextInt(foragingTypes.size());
+            ForagingCrop f = foragingTypes.get(rand);
+            return f;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package org.example.models;
 
 import org.example.models.Enums.BuildingType;
+import org.example.models.Enums.MineralType;
 import org.example.models.Enums.TileType;
 
 public class GameTile {
@@ -78,13 +79,17 @@ public class GameTile {
     @Override
     public String toString() {
         if (isOccupied) return "♥️";
-        if (itemOnTile != null) return "🍎";
+        if (itemOnTile != null) {
+            if(itemOnTile instanceof FruitAndVegetable) return "🍎";
+            else if(itemOnTile instanceof Tree) return "\uD83C\uDF33";
+            else if(itemOnTile instanceof Mineral) return "\uD83D\uDC8E";
+            else if(itemOnTile instanceof ForagingItem) return "🍎";
+            else if(itemOnTile.getName().equals("Wood")) return "\uD83E\uDEB5";
+        }
         if (tileType == TileType.Building) return "🏠";
         if (tileType == TileType.Water) return "🌊";
         if (tileType == TileType.Soil) return "🟫";
         if (tileType == TileType.Flat) return "🟩";
-        if (tileType == TileType.Tree) return "\uD83C\uDF33";
-        if (tileType == TileType.Stone) return "\uD83E\uDEA8";
         if (tileType == TileType.Mine) return "⛰\uFE0F";
         if (tileType == TileType.GreenHouse) return "\uD83C\uDF38";
         if (tileType == TileType.CheatThor) return "O";

@@ -2,6 +2,7 @@ package org.example.models.Tool;
 
 import org.example.models.*;
 import org.example.models.Enums.ItemLevel;
+import org.example.models.Enums.MineralType;
 import org.example.models.Enums.TileType;
 import org.example.models.Skills.Mining;
 import org.example.models.Skills.Skill;
@@ -39,7 +40,8 @@ public class Pickaxe implements Tool <ItemLevel> {
             if(mining.isMaxLevel()) energyUsage --;
             if(!reduceEnergy(energyUsage))
                 return new Result(false, "You don't have enough energy");
-            ((Mining) mining).mine(tile, this);
+            if(item instanceof Mineral) ((Mining) mining).mine(tile, this);
+            else Game.getCurrentPlayer().getForagingSkill().forageItem(tile);
         }
 
         return new Result(true, "");
@@ -60,7 +62,6 @@ public class Pickaxe implements Tool <ItemLevel> {
     public void upgradeLevel(){
         if (!level.isMaxLevel()) {
             level = level.upgradeLevel();
-            System.out.println(getName() + " upgraded to " + level.getName());
         }
     }
 
