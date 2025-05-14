@@ -32,7 +32,7 @@ public class Pickaxe implements Tool <ItemLevel> {
             if(mining.isMaxLevel()) energyUsage --;
             if(!reduceEnergy(energyUsage))
                 return new Result(false, "You don't have enough energy");
-            tile.setTileType(TileType.Soil);
+            tile.setTileType(TileType.Flat);
         } else if(item == null && tile.getTileType() == TileType.Water){
             return new Result(false, "You can't use the pickaxe on this tile");
         } else if(item != null) {

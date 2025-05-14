@@ -11,6 +11,7 @@ public class GameTile {
     private Item itemOnTile = null;
     private boolean hasBeenFertilized = false;
     private String fertilizer = "";
+    private boolean isOccupied = false;
     // can't be walked over if it's occupied
 
     public GameTile(int x, int y, TileType tileType) {
@@ -66,9 +67,16 @@ public class GameTile {
     public String getFertilizer() {
         return fertilizer;
     }
+    public boolean isOccupied() {
+        return isOccupied;
+    }
+    public void occupy() {
+        isOccupied = true;
+    }
 
     @Override
     public String toString() {
+        if (isOccupied) return "♥️";
         if (itemOnTile != null) return "🍎";
         if (tileType == TileType.Building) return "🏠";
         if (tileType == TileType.Water) return "🌊";

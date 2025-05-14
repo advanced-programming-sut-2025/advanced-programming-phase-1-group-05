@@ -73,6 +73,10 @@ public class Player {
 
     public void setEnergy(int energy) {
         this.energy = energy;
+        if(energy <= 0) {
+            energy = 0;
+            faint();
+        }
     }
 
     public int getX() {
@@ -93,10 +97,9 @@ public class Player {
 
     public void faint() {
         //TODO use time controller
-        TimeAndDate timeAndDate = new TimeAndDate();
-        timeAndDate.advanceDay();
+        GameManager.getGameClock().advanceDay();
         //TODO waking up in the same spot // wait for map mechanism
-        energy = energy * 3 / 2;
+        energy = energy * 3 / 4;
     }
 
     public void increaseEnergy(int amount) {

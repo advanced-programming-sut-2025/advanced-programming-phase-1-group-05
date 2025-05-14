@@ -49,7 +49,8 @@ public class MenuController {
                 (currentMenuName.equals("Main Menu") && target == Menu.PROFILE) ||
                 (currentMenuName.equals("Main Menu") && target == Menu.AVATAR)||
                 (currentMenuName.equals("Main Menu") && target == Menu.LOGIN) ||
-                (currentMenuName.equals("Main Menu") && target == Menu.REGISTER)){
+                (currentMenuName.equals("Main Menu") && target == Menu.REGISTER ||
+                        (currentMenuName.equals("Game Menu") && target == Menu.HOME))){
             return true;
         }
 

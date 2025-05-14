@@ -123,7 +123,17 @@ public class GameMap {
         generateFarm(0, 70, 30, 30, 2);         // Farm B
         generateFarm(70, 0, 30, 30, 3);         // Farm C
         generateFarm(70, 70, 30, 30, 4);        // Farm D
-
+        int[][] farmCoords = {
+                {0, 0},     // A
+                {0, 70},    // B
+                {70, 0},    // C
+                {70, 70}    // D
+        };
+        int i = 0;
+        for (Player player : Game.getAllPlayers()) {
+            int[] coords = farmCoords[i++];
+            player.setFarm(coords[0], coords[1]);
+        }
         generateVillageCenter();               // وسط
 
     }
@@ -258,7 +268,7 @@ public class GameMap {
 
     public void setTile(int x, int y, GameTile tile) {
         if (isInBounds(x, y)) {
-            map[x - 1][y - 1] = tile;
+            map[x][y] = tile;
         }
     }
 
@@ -381,8 +391,19 @@ public class GameMap {
         }
     }
 
+    public void setPlayerCoordinates(){
+        for(int i = 1; i < MAP_HEIGHT; i ++) {
+            for(int j = 1; j < MAP_WIDTH; j ++) {
+                GameTile tile = getTile(i, j);
+                if(tile.getTileType().equals(TileType.Building)) {
+                    Game.getCurrentPlayer().setCoordinate(i, j);
+                }
+            }
+        }
+    }
+
     public String whereAmI() {
-        String location ="";
+        String location ="Home";
         //TODO implement
         return location;
     }
