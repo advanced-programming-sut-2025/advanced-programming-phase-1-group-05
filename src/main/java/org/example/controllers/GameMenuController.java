@@ -1009,6 +1009,6 @@ public class GameMenuController extends MenuController {
                 }
             }
         }
-        return null;
+        return new Result(true, "Green House built!");
     }
 }
