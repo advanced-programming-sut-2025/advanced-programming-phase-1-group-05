@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GameMenuController extends MenuController {
+    private static int numGenerateMap = 0;
     public static User currentUser;
     public static List<Player> selectedPlayers;
     private static Map<String, Game> activeGames = new HashMap<>();
@@ -913,6 +914,7 @@ public class GameMenuController extends MenuController {
     }
 
     public Result printMap(Matcher matcher) {
+        numGenerateMap++;
 //        GameMap map = Game.getGameMap();
 
         try {
@@ -926,8 +928,10 @@ public class GameMenuController extends MenuController {
                 }
 
                 System.out.println("Printing map section at (" + x + "," + y + ") with size " + size + ":");
-                int farmNum = Game.getCurrentPlayer().getMapNum();
-                GameMap.generatePlaceOfPlayer(farmNum);
+                if (numGenerateMap == 1) {
+                    int farmNum = Game.getCurrentPlayer().getMapNum();
+                    GameMap.generatePlaceOfPlayer(farmNum);
+                }
                 map.printMapSection1(x,y,size);
                 map.printMapSection2(x,y,size);
                 map.printMapSection3(x,y,size);
@@ -935,8 +939,10 @@ public class GameMenuController extends MenuController {
                 return new Result(true, "Map section printed.");
             } else {
                 System.out.println("Printing full map:");
-                int farmNum = Game.getCurrentPlayer().getMapNum();
-                GameMap.generatePlaceOfPlayer(farmNum);
+                if (numGenerateMap == 1) {
+                    int farmNum = Game.getCurrentPlayer().getMapNum();
+                    GameMap.generatePlaceOfPlayer(farmNum);
+                }
                 map.printFullMap();
                 return new Result(true, "Full map printed.");
             }
@@ -1091,19 +1097,23 @@ public class GameMenuController extends MenuController {
                     return new Result(false, "No valid path to target.");
                 }
 
-                Point nextStep = path.get(0);
-                GameTile previousTile = Game.getGameMap().getTile(startX, startY);
+                // فقط آخرین نقطه مسیر (مقصد نهایی)
+                Point finalStep = path.get(path.size() - 1);
+                GameTile previousTile = Game.getGameMap().getTile(currentPlayer.getX(), currentPlayer.getY());
                 if (previousTile != null) {
                     previousTile.setTileType(TileType.Flat);
                     previousTile.setOccupied(false);
                 }
-                currentPlayer.setCoordinate(nextStep.x, nextStep.y);
-                if (targetTile != null) {
-                    targetTile.setTileType(TileType.Player);
-                    targetTile.setOccupied(true);
+
+                currentPlayer.setCoordinate(finalStep.x, finalStep.y);
+
+                GameTile newTile = Game.getGameMap().getTile(finalStep.x, finalStep.y);
+                if (newTile != null) {
+                    newTile.setTileType(TileType.Player);
+                    newTile.setOccupied(true);
                 }
 
-                return new Result(true, "Player moved to (" + nextStep.x + "," + nextStep.y + ")");
+                return new Result(true, "Player moved to (" + finalStep.x + "," + finalStep.y + ")");
             }
         } catch (Exception e) {
             return new Result(false, "Invalid input format.");
