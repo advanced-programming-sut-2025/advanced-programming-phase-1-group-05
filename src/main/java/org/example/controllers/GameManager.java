@@ -12,8 +12,8 @@ public class GameManager {
 
     public static void nextDay(){
         resetEnergy();
-        checkNPCGifts();
-        checkForThirdQuest();
+        //checkNPCGifts();
+        //checkForThirdQuest();
         giveBackSoldItemGolds();
         getAnimalProducts();
     }
@@ -67,6 +67,8 @@ public class GameManager {
     public static void giveBackSoldItemGolds(){
         for (Map.Entry<Player, Item> entry : Game.soldItems.entrySet()) {
             entry.getKey().addGold(entry.getValue().getPrice());
+            System.out.println("added " + entry.getValue().getPrice() + " gold to " +
+                    entry.getKey().getUsername() + " for selling " + entry.getValue().getName());
         }
         Game.soldItems.clear();
     }

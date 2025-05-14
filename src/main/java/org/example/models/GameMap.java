@@ -123,17 +123,7 @@ public class GameMap {
         generateFarm(0, 70, 30, 30, 2);         // Farm B
         generateFarm(70, 0, 30, 30, 3);         // Farm C
         generateFarm(70, 70, 30, 30, 4);        // Farm D
-        int[][] farmCoords = {
-                {0, 0},     // A
-                {0, 70},    // B
-                {70, 0},    // C
-                {70, 70}    // D
-        };
-        int i = 0;
-        for (Player player : Game.getAllPlayers()) {
-            int[] coords = farmCoords[i++];
-            player.setFarm(coords[0], coords[1]);
-        }
+
         generateVillageCenter();               // وسط
 
     }

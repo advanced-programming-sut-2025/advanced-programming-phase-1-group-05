@@ -34,7 +34,7 @@ public class AnimalHouse extends Building{
         animals.remove(animal);
     }
     public BuildingType getType() {
-        return BuildingType.valueOf(Type.name());
+        return BuildingType.fromString(Type.name());
     }
 
     public List<Animal> getAnimals () {

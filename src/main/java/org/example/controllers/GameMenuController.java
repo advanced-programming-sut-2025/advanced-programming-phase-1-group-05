@@ -171,9 +171,9 @@ public class GameMenuController extends MenuController {
         }
         pendingGame = game;
 
-        if (!currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername())) {
-            return Result.error("It's not your turn.");
-        }
+//        if (!currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername())) {
+//            return Result.error("It's not your turn.");
+//        }
 
         Game.getCurrentPlayer().increaseEnergy(-50);
 
@@ -183,7 +183,7 @@ public class GameMenuController extends MenuController {
             Game.getCurrentPlayer().resetEnergy();
         }
 
-        return Result.success("Now it's " + Game.getCurrentPlayer().getName() + "'s turn." +
+        return Result.success("Now it's " + Game.getCurrentPlayer().getUsername() + "'s turn." +
                 Game.getCurrentPlayer().getNotifications());
     }
 

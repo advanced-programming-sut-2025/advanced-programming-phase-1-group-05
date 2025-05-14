@@ -18,7 +18,7 @@ public class Game {
     private static final Database database = new Database();
     public static int currentPlayerIndex = 0;
     public static Map<Player, Item> soldItems = new HashMap<>();
-    // TODO a method for changing the weather
+
     // TODO make the game methods nonstatic
     public static Player getCurrentPlayer() {
         return currentPlayer;
@@ -64,16 +64,33 @@ public class Game {
             currentPlayerIndex = 0;
             GameManager.getGameClock().advanceTime(60);
         }
+
         currentPlayer = players.get(currentPlayerIndex);
+    }
+
+    public static void initializeFarms() {
+        int[][] farmCoords = {
+                {0, 0},     // A
+                {0, 70},    // B
+                {70, 0},    // C
+                {70, 70}    // D
+        };
+        int i = 0;
+        for (Player player : players) {
+            int[] coords = farmCoords[i++];
+            player.setFarm(coords[0], coords[1]);
+        }
     }
 
     public static Result startTheGame() {
         try {
 //            database.initializeStoresAndItems();
 //            database.initializePlantDatabase();
-//            database.loadNPCs();
-//            Player.initializeFriendships(players);
+//            database.loadNPCs();/
 
+
+            initializeFarms();
+            Player.initializeFriendships(players);
             GameManager.getGameClock().setDay(1);
             GameManager.getGameClock().setSeason(Season.SPRING);
             GameManager.getGameClock().setHour(9);

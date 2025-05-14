@@ -93,14 +93,14 @@ public class Database {
                 int price = storeProductObject.get("price").getAsInt();
                 int limit = storeProductObject.get("limit").getAsInt();
                 String buildingType = safeGetAsString(storeProductObject, "buildingType");
-                JsonArray seasons = storeProductObject.has("seasons") && !storeProductObject.get("seasons").isJsonNull()
-                        ? storeProductObject.get("seasons").getAsJsonArray()
+                JsonArray seasons = storeProductObject.has("season") && !storeProductObject.get("season").isJsonNull()
+                        ? storeProductObject.get("season").getAsJsonArray()
                         : null;
                 Map<String, Integer> costs = new HashMap<>();
                 List<Season> seasonsInStock = new ArrayList<>();
                 if (seasons != null) {
                     for (JsonElement season : seasons) {
-                        seasonsInStock.add(Season.valueOf(season.getAsString()));
+                        seasonsInStock.add(Season.fromString(season.getAsString()));
                     }
                 }
                 JsonObject costObject = storeProductObject.getAsJsonObject("cost");
@@ -127,6 +127,7 @@ public class Database {
         }
         return null;
     }
+
 
 
 

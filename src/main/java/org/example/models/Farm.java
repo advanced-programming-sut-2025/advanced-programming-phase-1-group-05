@@ -62,7 +62,7 @@ public class Farm {
 
         public ShippingBin(int farmStartY, int farmEndX) {
             startX = farmEndX - 5;
-            startY = farmStartY - 5;
+            startY = farmStartY + 5;
             endX = startX + 2;
             endY = startY + 1;
         }
@@ -70,6 +70,10 @@ public class Farm {
             boolean nearX = (x >= startX - 1 && x <= endX + 1);
             boolean nearY = (y >= startY - 1 && y <= endY + 1);
             return nearX && nearY;
+        }
+
+        public void getCoordinates() {
+            System.out.println(startX + "to" + endX + "," + startY + "to" + endY);
         }
     }
 
