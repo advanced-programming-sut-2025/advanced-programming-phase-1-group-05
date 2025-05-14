@@ -957,6 +957,7 @@ public class GameMenuController extends MenuController {
 
 
     public void helpReadingMap() {
+        System.out.println("Player :" + "\uD83E\uDDCD");
         System.out.println("Building :" + "🏠");
         System.out.println("Lake :" + "🌊");
         System.out.println("Soil :" + "🟫");

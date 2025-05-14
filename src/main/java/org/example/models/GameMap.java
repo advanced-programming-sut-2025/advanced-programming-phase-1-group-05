@@ -145,6 +145,7 @@ public class GameMap {
     }
 
     public static void generatePlaceOfPlayer(int farmNum) {
+        System.out.println(farmNum);
         int startX, startY;
 
         switch (farmNum) {
