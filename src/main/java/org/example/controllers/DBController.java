@@ -46,12 +46,10 @@ public class DBController {
 
     public static void loadUsers() {
         try {
-            // ایجاد فایل اگر وجود ندارد
             File file = new File(USERS_FILE);
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
-                // ذخیره آرایه خالی
                 try (FileWriter writer = new FileWriter(file)) {
                     writer.write("[]");
                 }
@@ -60,24 +58,20 @@ public class DBController {
 
             String json = FileController.getTextOfFile(USERS_FILE);
 
-            // اگر فایل خالی است با آرایه خالی شروع کن
             if (json == null || json.trim().isEmpty()) {
                 json = "[]";
             }
 
-            // پارس کردن JSON به صورت قطعی
             JsonElement element = JsonParser.parseString(json);
             JsonArray usersArray;
 
             if (element.isJsonArray()) {
                 usersArray = element.getAsJsonArray();
             } else {
-                // اگر آبجکت است، آن را به آرایه تبدیل کن
                 usersArray = new JsonArray();
                 if (element.isJsonObject()) {
                     usersArray.add(element);
                 }
-                // فایل را با فرمت صحیح ذخیره کن
                 try (FileWriter writer = new FileWriter(USERS_FILE)) {
                     gson.toJson(usersArray, writer);
                 }

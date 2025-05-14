@@ -30,7 +30,7 @@ public class Player {
     private Item currentItem;
     private static final List<Friendship> friendships = new ArrayList<>();
     private int proposalRejectionDaysLeft = 0;
-    private final Farm farm;
+    private Farm farm;
     private SharedWallet sharedWallet = null;
     private Map.Entry<Integer, Integer> coordinates;
     private List<AnimalHouse> coopAndBarns = new ArrayList<>();
@@ -52,9 +52,11 @@ public class Player {
         backPack.getInventory().put(new Hoe(), 1);
         backPack.getInventory().put(new Pickaxe(), 1);
         backPack.getInventory().put(new Scythe(), 1);
-        farm = new Farm(this);
     }
 
+    public void setFarm(int startX, int startY) {
+        this.farm = new Farm(this, startX, startY);
+    }
     public void addNotification(String message) {
         notifications.add(message);
     }
@@ -71,6 +73,10 @@ public class Player {
 
     public void setEnergy(int energy) {
         this.energy = energy;
+        if(energy <= 0) {
+            energy = 0;
+            faint();
+        }
     }
 
     public int getX() {
@@ -91,10 +97,9 @@ public class Player {
 
     public void faint() {
         //TODO use time controller
-        TimeAndDate timeAndDate = new TimeAndDate();
-        timeAndDate.advanceDay();
+        GameManager.getGameClock().advanceDay();
         //TODO waking up in the same spot // wait for map mechanism
-        energy = energy * 3 / 2;
+        energy = energy * 3 / 4;
     }
 
     public void increaseEnergy(int amount) {

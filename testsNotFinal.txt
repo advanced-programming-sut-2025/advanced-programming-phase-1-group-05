@@ -1,0 +1,85 @@
+register -u Nil-a11 -p Nil3333a%11 Nil3333a%11 -n nilalllala -e Nila.-a11@gma-il.com -g female
+pick question -q 2 -a Tehran -c Tehran
+menu enter Main
+menu enter Register
+register -u Melika-a11 -p Nil3333a%11 Nil3333a%11 -n nilalllala -e Nila.-a11@gma-il.com -g female
+pick question -q 2 -a Tehran -c Tehran
+login -u Nil-a11 -p Nil3333a%11
+menu enter Game
+game new -u Melika-a11
+game map 1
+game map2
+game map 2
+وجود آیتم های فصلی
+set coordinates * 50 15
+cheat add 1000 dollars
+purchase tomato seed
+داشتن قیمت متفاوت بر اساس فصل
+set coordinates * 30 40
+season
+show all products
+وجود ساعت کاری برای فروشگاه ها
+time
+cheat advance time 9h
+time
+purchase tomato seed -n 1
+وجود محدودیت روزانه در خرید
+cheat advance time 7h
+next turn 
+cheat add 7000 dollars
+purchase tomato seed -n 5
+purchase tomato seed -n 1
+نشان دادن محصولات موجود
+show all available products
+الزام برای حضور در فروشگاه
+set coordinates * 20 40
+purchase tomato seed -n 1
+نشان دادن کلیه محصولات فروشگاه
+set coordinates * 30 40
+show all products
+کم شدن پول بازیکن و اضافه شدن آیتم به inventory هنگام خرید
+show money
+purchase Artichoke Seed -n 1
+show money
+show inventory
+اختیاری بودن فلگ n-
+purchase Artichoke Seed
+خطا های فروشگاه :
+- نبود بازیکن در یک فروشگاه
+set coordinates * 20 40
+purchase tomato seed -n 1
+ نداشتن پول به میزان کافی
+set coordinates * 80 90
+purchase Iridium rod
+- وجود نداشتن آیتم گفته شده
+set coordinates * 30 40
+purchase blalala
+- وجود نداشتن آیتم در این فروشگاه
+purchase iridium rod
+- بیشتر بودن مقدار n از ظرفیت روزانه باقی مانده از آیتم
+purchase tomato seed -n 2
+اضافه کردن پول به بازیکن
+cheat add 100 dollars
+وجود سطل های فروش محصول
+get shipping bin coordinates ??
+اضافه شدن پول فروش آیتم ها پس از یک روز
+set coordinates * 24 5
+sell tomato seed -n 1
+cheat advance time 10h
+وجود دستور فروش
+sell tomato seed -n 1
+اختیاری بودن فلگ n-
+sell tomato seed
+خطاهای دستور فروش
+- وجود نداشتن آیتم نام برده شده
+sell blablabla
+ نداشتن آیتم در inventory
+sell iridium rod
+- وجود نداشتن آیتم به میزان کافی در inventory
+sell artichoke seed -n 3
+- نبودن کنار سطل‌های فروش
+set coordinates * 30 10
+sell artichoke seed -n 1
+ غیر قابل فروش بودن محصول (مانند ابزارها)
+set coordinates * 24 5
+sell hoe

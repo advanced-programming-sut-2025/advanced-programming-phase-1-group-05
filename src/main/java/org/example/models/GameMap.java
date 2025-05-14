@@ -23,7 +23,7 @@ public class GameMap {
     public static final int MAP_HEIGHT = 100;
     private GameTile[][] map = new GameTile[MAP_HEIGHT][MAP_WIDTH];
 
-    // TODO initialize this!!
+
     ArrayList<FruitAndVegetable> plants = new ArrayList<>();
     ArrayList<Tree> trees = new ArrayList<>();
     GreenHouse greenHouse = new GreenHouse();
@@ -257,7 +257,7 @@ public class GameMap {
 
     public void setTile(int x, int y, GameTile tile) {
         if (isInBounds(x, y)) {
-            map[x - 1][y - 1] = tile;
+            map[x][y] = tile;
         }
     }
 
@@ -335,6 +335,7 @@ public class GameMap {
             }
         }
 
+
         switch (farmType) {
             case 1: // مزرعه نوع 1
                 placeFixedFeature(startX+1, startY+1, 3, 2, TileType.Mine, "mine");
@@ -379,8 +380,19 @@ public class GameMap {
         }
     }
 
+    public void setPlayerCoordinates(){
+        for(int i = 1; i < MAP_HEIGHT; i ++) {
+            for(int j = 1; j < MAP_WIDTH; j ++) {
+                GameTile tile = getTile(i, j);
+                if(tile.getTileType().equals(TileType.Building)) {
+                    Game.getCurrentPlayer().setCoordinate(i, j);
+                }
+            }
+        }
+    }
+
     public String whereAmI() {
-        String location ="";
+        String location ="Home";
         //TODO implement
         return location;
     }

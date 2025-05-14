@@ -6,6 +6,7 @@ import org.example.controllers.MenuController;
 import org.example.controllers.StoreController;
 import org.example.models.Enums.GameMenuCommands;
 import org.example.models.Game;
+import org.example.models.GameTile;
 import org.example.models.Result;
 import org.example.models.TimeAndDate;
 
@@ -80,6 +81,7 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(result.getMessage());
         }
         else if (input.startsWith("cheat advance time")) {
+            input = input.trim();
             try {
                 String[] parts = input.split(" ");
                 String hoursPart = parts[3];
@@ -91,7 +93,7 @@ public class GameMenu implements org.example.views.AppMenu {
                     System.out.println("Time advanced by " + hours + " hours.");
                 }
             } catch (Exception e) {
-                System.out.println("Invalid format.");
+                System.out.println("Invalid format.m" + e.getMessage());
             }
         }
         else if (input.startsWith("cheat advance date")) {
@@ -262,11 +264,15 @@ public class GameMenu implements org.example.views.AppMenu {
             String[] coordinates = input.split(" ");
             int x = Integer.parseInt(coordinates[0]), y = Integer.parseInt(coordinates[1]);
             Game.getCurrentPlayer().setCoordinate(x, y);
+            GameTile tile = Game.getGameMap().getTile(x, y);
+            tile.occupy();
             System.out.println("set player coordinates to " + x + ", " + y);
         }
-        else if (input.startsWith("cheat add gold *")) {
-            input = input.substring(input.indexOf('*') + 1).trim();
-            Game.getCurrentPlayer().addGold(Integer.parseInt(input));
+        else if (input.equals("show money")) {
+            System.out.println(Game.getCurrentPlayer().getGold());
+        }
+        else if (input.equals("get shipping bin coordinates")) {
+            Game.getCurrentPlayer().getFarm().getShippingBin().getCoordinates();
         }
         else {
             System.out.println("Invalid Command!");

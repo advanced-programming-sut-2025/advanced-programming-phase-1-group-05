@@ -171,9 +171,9 @@ public class GameMenuController extends MenuController {
         }
         pendingGame = game;
 
-        if (!currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername())) {
-            return Result.error("It's not your turn.");
-        }
+//        if (!currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername())) {
+//            return Result.error("It's not your turn.");
+//        }
 
         Game.getCurrentPlayer().increaseEnergy(-50);
 
@@ -183,7 +183,7 @@ public class GameMenuController extends MenuController {
             Game.getCurrentPlayer().resetEnergy();
         }
 
-        return Result.success("Now it's " + Game.getCurrentPlayer().getName() + "'s turn." +
+        return Result.success("Now it's " + Game.getCurrentPlayer().getUsername() + "'s turn." +
                 Game.getCurrentPlayer().getNotifications());
     }
 
@@ -235,7 +235,7 @@ public class GameMenuController extends MenuController {
 
     //cheat code set energy
     public Result setEnergy(int value) {
-        Game.getCurrentPlayer().increaseEnergy(value);
+        Game.getCurrentPlayer().setEnergy(value);
         return new Result(true, "** your energy got increased by " + value + " **");
     }
 
@@ -327,8 +327,8 @@ public class GameMenuController extends MenuController {
         int[]dir = getDirections(direction);
         Item currentItem = Game.getCurrentPlayer().getCurrentItem();
         if(currentItem instanceof Tool) {
-            String message = ((Tool)currentItem).use(new AbstractMap.SimpleEntry<>(Game.getCurrentPlayer().getCoordinate().getKey() + dir[0],
-                    Game.getCurrentPlayer().getCoordinate().getKey() + dir[1])).getMessage();
+            String message = ((Tool)currentItem).use(new AbstractMap.SimpleEntry<>(Game.getCurrentPlayer().getCoordinate().getKey() + dir[1],
+                    Game.getCurrentPlayer().getCoordinate().getValue() + dir[0])).getMessage();
             return new Result(true, message);
         } else return new Result(true, "You aren't equipped with any tool");
     }
@@ -978,5 +978,17 @@ public class GameMenuController extends MenuController {
             return new Result(false, "Invalid input format.");
         }
         return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
+    }
+
+    private boolean canWalk(int x, int y) {
+        for (Player player : Game.getAllPlayers()) {
+            if (player.getFarm() != null) {
+                if (player.getFarm().isInFarm(x, y) && !player.getFarm().isOwner(Game.getCurrentPlayer())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
