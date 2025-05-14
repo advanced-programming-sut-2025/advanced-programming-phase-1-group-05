@@ -6,11 +6,14 @@ import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Tool;
 
 import javax.swing.plaf.PanelUI;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GameMenuController extends MenuController {
+    private static int numGenerateMap = 0;
     public static User currentUser;
     public static List<Player> selectedPlayers;
     private static Map<String, Game> activeGames = new HashMap<>();
@@ -911,6 +914,7 @@ public class GameMenuController extends MenuController {
     }
 
     public Result printMap(Matcher matcher) {
+        numGenerateMap++;
 //        GameMap map = Game.getGameMap();
 
         try {
@@ -924,6 +928,10 @@ public class GameMenuController extends MenuController {
                 }
 
                 System.out.println("Printing map section at (" + x + "," + y + ") with size " + size + ":");
+                if (numGenerateMap == 1) {
+                    int farmNum = Game.getCurrentPlayer().getMapNum();
+                    GameMap.generatePlaceOfPlayer(farmNum);
+                }
                 map.printMapSection1(x,y,size);
                 map.printMapSection2(x,y,size);
                 map.printMapSection3(x,y,size);
@@ -931,6 +939,10 @@ public class GameMenuController extends MenuController {
                 return new Result(true, "Map section printed.");
             } else {
                 System.out.println("Printing full map:");
+                if (numGenerateMap == 1) {
+                    int farmNum = Game.getCurrentPlayer().getMapNum();
+                    GameMap.generatePlaceOfPlayer(farmNum);
+                }
                 map.printFullMap();
                 return new Result(true, "Full map printed.");
             }
@@ -953,6 +965,7 @@ public class GameMenuController extends MenuController {
 
 
     public void helpReadingMap() {
+        System.out.println("Player :" + "\uD83E\uDDCD");
         System.out.println("Building :" + "🏠");
         System.out.println("Lake :" + "🌊");
         System.out.println("Soil :" + "🟫");
@@ -975,9 +988,9 @@ public class GameMenuController extends MenuController {
                 int y = Integer.parseInt(matcher.group("y"));
                 i = x;
                 j = y;
-                //todo: اگر گلخانه بود تاثیر نداره
                 if (Game.getGameMap().getTile(x,y).getTileType().equals(TileType.Tree)) {
                     Game.getGameMap().getTile(x,y).setTileType(TileType.Flat);
+                    //درخت هارو به فلت تبدیل میکنه رعد و برق
                 }
                 if (Game.getGameMap().getTile(x,y).getTileType().equals(TileType.GreenHouse)){
                     return new Result(false, "Cheat Thor failed!");
@@ -990,17 +1003,17 @@ public class GameMenuController extends MenuController {
         return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
     }
 
-    private boolean canWalk(int x, int y) {
-        for (Player player : Game.getAllPlayers()) {
-            if (player.getFarm() != null) {
-                if (player.getFarm().isInFarm(x, y) && !player.getFarm().isOwner(Game.getCurrentPlayer())) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
+//    private boolean canWalk(int x, int y) {
+//        for (Player player : Game.getAllPlayers()) {
+//            if (player.getFarm() != null) {
+//                if (player.getFarm().isInFarm(x, y) && !player.getFarm().isOwner(Game.getCurrentPlayer())) {
+//                    return false;
+//                }
+//            }
+//        }
+//
+//        return true;
+//    }
 
     public Result buildGreenHouse() {
         Player currentPlayer = Game.getCurrentPlayer();
@@ -1049,5 +1062,142 @@ public class GameMenuController extends MenuController {
         System.out.println("after building GreenHouse : Wood-> " + currentPlayer.getItemQuantity(item));
 
         return new Result(true, "Green House built!");
+    }
+
+    public Result walkPlayer(Matcher matcher) {
+        try {
+            if (matcher.group("x") != null && matcher.group("y") != null) {
+                int targetX = Integer.parseInt(matcher.group("x"));
+                int targetY = Integer.parseInt(matcher.group("y"));
+
+                if (!Game.getGameMap().isInBounds(targetX, targetY)) {
+                    return new Result(false, "Target coordinates are out of bounds.");
+                }
+
+                // بررسی مزرعه دیگران
+                if (!canWalk(targetX, targetY)) {
+                    return new Result(false, "You cannot enter another player's farm!");
+                }
+
+                Player currentPlayer = Game.getCurrentPlayer();
+                int startX = currentPlayer.getX();
+                int startY = currentPlayer.getY();
+
+                //بررسی کردن موانع
+                GameTile targetTile = Game.getGameMap().getTile(targetX, targetY);
+                if (targetTile == null || targetTile.getTileType() == TileType.Water ||
+                        targetTile.getTileType() == TileType.Stone || targetTile.isOccupied()) {
+                    return new Result(false, "Target tile is blocked.");
+                }
+
+                // یافتن کوتاه‌ترین مسیر با BFS
+                List<Point> path = findShortestPath(startX, startY, targetX, targetY);
+
+                if (path.isEmpty()) {
+                    return new Result(false, "No valid path to target.");
+                }
+
+                // فقط آخرین نقطه مسیر (مقصد نهایی)
+                Point finalStep = path.get(path.size() - 1);
+                GameTile previousTile = Game.getGameMap().getTile(currentPlayer.getX(), currentPlayer.getY());
+                if (previousTile != null) {
+                    previousTile.setTileType(TileType.Flat);
+                    previousTile.setOccupied(false);
+                }
+
+                currentPlayer.setCoordinate(finalStep.x, finalStep.y);
+
+                GameTile newTile = Game.getGameMap().getTile(finalStep.x, finalStep.y);
+                if (newTile != null) {
+                    newTile.setTileType(TileType.Player);
+                    newTile.setOccupied(true);
+                }
+
+                return new Result(true, "Player moved to (" + finalStep.x + "," + finalStep.y + ")");
+            }
+        } catch (Exception e) {
+            return new Result(false, "Invalid input format.");
+        }
+        return new Result(false, "Invalid command.");
+    }
+
+    // برای بررسی امکان حرکت به مزرعه دیگران
+    private boolean canWalk(int x, int y) {
+        for (Player player : Game.getAllPlayers()) {
+            if (player != Game.getCurrentPlayer() && player.getFarm() != null) {
+                if (player.getFarm().isInFarm(x, y)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // پیاده‌سازی الگوریتم BFS برای یافتن کوتاه‌ترین مسیر
+    private List<Point> findShortestPath(int startX, int startY, int targetX, int targetY) {
+        Queue<Node> queue = new LinkedList<>();
+        boolean[][] visited = new boolean[GameMap.MAP_WIDTH][GameMap.MAP_HEIGHT];
+        int[][] directions = {{0,1}, {1,0}, {0,-1}, {-1,0}}; // راست، پایین، چپ، بالا
+
+        queue.add(new Node(startX, startY, null));
+        visited[startX][startY] = true;
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+
+            //بررسی اینکه به مقصدمون رسیدیم یا نرسیدیم
+            if (current.x == targetX && current.y == targetY) {
+                return reconstructPath(current);
+            }
+
+            // بررسی خانه های اطراف
+            for (int[] dir : directions) {
+                int newX = current.x + dir[0];
+                int newY = current.y + dir[1];
+
+                if (Game.getGameMap().isInBounds(newX, newY) &&
+                        !visited[newX][newY] &&
+                        isWalkable(newX, newY)) {
+
+                    visited[newX][newY] = true;
+                    queue.add(new Node(newX, newY, current));
+                }
+            }
+        }
+
+        return Collections.emptyList();
+    }
+
+    // بررسی قابل امکان رد شدن از یک تایل
+    private boolean isWalkable(int x, int y) {
+        GameTile tile = Game.getGameMap().getTile(x, y);
+        return tile != null &&
+                tile.getTileType() != TileType.Water &&
+                tile.getTileType() != TileType.Stone &&
+                !tile.isOccupied() &&
+                canWalk(x, y);
+    }
+
+    //  برای ذخیره مسیر
+    private static class Node {
+        int x, y;
+        Node parent;
+
+        public Node(int x, int y, Node parent) {
+            this.x = x;
+            this.y = y;
+            this.parent = parent;
+        }
+    }
+
+    // بازسازی مسیر از آخرین گره
+    private List<Point> reconstructPath(Node node) {
+        List<Point> path = new ArrayList<>();
+        while (node != null) {
+            path.add(new Point(node.x, node.y));
+            node = node.parent;
+        }
+        Collections.reverse(path);
+        return path.subList(1, path.size()); //delete start location
     }
 }

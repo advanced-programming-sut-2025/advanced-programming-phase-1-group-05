@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum GameMenuCommands {
+    Walk("walk -l (?<x>\\d+) (?<y>\\d+)"),
     CheatThor("cheat Thor -l (?<x>\\d+) (?<y>\\d+)"),
     PrintMap("print map(?: -l (?<x>\\d+) (?<y>\\d+) -s (?<size>\\d+))?"),
     ShowEnergy("show energy"),
