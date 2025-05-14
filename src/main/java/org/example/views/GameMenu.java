@@ -145,7 +145,7 @@ public class GameMenu implements org.example.views.AppMenu {
             gameMenuController.helpReadingMap();
         }
         else if ((matcher = GameMenuCommands.Walk.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.walkPlayer(matcher));
+            //System.out.println(gameMenuController.walkPlayer(matcher));
         }
         else if ((matcher = GameMenuCommands.ShowEnergy.getMatcher(input)) != null) {
             System.out.println(gameMenuController.showEnergy().getMessage());
@@ -166,7 +166,7 @@ public class GameMenu implements org.example.views.AppMenu {
         } else if ((matcher = GameMenuCommands.ShowAvailableTools.getMatcher(input)) != null) {
             System.out.println(gameMenuController.showAvailableTools());
         } else if ((matcher = GameMenuCommands.UpgradeTool.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.upgradeTool(matcher.group("toolName")));
+            System.out.println(storeController.upgradeTool(matcher.group("toolName")));
         } else if ((matcher = GameMenuCommands.ShowCraftInfo.getMatcher(input)) != null) {
             System.out.println(gameMenuController.showCraftInfo(matcher.group("craftName")));
         } else if ((matcher = GameMenuCommands.UseTool.getMatcher(input)) != null) {

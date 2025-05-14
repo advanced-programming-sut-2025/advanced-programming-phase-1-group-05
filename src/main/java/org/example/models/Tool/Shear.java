@@ -56,5 +56,6 @@ public class Shear implements Tool<ItemLevel> {
         if (!level.isMaxLevel()) {
             level = level.upgradeLevel();
         }
+
     }
 }

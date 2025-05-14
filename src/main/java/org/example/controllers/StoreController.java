@@ -6,6 +6,7 @@ import org.example.models.Enums.*;
 import org.example.models.Tool.FishingPole;
 import org.example.models.Tool.Tool;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 
@@ -250,6 +251,41 @@ public class StoreController {
             currentPlayer.getBackPack().getInventory().remove(item, quantity);
         }
         return true;
+    }
+
+    //upgrade tool
+    public Result upgradeTool(String name) {
+
+        Store store = getCurrentStore();
+        if (store == null || !store.getStoreName().equals("Blacksmith")) {
+            return Result.error("You can only upgrade tools in the blacksmith.");
+        }
+        HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
+        for (Item item : items.keySet()) {
+            if (item.getName().equalsIgnoreCase(name)) {
+                if (item instanceof Tool) {
+                    ItemLevel levelBeforeUpgrading = (ItemLevel) ((Tool) item).getLevel();
+                    if ( levelBeforeUpgrading == ItemLevel.Iridium)
+                        return Result.error("Looks like this tool’s already maxed out. Even Clint couldn’t make it better!");
+                    ItemLevel level = levelBeforeUpgrading.upgradeLevel();
+                    String levelName = level.toString();
+                    if (level == ItemLevel.Brass ) levelName = "Copper";
+                    else if (level == ItemLevel.Iron) levelName = "Steel";
+                    Product product = store.getProduct(levelName + " tool");
+                    if (product == null) return Result.success("can't upgrade tool");
+                    int price  = store.getProduct(levelName + " tool").getPrice();
+                    Player player = Game.getCurrentPlayer();
+                    if (price > player.getGold())
+                        return Result.error("You can't afford to upgrade this tool!");
+                    Game.getCurrentPlayer().addGold(-price);
+                    ((Tool) item).upgradeLevel();
+                    return new Result(true, item.getName() + " upgraded to level " + ((Tool) item).getLevel());
+                } else {
+                    return new Result(true, "Selected item is not a tool");
+                }
+            }
+        }
+        return new Result(true, "You don't have that tool in your inventory");
     }
 
 }

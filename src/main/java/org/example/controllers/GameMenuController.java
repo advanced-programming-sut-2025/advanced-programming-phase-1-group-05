@@ -303,23 +303,7 @@ public class GameMenuController extends MenuController {
         return new Result(true, output.toString());
     }
 
-    //upgrade tool
-    public Result upgradeTool(String name) {
-        //TODO blacksmith stuff??
-        HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
-        for (Item item : items.keySet()) {
-            if (item.getName().equals(name)) {
-                if (item instanceof Tool) {
-                    //reduce money
-                    ((Tool) item).upgradeLevel();
-                    return new Result(true, item.getName() + " upgraded to level" + ((Tool) item).getLevel());
-                } else {
-                    return new Result(true, "Selected item is not a tool");
-                }
-            }
-        }
-        return new Result(true, "You don't have that tool in your inventory");
-    }
+
 
     //use tool
     public Result useTool(String direction) {
@@ -821,7 +805,7 @@ public class GameMenuController extends MenuController {
     public Result addItemCheatCode(String name, int count) {
         Item item = null;
         if(Game.getDatabase().getItem(name) != null) item = Game.getDatabase().getItem(name);
-        if(ItemRegistry.findItemByName(name) != null) item = ItemRegistry.findItemByName(name);
+        //if(ItemRegistry.findItemByName(name) != null) item = ItemRegistry.findItemByName(name);
 
         if (item == null) return new Result(false, "** No item with that name exists **");
         Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
