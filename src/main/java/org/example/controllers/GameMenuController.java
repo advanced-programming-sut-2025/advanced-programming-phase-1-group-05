@@ -1028,7 +1028,8 @@ public class GameMenuController extends MenuController {
 //                }
             }
         }
-        System.out.println("first wood: " + currentPlayer.getItemQuantity(item));
+        System.out.println("before building GreenHouse : Wood-> " + currentPlayer.getItemQuantity(item));
+        System.out.println("before building GreenHouse : Gold-> " + currentPlayer.getGold());
         if (currentPlayer.getMapNum() == 1) {
             currentPlayer.getBackPack().removeFromInventory(item , -500);
             currentPlayer.addGold(-1000);
@@ -1042,7 +1043,8 @@ public class GameMenuController extends MenuController {
             currentPlayer.getBackPack().removeFromInventory(item , -500);
             currentPlayer.addGold(-1000);
         }
-        System.out.println("after wood: " + currentPlayer.getItemQuantity(item));
+        System.out.println("after building GreenHouse : Gold-> " + currentPlayer.getGold());
+        System.out.println("after building GreenHouse : Wood-> " + currentPlayer.getItemQuantity(item));
 
         return new Result(true, "Green House built!");
     }
