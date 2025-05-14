@@ -23,7 +23,7 @@ public class GameMap {
     public static final int MAP_HEIGHT = 100;
     private GameTile[][] map = new GameTile[MAP_HEIGHT][MAP_WIDTH];
 
-    // TODO initialize this!!
+
     ArrayList<FruitAndVegetable> plants = new ArrayList<>();
     ArrayList<Tree> trees = new ArrayList<>();
     GreenHouse greenHouse = new GreenHouse();
@@ -123,6 +123,17 @@ public class GameMap {
         generateFarm(0, 70, 30, 30, 2);         // Farm B
         generateFarm(70, 0, 30, 30, 3);         // Farm C
         generateFarm(70, 70, 30, 30, 4);        // Farm D
+        int[][] farmCoords = {
+                {0, 0},     // A
+                {0, 70},    // B
+                {70, 0},    // C
+                {70, 70}    // D
+        };
+        int i = 0;
+        for (Player player : Game.getAllPlayers()) {
+            int[] coords = farmCoords[i++];
+            player.setFarm(coords[0], coords[1]);
+        }
         generateVillageCenter();               // وسط
 
     }
@@ -334,6 +345,7 @@ public class GameMap {
                 }
             }
         }
+
 
         switch (farmType) {
             case 1: // مزرعه نوع 1

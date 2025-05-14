@@ -8,12 +8,18 @@ public class Farm {
     private List<Player> owner = new ArrayList<>();
     private HashMap<Food, Integer> refrigeratedFoods = new HashMap<>();
     private final ArrayList<FruitAndVegetable> crops = new ArrayList<>();
-    //TODO the shipping bin coordinates should be in the farm
-    private final int startX = 10, startY = 10, endX = startX + 80, endY = startY + 50;
-    private final ShippingBin shippingBin = new ShippingBin(startY, endX);
-    // TODO add the farm coordinates
-    public Farm (Player player){
+
+    private final int startX , startY, endX, endY ;
+    private final ShippingBin shippingBin;
+
+
+    public Farm (Player player, int startX, int startY){
         owner.add(player);
+        this.startX = startX;
+        this.startY = startY;
+        endX = startX + 30;
+        endY = startY + 30;
+        shippingBin = new ShippingBin(startY, endX);
     }
 
     public ArrayList<FruitAndVegetable> getCrops() {
@@ -24,6 +30,9 @@ public class Farm {
         crops.add(fruitAndVegetable);
     }
 
+    public boolean isInFarm(int x, int y) {
+        return x >= startX && x <= endX && y >= startY && y <= endY;
+    }
     public boolean isOwner(Player player) {
         return  owner.contains(player);
     }
@@ -52,8 +61,8 @@ public class Farm {
         int startX, startY, endX, endY;
 
         public ShippingBin(int farmStartY, int farmEndX) {
-            startX = farmEndX - 10; // 80 to 82
-            startY = farmStartY - 5; // 5 to 6
+            startX = farmEndX - 5;
+            startY = farmStartY - 5;
             endX = startX + 2;
             endY = startY + 1;
         }

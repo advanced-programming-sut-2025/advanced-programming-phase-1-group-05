@@ -977,4 +977,16 @@ public class GameMenuController extends MenuController {
         }
         return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
     }
+
+    private boolean canWalk(int x, int y) {
+        for (Player player : Game.getAllPlayers()) {
+            if (player.getFarm() != null) {
+                if (player.getFarm().isInFarm(x, y) && !player.getFarm().isOwner(Game.getCurrentPlayer())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }
