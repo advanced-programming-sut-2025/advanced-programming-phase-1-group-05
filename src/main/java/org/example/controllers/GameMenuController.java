@@ -1055,4 +1055,18 @@ public class GameMenuController extends MenuController {
 
         return new Result(true, "Green House built!");
     }
+
+    public Result walkPlayer(Matcher matcher) {
+        try {
+            if (matcher.group("x") != null && matcher.group("y") != null) {
+                int x = Integer.parseInt(matcher.group("x"));
+                int y = Integer.parseInt(matcher.group("y"));
+
+
+            }
+        } catch (Exception e) {
+            return new Result(false, "Invalid input format.");
+        }
+        return new Result();
+    }
 }
