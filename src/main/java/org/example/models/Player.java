@@ -52,6 +52,8 @@ public class Player {
         backPack.getInventory().put(new Hoe(), 1);
         backPack.getInventory().put(new Pickaxe(), 1);
         backPack.getInventory().put(new Scythe(), 1);
+        backPack.getInventory().put(new Axe(), 1);
+        backPack.getInventory().put(new WateringCan(), 1);
     }
 
     public void setFarm(int startX, int startY) {

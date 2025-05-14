@@ -125,9 +125,21 @@ public enum CropType implements Material {
 
     @Override
     public String toString() {
-        return "Name :" + name + "\n" + "Source :" + source + "\n" + "Stages :" + stages + "\n" + "Total Harvest Time :" + totalHarvestTime +
-                "\n" + "One Time :" + oneTime + "\n" + "Regrowth Time :" + regrowthTime + "\n" + "Base Sell Price :" + price + "\n" +
-                "Is Edible :" + isEdible + "\n" + "Base Energy :" + energy + "\n" + "Season :" + seasons.toString() + "\n" + "Can Become Giant :" + canBecomeGiant + "\n";
+        StringBuilder builder = new StringBuilder();
+        builder.append("Name :").append(name).append("\n").append("Source :").
+                append(source).append("\n").append("Stages :").append(stages).
+                append("\n").append("Total Harvest Time :").append(totalHarvestTime).
+                append("\n").append("One Time :").append(oneTime).append("\n").
+                append("Regrowth Time :").append(regrowthTime).append("\n").
+                append("Base Sell Price :").append(price).append("\n").append("Is Edible :").
+                append(isEdible).append("\n").append("Base Energy :").append(energy).append("\n").
+                append("Season :");
+        for(Season season : seasons){
+            builder.append(season).append(",");
+        }
+        builder.deleteCharAt(builder.length()-1);
+        builder.append("\n" + "Can Become Giant :").append(canBecomeGiant);
+        return builder.toString();
     }
 
 }

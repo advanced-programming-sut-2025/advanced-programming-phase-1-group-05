@@ -27,7 +27,7 @@ public class Tree implements Item{
             int stageIndex =1;
             String[]growthStages = treeType.getStages().split("-");
             for(String gs : growthStages) {
-                treeGrowthTimeLine.add(new GrowthStep(GrowthStage.valueOf(String.valueOf(stageIndex)), Integer.parseInt(gs)));
+                treeGrowthTimeLine.add(new GrowthStep(Integer.parseInt(gs)));
                 stageIndex++;
             }
         }
@@ -81,7 +81,8 @@ public class Tree implements Item{
         public Result cutDownTree(){
             Random rand = new Random();
             int randomNum = rand.nextInt(2) + 1;
-            Game.getCurrentPlayer().getBackPack().getInventory().put(Game.getDatabase().getItem(this.treeType.getSeed()),randomNum);
+            Game.getCurrentPlayer().getForagingSkill().cutDownTree();
+            Game.getCurrentPlayer().getBackPack().getInventory().put(new BasicItem(treeType.getSeed(), this.price),randomNum);
             return new Result(true, "The tree was cut down, giving you " + randomNum + " of its seeds!");
         }
         public void setProtectedByScareCrow(boolean protectedByScareCrow) {
@@ -96,6 +97,9 @@ public class Tree implements Item{
         }
         public void setFruitGrowthCounter(int fruitGrowthCounter) {
             this.fruitGrowthCounter = fruitGrowthCounter;
+        }
+        public void setFullyGrown(){
+            this.fullyGrown = true;
         }
         @Override
         public String getName() {

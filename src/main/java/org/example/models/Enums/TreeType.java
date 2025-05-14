@@ -1,6 +1,8 @@
 package org.example.models.Enums;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public enum TreeType {
     ApricotTree("Apricot Tree", "Apricot Sapling", "7-7-7-7", 28, "Apricot", 1, 59, true, 38, List.of(Season.SPRING)),
@@ -75,12 +77,13 @@ public enum TreeType {
     }
 
     public static TreeType fromString(String name){
+        TreeType type = null;
         for (TreeType treeType : TreeType.values()) {
-            if (treeType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
-                return treeType;
+            if (treeType.getName().equals(name)) {
+                type = treeType;
             }
         }
-        return null;
+        return type;
     }
     public static TreeType getSeedType(String seed){
         for (TreeType treeType : TreeType.values()) {
@@ -89,5 +92,35 @@ public enum TreeType {
             }
         }
         return null;
+    }
+    public static TreeType getRandomTreeType (Season currentSeason) {
+        Random random = new Random();
+        List<TreeType> types = new ArrayList<>();
+        for (TreeType f : TreeType.values()) {
+            if (f.getSeasons().contains(currentSeason)) types.add(f);
+        }
+        while (true){
+            int rand = random.nextInt(types.size());
+            TreeType f = types.get(rand);
+            return f;
+        }
+    }
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Name: ").append(name).append("\n")
+                .append("Seed: ").append(seed).append("\n")
+                .append("Stages: ").append(stages).append("\n")
+                .append("TotalHarvestTime: ").append(totalHarvestTime).append("\n")
+                .append("Fruit: ").append(fruit).append("\n")
+                .append("FruitHarvestCycle: ").append(fruitHarvestCycle).append("\n")
+                .append("FruitPrice: ").append(fruitPrice).append("\n")
+                .append("IsFruitEdible: ").append(isFruitEdible).append("\n")
+                .append("FruitEnergy: ").append(fruitEnergy).append("\n").append("Seasons : ");
+        for (Season season : seasons) {
+            stringBuilder.append(season).append(", ");
+        }
+        return stringBuilder.toString();
+
     }
 }

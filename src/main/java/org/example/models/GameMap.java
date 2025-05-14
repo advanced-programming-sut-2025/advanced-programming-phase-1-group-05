@@ -4,12 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.example.controllers.GameManager;
 import org.example.models.Building.GreenHouse;
-import org.example.models.Enums.ForagingSeedType;
-import org.example.models.Enums.ForagingTreeSourceType;
-import org.example.models.Enums.Season;
-import org.example.models.Enums.TileType;
+import org.example.models.Enums.*;
 
 import java.awt.*;
+import java.awt.event.FocusAdapter;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -87,12 +85,12 @@ public class GameMap {
             Item item;
             if (tile != null && tile.getTileType() == TileType.Soil && tile.getItemOnTile() == null) {
                 if (chosen % 2 == 0) {
-                    item = new BasicItem(ForagingTreeSourceType
-                            .getRandomForagingTreeType(GameManager.getSeason()).getName(), 0);
+                    ForagingTreeSourceType type = ForagingTreeSourceType.getRandomForagingTreeType(GameManager.getSeason());
+                    item = new ForagingItem(type, type.getName(), type.getPrice());
                     tile.setItemOnTile(item);
                 } else {
-                    item = new BasicItem(ForagingSeedType
-                            .getRandomForagingSeedType(GameManager.getSeason()).getName(), 0);
+                    ForagingSeedType type = ForagingSeedType.getRandomForagingSeedType(GameManager.getSeason());
+                    item = new ForagingItem(type, type.getName(), type.getPrice());
                     tile.setItemOnTile(item);
                 }
             }
@@ -101,7 +99,22 @@ public class GameMap {
 
     //spawn foraging minerals
     public void setForagingMinerals(){
-        //TODO mining area
+        int totalTiles = map.length * map[0].length;
+        Random random = new Random();
+
+        if (random.nextInt(100) == 0) { // 1% chance
+            int chosen = random.nextInt(totalTiles);
+            int row = chosen / map[0].length;
+            int col = chosen % map[0].length;
+
+            GameTile tile = map[row][col];
+            Item item;
+            if (tile != null && tile.getTileType() == TileType.Mine && tile.getItemOnTile() == null) {
+                MineralType mineralType = MineralType.getRandomMineralType();
+                item = new Mineral(mineralType);
+                tile.setItemOnTile(item);
+            }
+        }
     }
     public void growPlants(){
         for(FruitAndVegetable f: plants){
@@ -137,14 +150,14 @@ public class GameMap {
         }
     }
     private void placeRandomDecorations(int startX, int startY, int width, int height,
-                                        int treeCount, int stoneCount,
+                                        int cropCount, int stoneCount,
                                         List<Rectangle> occupiedAreas, Random random) {
         int placedTrees = 0;
         int placedStones = 0;
-        int maxAttempts = (treeCount + stoneCount) * 2;
+        int maxAttempts = (cropCount + stoneCount) * 2;
 
         for (int attempt = 0; attempt < maxAttempts; attempt++) {
-            if (placedTrees >= treeCount && placedStones >= stoneCount) {
+            if (placedTrees >= cropCount && placedStones >= stoneCount) {
                 break;
             }
 
@@ -164,27 +177,25 @@ public class GameMap {
             if (isAreaOccupied(point, occupiedAreas)) {
                 continue;
             }
-
-            TileType decorationType;
-            if (placedTrees >= treeCount) {
-                decorationType = TileType.Stone;
-            } else if (placedStones >= stoneCount) {
-                decorationType = TileType.Tree;
-            } else {
-                decorationType = random.nextBoolean() ? TileType.Tree : TileType.Stone;
-            }
-
-            setTile(x, y, new GameTile(x, y, decorationType));
-
-            occupiedAreas.add(point);
-
-            if (decorationType == TileType.Tree) {
-                placedTrees++;
-            } else {
-                placedStones++;
-            }
+            setRandomDecoration(tile);
         }
 
+    }
+
+    public void setRandomDecoration(GameTile tile){
+        Random random = new Random();
+        int x = random.nextInt(100);
+        if(tile.getTileType() == TileType.Mine && tile.getItemOnTile() == null) {
+            tile.setItemOnTile(new Mineral(MineralType.getRandomMineralType()));
+        } else if (tile.getTileType() == TileType.Soil && tile.getItemOnTile() == null) {
+            ForagingCrop type = ForagingCrop.getRandomForagingCrop(GameManager.getSeason());
+            TreeType type1 = TreeType.getRandomTreeType(GameManager.getSeason());
+            Tree newTree = new Tree(type1);
+            MineralType mineralType = MineralType.getRandomMineralType();
+            newTree.setFullyGrown();
+            if(x%2 == 0) tile.setItemOnTile(new ForagingItem(type, type.getName(), type.getPrice()));
+            else tile.setItemOnTile(newTree);
+        }
     }
 
     private void placeRandomMine(int startX, int startY, int width, int height,
@@ -365,6 +376,7 @@ public class GameMap {
                 placeFixedFeature(startX+19, startY+20, 4, 4, TileType.Building, "builing");
                 break;
         }
+
 
         placeRandomDecorations(startX, startY, width, height, 15, 10, new ArrayList<>(), new Random());
     }

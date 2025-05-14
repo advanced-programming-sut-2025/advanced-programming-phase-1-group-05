@@ -31,7 +31,7 @@ public class FruitAndVegetable implements Item {
         int stageIndex = 1;
         String[]growthStages = type.getStages().split("-");
         for(String gs : growthStages) {
-            growthTimeline.add(new GrowthStep(GrowthStage.valueOf(String.valueOf(stageIndex)), Integer.parseInt(gs)));
+            growthTimeline.add(new GrowthStep(Integer.parseInt(gs)));
             stageIndex++;
         }
         this.age = 0;

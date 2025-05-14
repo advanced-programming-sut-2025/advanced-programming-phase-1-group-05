@@ -339,10 +339,12 @@ public class GameMenuController extends MenuController {
         TreeType treeType = TreeType.fromString(name);
         ForagingTreeSourceType foragingTreeSourceType = ForagingTreeSourceType.fromString(name);
         ForagingCrop foragingCrop = ForagingCrop.fromString(name);
-        if(cropType != null) return new Result(true, cropType.getName());
+        MineralType mineralType = MineralType.fromString(name);
+        if(cropType != null) return new Result(true, cropType.toString());
         else if(treeType != null ) return new Result(true, treeType.toString());
         else if(foragingTreeSourceType != null ) return new Result(true, foragingTreeSourceType.toString());
         else if(foragingCrop != null ) return new Result(true, foragingCrop.toString());
+        else if(mineralType != null ) return new Result(true, mineralType.toString());
 
         return new Result(true, "Couldn’t find the craft you're looking for");
     }

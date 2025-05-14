@@ -58,5 +58,18 @@ public enum MineralType implements Material, Item {
         return false;
     }
 
+    public static MineralType fromString(String name){
+        for (MineralType type : MineralType.values()) {
+            if (type.getName().equals(name)) {
+                return type;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Name : " + getName() + "\nDescription : " + getDescription() + "\nPrice : " + getPrice();
+    }
 
 }

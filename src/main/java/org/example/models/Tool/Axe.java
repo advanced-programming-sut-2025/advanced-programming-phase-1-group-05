@@ -35,7 +35,7 @@ public class Axe implements Tool <ItemLevel>{
             }
             return new Result(false, "You can't use the axe on this tile");
         }
-        if(tile.getTileType() == TileType.Flat) {
+        if(tile.getTileType() == TileType.Flat || tile.getTileType() == TileType.Soil) {
             if (foraging.isMaxLevel()) energyUsage--;
             if (!reduceEnergy(energyUsage - 1)) {
                 return new Result(false, "You don't have enough energy");
@@ -46,6 +46,8 @@ public class Axe implements Tool <ItemLevel>{
                 Game.getCurrentPlayer().getBackPack().addToInventory(wood, 8);
                 Item sap = new BasicItem(((Tree) item).getName() + " sap", 0);
                 Game.getCurrentPlayer().getBackPack().addToInventory(sap, 2);
+                Result result = ((Tree)item).cutDownTree();
+                return result;
             } else if (item.getName().equals("Wood")) {
                 tile.setItemOnTile(null);
                 Game.getCurrentPlayer().getBackPack().addToInventory(item, 1);

@@ -25,7 +25,7 @@ public enum ForagingTreeSourceType implements Material {
     }
     public static ForagingTreeSourceType fromString(String name){
         for (ForagingTreeSourceType sourceType : ForagingTreeSourceType.values()) {
-            if (sourceType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+            if (sourceType.getName().equals(name)) {
                 return sourceType;
             }
         }
@@ -46,5 +46,15 @@ public enum ForagingTreeSourceType implements Material {
     @Override
     public int getPrice() {
         return 0;
+    }
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Name : ").append(name).append("\n")
+                .append("Seasons : ");
+        for (Season season : seasons) {
+            builder.append(season).append(", ");
+        }
+        return builder.toString();
     }
 }

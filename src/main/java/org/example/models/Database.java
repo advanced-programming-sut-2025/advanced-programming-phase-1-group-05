@@ -104,8 +104,6 @@ public class Database {
     }
 
 
-
-
     public ArrayList<Craft> getCraftingRecipeDatabase() {
         return craftingRecipeDatabase;
     }

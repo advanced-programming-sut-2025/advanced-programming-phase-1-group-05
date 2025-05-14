@@ -1,5 +1,7 @@
 package org.example.models.Enums;
 
+import com.sun.source.tree.Tree;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -64,7 +66,7 @@ public enum ForagingSeedType implements Material {
 
     public static ForagingSeedType fromString(String name){
         for (ForagingSeedType seedType : ForagingSeedType.values()) {
-            if (seedType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+            if (seedType.getName().equals(name)) {
                 return seedType;
             }
         }
@@ -86,5 +88,14 @@ public enum ForagingSeedType implements Material {
     @Override
     public int getPrice() {
         return 0;
+    }
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Name : ").append(name).append("\n").append("Seasons : ");
+        for (Season season : seasons) {
+            stringBuilder.append(season).append(", ");
+        }
+        return stringBuilder.toString();
     }
 }

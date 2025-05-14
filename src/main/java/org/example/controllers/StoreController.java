@@ -3,6 +3,7 @@ package org.example.controllers;
 import org.example.models.*;
 import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.*;
+import org.example.models.Tool.FishingPole;
 import org.example.models.Tool.Tool;
 
 import java.util.Map;
@@ -101,19 +102,25 @@ public class StoreController {
             }
             //add craft recipes to learnt recipes
         } else if(productName.contains("Recipe")) {
-            if(productName.equals("Dehydrator Recipe")) {
+            if (productName.equals("Dehydrator Recipe")) {
                 Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
-            } else if(productName.equals("Grass Starter Recipe")) {
+            } else if (productName.equals("Grass Starter Recipe")) {
                 Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
-            } else if(productName.equals("Fish Smoker Recipe")) {
+            } else if (productName.equals("Fish Smoker Recipe")) {
                 Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
             } else {
                 String name = productName.replace("Recipe", "");
                 CookingRecipeType type = CookingRecipeType.fromString(name);
                 Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
             }
-        }
-        else {
+//        } else if(productName.contains("Pole")) {
+//            if(productName.equals("Fishing Pole")) {
+//                Game.getCurrentPlayer().getBackPack().addToInventory(new FishingPole(), 1);
+//            } else if(productName.equals("Bamboo Pole")) {
+//                Game.getCurrentPlayer().getBackPack().
+//            }
+//        }
+        } else {
             player.getBackPack().addToInventory(product, count);
         }
         product.addSold(count);

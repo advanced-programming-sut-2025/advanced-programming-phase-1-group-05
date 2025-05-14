@@ -50,7 +50,6 @@ public class TrashCan implements Tool <ItemLevel> {
     public void upgradeLevel(){
         if (!level.isMaxLevel()) {
             level = level.upgradeLevel();
-            System.out.println(getName() + " upgraded to " + level.getName());
         }
     }
 }
