@@ -962,6 +962,7 @@ public class GameMenuController extends MenuController {
     }
 
 
+
     public Result cheatThor(Matcher matcher) {
         int i = 0,j = 0;
         try {
