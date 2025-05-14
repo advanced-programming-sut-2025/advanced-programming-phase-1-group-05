@@ -1064,12 +1064,11 @@ public class GameMenuController extends MenuController {
                 int targetX = Integer.parseInt(matcher.group("x"));
                 int targetY = Integer.parseInt(matcher.group("y"));
 
-                // بررسی محدوده معتبر
                 if (!Game.getGameMap().isInBounds(targetX, targetY)) {
                     return new Result(false, "Target coordinates are out of bounds.");
                 }
 
-                // بررسی مزرعه بازیکنان دیگر
+                // بررسی مزرعه دیگران
                 if (!canWalk(targetX, targetY)) {
                     return new Result(false, "You cannot enter another player's farm!");
                 }
@@ -1078,7 +1077,7 @@ public class GameMenuController extends MenuController {
                 int startX = currentPlayer.getX();
                 int startY = currentPlayer.getY();
 
-                // بررسی موانع در مقصد
+                //بررسی کردن موانع
                 GameTile targetTile = Game.getGameMap().getTile(targetX, targetY);
                 if (targetTile == null || targetTile.getTileType() == TileType.Water ||
                         targetTile.getTileType() == TileType.Stone || targetTile.isOccupied()) {
@@ -1092,17 +1091,16 @@ public class GameMenuController extends MenuController {
                     return new Result(false, "No valid path to target.");
                 }
 
-                // حرکت بازیکن به اولین گام در مسیر (یا تمام مسیر بسته به نیاز)
                 Point nextStep = path.get(0);
                 GameTile previousTile = Game.getGameMap().getTile(startX, startY);
                 if (previousTile != null) {
                     previousTile.setTileType(TileType.Flat);
-//                    previousTile.setOccupied(false);
+                    previousTile.setOccupied(false);
                 }
                 currentPlayer.setCoordinate(nextStep.x, nextStep.y);
                 if (targetTile != null) {
                     targetTile.setTileType(TileType.Player);
-//                    targetTile.setOccupied(true);
+                    targetTile.setOccupied(true);
                 }
 
                 return new Result(true, "Player moved to (" + nextStep.x + "," + nextStep.y + ")");
@@ -1113,7 +1111,7 @@ public class GameMenuController extends MenuController {
         return new Result(false, "Invalid command.");
     }
 
-    // تابع کمکی برای بررسی امکان حرکت به مزرعه دیگران
+    // برای بررسی امکان حرکت به مزرعه دیگران
     private boolean canWalk(int x, int y) {
         for (Player player : Game.getAllPlayers()) {
             if (player != Game.getCurrentPlayer() && player.getFarm() != null) {
@@ -1137,12 +1135,12 @@ public class GameMenuController extends MenuController {
         while (!queue.isEmpty()) {
             Node current = queue.poll();
 
-            // اگر به مقصد رسیدیم
+            //بررسی اینکه به مقصدمون رسیدیم یا نرسیدیم
             if (current.x == targetX && current.y == targetY) {
                 return reconstructPath(current);
             }
 
-            // بررسی همسایه‌ها
+            // بررسی خانه های اطراف
             for (int[] dir : directions) {
                 int newX = current.x + dir[0];
                 int newY = current.y + dir[1];
@@ -1157,10 +1155,10 @@ public class GameMenuController extends MenuController {
             }
         }
 
-        return Collections.emptyList(); // مسیری یافت نشد
+        return Collections.emptyList();
     }
 
-    // بررسی قابل عبور بودن یک تایل
+    // بررسی قابل امکان رد شدن از یک تایل
     private boolean isWalkable(int x, int y) {
         GameTile tile = Game.getGameMap().getTile(x, y);
         return tile != null &&
@@ -1170,7 +1168,7 @@ public class GameMenuController extends MenuController {
                 canWalk(x, y);
     }
 
-    // کلاس کمکی برای ذخیره مسیر
+    //  برای ذخیره مسیر
     private static class Node {
         int x, y;
         Node parent;
@@ -1190,6 +1188,6 @@ public class GameMenuController extends MenuController {
             node = node.parent;
         }
         Collections.reverse(path);
-        return path.subList(1, path.size()); // نقطه شروع را حذف می‌کنیم
+        return path.subList(1, path.size()); //delete start location
     }
 }

@@ -102,4 +102,7 @@ public class GameTile {
         return "🟫";
     }
 
+    public void setOccupied(boolean b) {
+        this.occupied = b;
+    }
 }
