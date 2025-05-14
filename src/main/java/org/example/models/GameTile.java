@@ -12,6 +12,7 @@ public class GameTile {
     private boolean hasBeenFertilized = false;
     private String fertilizer = "";
     private boolean isOccupied = false;
+    public static boolean greenHouseBuilt = false;
     // can't be walked over if it's occupied
 
     public GameTile(int x, int y, TileType tileType) {
@@ -85,6 +86,7 @@ public class GameTile {
         if (tileType == TileType.Tree) return "\uD83C\uDF33";
         if (tileType == TileType.Stone) return "\uD83E\uDEA8";
         if (tileType == TileType.Mine) return "⛰\uFE0F";
+        if (tileType == TileType.GreenHouse) return "\uD83C\uDF38";
         if (tileType == TileType.CheatThor) return "O";
         return "🟫";
     }

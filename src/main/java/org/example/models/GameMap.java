@@ -338,28 +338,28 @@ public class GameMap {
 
         switch (farmType) {
             case 1: // مزرعه نوع 1
+                placeFixedFeature(startX+20, startY+15, 6, 5, TileType.GreenHouse, "greenhouse");
                 placeFixedFeature(startX+1, startY+1, 3, 2, TileType.Mine, "mine");
                 placeFixedFeature(startX+5, startY+5, 3, 2, TileType.Water, "lake");
                 placeFixedFeature(startX+10, startY+10, 4, 4, TileType.Building, "builing");
                 break;
 
             case 2: // مزرعه نوع 2
-                placeFixedFeature(startX+20, startY+20, 3, 2, TileType.Water, "lake");
-
+                placeFixedFeature(startX+14, startY+15, 6, 5, TileType.GreenHouse, "greenhouse");
+                placeFixedFeature(startX+20, startY+21, 3, 2, TileType.Water, "lake");
                 placeFixedFeature(startX+4, startY+4, 3, 2, TileType.Mine, "mine");
-
-
                 placeFixedFeature(startX+10, startY+10, 4, 4, TileType.Building, "builing");
                 break;
 
             case 3: // مزرعه نوع 3
-//                placeFixedFeature(startX+10, startY+10, 5, 6, TileType.Building, "greenhouse");
+                placeFixedFeature(startX+20, startY+15, 6, 5, TileType.GreenHouse, "greenhouse");
                 placeFixedFeature(startX+2, startY+2, 3, 2, TileType.Mine, "mine");
                 placeFixedFeature(startX+10, startY+11, 3, 2, TileType.Water, "lake");
                 placeFixedFeature(startX+15, startY+20, 4, 4, TileType.Building, "builing");
                 break;
 
             case 4: // مزرعه نوع 4
+                placeFixedFeature(startX+10, startY+5, 6, 5, TileType.GreenHouse, "greenhouse");
                 placeFixedFeature(startX+4, startY+2, 3, 2, TileType.Mine, "mine");
                 placeFixedFeature(startX+15, startY+11, 3, 2, TileType.Water, "lake");
                 placeFixedFeature(startX+19, startY+20, 4, 4, TileType.Building, "builing");

@@ -958,6 +958,7 @@ public class GameMenuController extends MenuController {
         System.out.println("Tree :" + "\uD83C\uDF33");
         System.out.println("Stone :" + "\uD83E\uDEA8");
         System.out.println("Mine :" + "⛰\uFE0F");
+        System.out.println("Green House :" + "\uD83C\uDF38");
         System.out.println("Cheat Thor :" + "O");
     }
 
@@ -965,6 +966,7 @@ public class GameMenuController extends MenuController {
 
     public Result cheatThor(Matcher matcher) {
         int i = 0,j = 0;
+        boolean done = false;
         try {
             if (matcher.group("x") != null && matcher.group("y") != null) {
                 int x = Integer.parseInt(matcher.group("x"));
@@ -972,12 +974,16 @@ public class GameMenuController extends MenuController {
                 i = x;
                 j = y;
                 //todo: اگر گلخانه بود تاثیر نداره
-                Game.getGameMap().getTile(x,y).setTileType(TileType.CheatThor);
+                if (!Game.getGameMap().getTile(x,y).getTileType().equals(TileType.GreenHouse)){
+                    done = true;
+                    Game.getGameMap().getTile(x,y).setTileType(TileType.CheatThor);
+                }
             }
         } catch (Exception e) {
             return new Result(false, "Invalid input format.");
         }
-        return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
+        if (done) return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
+        else return new Result(false, "Cheat Thor failed!");
     }
 
     private boolean canWalk(int x, int y) {
@@ -990,5 +996,17 @@ public class GameMenuController extends MenuController {
         }
 
         return true;
+    }
+
+    public Result buildGreenHouse() {
+        Game.canBuildGreenHouse = true;
+        for (int i = 0; i < 100; i++) {
+            for (int j = 0; j < 100 ; j++) {
+                if(Game.getGameMap().getTile(i,j).getTileType().equals(TileType.GreenHouse)) {
+                    GameTile.greenHouseBuilt = true;
+                }
+            }
+        }
+        return null;
     }
 }

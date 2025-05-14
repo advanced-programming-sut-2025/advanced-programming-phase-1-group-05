@@ -17,6 +17,8 @@ public class Game {
     private static Weather forecastedWeather = Weather.Sunny;
     private static final Database database = new Database();
     public static int currentPlayerIndex = 0;
+    public static boolean canBuildGreenHouse = false;
+//    public static boolean greenHouseBuilt = false;
     public static Map<Player, Item> soldItems = new HashMap<>();
 
     // TODO make the game methods nonstatic

@@ -137,6 +137,10 @@ public class GameMenu implements org.example.views.AppMenu {
         else if ((matcher = GameMenuCommands.CheatThor.getMatcher(input)) != null) {
             System.out.println(gameMenuController.cheatThor(matcher));
         }
+        else if (input.equals("greenhouse build")) {
+            Result result = gameMenuController.buildGreenHouse();
+            System.out.println(result.getMessage());
+        }
         else if (input.equals("help reading map")) {
             gameMenuController.helpReadingMap();
         }
