@@ -961,6 +961,7 @@ public class GameMenuController extends MenuController {
         System.out.println("Cheat Thor :" + "O");
     }
 
+
     public Result cheatThor(Matcher matcher) {
         int i = 0,j = 0;
         try {
