@@ -166,7 +166,7 @@
         ]
       },
       {
-        "name": "Ancient Seed",
+        "name": "Ancient seeds",
         "price": 500,
         "limit": 1,
         "season": [
@@ -221,7 +221,7 @@
         ]
       },
       {
-        "name": "Parsnip Seed",
+        "name": "Parsnip seeds",
         "price": 25,
         "limit": 5,
         "season": [
@@ -237,7 +237,7 @@
         ]
       },
       {
-        "name": "Cauliflower Seed",
+        "name": "Cauliflower seeds",
         "price": 100,
         "limit": 5,
         "season": [
@@ -245,7 +245,7 @@
         ]
       },
       {
-        "name": "Potato Seed",
+        "name": "Potato seeds",
         "price": 62,
         "limit": 5,
         "season": [
@@ -253,7 +253,7 @@
         ]
       },
       {
-        "name": "Strawberry Seed",
+        "name": "Strawberry seeds",
         "price": 100,
         "limit": 5,
         "season": [
@@ -269,7 +269,7 @@
         ]
       },
       {
-        "name": "Kale Seed",
+        "name": "Kale seeds",
         "price": 87,
         "limit": 5,
         "season": [
@@ -286,7 +286,7 @@
         ]
       },
       {
-        "name": "Carrot Seed",
+        "name": "Carrot seeds",
         "price": 5,
         "limit": 10,
         "season": [
@@ -294,7 +294,7 @@
         ]
       },
       {
-        "name": "Rhubarb Seed",
+        "name": "Rhubarb seeds",
         "price": 100,
         "limit": 5,
         "season": [
@@ -302,7 +302,7 @@
         ]
       },
       {
-        "name": "Jazz Seed",
+        "name": "Jazz seeds",
         "price": 37,
         "limit": 5,
         "season": [
@@ -310,7 +310,7 @@
         ]
       },
       {
-        "name": "Tomato Seed",
+        "name": "Tomato seeds",
         "price": 62,
         "limit": 5,
         "season": [
@@ -318,7 +318,7 @@
         ]
       },
       {
-        "name": "Pepper Seed",
+        "name": "Pepper seeds",
         "price": 50,
         "limit": 5,
         "season": [
@@ -326,7 +326,7 @@
         ]
       },
       {
-        "name": "Wheat Seed",
+        "name": "Wheat seeds",
         "price": 12,
         "limit": 10,
         "season": [
@@ -335,7 +335,7 @@
         ]
       },
       {
-        "name": "Summer Squash Seed",
+        "name": "Summer Squash seeds",
         "price": 10,
         "limit": 10,
         "season": [
@@ -343,7 +343,7 @@
         ]
       },
       {
-        "name": "Radish Seed",
+        "name": "Radish seeds",
         "price": 50,
         "limit": 5,
         "season": [
@@ -351,7 +351,7 @@
         ]
       },
       {
-        "name": "Melon Seed",
+        "name": "Melon seeds",
         "price": 100,
         "limit": 5,
         "season": [
@@ -367,7 +367,7 @@
         ]
       },
       {
-        "name": "Poppy Seed",
+        "name": "Poppy seeds",
         "price": 125,
         "limit": 5,
         "season": [
@@ -375,7 +375,7 @@
         ]
       },
       {
-        "name": "Spangle Seed",
+        "name": "Spangle seeds",
         "price": 62,
         "limit": 5,
         "season": [
@@ -383,7 +383,7 @@
         ]
       },
       {
-        "name": "Starfruit Seed",
+        "name": "Starfruit seeds",
         "price": 400,
         "limit": 5,
         "season": [
@@ -391,7 +391,7 @@
         ]
       },
       {
-        "name": "Sunflower Seed",
+        "name": "Sunflower seedss",
         "price": 125,
         "limit": 5,
         "season": [
@@ -400,7 +400,7 @@
         ]
       },
       {
-        "name": "Corn Seed",
+        "name": "Corn seeds",
         "price": 187,
         "limit": 5,
         "season": [
@@ -409,7 +409,7 @@
         ]
       },
       {
-        "name": "Eggplant Seed",
+        "name": "Eggplant seeds",
         "price": 25,
         "limit": 5,
         "season": [
@@ -417,7 +417,7 @@
         ]
       },
       {
-        "name": "Pumpkin Seed",
+        "name": "Pumpkin seeds",
         "price": 125,
         "limit": 5,
         "season": [
@@ -425,7 +425,7 @@
         ]
       },
       {
-        "name": "Broccoli Seed",
+        "name": "Broccoli seeds",
         "price": 15,
         "limit": 5,
         "season": [
@@ -433,7 +433,7 @@
         ]
       },
       {
-        "name": "Amaranth Seed",
+        "name": "Amaranth seeds",
         "price": 87,
         "limit": 5,
         "season": [
@@ -449,7 +449,7 @@
         ]
       },
       {
-        "name": "Beet Seed",
+        "name": "Beet seeds",
         "price": 20,
         "limit": 5,
         "season": [
@@ -457,7 +457,7 @@
         ]
       },
       {
-        "name": "Yam Seed",
+        "name": "Yam seeds",
         "price": 75,
         "limit": 5,
         "season": [
@@ -465,7 +465,7 @@
         ]
       },
       {
-        "name": "Bok Choy Seed",
+        "name": "Bok Choy seeds",
         "price": 62,
         "limit": 5,
         "season": [
@@ -473,7 +473,7 @@
         ]
       },
       {
-        "name": "Fairy Seed",
+        "name": "Fairy seeds",
         "price": 250,
         "limit": 5,
         "season": [
@@ -481,7 +481,7 @@
         ]
       },
       {
-        "name": "Rare Seed",
+        "name": "Rare seeds",
         "price": 1000,
         "limit": 1,
         "season": [
@@ -489,7 +489,7 @@
         ]
       },
       {
-        "name": "Powdermelon Seed",
+        "name": "Powdermelon seeds",
         "price": 20,
         "limit": 10,
         "season": [
@@ -795,7 +795,7 @@
         "limit": 1
       },
       {
-        "name": "Parsnip Seed",
+        "name": "Parsnip seeds",
         "price": 20,
         "limit": 5,
         "season": [
@@ -811,7 +811,7 @@
         ]
       },
       {
-        "name": "Cauliflower Seed",
+        "name": "Cauliflower seeds",
         "price": 80,
         "limit": 5,
         "season": [
@@ -819,7 +819,7 @@
         ]
       },
       {
-        "name": "Potato Seed",
+        "name": "Potato seeds",
         "price": 50,
         "limit": 5,
         "season": [
@@ -835,7 +835,7 @@
         ]
       },
       {
-        "name": "Kale Seed",
+        "name": "Kale seeds",
         "price": 70,
         "limit": 5,
         "season": [
@@ -843,7 +843,7 @@
         ]
       },
       {
-        "name": "Jazz Seed",
+        "name": "Jazz seeds",
         "price": 30,
         "limit": 5,
         "season": [
@@ -851,7 +851,7 @@
         ]
       },
       {
-        "name": "Garlic Seed",
+        "name": "Garlic seeds",
         "price": 40,
         "limit": 5,
         "season": [
@@ -867,7 +867,7 @@
         ]
       },
       {
-        "name": "Melon Seed",
+        "name": "Melon seeds",
         "price": 80,
         "limit": 5,
         "season": [
@@ -875,7 +875,7 @@
         ]
       },
       {
-        "name": "Tomato Seed",
+        "name": "Tomato seeds",
         "price": 50,
         "limit": 5,
         "season": [
@@ -883,7 +883,7 @@
         ]
       },
       {
-        "name": "Blueberry Seed",
+        "name": "Blueberry seeds",
         "price": 80,
         "limit": 5,
         "season": [
@@ -891,7 +891,7 @@
         ]
       },
       {
-        "name": "Pepper Seed",
+        "name": "Pepper seeds",
         "price": 40,
         "limit": 5,
         "season": [
@@ -899,7 +899,7 @@
         ]
       },
       {
-        "name": "Wheat Seed",
+        "name": "Wheat seeds",
         "price": 10,
         "limit": 5,
         "season": [
@@ -908,7 +908,7 @@
         ]
       },
       {
-        "name": "Radish Seed",
+        "name": "Radish seeds",
         "price": 40,
         "limit": 5,
         "season": [
@@ -916,7 +916,7 @@
         ]
       },
       {
-        "name": "Poppy Seed",
+        "name": "Poppy seeds",
         "price": 100,
         "limit": 5,
         "season": [
@@ -924,7 +924,7 @@
         ]
       },
       {
-        "name": "Spangle Seed",
+        "name": "Spangle seeds",
         "price": 50,
         "limit": 5,
         "season": [
@@ -940,7 +940,7 @@
         ]
       },
       {
-        "name": "Corn Seed",
+        "name": "Corn seeds",
         "price": 150,
         "limit": 5,
         "season": [
@@ -949,7 +949,7 @@
         ]
       },
       {
-        "name": "Sunflower Seed",
+        "name": "Sunflower seedss",
         "price": 200,
         "limit": 5,
         "season": [
@@ -958,7 +958,7 @@
         ]
       },
       {
-        "name": "Red Cabbage Seed",
+        "name": "Red Cabbage seeds",
         "price": 100,
         "limit": 5,
         "season": [
@@ -966,7 +966,7 @@
         ]
       },
       {
-        "name": "Eggplant Seed",
+        "name": "Eggplant seeds",
         "price": 20,
         "limit": 5,
         "season": [
@@ -974,7 +974,7 @@
         ]
       },
       {
-        "name": "Pumpkin Seed",
+        "name": "Pumpkin seeds",
         "price": 100,
         "limit": 5,
         "season": [
@@ -982,7 +982,7 @@
         ]
       },
       {
-        "name": "Bok Choy Seed",
+        "name": "Bok Choy seeds",
         "price": 50,
         "limit": 5,
         "season": [
@@ -990,7 +990,7 @@
         ]
       },
       {
-        "name": "Yam Seed",
+        "name": "Yam seeds",
         "price": 60,
         "limit": 5,
         "season": [
@@ -998,7 +998,7 @@
         ]
       },
       {
-        "name": "Cranberry Seed",
+        "name": "Cranberry seeds",
         "price": 240,
         "limit": 5,
         "season": [
@@ -1006,7 +1006,7 @@
         ]
       },
       {
-        "name": "Fairy Seed",
+        "name": "Fairy seeds",
         "price": 200,
         "limit": 5,
         "season": [
@@ -1014,7 +1014,7 @@
         ]
       },
       {
-        "name": "Amaranth Seed",
+        "name": "Amaranth seeds",
         "price": 70,
         "limit": 5,
         "season": [
@@ -1030,7 +1030,7 @@
         ]
       },
       {
-        "name": "Artichoke Seed",
+        "name": "Artichoke seeds",
         "price": 30,
         "limit": 5,
         "season": [

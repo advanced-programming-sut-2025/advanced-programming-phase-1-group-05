@@ -11,6 +11,7 @@ public class ArtisanProduct implements Item {
         this.energy = energy;
         processingHours = processingTime;
         this.sellPrice = sellPrice;
+        Game.getDatabase().itemDatabase.add(this);
     }
 
     public String getName() {
