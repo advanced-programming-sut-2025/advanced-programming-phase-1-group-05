@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum GameMenuCommands {
+    Walk("walk -l (?<x>\\d+) (?<y>\\d+)"),
     CheatThor("cheat Thor -l (?<x>\\d+) (?<y>\\d+)"),
     PrintMap("print map(?: -l (?<x>\\d+) (?<y>\\d+) -s (?<size>\\d+))?"),
     ShowEnergy("show energy"),
@@ -31,6 +32,7 @@ public enum GameMenuCommands {
     CollectProduce("collect\\s+produce\\s+-n\\s+(?<name>\\S+)"),
     SellAnimal("sell\\s+animal\\s+-n\\s+(?<animalName>.+?)"),
     StartFishing("fishing\\s+-p\\s+(?<fishingPole>.+?)"),
+    ArtisanUSe("artisan use\\s+(?<args>.+)"),
     Gift("gift\\s+-u\\s+(?<username>\\S+)\\s+-i\\s+(?<itemName>.+?)\\s+-a\\s+(?<amount>\\d+)"),
     GiftHistory("gift\\s+history\\s+-u\\s+(?<username>.+?)"),
     RateGift("gift\\s+rate\\s+-i\\s+(?<giftNumber>\\d+?)\\s+-r\\s+(?<rate>\\d+?)"),

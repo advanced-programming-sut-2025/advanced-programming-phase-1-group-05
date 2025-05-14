@@ -3,6 +3,7 @@ package org.example.models;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.example.controllers.GameManager;
+import org.example.controllers.GameMenuController;
 import org.example.models.Building.GreenHouse;
 import org.example.models.Enums.*;
 
@@ -19,7 +20,7 @@ import java.util.Random;
 public class GameMap {
     public static final int MAP_WIDTH = 100;
     public static final int MAP_HEIGHT = 100;
-    private GameTile[][] map = new GameTile[MAP_HEIGHT][MAP_WIDTH];
+    private static GameTile[][] map = new GameTile[MAP_HEIGHT][MAP_WIDTH];
 
 
     ArrayList<FruitAndVegetable> plants = new ArrayList<>();
@@ -131,13 +132,55 @@ public class GameMap {
         }
     }
     public GameMap() {
+//        Player currentPlayer = Game.getCurrentPlayer();
+//        int farmNum = currentPlayer.getMapNum();
         initEmptyMap(TileType.Flat);
+//        generatePlaceOfPlayer(farmNum);
         generateFarm(0, 0, 30, 30, 1);          // Farm A
         generateFarm(0, 70, 30, 30, 2);         // Farm B
         generateFarm(70, 0, 30, 30, 3);         // Farm C
         generateFarm(70, 70, 30, 30, 4);        // Farm D
-        generateVillageCenter();               // وسط
+        generateVillageCenter();
 
+    }
+
+    public static void generatePlaceOfPlayer(int farmNum) {
+        System.out.println(farmNum);
+        int startX, startY;
+
+        switch (farmNum) {
+            case 1:
+                startX = 5;
+                startY = 5;
+                break;
+            case 2:
+                startX = 95;
+                startY = 5;
+                break;
+            case 3:
+                startX = 5;
+                startY = 95;
+                break;
+            case 4:
+                startX = 95;
+                startY = 95;
+                break;
+            default:
+                // Default position if farm number is invalid
+                startX = 50;
+                startY = 50;
+                break;
+        }
+
+        // Set player coordinates
+        Game.getCurrentPlayer().setCoordinate(startX, startY);
+
+        // Mark the tile as occupied
+        // TODO ; HELLo
+        GameTile playerTile = getTile(startX, startY);
+        if (playerTile != null) {
+            playerTile.occupy();
+        }
     }
 
     private void generateVillageCenter() {
@@ -258,8 +301,8 @@ public class GameMap {
             }
         }
     }
-
-    public GameTile getTile(int x, int y) {
+//TODO HElloooo
+    public static GameTile getTile(int x, int y) {
         if (isInBounds(x, y)) {
             return map[x - 1][y - 1];
         }
@@ -272,7 +315,7 @@ public class GameMap {
         }
     }
 
-    public boolean isInBounds(int x, int y) {
+    public static boolean isInBounds(int x, int y) {
         return x > 0 && y > 0 && x <= map.length && y <= map[0].length;
     }
     public void printFullMap() {

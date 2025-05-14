@@ -10,5 +10,6 @@ public enum TileType {
     CheatThor,
     Building,
     GreenHouse,
+    Player,
     Occupied;
 }
