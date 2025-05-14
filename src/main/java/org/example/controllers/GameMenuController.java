@@ -974,16 +974,18 @@ public class GameMenuController extends MenuController {
                 i = x;
                 j = y;
                 //todo: اگر گلخانه بود تاثیر نداره
-                if (!Game.getGameMap().getTile(x,y).getTileType().equals(TileType.GreenHouse)){
-                    done = true;
-                    Game.getGameMap().getTile(x,y).setTileType(TileType.CheatThor);
+                if (Game.getGameMap().getTile(x,y).getTileType().equals(TileType.Tree)) {
+                    Game.getGameMap().getTile(x,y).setTileType(TileType.Flat);
                 }
+                if (Game.getGameMap().getTile(x,y).getTileType().equals(TileType.GreenHouse)){
+                    return new Result(false, "Cheat Thor failed!");
+                }
+                else Game.getGameMap().getTile(x,y).setTileType(TileType.CheatThor);
             }
         } catch (Exception e) {
             return new Result(false, "Invalid input format.");
         }
-        if (done) return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
-        else return new Result(false, "Cheat Thor failed!");
+        return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
     }
 
     private boolean canWalk(int x, int y) {
