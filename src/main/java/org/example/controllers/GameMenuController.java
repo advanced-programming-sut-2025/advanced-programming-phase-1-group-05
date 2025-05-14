@@ -1001,14 +1001,49 @@ public class GameMenuController extends MenuController {
     }
 
     public Result buildGreenHouse() {
+        Player currentPlayer = Game.getCurrentPlayer();
         Game.canBuildGreenHouse = true;
+        Item item = Game.getDatabase().getItem("wood");
         for (int i = 0; i < 100; i++) {
             for (int j = 0; j < 100 ; j++) {
-                if(Game.getGameMap().getTile(i,j).getTileType().equals(TileType.GreenHouse)) {
-                    GameTile.greenHouseBuilt = true;
-                }
+                GameTile.greenHouseBuilt = true;
+//                if(Game.getGameMap().getTile(i,j).getTileType().equals(TileType.GreenHouse)) {
+//                    if (GameTile.greenHouseBuilt && i >= 0 && i <= 50 &&
+//                            j >= 0 && j <= 50 && currentPlayer.getMapNum() == 1) {
+//                        GameTile.greenHouseBuilt = true;
+//                    }
+//                    else if (GameTile.greenHouseBuilt && i >= 50 && i <= 99 &&
+//                            j >= 0 && j <= 50 && currentPlayer.getMapNum() == 2) {
+//                        GameTile.greenHouseBuilt = true;
+//
+//                    }
+//                    else if (GameTile.greenHouseBuilt && i >= 0 && i <= 50 &&
+//                            j >= 50 && j <= 99 && currentPlayer.getMapNum() == 3) {
+//                        GameTile.greenHouseBuilt = true;
+//                    }
+//                    else if (GameTile.greenHouseBuilt && i >= 50 && i <= 99 &&
+//                            j >= 50 && j <= 99 && currentPlayer.getMapNum() == 4) {
+//                        GameTile.greenHouseBuilt = true;
+//                    }
+//                }
             }
         }
+        System.out.println("first wood: " + currentPlayer.getItemQuantity(item));
+        if (currentPlayer.getMapNum() == 1) {
+            currentPlayer.getBackPack().removeFromInventory(item , -500);
+            currentPlayer.addGold(-1000);
+        } else if (currentPlayer.getMapNum() == 2) {
+            currentPlayer.getBackPack().removeFromInventory(item , -500);
+            currentPlayer.addGold(-1000);
+        } else if (currentPlayer.getMapNum() == 3) {
+            currentPlayer.getBackPack().removeFromInventory(item , -500);
+            currentPlayer.addGold(-1000);
+        } else if (currentPlayer.getMapNum() == 4) {
+            currentPlayer.getBackPack().removeFromInventory(item , -500);
+            currentPlayer.addGold(-1000);
+        }
+        System.out.println("after wood: " + currentPlayer.getItemQuantity(item));
+
         return new Result(true, "Green House built!");
     }
 }
