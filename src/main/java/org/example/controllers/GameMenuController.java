@@ -6,7 +6,9 @@ import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Tool;
 
 import javax.swing.plaf.PanelUI;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -995,17 +997,17 @@ public class GameMenuController extends MenuController {
         return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
     }
 
-    private boolean canWalk(int x, int y) {
-        for (Player player : Game.getAllPlayers()) {
-            if (player.getFarm() != null) {
-                if (player.getFarm().isInFarm(x, y) && !player.getFarm().isOwner(Game.getCurrentPlayer())) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
+//    private boolean canWalk(int x, int y) {
+//        for (Player player : Game.getAllPlayers()) {
+//            if (player.getFarm() != null) {
+//                if (player.getFarm().isInFarm(x, y) && !player.getFarm().isOwner(Game.getCurrentPlayer())) {
+//                    return false;
+//                }
+//            }
+//        }
+//
+//        return true;
+//    }
 
     public Result buildGreenHouse() {
         Player currentPlayer = Game.getCurrentPlayer();
@@ -1059,14 +1061,135 @@ public class GameMenuController extends MenuController {
     public Result walkPlayer(Matcher matcher) {
         try {
             if (matcher.group("x") != null && matcher.group("y") != null) {
-                int x = Integer.parseInt(matcher.group("x"));
-                int y = Integer.parseInt(matcher.group("y"));
+                int targetX = Integer.parseInt(matcher.group("x"));
+                int targetY = Integer.parseInt(matcher.group("y"));
 
+                // بررسی محدوده معتبر
+                if (!Game.getGameMap().isInBounds(targetX, targetY)) {
+                    return new Result(false, "Target coordinates are out of bounds.");
+                }
 
+                // بررسی مزرعه بازیکنان دیگر
+                if (!canWalk(targetX, targetY)) {
+                    return new Result(false, "You cannot enter another player's farm!");
+                }
+
+                Player currentPlayer = Game.getCurrentPlayer();
+                int startX = currentPlayer.getX();
+                int startY = currentPlayer.getY();
+
+                // بررسی موانع در مقصد
+                GameTile targetTile = Game.getGameMap().getTile(targetX, targetY);
+                if (targetTile == null || targetTile.getTileType() == TileType.Water ||
+                        targetTile.getTileType() == TileType.Stone || targetTile.isOccupied()) {
+                    return new Result(false, "Target tile is blocked.");
+                }
+
+                // یافتن کوتاه‌ترین مسیر با BFS
+                List<Point> path = findShortestPath(startX, startY, targetX, targetY);
+
+                if (path.isEmpty()) {
+                    return new Result(false, "No valid path to target.");
+                }
+
+                // حرکت بازیکن به اولین گام در مسیر (یا تمام مسیر بسته به نیاز)
+                Point nextStep = path.get(0);
+                GameTile previousTile = Game.getGameMap().getTile(startX, startY);
+                if (previousTile != null) {
+                    previousTile.setTileType(TileType.Flat);
+//                    previousTile.setOccupied(false);
+                }
+                currentPlayer.setCoordinate(nextStep.x, nextStep.y);
+                if (targetTile != null) {
+                    targetTile.setTileType(TileType.Player);
+//                    targetTile.setOccupied(true);
+                }
+
+                return new Result(true, "Player moved to (" + nextStep.x + "," + nextStep.y + ")");
             }
         } catch (Exception e) {
             return new Result(false, "Invalid input format.");
         }
-        return new Result();
+        return new Result(false, "Invalid command.");
+    }
+
+    // تابع کمکی برای بررسی امکان حرکت به مزرعه دیگران
+    private boolean canWalk(int x, int y) {
+        for (Player player : Game.getAllPlayers()) {
+            if (player != Game.getCurrentPlayer() && player.getFarm() != null) {
+                if (player.getFarm().isInFarm(x, y)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // پیاده‌سازی الگوریتم BFS برای یافتن کوتاه‌ترین مسیر
+    private List<Point> findShortestPath(int startX, int startY, int targetX, int targetY) {
+        Queue<Node> queue = new LinkedList<>();
+        boolean[][] visited = new boolean[GameMap.MAP_WIDTH][GameMap.MAP_HEIGHT];
+        int[][] directions = {{0,1}, {1,0}, {0,-1}, {-1,0}}; // راست، پایین، چپ، بالا
+
+        queue.add(new Node(startX, startY, null));
+        visited[startX][startY] = true;
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+
+            // اگر به مقصد رسیدیم
+            if (current.x == targetX && current.y == targetY) {
+                return reconstructPath(current);
+            }
+
+            // بررسی همسایه‌ها
+            for (int[] dir : directions) {
+                int newX = current.x + dir[0];
+                int newY = current.y + dir[1];
+
+                if (Game.getGameMap().isInBounds(newX, newY) &&
+                        !visited[newX][newY] &&
+                        isWalkable(newX, newY)) {
+
+                    visited[newX][newY] = true;
+                    queue.add(new Node(newX, newY, current));
+                }
+            }
+        }
+
+        return Collections.emptyList(); // مسیری یافت نشد
+    }
+
+    // بررسی قابل عبور بودن یک تایل
+    private boolean isWalkable(int x, int y) {
+        GameTile tile = Game.getGameMap().getTile(x, y);
+        return tile != null &&
+                tile.getTileType() != TileType.Water &&
+                tile.getTileType() != TileType.Stone &&
+                !tile.isOccupied() &&
+                canWalk(x, y);
+    }
+
+    // کلاس کمکی برای ذخیره مسیر
+    private static class Node {
+        int x, y;
+        Node parent;
+
+        public Node(int x, int y, Node parent) {
+            this.x = x;
+            this.y = y;
+            this.parent = parent;
+        }
+    }
+
+    // بازسازی مسیر از آخرین گره
+    private List<Point> reconstructPath(Node node) {
+        List<Point> path = new ArrayList<>();
+        while (node != null) {
+            path.add(new Point(node.x, node.y));
+            node = node.parent;
+        }
+        Collections.reverse(path);
+        return path.subList(1, path.size()); // نقطه شروع را حذف می‌کنیم
     }
 }
