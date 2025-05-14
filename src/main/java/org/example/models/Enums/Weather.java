@@ -3,10 +3,10 @@ package org.example.models.Enums;
 import org.example.models.*;
 
 public enum Weather {
-    Sunny(1, 1.5),
+    Sunny(0, 1.5),
     Rain(1.5, 1.2),
     Storm(1.5, 4),
-    Snow(1.5, 0);
+    Snow(2, 0);
 
     private final double energyCoefficient;
     private final double fishingCoefficient;
