@@ -1,10 +1,12 @@
 package org.example.models.Enums;
 
+import org.example.models.Item;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public enum TreeType {
+public enum TreeType implements Material, Item {
     ApricotTree("Apricot Tree", "Apricot Sapling", "7-7-7-7", 28, "Apricot", 1, 59, true, 38, List.of(Season.SPRING)),
     CherryTree("Cherry Tree", "Cherry Sapling", "7-7-7-7", 28, "Cherry", 1, 80, true, 38, List.of(Season.SPRING)),
     BananaTree("Banana Tree", "Banana Sapling", "7-7-7-7", 28, "Banana", 1, 150, true, 75, List.of(Season.SUMMER)),
@@ -48,6 +50,8 @@ public enum TreeType {
     public String getName() {
         return name;
     }
+
+
     public String getSeed() {
         return seed;
     }
@@ -87,7 +91,7 @@ public enum TreeType {
     }
     public static TreeType getSeedType(String seed){
         for (TreeType treeType : TreeType.values()) {
-            if(treeType.getSeed().equals(seed)){
+            if(treeType.getSeed().contains(seed)){
                 return treeType;
             }
         }
@@ -122,5 +126,9 @@ public enum TreeType {
         }
         return stringBuilder.toString();
 
+    }
+    @Override
+    public int getPrice() {
+        return fruitPrice;
     }
 }

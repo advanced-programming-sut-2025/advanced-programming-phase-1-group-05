@@ -3,12 +3,13 @@ package org.example.models.Enums;
 import org.example.models.Craft;
 import org.example.models.Database;
 import org.example.models.Game;
+import org.example.models.Item;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public enum CraftType implements Material {
+public enum CraftType implements Material, Item {
     CherryBomb("Cherry Bomb", Map.of(Game.getDatabase().getItem("Copper Ore"), 4, MineralType.Coal, 1), "Mining Level 1", 50),
     Bomb("Bomb", Map.of(Game.getDatabase().getItem("Iron Ore"), 4, MineralType.Coal, 1), "Mining Level 2", 50),
     MegaBomb("Mega Bomb", Map.of(Game.getDatabase().getItem("Gold Ore"), 4, MineralType.Coal, 1), "Mining Level 3", 50),

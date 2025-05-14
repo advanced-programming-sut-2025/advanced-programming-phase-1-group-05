@@ -103,15 +103,6 @@ public class Database {
         return null;
     }
 
-
-    public ArrayList<Craft> getCraftingRecipeDatabase() {
-        return craftingRecipeDatabase;
-    }
-
-    public ArrayList<Item> getItemDatabase() {
-        return itemDatabase;
-    }
-
     public List<Store> getStores() {
         return stores;
     }

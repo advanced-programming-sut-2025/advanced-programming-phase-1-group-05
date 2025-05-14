@@ -1,12 +1,14 @@
 package org.example.models.Enums;
 
+import org.example.models.Item;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public enum Fish implements Material {
+public enum Fish implements Material, Item {
 
     Salmon("Salmon",75, Season.FALL, false),
     Sardine("Sardin",40, Season.FALL, false),

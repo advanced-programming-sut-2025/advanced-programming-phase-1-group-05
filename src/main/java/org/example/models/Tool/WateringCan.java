@@ -26,6 +26,7 @@ public class WateringCan implements Tool<ItemLevel> {
                 if(!reduceEnergy(energyUsage))
                     return new Result(false, "You don't have enough energy");
                 waterlevel = level.getWateringcanCapacity();
+                return new Result(true, "Watering can successfully filled up!");
             } else return new Result(false, "Nothing to water!");
         } else {
             if(item instanceof FruitAndVegetable) {
@@ -35,9 +36,10 @@ public class WateringCan implements Tool<ItemLevel> {
                 Game.getCurrentPlayer().getFarmingSkill().waterCrop((FruitAndVegetable)item);
                 if(waterlevel - 1 < 9) waterlevel = 0;
                 else waterlevel--;
+                return new Result(true, "Crop was successfully watered!");
             }
         }
-        return new Result(true, "");
+        return new Result(false, "Nothing to water!");
     }
 
 

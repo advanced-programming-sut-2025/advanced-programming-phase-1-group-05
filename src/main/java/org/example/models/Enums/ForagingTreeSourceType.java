@@ -1,10 +1,12 @@
 package org.example.models.Enums;
 
+import org.example.models.Item;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public enum ForagingTreeSourceType implements Material {
+public enum ForagingTreeSourceType implements Material, Item {
     Acorns("Acorns", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER)),
     MapleSeeds("Maple Seeds", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER)),
     PineCones("Pine Cones", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER)),

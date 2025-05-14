@@ -23,6 +23,7 @@ public class FruitAndVegetable implements Item {
     private int regrowthCounter;
     private int daysNoWater;
     private boolean alive = true;
+    private boolean isGiant;
 
 
     public FruitAndVegetable(CropType type) {
@@ -48,33 +49,70 @@ public class FruitAndVegetable implements Item {
         this.coordinates = coordinates;}
 
     //when planting a fruit or vegetable
-    public boolean canBecomeGiant(List<FruitAndVegetable> plants) {
-        if(!type.canBecomeGiant()) return false;
+    public GameTile[] canBecomeGiant(List<FruitAndVegetable> plants) {
+        if (!type.canBecomeGiant()) return null;
+
         int x = coordinates.getKey();
         int y = coordinates.getValue();
-        int adjacentCount = 0;
 
-        for (FruitAndVegetable p : plants) {
-            int otherX = p.getCoordinates().getKey();
-            int otherY = p.getCoordinates().getValue();
+        int[][] squareOffsets = {
+                {0, 0}, {-1, 0}, {0, -1}, {-1, -1}
+        };
 
-            if ((Math.abs(otherX - x) == 1 && otherY == y) || (Math.abs(otherY - y) == 1 && otherX == x)) {
-                adjacentCount++;
+        for (int[] offset : squareOffsets) {
+            int baseX = x + offset[0];
+            int baseY = y + offset[1];
+
+            FruitAndVegetable[] group = new FruitAndVegetable[4];
+            int found = 0;
+
+            for (FruitAndVegetable p : plants) {
+                int px = p.getCoordinates().getKey();
+                int py = p.getCoordinates().getValue();
+
+                if (!p.isGiant() && p.getName().equals(this.type.getName())) {
+                    if ((px == baseX     && py == baseY) ||
+                            (px == baseX + 1 && py == baseY) ||
+                            (px == baseX     && py == baseY + 1) ||
+                            (px == baseX + 1 && py == baseY + 1)) {
+                        group[found++] = p;
+                    }
+                }
+            }
+
+            if (found == 4) {
+                GameTile[] result = new GameTile[3];
+                int i = 0;
+                for (FruitAndVegetable p : group) {
+                    if (p != this) {
+                        int tileX = p.getCoordinates().getKey();
+                        int tileY = p.getCoordinates().getValue();
+                        result[i++] = Game.getGameMap().getTile(tileX, tileY);
+                    }
+                }
+                return result;
             }
         }
 
-        return true;
+        return null;
     }
 
 
     public void expandToGiant(List<FruitAndVegetable> plants) {
-        if (type.canBecomeGiant() && canBecomeGiant(plants)) {
-            int x = coordinates.getKey();
-            int y = coordinates.getValue();
-
-            setCoordinates(new AbstractMap.SimpleEntry<>(x, y));
-
+        if (type.canBecomeGiant() && canBecomeGiant(plants) != null) {
+            GameTile[] adjacentTiles = canBecomeGiant(plants);
+            for(GameTile adjacentTile : adjacentTiles) {
+                Item item = adjacentTile.getItemOnTile();
+                ((FruitAndVegetable)item).setGiant(true);
+            }
         }
+    }
+
+    public boolean isGiant() {
+        return isGiant;
+    }
+    public void setGiant(boolean isGiant) {
+        this.isGiant = isGiant;
     }
 
     public boolean isProtectedByScareCrow() {

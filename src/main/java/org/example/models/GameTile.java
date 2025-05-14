@@ -39,16 +39,7 @@ public class GameTile {
         this.tileType = tileType;
     }
     public boolean isTileValidForPlanting(){
-        for(FruitAndVegetable f: Game.getGameMap().getPlants()) {
-            if(f.getCoordinates().getKey() == x && f.getCoordinates().getValue() == y) {
-                return true;
-            }
-        }
-        for(Tree tree: Game.getGameMap().getTrees()) {
-            if(tree.getCoordinates().getKey() == x && tree.getCoordinates().getValue() == y) {
-                return true;
-            }
-        }
+        if(itemOnTile == null) return true;
         return false;
     }
     public int getX() {
@@ -80,7 +71,10 @@ public class GameTile {
     public String toString() {
         if (isOccupied) return "♥️";
         if (itemOnTile != null) {
-            if(itemOnTile instanceof FruitAndVegetable) return "🍎";
+            if(itemOnTile instanceof FruitAndVegetable) {
+                if(((FruitAndVegetable)itemOnTile).isGiant()) return "\uD83C\uDF49";
+                else return "🍎";
+            }
             else if(itemOnTile instanceof Tree) return "\uD83C\uDF33";
             else if(itemOnTile instanceof Mineral) return "\uD83D\uDC8E";
             else if(itemOnTile instanceof ForagingItem) return "🍎";

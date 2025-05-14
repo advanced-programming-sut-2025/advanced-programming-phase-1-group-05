@@ -23,27 +23,26 @@ public class Farming implements Skill{
         if(seed.equals("Mixed Seeds")) {
             FruitAndVegetable newCrop = mixedSeedPlant();
             tile.setItemOnTile(newCrop);
+            newCrop.setCoordinates(new AbstractMap.SimpleEntry<>(tile.getX(), tile.getY()));
             Game.getGameMap().addPlant(newCrop);
             //can become giant
-            if(newCrop.canBecomeGiant(Game.getCurrentPlayer().getFarm().getCrops())) {
-                newCrop.expandToGiant(Game.getCurrentPlayer().getFarm().getCrops());
-            }
+            newCrop.expandToGiant(Game.getCurrentPlayer().getFarm().getCrops());
         }
         if(cropType != null) {
             FruitAndVegetable crop = new FruitAndVegetable(cropType);
             tile.setItemOnTile(crop);
+            crop.setCoordinates(new AbstractMap.SimpleEntry<>(tile.getX(), tile.getY()));
             Game.getGameMap().addPlant(crop);
             if(tile.hasBeenFertilized()) {
                 crop.fertilize(tile.getFertilizer());
             }
-            if(crop.canBecomeGiant(Game.getCurrentPlayer().getFarm().getCrops())) {
-                crop.expandToGiant(Game.getCurrentPlayer().getFarm().getCrops());
-            }
+            crop.expandToGiant(Game.getCurrentPlayer().getFarm().getCrops());
             return true;
         } else if (treeType != null) {
             Tree tree = new Tree(treeType);
             tile.setItemOnTile(tree);
             Game.getGameMap().addTree(tree);
+            tree.setCoordinates(new AbstractMap.SimpleEntry<>(tile.getX(), tile.getY()));
             return true;
         }
         return false;

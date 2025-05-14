@@ -11,7 +11,6 @@ import java.util.Random;
 
 public class Tree implements Item{
         private final TreeType treeType;
-        private int price;
         private Map.Entry<Integer,Integer> coordinates;
         private boolean fullyGrown;
         private boolean isFruitGrown;
@@ -82,7 +81,7 @@ public class Tree implements Item{
             Random rand = new Random();
             int randomNum = rand.nextInt(2) + 1;
             Game.getCurrentPlayer().getForagingSkill().cutDownTree();
-            Game.getCurrentPlayer().getBackPack().getInventory().put(new BasicItem(treeType.getSeed(), this.price),randomNum);
+            Game.getCurrentPlayer().getBackPack().getInventory().put(new BasicItem(treeType.getSeed(), 0),randomNum);
             return new Result(true, "The tree was cut down, giving you " + randomNum + " of its seeds!");
         }
         public void setProtectedByScareCrow(boolean protectedByScareCrow) {
@@ -107,7 +106,10 @@ public class Tree implements Item{
         }
         @Override
         public int getPrice() {
-            return price;
+            return 0;
+        }
+        public void setCoordinates(Map.Entry<Integer,Integer> coordinates) {
+            this.coordinates = coordinates;
         }
 
 

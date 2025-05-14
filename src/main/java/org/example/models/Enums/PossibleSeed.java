@@ -1,8 +1,10 @@
 package org.example.models.Enums;
 
+import org.example.models.Item;
+
 import java.util.List;
 
-public enum PossibleSeed {
+public enum PossibleSeed implements Material, Item {
     SPRING("Spring",List.of(CropType.Cauliflower, CropType.Parsnip, CropType.Potato, CropType.BlueJazz, CropType.Tulip)),
     SUMMER("Summer",List.of(CropType.Corn, CropType.HotPepper, CropType.Radish, CropType.Wheat, CropType.Poppy, CropType.Sunflower, CropType.SummerSpangle)),
     FALL("Fall",List.of(CropType.Artichoke, CropType.Corn, CropType.Eggplant, CropType.Pumpkin, CropType.Sunflower, CropType.FairyRose)),
@@ -19,5 +21,15 @@ public enum PossibleSeed {
         else if (season == Season.SUMMER) return PossibleSeed.SUMMER.possibleSeeds;
         else if (season == Season.FALL) return PossibleSeed.FALL.possibleSeeds;
         else return PossibleSeed.WINTER.possibleSeeds;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public int getPrice() {
+        return 0;
     }
 }

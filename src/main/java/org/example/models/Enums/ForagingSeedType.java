@@ -1,12 +1,13 @@
 package org.example.models.Enums;
 
 import com.sun.source.tree.Tree;
+import org.example.models.Item;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public enum ForagingSeedType implements Material {
+public enum ForagingSeedType implements Material, Item {
     JazzSeeds("Jazz Seeds", List.of(Season.SPRING)),
     CarrotSeeds("Carrot Seeds", List.of(Season.SPRING)),
     CauliflowerSeeds("Cauliflower Seeds", List.of(Season.SPRING)),

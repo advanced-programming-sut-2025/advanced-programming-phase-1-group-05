@@ -5,7 +5,6 @@ import org.example.models.Enums.*;
 import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Tool;
 
-import javax.swing.plaf.PanelUI;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -725,9 +724,10 @@ public class GameMenuController extends MenuController {
 
 
     //plant seed on a specific tile
-    public Result plantSeed(String seed, Map.Entry<Integer, Integer> coordinates) {
+    public Result plantSeed(String seed, String direction) {
+        int[]dir = getDirections(direction);
         GameMap map = Game.getGameMap();
-        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
+        GameTile tile = map.getTile(Game.getCurrentPlayer().getCoordinate().getKey() + dir[1], Game.getCurrentPlayer().getCoordinate().getValue() + dir[0]);
         //errors
         if (tile == null) return new Result(false, "Tile not found");
         if (tile.getTileType() != TileType.Soil)
@@ -773,8 +773,7 @@ public class GameMenuController extends MenuController {
 
     //how much water left
     public Result howMuchWaterLeft() {
-        int waterLeft = Game.getCurrentPlayer().getWateringCan().getCapacity() -
-                Game.getCurrentPlayer().getWateringCan().getWaterlevel();
+        int waterLeft = Game.getCurrentPlayer().getWateringCan().getWaterlevel();
         return new Result(true, waterLeft + " water units left in your watering can");
     }
 

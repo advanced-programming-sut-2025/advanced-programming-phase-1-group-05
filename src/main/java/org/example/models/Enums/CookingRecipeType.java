@@ -1,11 +1,12 @@
 package org.example.models.Enums;
 
 import org.example.models.Game;
+import org.example.models.Item;
 
 import java.util.List;
 import java.util.Map;
 
-public enum CookingRecipeType implements Material{
+public enum CookingRecipeType implements Material, Item {
     FriedEgg("Fried Egg", Map.of(Game.getDatabase().getItem("Egg"), 1),50, "", "Starter", 35),
     BakedFish("Fried Egg", Map.of(Fish.Sardine, 1, Fish.Salmon, 1, CropType.Wheat, 1),75, "", "Starter", 100),
     Salad("Fried Egg", Map.of(ForagingCrop.Leek, 1, Game.getDatabase().getItem("Dandelion"), 1),113, "", "Starter", 110),

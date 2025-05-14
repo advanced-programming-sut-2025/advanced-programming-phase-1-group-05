@@ -1,10 +1,12 @@
 package org.example.models.Enums;
 
+import org.example.models.Item;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public enum ForagingCrop implements Material {
+public enum ForagingCrop implements Material, Item {
     CommonMushroom("Common Mushroom", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER), 40, 38),
     Daffodil("Daffodil", List.of(Season.SPRING), 30, 0),
     Leek("Leek", List.of(Season.SPRING), 60, 40),

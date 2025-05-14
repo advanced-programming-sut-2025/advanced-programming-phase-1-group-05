@@ -1,8 +1,10 @@
 package org.example.models.Enums;
 
+import org.example.models.Item;
+
 import java.util.List;
 
-public enum CropType implements Material {
+public enum CropType implements Material, Item {
     BlueJazz("Blue Jazz", "Jazz Seeds", "1-2-2-2", 7, true, 0, 50, true, 45, List.of(Season.SPRING), false),
     Carrot("Carrot", "Carrot Seeds", "1-1-1", 3, true, 0, 35, true, 75, List.of(Season.SPRING), false),
     Cauliflower("Cauliflower", "Cauliflower Seeds", "1-2-4-4-1", 12, true, 0, 175, true, 75, List.of(Season.SPRING), true),
@@ -108,7 +110,7 @@ public enum CropType implements Material {
 
     public static CropType getSeedType(String seed){
         for(CropType cropType : CropType.values()){
-            if(cropType.source.equals(seed)){
+            if(cropType.source.contains(seed)){
                 return cropType;
             }
         }

@@ -173,8 +173,7 @@ public class GameMenu implements org.example.views.AppMenu {
         } else if((matcher = GameMenuCommands.PlowTile.getMatcher(input)) != null) {
             System.out.println(gameMenuController.plowTile(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y"))));
         } else if((matcher = GameMenuCommands.Plant.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.plantSeed(matcher.group("seed"),
-                    new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")), Integer.parseInt(matcher.group("y")))));
+            System.out.println(gameMenuController.plantSeed(matcher.group("seed"),matcher.group("direction")));
         } else if((matcher = GameMenuCommands.ShowPlant.getMatcher(input)) != null) {
             System.out.println(gameMenuController.showPlant(new AbstractMap.SimpleEntry<>(Integer.parseInt(matcher.group("x")),
                     Integer.parseInt(matcher.group("y")))));

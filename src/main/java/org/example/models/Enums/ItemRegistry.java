@@ -12,7 +12,9 @@ public class ItemRegistry {
             ForagingCrop.class,
             ForagingSeedType.class,
             CraftType.class,
-            CookingRecipeType.class
+            CookingRecipeType.class,
+            Fish.class,
+            MineralType.class
     );
 
     public static Item findItemByName(String name) {
