@@ -134,9 +134,12 @@ public class GameMap {
             int[] coords = farmCoords[i++];
             player.setFarm(coords[0], coords[1]);
         }
-        generateVillageCenter();               // وسط
+        generateVillageCenter();// وسط
+        //setPlayerCoordinates();
 
     }
+
+
 
     private void generateVillageCenter() {
         int centerX = MAP_HEIGHT / 2;
@@ -244,8 +247,6 @@ public class GameMap {
     }
 
 
-
-
     private boolean insideRect(int i, int j, int x, int y, int w, int h) {
         return i >= x && i < x + h && j >= y && j < y + w;
     }
@@ -268,7 +269,7 @@ public class GameMap {
 
     public void setTile(int x, int y, GameTile tile) {
         if (isInBounds(x, y)) {
-            map[x - 1][y - 1] = tile;
+            map[x][y] = tile;
         }
     }
 
@@ -391,8 +392,18 @@ public class GameMap {
         }
     }
 
+    public void setPlayerCoordinates(){
+        for(int i = 1; i < MAP_HEIGHT; i ++) {
+            for(int j = 1; j < MAP_WIDTH; j ++) {
+                GameTile tile = getTile(i, j);
+                if(tile.getTileType().equals(TileType.Building)) {
+                    Game.getCurrentPlayer().setCoordinate(i, j);
+                }
+            }
+        }
+    }
     public String whereAmI() {
-        String location ="";
+        String location ="Home";
         //TODO implement
         return location;
     }

@@ -15,7 +15,7 @@ public class TimeAndDate {
 
     public TimeAndDate() {
         this.day = 1;
-        this.season = Season.SPRING; // مقداردهی پیش‌فرض فصل
+        this.season = Season.SPRING;
         this.hour = 9;
         this.minute = 0;
     }
@@ -70,7 +70,8 @@ public class TimeAndDate {
         Game.getGameMap().setForagingMinerals();
         if(!Game.getCurrentPlayer().isEnergyUnlimited()) Game.getCurrentPlayer().resetEnergy();
         Game.setForecastedWeatherBySeason(season);
-        GameManager.nextDay();
+        Game.getGameMap().crowDamage();
+        //GameManager.nextDay();
     }
     public Season getCurrentSeason() { return season; }
     public int getDay() { return day; }

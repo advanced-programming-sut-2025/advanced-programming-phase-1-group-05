@@ -8,8 +8,8 @@ import java.util.*;
 
 public class Game {
     private static Scanner scanner = new Scanner(System.in);
-    private static GameMap gameMap = new GameMap();
     private static Player currentPlayer;
+    private static GameMap gameMap = new GameMap();
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static List<Message> messages = new ArrayList<>();
     private static List<Gift> gifts = new ArrayList<>();

@@ -6,6 +6,7 @@ import org.example.controllers.MenuController;
 import org.example.controllers.StoreController;
 import org.example.models.Enums.GameMenuCommands;
 import org.example.models.Game;
+import org.example.models.GameTile;
 import org.example.models.Result;
 import org.example.models.TimeAndDate;
 
@@ -262,6 +263,8 @@ public class GameMenu implements org.example.views.AppMenu {
             String[] coordinates = input.split(" ");
             int x = Integer.parseInt(coordinates[0]), y = Integer.parseInt(coordinates[1]);
             Game.getCurrentPlayer().setCoordinate(x, y);
+            GameTile tile = Game.getGameMap().getTile(x, y);
+            tile.occupy();
             System.out.println("set player coordinates to " + x + ", " + y);
         }
         else if (input.startsWith("cheat add gold *")) {

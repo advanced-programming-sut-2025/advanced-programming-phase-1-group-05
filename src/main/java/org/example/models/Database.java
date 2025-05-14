@@ -23,32 +23,7 @@ public class Database {
     Map<String, NPC> NPCs = new HashMap<>();
 
     public Database() {
-        //initializePlantDatabase();
         initializeStoresAndItems();loadNPCs();
-    }
-
-    //start when the game starts
-    //put this somewhere where everything is initialized
-    public void initializePlantDatabase() {
-        try {
-            Gson gson = new Gson();
-
-            FileReader reader = new FileReader("plants.json");
-
-            Type plantListType = new TypeToken<ArrayList<FruitAndVegetable>>() {
-            }.getType();
-
-            ArrayList<FruitAndVegetable> plantList = gson.fromJson(reader, plantListType);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public FruitAndVegetable getFruitAndVegetable(String name) {
-        FruitAndVegetable plant = null;
-        return plant;
     }
 
 
@@ -192,7 +167,6 @@ public class Database {
         JsonElement el = obj.get(key);
         return el != null && !el.isJsonNull() ? el.getAsString() : null;
     }
-
 
 
 }

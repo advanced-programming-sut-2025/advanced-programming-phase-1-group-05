@@ -235,7 +235,7 @@ public class GameMenuController extends MenuController {
 
     //cheat code set energy
     public Result setEnergy(int value) {
-        Game.getCurrentPlayer().increaseEnergy(value);
+        Game.getCurrentPlayer().setEnergy(value);
         return new Result(true, "** your energy got increased by " + value + " **");
     }
 
@@ -327,8 +327,8 @@ public class GameMenuController extends MenuController {
         int[]dir = getDirections(direction);
         Item currentItem = Game.getCurrentPlayer().getCurrentItem();
         if(currentItem instanceof Tool) {
-            String message = ((Tool)currentItem).use(new AbstractMap.SimpleEntry<>(Game.getCurrentPlayer().getCoordinate().getKey() + dir[0],
-                    Game.getCurrentPlayer().getCoordinate().getKey() + dir[1])).getMessage();
+            String message = ((Tool)currentItem).use(new AbstractMap.SimpleEntry<>(Game.getCurrentPlayer().getCoordinate().getKey() + dir[1],
+                    Game.getCurrentPlayer().getCoordinate().getValue() + dir[0])).getMessage();
             return new Result(true, message);
         } else return new Result(true, "You aren't equipped with any tool");
     }
