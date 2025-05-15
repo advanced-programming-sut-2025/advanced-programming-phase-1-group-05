@@ -143,9 +143,10 @@ public class RegisterMenuController {
 
         boolean hasLower = username.matches(".*[a-z].*");
         boolean hasUpper = username.matches(".*[A-Z].*");
+        boolean hasNumber = username.matches(".*.[0-9].*");
         boolean hasHyphen = username.contains("-");
 
-        return username.matches(allowedCharsRegex) && hasLower && hasUpper && hasHyphen;
+        return username.matches(allowedCharsRegex) && hasLower && hasUpper && hasHyphen && hasNumber;
     }
 
     private boolean isValidEmail(String email) {
@@ -168,7 +169,18 @@ public class RegisterMenuController {
             return false;
         }
 
-        return email.matches(emailRegex);
+        boolean hasUpperCase = email.matches(".*[A-Z].*");
+        boolean hasNumber = email.matches(".*.[0-9].*");
+        boolean hasHyphen = email.contains("-");
+        boolean valid1 = email.contains(".com");
+        boolean valid2 = email.contains("ir");
+        boolean valid3 = email.contains(".org");
+
+
+
+
+
+        return email.matches(emailRegex) && hasUpperCase && hasNumber && hasHyphen && (valid1 || valid2 || valid3);
     }
 
     public Result validatePasswordStrength(String password) {
