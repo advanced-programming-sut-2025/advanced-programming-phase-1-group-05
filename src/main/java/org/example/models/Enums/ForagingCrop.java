@@ -77,4 +77,17 @@ public enum ForagingCrop implements Material, Item {
             return f;
         }
     }
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Name : ").append(name).append("\n")
+                .append("Price : ").append(price).append("\n")
+                .append("Energy : ").append(energy).append("\n")
+                .append("Seasons : ");
+        for (Season season : seasons) {
+            builder.append(season).append(", ");
+        }
+        builder.deleteCharAt(builder.length()-1);
+        return builder.toString();
+    }
 }

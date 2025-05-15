@@ -85,6 +85,7 @@ public class GameTile {
             else if(itemOnTile instanceof Mineral) return "\uD83D\uDC8E";
             else if(itemOnTile instanceof ForagingItem) return "🍎";
             else if(itemOnTile.getName().equals("Wood")) return "\uD83E\uDEB5";
+            else if(itemOnTile.getName().equals("Fiber")) return "\uD83C\uDF3F";
         }
         if (tileType == TileType.Building) return "🏠";
         if (tileType == TileType.Water) return "🌊";

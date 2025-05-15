@@ -56,7 +56,8 @@ public class GameMap {
                         return new Result(false, "Your plant was protected by scare crow.");
                     GameTile tile = this.getTile(fruitAndVegetable.getCoordinates().getKey(),
                             fruitAndVegetable.getCoordinates().getValue());
-                    tile.setItemOnTile(null);
+                    if(tile.getTileType().equals(TileType.GreenHouse))
+                        return new Result(true, "Your plant was protected in the green house.");
                     plants.remove(index);
                     return new Result(true, "A crow destroyed your plant during the night");
                 } else if (targetPlant && !trees.isEmpty()) {
@@ -85,13 +86,19 @@ public class GameMap {
             GameTile tile = map[row][col];
             Item item;
             if (tile != null && tile.getTileType() == TileType.Soil && tile.getItemOnTile() == null) {
-                if (chosen % 2 == 0) {
+                if (chosen % 4 == 0) {
                     ForagingTreeSourceType type = ForagingTreeSourceType.getRandomForagingTreeType(GameManager.getSeason());
                     item = new ForagingItem(type, type.getName(), type.getPrice());
                     tile.setItemOnTile(item);
-                } else {
+                } else if(chosen % 4 == 1) {
                     ForagingSeedType type = ForagingSeedType.getRandomForagingSeedType(GameManager.getSeason());
                     item = new ForagingItem(type, type.getName(), type.getPrice());
+                    tile.setItemOnTile(item);
+                } else if(chosen % 4 == 2) {
+                    item = Game.getDatabase().getItem("Wood");
+                    tile.setItemOnTile(item);
+                } else {
+                    item = Game.getDatabase().getItem("Fiber");
                     tile.setItemOnTile(item);
                 }
             }
@@ -99,24 +106,29 @@ public class GameMap {
     }
 
     //spawn foraging minerals
-    public void setForagingMinerals(){
-        int totalTiles = map.length * map[0].length;
+    public void setForagingMinerals() {
         Random random = new Random();
 
-        if (random.nextInt(100) == 0) { // 1% chance
-            int chosen = random.nextInt(totalTiles);
-            int row = chosen / map[0].length;
-            int col = chosen % map[0].length;
+        if (random.nextInt(25) == 0) { // 4% chance
+            List<GameTile> mineralTiles = new ArrayList<>();
 
-            GameTile tile = map[row][col];
-            Item item;
-            if (tile != null && tile.getTileType() == TileType.Mine && tile.getItemOnTile() == null) {
+            for (int row = 0; row < map.length; row++) {
+                for (int col = 0; col < map[0].length; col++) {
+                    GameTile tile = map[row][col];
+                    if (tile != null && tile.getTileType() == TileType.Mine && tile.getItemOnTile() == null) {
+                        mineralTiles.add(tile);
+                    }
+                }
+            }
+
+            if (!mineralTiles.isEmpty()) {
+                GameTile chosenTile = mineralTiles.get(random.nextInt(mineralTiles.size()));
                 MineralType mineralType = MineralType.getRandomMineralType();
-                item = new Mineral(mineralType);
-                tile.setItemOnTile(item);
+                chosenTile.setItemOnTile(new Mineral(mineralType));
             }
         }
     }
+
     public void growPlants(){
         for(FruitAndVegetable f: plants){
             if(f.isAlive()) f.grow();

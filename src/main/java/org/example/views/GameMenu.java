@@ -144,11 +144,8 @@ public class GameMenu implements org.example.views.AppMenu {
         else if (input.equals("help reading map")) {
             gameMenuController.helpReadingMap();
         }
-        else if (input.equals("show menus")) {
-            menuController.showMenus();
-        }
         else if ((matcher = GameMenuCommands.Walk.getMatcher(input)) != null) {
-            //System.out.println(gameMenuController.walkPlayer(matcher));
+          // System.out.println(gameMenuController.walkPlayer(matcher));
         }
         else if ((matcher = GameMenuCommands.ShowEnergy.getMatcher(input)) != null) {
             System.out.println(gameMenuController.showEnergy().getMessage());
@@ -169,7 +166,7 @@ public class GameMenu implements org.example.views.AppMenu {
         } else if ((matcher = GameMenuCommands.ShowAvailableTools.getMatcher(input)) != null) {
             System.out.println(gameMenuController.showAvailableTools());
         } else if ((matcher = GameMenuCommands.UpgradeTool.getMatcher(input)) != null) {
-            System.out.println(storeController.upgradeTool(matcher.group("toolName")));
+            System.out.println(new StoreController().upgradeTool(matcher.group("toolName")));
         } else if ((matcher = GameMenuCommands.ShowCraftInfo.getMatcher(input)) != null) {
             System.out.println(gameMenuController.showCraftInfo(matcher.group("craftName")));
         } else if ((matcher = GameMenuCommands.UseTool.getMatcher(input)) != null) {
@@ -202,20 +199,11 @@ public class GameMenu implements org.example.views.AppMenu {
         else if ((matcher = GameMenuCommands.BuyAnimal.getMatcher(input)) != null) {
             System.out.println(storeController.buyAnimal(matcher));
         }
-        else if ((matcher = GameMenuCommands.PetAnimal.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.petAnimal(matcher));
-        }
         else if ((matcher = GameMenuCommands.SetFriendshipCC.getMatcher(input)) != null) {
             System.out.println(gameMenuController.cheatSetFriendship(matcher));
         }
-        else if (input.equals("animals")) {
-            System.out.println(gameMenuController.printAnimalsInfo());
-        }
         else if ((matcher = GameMenuCommands.FeedHay.getMatcher(input)) != null) {
             System.out.println(gameMenuController.feedHay(matcher));
-        }
-        else if (input.equals("produces")) {
-            System.out.println(gameMenuController.printUncollectedProduce());
         }
         else if ((matcher = GameMenuCommands.CollectProduce.getMatcher(input)) != null) {
             System.out.println(gameMenuController.collectProduce(matcher));
@@ -225,12 +213,6 @@ public class GameMenu implements org.example.views.AppMenu {
         }
         else if ((matcher = GameMenuCommands.StartFishing.getMatcher(input)) != null) {
             System.out.println(gameMenuController.startFishing(matcher));
-        }
-        else if ((matcher = GameMenuCommands.ArtisanUSe.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.useArtisan(matcher));
-        }
-        else if ((matcher = GameMenuCommands.ArtisanGet.getMatcher(input)) != null) {
-            System.out.println(gameMenuController.artisanGet(matcher));
         }
         else if ((matcher = GameMenuCommands.Purchase.getMatcher(input)) != null) {
             System.out.println(storeController.purchase(matcher));

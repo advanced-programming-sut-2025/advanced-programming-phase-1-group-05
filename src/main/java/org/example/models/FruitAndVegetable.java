@@ -49,11 +49,18 @@ public class FruitAndVegetable implements Item {
         this.coordinates = coordinates;}
 
     //when planting a fruit or vegetable
-    public GameTile[] canBecomeGiant(List<FruitAndVegetable> plants) {
-        if (!type.canBecomeGiant()) return null;
+    public ArrayList<GameTile> getMatchingGiantSquare(GameTile tile) {
+        ArrayList<GameTile> matchingGroup = new ArrayList<>();
+        if(!this.type.canBecomeGiant()) return matchingGroup;
 
-        int x = coordinates.getKey();
-        int y = coordinates.getValue();
+        int x = tile.getX();
+        int y = tile.getY();
+
+        Item baseItem = tile.getItemOnTile();
+        if (!(baseItem instanceof FruitAndVegetable basePlant)) return matchingGroup;
+        if (basePlant.isGiant()) return matchingGroup;
+
+        String targetName = basePlant.getName();
 
         int[][] squareOffsets = {
                 {0, 0}, {-1, 0}, {0, -1}, {-1, -1}
@@ -63,50 +70,56 @@ public class FruitAndVegetable implements Item {
             int baseX = x + offset[0];
             int baseY = y + offset[1];
 
-            FruitAndVegetable[] group = new FruitAndVegetable[4];
-            int found = 0;
+            ArrayList<GameTile> squareTiles = new ArrayList<>();
+            boolean validSquare = true;
 
-            for (FruitAndVegetable p : plants) {
-                int px = p.getCoordinates().getKey();
-                int py = p.getCoordinates().getValue();
+            for (int dx = 0; dx <= 1; dx++) {
+                for (int dy = 0; dy <= 1; dy++) {
+                    int tileX = baseX + dx;
+                    int tileY = baseY + dy;
 
-                if (!p.isGiant() && p.getName().equals(this.type.getName())) {
-                    if ((px == baseX     && py == baseY) ||
-                            (px == baseX + 1 && py == baseY) ||
-                            (px == baseX     && py == baseY + 1) ||
-                            (px == baseX + 1 && py == baseY + 1)) {
-                        group[found++] = p;
+                    if (!GameMap.isInBounds(tileX, tileY)) {
+                        validSquare = false;
+                        break;
                     }
+
+                    GameTile checkTile = GameMap.getTile(tileX, tileY);
+                    Item item;
+
+                    if (checkTile == null || (item = checkTile.getItemOnTile()) == null ||
+                            !(item instanceof FruitAndVegetable p) ||
+                            p.isGiant() ||
+                            !p.getName().equals(targetName)) {
+                        validSquare = false;
+                        break;
+                    }
+
+                    squareTiles.add(checkTile);
                 }
+                if (!validSquare) break;
             }
 
-            if (found == 4) {
-                GameTile[] result = new GameTile[3];
-                int i = 0;
-                for (FruitAndVegetable p : group) {
-                    if (p != this) {
-                        int tileX = p.getCoordinates().getKey();
-                        int tileY = p.getCoordinates().getValue();
-                        result[i++] = Game.getGameMap().getTile(tileX, tileY);
-                    }
-                }
-                return result;
+            if (validSquare && squareTiles.contains(tile)) {
+                return squareTiles;
             }
         }
 
-        return null;
+        return matchingGroup;
     }
 
 
-    public void expandToGiant(List<FruitAndVegetable> plants) {
-        if (type.canBecomeGiant() && canBecomeGiant(plants) != null) {
-            GameTile[] adjacentTiles = canBecomeGiant(plants);
-            for(GameTile adjacentTile : adjacentTiles) {
-                Item item = adjacentTile.getItemOnTile();
-                ((FruitAndVegetable)item).setGiant(true);
+    public Result expandToGiant(GameTile tile) {
+        ArrayList<GameTile> tilesToExpand = getMatchingGiantSquare(tile);
+        if(tilesToExpand.isEmpty()) return new Result(false, "Cannot turn giant");
+        else {
+            for(GameTile t : tilesToExpand) {
+                ((FruitAndVegetable)t.getItemOnTile()).setGiant(true);
+                this.setGiant(true);
             }
         }
+        return new Result(true, "Crop turned giant!");
     }
+
 
     public boolean isGiant() {
         return isGiant;

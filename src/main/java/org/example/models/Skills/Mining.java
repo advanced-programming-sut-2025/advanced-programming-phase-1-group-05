@@ -15,6 +15,7 @@ public class Mining implements Skill{
     public void mine(GameTile tile, Pickaxe pickaxe) {
         Item stone = tile.getItemOnTile();
         Game.getCurrentPlayer().getBackPack().addToInventory(stone, 1);
+        tile.setItemOnTile(null);
         increaseCapacity();
         if(level >=2) {
             Item addedItem = MineralType.getRandomMineralType();
