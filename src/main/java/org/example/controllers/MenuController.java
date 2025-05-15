@@ -49,8 +49,8 @@ public class MenuController {
                 (currentMenuName.equals("Main Menu") && target == Menu.PROFILE) ||
                 (currentMenuName.equals("Main Menu") && target == Menu.AVATAR)||
                 (currentMenuName.equals("Main Menu") && target == Menu.LOGIN) ||
-                (currentMenuName.equals("Main Menu") && target == Menu.REGISTER ||
-                        (currentMenuName.equals("Game Menu") && target == Menu.HOME))){
+                (currentMenuName.equals("Main Menu") && target == Menu.REGISTER) ||
+                (currentMenuName.equals("Game Menu") && target == Menu.HOME)){
             return true;
         }
 
@@ -86,8 +86,13 @@ public class MenuController {
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
                 return new RegisterMenu(this, registerController, this.getScanner());
-            case TRADE:
+            case TRADE: {
                 return TradeMenu.getTradeMenu();
+            }
+            case HOME: {
+                return new HomeMenu();
+            }
+
             default: throw new IllegalArgumentException("Unknown menu type");
         }
     }

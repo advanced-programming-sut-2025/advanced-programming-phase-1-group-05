@@ -18,15 +18,17 @@ public class Farming implements Skill{
 
     //plant seed
     public boolean plantSeed(String seed, GameTile tile) {
+        System.out.println(seed);
         CropType cropType = CropType.getSeedType(seed);
         TreeType treeType = TreeType.getSeedType(seed);
         if(seed.equals("Mixed Seeds")) {
             FruitAndVegetable newCrop = mixedSeedPlant();
             tile.setItemOnTile(newCrop);
             newCrop.setCoordinates(new AbstractMap.SimpleEntry<>(tile.getX(), tile.getY()));
-            Game.getGameMap().addPlant(newCrop);
+            Game.getCurrentPlayer().getFarm().addCrop(newCrop);
             //can become giant
-            newCrop.expandToGiant(Game.getCurrentPlayer().getFarm().getCrops());
+            Result result = newCrop.expandToGiant(tile);
+            return true;
         }
         if(cropType != null) {
             FruitAndVegetable crop = new FruitAndVegetable(cropType);
@@ -36,7 +38,7 @@ public class Farming implements Skill{
             if(tile.hasBeenFertilized()) {
                 crop.fertilize(tile.getFertilizer());
             }
-            crop.expandToGiant(Game.getCurrentPlayer().getFarm().getCrops());
+            Result result = crop.expandToGiant(tile);
             return true;
         } else if (treeType != null) {
             Tree tree = new Tree(treeType);

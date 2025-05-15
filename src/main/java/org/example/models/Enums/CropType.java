@@ -118,7 +118,7 @@ public enum CropType implements Material, Item {
     }
     public static CropType fromString(String name){
         for (CropType cropType : CropType.values()) {
-            if (cropType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+            if (cropType.getName().equals(name)) {
                 return cropType;
             }
         }

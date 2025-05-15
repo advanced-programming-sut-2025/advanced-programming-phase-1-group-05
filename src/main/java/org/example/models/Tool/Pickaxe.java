@@ -40,7 +40,10 @@ public class Pickaxe implements Tool <ItemLevel> {
             if(mining.isMaxLevel()) energyUsage --;
             if(!reduceEnergy(energyUsage))
                 return new Result(false, "You don't have enough energy");
-            if(item instanceof Mineral) ((Mining) mining).mine(tile, this);
+            if(item instanceof Mineral) {
+                ((Mining) mining).mine(tile, this);
+                return new Result(true, "Successfully mined a mineral");
+            }
             else Game.getCurrentPlayer().getForagingSkill().forageItem(tile);
         }
 

@@ -25,7 +25,7 @@ public class BackPack implements Tool <BackPackType>{
         //learntCookingRecipe.add(CookingRecipeType.BakedFish);
         //learntCookingRecipe.add(CookingRecipeType.Salad);
     }
-    private boolean isStorageUnlimited = false;
+    private boolean isStorageUnlimited = true;
 
     public void setBackPackType(BackPackType type) {
         this.level = type;
