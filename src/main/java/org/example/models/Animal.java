@@ -14,10 +14,11 @@ public class Animal implements Item{
     private EnclosureType enclosureType;
     private List<Item> products = new ArrayList<>();
     private List<Product> unCollectedProducts = new ArrayList<>();
-    private boolean wasFed = false;
+    private boolean wasFed = false, petToday  = false, isOut = false;
     int friendshipPoints = 0;
     private AnimalType type;
     private int x, y;
+
 
     public Animal(String name, AnimalType type, Player player) {
         this.name = name;
@@ -140,10 +141,23 @@ public class Animal implements Item{
     public boolean wasFed() {
         return  wasFed;
     }
+    public boolean wasPetToday() {
+        return petToday;
+    }
+    public void setPetToday(boolean petToday) {
+        this.petToday = petToday;
+    }
     public List<Product> getUnCollectedProducts() {
         return unCollectedProducts;
     }
     public void setFeedingStatus(boolean wasFed) {
         this.wasFed = wasFed;
+    }
+    public void shepherd () {
+        isOut = !isOut;
+    }
+
+    public boolean isOut() {
+        return isOut;
     }
 }

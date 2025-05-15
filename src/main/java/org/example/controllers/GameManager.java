@@ -24,7 +24,11 @@ public class GameManager {
                 for (Animal animal : animalHouse.getAnimals()) {
                      if (animal.wasFed())
                          animal.produce();
-                    animal.setFeedingStatus(false);
+                     else animal.adjustFriendshipPoints(-20);
+                     if (!animal.wasPetToday()) animal.adjustFriendshipPoints(10 - animal.getFriendshipPoints()/200);
+                     if (animal.isOut()) animal.adjustFriendshipPoints(-20);
+                     animal.setPetToday(false);
+                     animal.setFeedingStatus(false);
                 }
             }
         }

@@ -344,8 +344,10 @@ public class GameMenuController extends MenuController {
             return Result.error("You need to get closer to the animal. animal coordinates: " + animal.getX() +" " + animal.getY());
         }
         animal.adjustFriendshipPoints(15);
+        animal.setPetToday(true);
         return Result.success("");
     }
+
     public Result cheatSetFriendship(Matcher m) {
         String animalName = m.group("animalName");
         int amount = Integer.parseInt(m.group("amount"));
@@ -355,6 +357,17 @@ public class GameMenuController extends MenuController {
         return Result.success("Friendship boosted! Nothing says ‘bonding’ like a little… code magic. Your animal is now contractually obligated to adore you");
     }
 
+    public Result printAnimalsInfo() {
+
+        Player player = Game.getCurrentPlayer();
+        List<Animal> animals = player.getAllAnimals();
+        StringBuilder output = new StringBuilder();
+        output.append("Your animals: ").append("\n");
+        for (Animal animal : animals) {
+            output.append(animal.getName()).append("\t").append(animal.getFriendshipPoints()).append("\n");
+        }
+        return Result.success(output.toString());
+    }
     public Result feedHay(Matcher m) {
         String animalName = m.group("animalName");
         Player player = Game.getCurrentPlayer();
@@ -365,6 +378,17 @@ public class GameMenuController extends MenuController {
         animal.adjustFriendshipPoints(8);
         return Result.success("You offer food. The animal accepts. A bond is forged through snacks.");
 
+    }
+    public Result printUncollectedProduce() {
+        Player player = Game.getCurrentPlayer();
+        List<Animal> animals = player.getAllAnimals();
+        StringBuilder builder = new StringBuilder();
+        for (Animal animal : animals) {
+            for (Product product : animal.getUnCollectedProducts()) {
+                builder.append(animal.getType()).append(animal.getName()).append(" has produced ").append(product.getName()).append("\n");
+            }
+        }
+        return Result.success(builder.toString());
     }
     public Result collectProduce(Matcher m) {
         String animalName = m.group("name");
@@ -410,9 +434,19 @@ public class GameMenuController extends MenuController {
         Random rand = new Random();
         double weatherCoefficient = Game.getCurrentWeather().getFishingCoefficient();
         int numOfFish =Math.min((int) (rand.nextDouble() * weatherCoefficient * (fishingLevel + 2)), 6) ;
+        int qualityScore = (int) ((rand.nextDouble()*(fishingLevel + 2) * pole.getFishingCoefficient())/(7 - weatherCoefficient));
+        ItemLevel level;
+        if (qualityScore <= 0.5) level = ItemLevel.Normal;
+        else if (qualityScore <= 0.7) level = ItemLevel.Brass;
+        else if (qualityScore <= 0.9) level = ItemLevel.Gold;
+        else level = ItemLevel.Iridium;
+        Product product = new Product(caughtFish.getName(), caughtFish.getPrice(), -1, null, null, null);
+        product.setItemLevel(level);
+        Result result = player.getBackPack().addToInventory(product, numOfFish);
+        player.getFishingSkill().increaseCapacity();
+        if (result.isSuccess()) return Result.success("You caught " + numOfFish + " " + level.getName() + " " + caughtFish.getName());
+        return result;
 
-
-        return Result.success("");
     }
 
     public Result useArtisan(Matcher m ) {
@@ -426,6 +460,25 @@ public class GameMenuController extends MenuController {
 //            return Result.error("Nope, artisan machines don’t have Wi-Fi. Go stand next to it!");
         if (artisan != null) artisan.useArtisan(args);
         return Result.success("");
+    }
+
+    public Result artisanGet(Matcher m) {
+        String args = m.group("artisanName");
+        ArtisanType artisan = ArtisanType.getArtisan(args);
+        if (artisan == null)
+            return Result.error("That machine doesn’t seem to exist. Are you sure it’s real?");
+        List<ArtisanProduct> products = artisan.getProducts();
+        StringBuilder builder = new StringBuilder();
+        if (artisan.products.isEmpty())
+            return Result.error("There's nothing in the machine-unless you're trying to process thin air");
+        if (products.isEmpty())
+            return Result.error("Hold tight! The machine’s still working on it.");
+        for (ArtisanProduct product : products) {
+            Game.getCurrentPlayer().getBackPack().addToInventory(product, 1);
+            builder.append("added " + product.getName() + " to your inventory");
+            artisan.products.remove(product);
+        }
+        return Result.success(builder.toString());
     }
     public Result cheatAddMoney(int amount){
         Player player = Game.getCurrentPlayer();

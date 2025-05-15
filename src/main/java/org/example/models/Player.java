@@ -233,6 +233,13 @@ public class Player {
         return coopAndBarns;
     }
 
+    public List<Animal> getAllAnimals() {
+        List<Animal> animals = new ArrayList<>();
+        for (AnimalHouse animalHouse : coopAndBarns) {
+            animals.addAll(animalHouse.getAnimals());
+        }
+        return animals;
+    }
     public static void initializeFriendships(List<Player> players) {
         for (int i = 0; i < players.size(); i++) {
             for (int j = i + 1; j < players.size(); j++) {

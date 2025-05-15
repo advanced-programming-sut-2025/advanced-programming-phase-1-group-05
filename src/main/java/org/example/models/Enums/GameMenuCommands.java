@@ -34,6 +34,7 @@ public enum GameMenuCommands {
     SellAnimal("sell\\s+animal\\s+-n\\s+(?<animalName>.+?)"),
     StartFishing("fishing\\s+-p\\s+(?<fishingPole>.+?)"),
     ArtisanUSe("artisan use\\s+(?<args>.+)"),
+    ArtisanGet("artisan get\\s+(?<artisanName>.+)"),
     Gift("gift\\s+-u\\s+(?<username>\\S+)\\s+-i\\s+(?<itemName>.+?)\\s+-a\\s+(?<amount>\\d+)"),
     GiftHistory("gift\\s+history\\s+-u\\s+(?<username>.+?)"),
     RateGift("gift\\s+rate\\s+-i\\s+(?<giftNumber>\\d+?)\\s+-r\\s+(?<rate>\\d+?)"),

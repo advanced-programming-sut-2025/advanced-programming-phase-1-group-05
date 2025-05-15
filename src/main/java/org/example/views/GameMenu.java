@@ -208,8 +208,14 @@ public class GameMenu implements org.example.views.AppMenu {
         else if ((matcher = GameMenuCommands.SetFriendshipCC.getMatcher(input)) != null) {
             System.out.println(gameMenuController.cheatSetFriendship(matcher));
         }
+        else if (input.equals("animals")) {
+            System.out.println(gameMenuController.printAnimalsInfo());
+        }
         else if ((matcher = GameMenuCommands.FeedHay.getMatcher(input)) != null) {
             System.out.println(gameMenuController.feedHay(matcher));
+        }
+        else if (input.equals("produces")) {
+            System.out.println(gameMenuController.printUncollectedProduce());
         }
         else if ((matcher = GameMenuCommands.CollectProduce.getMatcher(input)) != null) {
             System.out.println(gameMenuController.collectProduce(matcher));
@@ -222,6 +228,9 @@ public class GameMenu implements org.example.views.AppMenu {
         }
         else if ((matcher = GameMenuCommands.ArtisanUSe.getMatcher(input)) != null) {
             System.out.println(gameMenuController.useArtisan(matcher));
+        }
+        else if ((matcher = GameMenuCommands.ArtisanGet.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.artisanGet(matcher));
         }
         else if ((matcher = GameMenuCommands.Purchase.getMatcher(input)) != null) {
             System.out.println(storeController.purchase(matcher));

@@ -130,7 +130,7 @@ public enum ArtisanType {
     ));
 
     private final List<Map<Map<String, Integer>, ArtisanProduct>> items;
-
+    public List<ArtisanProduct> products = new ArrayList<>();
     ArtisanType(List<Map<Map<String, Integer>, ArtisanProduct>> items) {
 
 
@@ -238,7 +238,7 @@ public enum ArtisanType {
         return "";
     }
 
-    public ArtisanProduct useArtisan(String input) {
+    public void useArtisan(String input) {
         input = input.toLowerCase().replaceAll(" ", "").replaceAll(getName(), "");
         for (Map<Map<String, Integer>, ArtisanProduct> recipes : items) {
             List<Map.Entry<Map<String, Integer>, ArtisanProduct>> sortedEntries = new ArrayList<>(recipes.entrySet());
@@ -259,7 +259,6 @@ public enum ArtisanType {
 
                         if (Game.getCurrentPlayer().getItemQuantity(Game.getDatabase().getItem(ingredient.getKey())) < ingredient.getValue()) {
                             canAfford = false;
-                            System.out.println(Game.getCurrentPlayer().getItemQuantity(Game.getDatabase().getItem(ingredient.getKey())) + "  " +ingredient.getValue());
                         }
 
                         newInput = newInput.replaceAll(ingredient.getKey().toLowerCase().replaceAll(" ", ""), "");
@@ -271,21 +270,22 @@ public enum ArtisanType {
 
                 if (found && !canAfford) {
                     System.out.println("not enough ingredients in inventory");
-                    return null;
+                    return;
                 }
                 if (found && newInput.isEmpty()) {
                     System.out.print(entry.getValue().getName() + " will be ready in " + entry.getValue().getProcessingTime() + " hours");
-                    return entry.getValue();
+                    ArtisanProduct product = entry.getValue();
+                    products.add(new ArtisanProduct(product.getName(), product.getEnergy(), product.getProcessingTime(), product.getPrice()));
+                    return;
                 }
                 if (found && !newInput.isEmpty()) {
                     System.out.print("Extra items in input: " + input + ".");
-                    return null;
+                    return;
                 }
             }
         }
 
         System.out.println("invalid items.");
-        return null;
     }
 
     private static Map<Map<String, Integer>, ArtisanProduct> createRecipe(
@@ -296,4 +296,11 @@ public enum ArtisanType {
         );
     }
 
+    public List<ArtisanProduct> getProducts() {
+        List<ArtisanProduct> artisanProducts = new ArrayList<>();
+        for (ArtisanProduct product : products) {
+            if (product.isReady()) artisanProducts.add(product);
+        }
+        return artisanProducts;
+    }
 }

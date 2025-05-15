@@ -11,7 +11,7 @@ import java.util.Random;
 public enum Fish implements Material, Item {
 
     Salmon("Salmon",75, Season.FALL, false),
-    Sardine("Sardin",40, Season.FALL, false),
+    Sardine("Sardine",40, Season.FALL, false),
     Shad("Shad",60, Season.FALL, false),
     BlueDiscus("Blue Discus",120, Season.FALL, false),
     MidnightCarp("Midnight Carp",150, Season.WINTER, false),

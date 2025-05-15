@@ -40,11 +40,10 @@ public class TimeAndDate {
         return season;
     }
 
-    public int getMinute() {
-        return minute;
+
+    public int getTotalHours() {
+        return day * 24 + hour;
     }
-    //every 28 days
-    public void changeSeason(Season season) {}
 
     public void advanceTime(int minutes){
         minute += minutes;
