@@ -214,6 +214,9 @@ public class GameMenu implements org.example.views.AppMenu {
         else if ((matcher = GameMenuCommands.StartFishing.getMatcher(input)) != null) {
             System.out.println(gameMenuController.startFishing(matcher));
         }
+        else if ((matcher = GameMenuCommands.ArtisanUSe.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.useArtisan(matcher));
+        }
         else if ((matcher = GameMenuCommands.Purchase.getMatcher(input)) != null) {
             System.out.println(storeController.purchase(matcher));
         } else if ((matcher = GameMenuCommands.CheatAddMoney.getMatcher(input)) != null) {

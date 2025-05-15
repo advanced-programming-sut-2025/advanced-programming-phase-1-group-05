@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import org.example.controllers.DBController;
 import org.example.controllers.MenuController;
+import org.example.models.Enums.ArtisanType;
 import org.example.models.Game;
 
 public class Main {
@@ -12,5 +13,6 @@ public class Main {
         Scanner scanner = Game.getScanner();
         MenuController menuController = new MenuController(scanner);
         menuController.run();
+
     }
 }

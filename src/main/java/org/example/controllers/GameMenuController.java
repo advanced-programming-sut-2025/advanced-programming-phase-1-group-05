@@ -406,6 +406,13 @@ public class GameMenuController extends MenuController {
 
         return Result.success("");
     }
+
+    public Result useArtisan(Matcher m ) {
+        String args = m.group("args");
+        ArtisanType artisan = ArtisanType.getArtisan(args);
+        if (artisan != null) artisan.useArtisan(args);
+        return Result.success("");
+    }
     public Result cheatAddMoney(int amount){
         Player player = Game.getCurrentPlayer();
         player.addGold(amount);
