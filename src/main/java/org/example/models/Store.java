@@ -28,7 +28,7 @@ public class Store {
     private void setOccupied() {
         for (int i = xEnd; i >= xStart; i--) {
             for (int j = yEnd; j >= yStart; j--) {
-                Game.getGameMap().getTile(i, j).setBuilding(BuildingType.Store);
+//                Game.getGameMap().getTile(i, j).setBuilding(BuildingType.Store);
             }
         }
     }

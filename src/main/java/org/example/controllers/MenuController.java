@@ -128,4 +128,8 @@ public class MenuController {
     public Scanner getScanner() {
         return scanner;
     }
+
+    public void showMenus() {
+        System.out.println("Register\nLogin\nMain\nProfile\nGame\nAvatar\nHome\nTrade");
+    }
 }

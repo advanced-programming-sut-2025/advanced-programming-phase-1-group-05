@@ -43,7 +43,9 @@ public class RegisterMenu implements org.example.views.AppMenu {
                     menuController.enterMenu("login");
                 }
             }
-        } else if (input.equalsIgnoreCase("user logout")){
+        } else if (input.equals("show menus")) {
+            menuController.showMenus();
+        }else if (input.equalsIgnoreCase("user logout")){
             Result result = menuController.logoutUser();
             System.out.println(result.getMessage());
         }else {

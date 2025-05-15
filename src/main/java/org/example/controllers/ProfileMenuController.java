@@ -136,7 +136,7 @@ public class ProfileMenuController extends MenuController {
 
     private Result showUserInfo() {
         StringBuilder info = new StringBuilder();
-        System.out.println(Game.getAllPlayers());
+//        System.out.println(Game.getAllPlayers());
         info.append("Username: ").append(currentUser.getUsername()).append("\n");
         info.append("Nickname: ").append(currentUser.getNickName()).append("\n");
         for (Player player : Game.getAllPlayers()) {
@@ -146,7 +146,9 @@ public class ProfileMenuController extends MenuController {
                 info.append("This user hadn't any game!\n");
             }
         }
-        if (Game.getAllPlayers() == null || Game.getAllPlayers().isEmpty()) info.append("Money: 0\n");
+        if (Game.getAllPlayers() == null || Game.getAllPlayers().isEmpty() || Game.getCurrentPlayer() == null)
+            info.append("Money: 0\n");
+        else info.append("Money: " + Game.getCurrentPlayer().getGold()).append("\n");
         info.append("Games played: ").append(currentUser.getGamesPlayed()).append("\n");
         return Result.success(info.toString());
     }

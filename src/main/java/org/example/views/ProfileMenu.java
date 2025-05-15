@@ -26,6 +26,8 @@ public class ProfileMenu implements org.example.views.AppMenu {
         else if (input.equalsIgnoreCase("user logout")){
             Result result = menuController.logoutUser();
             System.out.println(result.getMessage());
+        } else if (input.equals("show menus")) {
+            menuController.showMenus();
         } else {
             Result result = profileController.handleProfileCommand(input);
             System.out.println(result.getMessage());
