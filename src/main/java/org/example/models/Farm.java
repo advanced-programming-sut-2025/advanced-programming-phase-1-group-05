@@ -57,6 +57,22 @@ public class Farm {
         return shippingBin;
     }
 
+    public int getStartX() {
+        return startX;
+    }
+
+    public int getStartY() {
+        return startY;
+    }
+
+    public int getEndX() {
+        return endX;
+    }
+
+    public int getEndY() {
+        return endY;
+    }
+
     public static class ShippingBin {
         int startX, startY, endX, endY;
 

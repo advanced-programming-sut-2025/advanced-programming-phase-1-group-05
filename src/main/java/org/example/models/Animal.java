@@ -17,11 +17,39 @@ public class Animal implements Item{
     private boolean wasFed = false;
     int friendshipPoints = 0;
     private AnimalType type;
+    private int x, y;
 
-    public Animal(String name, AnimalType type) {
+    public Animal(String name, AnimalType type, Player player) {
         this.name = name;
         this.type = type;
         initializeAnimal();
+        setCoordinates(player);
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    private void setCoordinates(Player player) {
+        Farm farm = player.getFarm();
+        int startX = farm.getStartX(), startY = farm.getStartY(), endX = farm.getEndX(), endY = farm.getEndY();
+        Random random = new Random();
+
+        while (true) {
+            int x = random.nextInt(endX - startX + 1) + startX;
+            int y = random.nextInt(endY - startY + 1) + startY;
+            GameTile tile = GameMap.getTile(x, y);
+
+            if (!tile.isOccupied()) {
+                this.x = x;
+                this.y = y;
+                break;
+            }
+        }
     }
 
     public AnimalType getType() {

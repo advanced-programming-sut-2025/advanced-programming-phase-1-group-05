@@ -177,7 +177,7 @@ public class StoreController {
             return Result.error("You don't have an empty " + enclosureType);
         }
         AnimalType type = AnimalType.fromString(m.group("animalType"));
-        animalHouse.addAnimal(new Animal(m.group("name"), type));
+        animalHouse.addAnimal(new Animal(m.group("name"), type, player));
         player.addGold(-product.getPrice());
         return Result.success("animal bought successfully!");
     }

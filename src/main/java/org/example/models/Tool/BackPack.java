@@ -55,7 +55,7 @@ public class BackPack implements Tool <BackPackType>{
             if (getInventoryCapacity() + amount <= level.getCapacity()) {
                 if (!inventory.containsKey(item)) inventory.put(item, inventory.getOrDefault(item, 0) + amount);
                 else inventory.put(item, inventory.get(item) + amount);
-                return new Result(true, item.getName() + " successfully added to your inventory");
+                return new Result(true, "**" + amount + " of " + item.getName() + " successfully added to your inventory**");
             } else {
                 return new Result(false, "You're backpack is full! Upgrade to store more items");
             }

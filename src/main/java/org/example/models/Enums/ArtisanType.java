@@ -185,7 +185,7 @@ public enum ArtisanType {
         } else if (input.startsWith("dehydrator")) {
             return Dehydrator;
         } else if (input.startsWith("charcoalklin")) {
-            return CHEESE_PRESS;
+            return CharcoalKlin;
         } else if (input.startsWith("loom")) {
             return Loom;
         } else if (input.startsWith("mayonnaisemachine")) {
@@ -243,7 +243,6 @@ public enum ArtisanType {
         for (Map<Map<String, Integer>, ArtisanProduct> recipes : items) {
             List<Map.Entry<Map<String, Integer>, ArtisanProduct>> sortedEntries = new ArrayList<>(recipes.entrySet());
 
-            // Sort by length of first key (we assume 1 key per recipe input)
             sortedEntries.sort((e1, e2) -> {
                 String key1 = e1.getKey().keySet().iterator().next();
                 String key2 = e2.getKey().keySet().iterator().next();
@@ -257,8 +256,10 @@ public enum ArtisanType {
 
                 for (Map.Entry<String, Integer> ingredient : entry.getKey().entrySet()) {
                     if (input.contains(ingredient.getKey().toLowerCase().replaceAll(" ", ""))) {
+
                         if (Game.getCurrentPlayer().getItemQuantity(Game.getDatabase().getItem(ingredient.getKey())) < ingredient.getValue()) {
                             canAfford = false;
+                            System.out.println(Game.getCurrentPlayer().getItemQuantity(Game.getDatabase().getItem(ingredient.getKey())) + "  " +ingredient.getValue());
                         }
 
                         newInput = newInput.replaceAll(ingredient.getKey().toLowerCase().replaceAll(" ", ""), "");

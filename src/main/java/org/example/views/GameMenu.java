@@ -199,6 +199,9 @@ public class GameMenu implements org.example.views.AppMenu {
         else if ((matcher = GameMenuCommands.BuyAnimal.getMatcher(input)) != null) {
             System.out.println(storeController.buyAnimal(matcher));
         }
+        else if ((matcher = GameMenuCommands.PetAnimal.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.petAnimal(matcher));
+        }
         else if ((matcher = GameMenuCommands.SetFriendshipCC.getMatcher(input)) != null) {
             System.out.println(gameMenuController.cheatSetFriendship(matcher));
         }

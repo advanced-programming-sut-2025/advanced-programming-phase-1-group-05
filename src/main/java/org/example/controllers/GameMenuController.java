@@ -333,8 +333,16 @@ public class GameMenuController extends MenuController {
     }
 
     public Result petAnimal(Matcher m) {
-        String animalName = "";
+        String animalName = m.group("animalName");
         Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        if (animal == null) {
+            return Result.error("animal doesn't exist or isn't yours");
+        }
+        Player currentPlayer = Game.getCurrentPlayer();
+        if (Math.abs(animal.getX() - currentPlayer.getX()) > 1 ||
+        Math.abs(animal.getY() - currentPlayer.getY()) > 1) {
+            return Result.error("You need to get closer to the animal. animal coordinates: " + animal.getX() +" " + animal.getY());
+        }
         animal.adjustFriendshipPoints(15);
         return Result.success("");
     }
@@ -821,8 +829,8 @@ public class GameMenuController extends MenuController {
         //if(ItemRegistry.findItemByName(name) != null) item = ItemRegistry.findItemByName(name);
 
         if (item == null) return new Result(false, "** No item with that name exists **");
-        Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
-        return new Result(true, "** " + count + " of " + name + " added to your inventory **");
+        return Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
+        //return new Result(true, "** " + count + " of " + name + " added to your inventory **");
     }
 
     //plow tile
