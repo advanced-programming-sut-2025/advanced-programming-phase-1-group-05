@@ -43,7 +43,9 @@ public class GameMenuController extends MenuController {
         Matcher matcher = pattern.matcher(input.trim());
 
         if (!matcher.matches()) {
-            return Result.error("Invalid command format! Correct format: 'game new -u <username> [-u <username2>] [-u <username3>]'");
+            return Result.error
+                    ("Invalid command format! Correct format:" +
+                            " 'game new -u <username> [-u <username2>] [-u <username3>]'");
         }
         if (matcher.group("extra") != null) {
             return Result.error("Maximum 3 usernames allowed!");
@@ -317,7 +319,8 @@ public class GameMenuController extends MenuController {
                 if (item instanceof Tool) {
                     //reduce money
                     ((Tool) item).upgradeLevel();
-                    return new Result(true, item.getName() + " upgraded to level" + ((Tool) item).getLevel());
+                    return new Result(true, item.getName() +
+                            " upgraded to level" + ((Tool) item).getLevel());
                 } else {
                     return new Result(true, "Selected item is not a tool");
                 }
@@ -331,7 +334,8 @@ public class GameMenuController extends MenuController {
         int[]dir = getDirections(direction);
         Item currentItem = Game.getCurrentPlayer().getCurrentItem();
         if(currentItem instanceof Tool) {
-            String message = ((Tool)currentItem).use(new AbstractMap.SimpleEntry<>(Game.getCurrentPlayer().getCoordinate().getKey() + dir[1],
+            String message = ((Tool)currentItem).use(new AbstractMap.SimpleEntry<>
+                    (Game.getCurrentPlayer().getCoordinate().getKey() + dir[1],
                     Game.getCurrentPlayer().getCoordinate().getValue() + dir[0])).getMessage();
             return new Result(true, message);
         } else return new Result(true, "You aren't equipped with any tool");
@@ -365,7 +369,8 @@ public class GameMenuController extends MenuController {
         Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
         if (animal == null ) return Result.error("animal doesn't exist or isn't yours");
         animal.setFriendshipPoints(amount);
-        return Result.success("Friendship boosted! Nothing says ‘bonding’ like a little… code magic. Your animal is now contractually obligated to adore you");
+        return Result.success("Friendship boosted! Nothing says ‘bonding’ like a little… code magic." +
+                " Your animal is now contractually obligated to adore you");
     }
 
     public Result feedHay(Matcher m) {
@@ -419,7 +424,8 @@ public class GameMenuController extends MenuController {
             return Result.error("You don't have that pole in your inventory");
         int fishingLevel = player.getFishingSkill().getLevel();
         Fish caughtFish = Fish.getRandomFish(GameManager.getSeason(), fishingLevel);
-        if (caughtFish == null) return Result.error("Your bobber danced, your hopes rose… and then? Nothing. The fish must be laughing underwater.");
+        if (caughtFish == null) return Result.error("Your bobber danced, your hopes rose… and then? Nothing." +
+                " The fish must be laughing underwater.");
         Random rand = new Random();
         double weatherCoefficient = Game.getCurrentWeather().getFishingCoefficient();
         int numOfFish =Math.min((int) (rand.nextDouble() * weatherCoefficient * (fishingLevel + 2)), 6) ;
@@ -455,9 +461,12 @@ public class GameMenuController extends MenuController {
         Player targetPlayer = Game.getPlayerByUsername(username);
         Player currentPlayer = Game.getCurrentPlayer();
 
-        if (targetPlayer == null) return new Result(false, "Hmmm... either they moved away, or they never existed!");
-        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
-            return new Result(false, "You can't have a heart-to-heart with someone who's miles away!");
+        if (targetPlayer == null) return new Result
+                (false, "Hmmm... either they moved away, or they never existed!");
+        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 ||
+                Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
+            return new Result
+                    (false, "You can't have a heart-to-heart with someone who's miles away!");
         Game.addMessage(new Message(currentPlayer, targetPlayer, message));
         currentPlayer.changeFriendshipXP(20, targetPlayer);
         if (currentPlayer.isMarriedTo(targetPlayer)) {
@@ -687,7 +696,8 @@ public class GameMenuController extends MenuController {
         for (Map.Entry<String, Integer> entry : lastNPC.getRequests().entrySet()) {
             index++;
             output.append("\n").append(index).append(". ")
-                    .append(entry.getValue()).append(" ").append(Game.getDatabase().getItem(entry.getKey()).getName()).append("(s)");
+                    .append(entry.getValue()).append(" ")
+                    .append(Game.getDatabase().getItem(entry.getKey()).getName()).append("(s)");
             if (index == lastNPC.getNumOfUnlockedQuests(player)) break;
         }
 
@@ -770,8 +780,10 @@ public class GameMenuController extends MenuController {
             if(fruit.getAge() == 0) {
                 boolean successful = Game.getCurrentPlayer().getFarmingSkill().fertilizeCrop(coordinates, fertilizer);
                 if (successful) return new Result(true, "Successfully fertilized with " + fertilizer);
-                else return new Result(false, "You don't have that kind of fertilizer");
-            } else return new Result(false, "You can only fertilize tile before or the day of planting!");
+                else return new Result
+                        (false, "You don't have that kind of fertilizer");
+            } else return new Result
+                    (false, "You can only fertilize tile before or the day of planting!");
         } else return new Result(false, "Can't fertilize this tile");
     }
 
@@ -927,7 +939,8 @@ public class GameMenuController extends MenuController {
 //        GameMap map = Game.getGameMap();
 
         try {
-            if (matcher.group("x") != null && matcher.group("y") != null && matcher.group("size") != null) {
+            if (matcher.group("x") != null && matcher.group("y") != null &&
+                    matcher.group("size") != null) {
                 int x = Integer.parseInt(matcher.group("x"));
                 int y = Integer.parseInt(matcher.group("y"));
                 int size = Integer.parseInt(matcher.group("size"));
