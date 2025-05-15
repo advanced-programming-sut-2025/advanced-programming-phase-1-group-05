@@ -1,0 +1,42 @@
+//test for croptypes and stuff
+register -u Nil-a11 -p Nil3333a%11 Nil3333a%11 -n nilalllala -e Nila.-a11@gma-il.com -g female
+pick question -q 2 -a Tehran -c Tehran
+menu enter Main
+menu enter Register
+register -u Melika-a11 -p Nil3333a%11 Nil3333a%11 -n nilalllala -e Nila.-a11@gma-il.com -g female
+pick question -q 2 -a Tehran -c Tehran
+login -u Nil-a11 -p Nil3333a%11
+menu enter Game
+game new -u Melika-a11
+game map 1
+game map 2
+//all crops
+show craft info -n Green Bean
+show craft info -n Strawberry
+show craft info -n Hot Pepper
+show craft info -n Fairy Rose
+show craft info -n Ancient Fruit
+//all trees
+show craft info -n Apricot Tree
+show craft info -n Mushroom Tree
+show craft info -n Oak Tree
+//foraging crops
+show craft info -n Leek
+show craft info -n Blackberry
+show craft info -n Wild Plum
+//foraging trees
+show craft info -n Acorns
+show craft info -n Mahogany Seeds
+//giant crop
+cheat add item -n Melon Seeds -c 4
+set coordinates * 5 5
+plant -s Melon Seeds -d down
+set coordinates * 5 4
+plant -s Melon Seeds -d down
+set coordinates * 7 3
+plant -s Melon Seeds -d right
+set coordinates * 8 5
+plant -s Melon Seeds -d up
+//mixed seeds
+cheat add item -n Mixed Seeds -c 1
+plant -s Mixed Seeds -d up
