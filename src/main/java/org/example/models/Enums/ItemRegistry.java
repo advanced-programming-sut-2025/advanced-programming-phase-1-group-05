@@ -18,18 +18,25 @@ public class ItemRegistry {
     );
 
     public static Item findItemByName(String name) {
+        if (name == null) return null;
+
+        Item fromDB = Game.getDatabase().getItem(name);
+        if (fromDB != null) return fromDB;
+
         String upper = name.toUpperCase();
 
-        if (Game.getDatabase().getItem(name) != null)
-            return Game.getDatabase().getItem(name);
         for (Class<? extends Enum<?>> enumClass : itemEnums) {
-            for (Enum<?> constant : enumClass.getEnumConstants()) {
-                if (constant.name().equalsIgnoreCase(upper)) {
-                    return (Item) constant;
+            Enum<?>[] constants = enumClass.getEnumConstants();
+            if (constants == null) continue;
+
+            for (Enum<?> constant : constants) {
+                if (constant.name().equalsIgnoreCase(upper) && constant instanceof Item item) {
+                    return item;
                 }
             }
         }
 
         return null;
     }
+
 }

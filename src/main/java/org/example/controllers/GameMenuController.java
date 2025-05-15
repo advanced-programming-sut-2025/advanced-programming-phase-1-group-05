@@ -879,11 +879,18 @@ public class GameMenuController extends MenuController {
     public Result addItemCheatCode(String name, int count) {
         Item item = null;
         if(Game.getDatabase().getItem(name) != null) item = Game.getDatabase().getItem(name);
-        //if(ItemRegistry.findItemByName(name) != null) item = ItemRegistry.findItemByName(name);
+        else if(CropType.fromString(name) != null) item = CropType.fromString(name);
+        else if(ForagingTreeSourceType.fromString(name) != null) item = ForagingTreeSourceType.fromString(name);
+        else if(ForagingCrop.fromString(name) != null) item = ForagingCrop.fromString(name);
+        else if(ForagingSeedType.fromString(name) != null) item = ForagingSeedType.fromString(name);
+        else if(CraftType.fromString(name) != null) item = CraftType.fromString(name);
+        else if(CookingRecipeType.fromString(name) != null) item = CookingRecipeType.fromString(name);
+        else if(Fish.fromString(name)!=null) item = Fish.fromString(name);
+        else if(MineralType.fromString(name) != null) item = MineralType.fromString(name);
 
         if (item == null) return new Result(false, "** No item with that name exists **");
-        return Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
-        //return new Result(true, "** " + count + " of " + name + " added to your inventory **");
+        Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
+        return new Result(true, "** " + count + " of " + name + " added to your inventory **");
     }
 
     //plow tile
