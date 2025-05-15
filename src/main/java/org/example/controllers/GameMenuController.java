@@ -1121,7 +1121,6 @@ public class GameMenuController extends MenuController {
                     newTile.setTileType(TileType.Player);
                     newTile.setOccupied(true);
                 }
-
                 return new Result(true, "Player moved to (" + finalStep.x + "," + finalStep.y + ")");
             }
         } catch (Exception e) {
