@@ -160,6 +160,7 @@ public class GameMenuController extends MenuController {
             pendingGame = null;
             canLoadGame = true;
             DBController.saveGameState();
+            User.haveSavedGame = true;
             return Result.success("Exited Game successfully!");
         }
         return Result.error("You can't exit the game!");
@@ -895,8 +896,16 @@ public class GameMenuController extends MenuController {
             if (tokens.length != 4) {
                 return Result.error("Invalid format. Usage: cheat weather set <Type>");
             }
+            String inputWeather = tokens[3];
+            for (Weather weather : Weather.values()) {
+                if (weather.name().equalsIgnoreCase(inputWeather)) {
+                    Game.setForecastedWeather(weather);
+                    return Result.success("Forecasted weather for tomorrow set to: " + weather);
+                }
+            }
+//            return Result.error("Invalid weather type. Valid types: Sunny, Rain, Storm, Snow");
 
-            String weatherType = tokens[3].toUpperCase();
+            String weatherType = tokens[3];
 
             Weather newForecastedWeather;
             try {
