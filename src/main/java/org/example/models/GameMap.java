@@ -96,6 +96,7 @@ public class GameMap {
                     tile.setItemOnTile(item);
                 } else if(chosen % 4 == 2) {
                     item = Game.getDatabase().getItem("Wood");
+
                     tile.setItemOnTile(item);
                 } else {
                     item = Game.getDatabase().getItem("Fiber");

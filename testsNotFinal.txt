@@ -2,14 +2,38 @@ register -u Nil-a11 -p Nil3333a%11 Nil3333a%11 -n nilalllala -e Nila.-a11@gma-il
 pick question -q 2 -a Tehran -c Tehran
 menu enter Main
 menu enter Register
-register -u Melika-a11 -p Nil3333a%11 Nil3333a%11 -n nilalllala -e Nila.-a11@gma-il.com -g female
+register -u Melika-a11 -p Nil3333a%11 Nil3333a%11 -n melika -e Nila.-a11@gma-il.com -g female
+pick question -q 2 -a Tehran -c Tehran
+menu enter Main
+menu enter Register
+register -u Mamad-a11 -p Nil3333a%11 Nil3333a%11 -n mamad -e Nila.-a11@gma-il.com -g female
 pick question -q 2 -a Tehran -c Tehran
 login -u Nil-a11 -p Nil3333a%11
 menu enter Game
-game new -u Melika-a11
+game new -u Melika-a11 -u Mamad-a11
 game map 1
 game map2
 game map 2
+game map 3
+next turn
+قابلیت نمایش سطوح دوستی با سایر بازیکنان
+friendships
+قابلیت صحبت کردن با بازیکنان
+talk -u Melika-a11 -m Hey there!
+دریافت شدن اعلان توسط بازیکنی که با او صحبت شده
+next turn
+نمایش تاریخچه صحبت با هر بازیکن
+talk history -u Nil-a11
+خطا درصورت نبودن بازیکنان کنار هم هنگام صحبت کردن
+set coordinates * 50 60
+next turn
+set coordinates * 30 12
+talk -u Melika-a11 -m Hey there!
+قابلیت هدیه دادن به بازیکنان
+cheat add item -n tulip bulb -c 1
+cheat add friendship -u Melika-a11 -a 101
+gift -u Melika-a11 -i tulip bulb -a 1
+friendships
 وجود آیتم های فصلی
 set coordinates * 50 15
 cheat add 1000 dollars

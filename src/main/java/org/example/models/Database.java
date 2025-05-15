@@ -40,7 +40,6 @@ public class Database {
         itemDatabase.add(new BasicItem("Large milk", 190));
         itemDatabase.add(new BasicItem("Goat milk", 225));
         itemDatabase.add(new BasicItem("Large goat milk", 345));
-        itemDatabase.add(new BasicItem("Wool", 340));
         itemDatabase.add(new BasicItem("Truffle", 625));
         String json;
         try {

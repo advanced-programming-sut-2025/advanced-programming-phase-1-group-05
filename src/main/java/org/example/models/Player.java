@@ -290,7 +290,9 @@ public class Player {
 
     public void changeFriendshipXP(int xp, Player a) {
         Friendship friendship = getFriendship(this, a);
-        if (friendship != null) friendship.addPoints(xp);
+        if (friendship != null) {
+            friendship.addPoints(xp);
+        }
     }
 
     public int getProposalRejectionDaysLeft() {
@@ -351,7 +353,7 @@ public class Player {
         }
 
         public boolean containsPlayer(Player a) {
-            return player1.equals(a) && player2.equals(a);
+            return player1.equals(a) || player2.equals(a);
         }
 
         public int getFriendshipLevel() {

@@ -226,15 +226,19 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(storeController.sell(matcher));
         } else if (input.equals("friendships")) {
             System.out.println(gameMenuController.showFriendshipLevels().getMessage());
-        } else if (input.matches("talk\\s+-u\\s+\\S+-m\\s+.*")) {
-            System.out.println(gameMenuController.talkToPlayer(input).getMessage());
+        } else if ((matcher = GameMenuCommands.Talk.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.talkToPlayer(matcher).getMessage());
         } else if (input.matches("talk\\s+history\\s+-u\\s+\\S+")) {
             System.out.println(gameMenuController.talkHistory(input).getMessage());
         } else if (input.equals("gift list")) {
             System.out.println(gameMenuController.showGiftList());
         } else if ((matcher = GameMenuCommands.Gift.getMatcher(input)) != null) {
             System.out.println(gameMenuController.giftPlayer(matcher));
-        } else if ((matcher = GameMenuCommands.RateGift.getMatcher(input)) != null) {
+        }
+        else if ((matcher = GameMenuCommands.FriendshipPointsCC.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.cheatAddFriendshipPoints(matcher));
+        }
+        else if ((matcher = GameMenuCommands.RateGift.getMatcher(input)) != null) {
             System.out.println(gameMenuController.
                     rateTheGift(Integer.parseInt(matcher.group("giftNumber")), Integer.parseInt(matcher.group("rate"))));
         } else if ((matcher = GameMenuCommands.GiftHistory.getMatcher(input)) != null) {

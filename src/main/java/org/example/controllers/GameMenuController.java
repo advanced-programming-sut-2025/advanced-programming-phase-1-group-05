@@ -491,20 +491,15 @@ public class GameMenuController extends MenuController {
         builder.append("friendship levels: \n");
         for (Player player : Game.getAllPlayers()) {
             if (!player.equals(currentPlayer)) {
-                builder.append(player.getName()).append(" : ").append(currentPlayer.getFriendshipLevel(player));
+                builder.append(player.getName()).append(" : ").append(currentPlayer.getFriendshipLevel(player)).append("\n");
             }
         }
         return new Result(true, builder.toString());
     }
 
-    public Result talkToPlayer(String input) {
-        String[] parts = input.split("\\s+");
-        int uIndex = -1, mIndex = -1;
-        for (int i = 0; i < parts.length; i++) {
-            if (parts[i].equals("-u")) uIndex = i;
-            else if (parts[i].equals("-m")) mIndex = i;
-        }
-        String username = parts[uIndex + 1], message = input.substring(mIndex + 1).trim();
+    public Result talkToPlayer(Matcher m) {
+
+        String username = m.group("username"), message = m.group("message");
         Player targetPlayer = Game.getPlayerByUsername(username);
         Player currentPlayer = Game.getCurrentPlayer();
 
@@ -516,8 +511,8 @@ public class GameMenuController extends MenuController {
         if (currentPlayer.isMarriedTo(targetPlayer)) {
             currentPlayer.increaseEnergy(50);
         }
-        return new Result(true, (targetPlayer.getName()) +
-                        "! A little birdie dropped off a message-check your inbox!");
+        targetPlayer.addNotification(targetPlayer.getName() + "! A little birdie dropped off a message-check your inbox!");
+        return new Result(true, "");
     }
 
     public Result talkHistory(String input) {
@@ -531,13 +526,21 @@ public class GameMenuController extends MenuController {
                 "Looks like you two haven't broken the ice yet");
 
         StringBuilder output = new StringBuilder();
-        output.append("Talk history with ").append(input);
+        output.append("Talk history with ").append(input).append("\n");
         for (Message message : messages) {
             output.append(message.getSender().getName()).append(": ").append(message.getMessage()).append("\n");
         }
         return new Result(true, output.toString());
     }
 
+    public Result cheatAddFriendshipPoints(Matcher m) {
+        Player currentPlayer = Game.getCurrentPlayer();
+        Player targetPlayer = Game.getPlayerByUsername(m.group("username"));
+        if (targetPlayer == null) return Result.error("");
+        int amount =Integer.parseInt(m.group("amount"));
+        currentPlayer.changeFriendshipXP(amount, targetPlayer);
+        return Result.success("added " + amount + " friendship points to " + targetPlayer.getName());
+    }
     public Result giftPlayer(Matcher matcher) {
         String username = matcher.group("username"), itemName = matcher.group("itemName");
         int amount = Integer.parseInt(matcher.group("amount"));
