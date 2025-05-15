@@ -410,6 +410,12 @@ public class GameMenuController extends MenuController {
     public Result useArtisan(Matcher m ) {
         String args = m.group("args");
         ArtisanType artisan = ArtisanType.getArtisan(args);
+        if (artisan == null)
+            return Result.error("That machine doesn’t seem to exist. Are you sure it’s real?");
+
+        Player player = Game.getCurrentPlayer();
+//        if (!player.getBackPack().hasThisCraft(artisan.getCraftType()))
+//            return Result.error("Nope, artisan machines don’t have Wi-Fi. Go stand next to it!");
         if (artisan != null) artisan.useArtisan(args);
         return Result.success("");
     }

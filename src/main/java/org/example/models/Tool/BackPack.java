@@ -35,6 +35,16 @@ public class BackPack implements Tool <BackPackType>{
         return inventory;
     }
 
+
+    public boolean hasThisCraft(CraftType craft) {
+        for (Item item : inventory.keySet()) {
+            if (item instanceof Craft) {
+                if (((Craft) item).getType() == craft)
+                    return true;
+            }
+        }
+        return false;
+    }
     public Result addToInventory(Item item, int amount) {
         if(isStorageUnlimited) {
             if(!inventory.containsKey(item)) inventory.put(item, inventory.getOrDefault(item, 0) + amount);

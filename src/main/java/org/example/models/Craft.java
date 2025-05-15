@@ -19,6 +19,10 @@ public class Craft extends BasicItem implements Item {
         this.type = type;
     }
 
+    public CraftType getType() {
+        return type;
+    }
+
     public Map<Material, Integer> getIngredients() {
         return type.getIngredients();
     }
