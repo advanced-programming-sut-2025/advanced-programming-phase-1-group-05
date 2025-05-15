@@ -5,6 +5,7 @@ import org.example.models.Game;
 import org.example.models.Item;
 import org.example.models.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -16,10 +17,10 @@ public enum ArtisanType {
             )),
     CHEESE_PRESS(
             List.of(
-                    createRecipe(Map.of("milk", 1), new ArtisanProduct("Cheese", 100, 3, 230)),
                     createRecipe(Map.of("large milk", 1), new ArtisanProduct("Cheese", 100, 3, 345)),
                     createRecipe(Map.of("goat milk", 1), new ArtisanProduct("Goat Cheese", 100, 3, 400)),
-                    createRecipe(Map.of("large goat milk", 1), new ArtisanProduct("Goat Cheese", 100, 3, 600)))
+                    createRecipe(Map.of("large goat milk", 1), new ArtisanProduct("Goat Cheese", 100, 3, 600)),
+                    createRecipe(Map.of("milk", 1), new ArtisanProduct("Cheese", 100, 3, 230)))
     ),
     Keg(List.of(Map.of(Map.of("Wheat", 1), new ArtisanProduct("Beer", 50, 24, 200)),
             Map.of(Map.of("rice", 1), new ArtisanProduct("Vinegar", 13, 10, 100)),
@@ -137,30 +138,38 @@ public enum ArtisanType {
 
     }
 
-    public static CraftType getCraftType(String input) {
-        input = input.replaceAll(" ", "").trim().toLowerCase();
-        if (input.startsWith("beehouse")) {
-            return CraftType.BeeHouse;
-        } else if (input.startsWith("cheesepress")) {
-            return CraftType.CheesePress;
-        } else if (input.startsWith("keg")) {
-            return CraftType.Keg;
-        } else if (input.startsWith("dehydrator")) {
-            return CraftType.Dehydrator;
-        } else if (input.startsWith("charcoalklin")) {
-            return CraftType.CharcoalKlin;
-        } else if (input.startsWith("loom")) {
-            return CraftType.Loom;
-        } else if (input.startsWith("mayonnaisemachine")) {
-            return CraftType.MayonnaiseMachine;
-        } else if (input.startsWith("olimaker")) {
-            return CraftType.OilMaker;
-        } else if (input.startsWith("preservesjar")) {
-            return CraftType.PreservesJar;
-        } else if (input.startsWith("fishsmoker")) {
-            return CraftType.FishSmoker;
-        } else if (input.startsWith("furnace")) {
-            return CraftType.Furnace;
+    public CraftType getCraftType() {
+        switch (this) {
+            case BEE_HOUSE -> {
+                return CraftType.BeeHouse;
+            }
+            case CHEESE_PRESS -> {
+                return CraftType.CheesePress;
+            }
+            case Keg -> {
+                return CraftType.Keg;
+            }
+            case Dehydrator -> {
+                return CraftType.Dehydrator;
+            }
+            case CharcoalKlin -> {
+                return CraftType.CharcoalKlin;
+            }
+            case MayonnaiseMachine -> {
+                return CraftType.MayonnaiseMachine;
+            }
+            case OilMaker -> {
+                return CraftType.OilMaker;
+            }
+            case PreservesJar -> {
+                return CraftType.PreservesJar;
+            }
+            case FishSmoker -> {
+                return CraftType.FishSmoker;
+            }
+            case Furnace -> {
+                return CraftType.Furnace;
+            }
         }
         return null;
     }
@@ -232,27 +241,49 @@ public enum ArtisanType {
     public ArtisanProduct useArtisan(String input) {
         input = input.toLowerCase().replaceAll(" ", "").replaceAll(getName(), "");
         for (Map<Map<String, Integer>, ArtisanProduct> recipes : items) {
-            for (Map.Entry<Map<String, Integer>, ArtisanProduct> entry : recipes.entrySet()) {
+            List<Map.Entry<Map<String, Integer>, ArtisanProduct>> sortedEntries = new ArrayList<>(recipes.entrySet());
+
+            // Sort by length of first key (we assume 1 key per recipe input)
+            sortedEntries.sort((e1, e2) -> {
+                String key1 = e1.getKey().keySet().iterator().next();
+                String key2 = e2.getKey().keySet().iterator().next();
+                return Integer.compare(key2.length(), key1.length()); // Descending
+            });
+
+            for (Map.Entry<Map<String, Integer>, ArtisanProduct> entry : sortedEntries) {
                 String newInput = input;
                 boolean found = true;
-                for (Map.Entry<String, Integer> ingredient : entry.getKey().entrySet()) {
-                    if (input.contains(ingredient.getKey().toLowerCase())) {
-                        newInput = newInput.replaceAll(ingredient.getKey().toLowerCase(), "");
-                    } else found = false;
+                boolean canAfford = true;
 
-                    if (!found) break;
+                for (Map.Entry<String, Integer> ingredient : entry.getKey().entrySet()) {
+                    if (input.contains(ingredient.getKey().toLowerCase().replaceAll(" ", ""))) {
+                        if (Game.getCurrentPlayer().getItemQuantity(Game.getDatabase().getItem(ingredient.getKey())) < ingredient.getValue()) {
+                            canAfford = false;
+                        }
+
+                        newInput = newInput.replaceAll(ingredient.getKey().toLowerCase().replaceAll(" ", ""), "");
+                    } else {
+                        found = false;
+                        break;
+                    }
+                }
+
+                if (found && !canAfford) {
+                    System.out.println("not enough ingredients in inventory");
+                    return null;
                 }
                 if (found && newInput.isEmpty()) {
                     System.out.print(entry.getValue().getName() + " will be ready in " + entry.getValue().getProcessingTime() + " hours");
                     return entry.getValue();
                 }
                 if (found && !newInput.isEmpty()) {
-                    System.out.print("Extra items in input.");
+                    System.out.print("Extra items in input: " + input + ".");
                     return null;
                 }
             }
         }
-        System.out.print("invalid ingredients.");
+
+        System.out.println("invalid items.");
         return null;
     }
 
