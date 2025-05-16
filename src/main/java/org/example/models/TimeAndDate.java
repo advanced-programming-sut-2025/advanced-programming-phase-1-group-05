@@ -52,13 +52,13 @@ public class TimeAndDate {
             hour ++;
         }
         if (hour >= 22) {
-            hour = 9;
-            minute = 0;
             advanceDay();
         }
     }
     public void advanceDay() {
         day++;
+        hour = 9;
+        minute = 0;
         if (day > 28) {
             day = 1;
             season = season.next();

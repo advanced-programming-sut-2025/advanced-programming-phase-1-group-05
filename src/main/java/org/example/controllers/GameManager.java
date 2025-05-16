@@ -12,8 +12,8 @@ public class GameManager {
 
     public static void nextDay(){
         resetEnergy();
-        //checkNPCGifts();
-        //checkForThirdQuest();
+        checkNPCGifts();
+        checkForThirdQuest();
         giveBackSoldItemGolds();
         getAnimalProducts();
     }
@@ -66,6 +66,7 @@ public class GameManager {
             for (NPC npc : Game.getAllNPCs()) {
                 if (gameClock.getDay() == npc.getDaysToUnlockThirdQuest() && npc.getNumOfUnlockedQuests(player) == 2) {
                     npc.unlockThirdQuest(player);
+                    System.out.println(npc.getName() + "'s third quest has been unlocked");
                 }
             }
         }

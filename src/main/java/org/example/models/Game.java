@@ -92,9 +92,6 @@ public class Game {
 
 
             initializeFarms();
-            for (Player player : players) {
-                System.out.println(player.getFarm() == null);
-            }
             Player.initializeFriendships(players);
             GameManager.getGameClock().setDay(1);
             GameManager.getGameClock().setSeason(Season.SPRING);
@@ -103,7 +100,9 @@ public class Game {
             if (!players.isEmpty()) {
                 currentPlayer = players.get(0);
             }
-
+            for (NPC npc : getAllNPCs()) {
+                npc.initializeFriendships();
+            }
             return Result.success("Game started successfully! Current player: " +
                     (currentPlayer != null ? currentPlayer.getUsername() : "None"));
         } catch (Exception e) {
@@ -111,14 +110,15 @@ public class Game {
         }
     }
     public static List<NPC> getAllNPCs() {
-        List<NPC> allNPCs = new ArrayList<>();
-        for (Map.Entry<String, NPC> entry : database.getNPCs().entrySet()) {
-            allNPCs.add(entry.getValue());
-        }
-        return allNPCs;
+        return database.getNPCs();
     }
     public static NPC getNPCByName(String npcName) {
-        return database.getNPCs().get(npcName);
+        for (NPC npc: getAllNPCs()) {
+            if (npc.getName().equalsIgnoreCase(npcName)) {
+                return npc;
+            }
+        }
+        return null;
     }
     public static Weather getCurrentWeather() {
         return currentWeather;

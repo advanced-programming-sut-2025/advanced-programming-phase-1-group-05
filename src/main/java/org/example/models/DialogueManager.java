@@ -32,7 +32,7 @@ public class DialogueManager {
         if (npcData == null) {
             return npcName +" just stares at you awkwardly";
         }
-        List<String> options = npcData.getOrDefault(weather, npcData.get("daily"));
+        List<String> options = npcData.getOrDefault(weather.toLowerCase(), npcData.get("daily"));
         if (options == null || options.isEmpty()) {
             return npcName + " just stares at you awkwardly";
         }

@@ -214,6 +214,12 @@ public class GameMenu implements org.example.views.AppMenu {
         else if ((matcher = GameMenuCommands.StartFishing.getMatcher(input)) != null) {
             System.out.println(gameMenuController.startFishing(matcher));
         }
+        else if ((matcher = GameMenuCommands.ArtisanUSe.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.useArtisan(matcher));
+        }
+        else if ((matcher = GameMenuCommands.ArtisanGet.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.artisanGet(matcher));
+        }
         else if ((matcher = GameMenuCommands.Purchase.getMatcher(input)) != null) {
             System.out.println(storeController.purchase(matcher));
         } else if ((matcher = GameMenuCommands.CheatAddMoney.getMatcher(input)) != null) {
@@ -256,7 +262,7 @@ public class GameMenu implements org.example.views.AppMenu {
         } else if (input.equals("start trade")) {
             menuController.enterMenu("trade");
         }
-        else if (input.equals("friendship\\s+NPC\\s+list")) {
+        else if (input.matches("friendship\\s+NPC\\s+list")) {
             System.out.println(gameMenuController.NPCFriendshipLevels().getMessage());
         } else if (input.matches("meet\\s+NPC\\s+\\S+")) {
             int CIndex = input.indexOf('C');

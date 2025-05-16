@@ -20,7 +20,7 @@ public class Database {
     ArrayList<Item> itemDatabase = new ArrayList<>();
     ArrayList<Craft> craftingRecipeDatabase = new ArrayList<>();
     List<Store> stores = new ArrayList<>();
-    Map<String, NPC> NPCs = new HashMap<>();
+    List<NPC> NPCs = new ArrayList<>();
 
     public Database() {
         initializeStoresAndItems();loadNPCs();
@@ -144,11 +144,11 @@ public class Database {
             }
 
             NPC npc = new NPC(name, favorites, requests, rewards);
-            NPCs.put(name, npc);
+            NPCs.add(npc);
         }
     }
 
-    public Map<String, NPC> getNPCs() {
+    public List<NPC> getNPCs() {
         return NPCs;
     }
 

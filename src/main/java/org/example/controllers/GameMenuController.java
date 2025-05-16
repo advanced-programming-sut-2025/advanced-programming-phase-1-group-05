@@ -715,8 +715,8 @@ public class GameMenuController extends MenuController {
         Player currentPlayer = Game.getCurrentPlayer();
         builder.append("friendship status with NPCs: ");
         for (NPC npc : Game.getAllNPCs()) {
-            builder.append("\n").append(npc.getName())
-                    .append(" friendship level: ").append(npc.getFriendshipLevel(currentPlayer))
+            builder.append("\n").append(npc.getName()).append("\t")
+                    .append("friendship level: ").append(npc.getFriendshipLevel(currentPlayer))
                     .append(" friendship points: ").append(npc.getFriendshipPoints(currentPlayer));
         }
         return new Result(true, builder.toString());
@@ -725,21 +725,27 @@ public class GameMenuController extends MenuController {
     public Result meetNPC(String npcName) {
         NPC npc = Game.getNPCByName(npcName);
         Player player = Game.getCurrentPlayer();
+        if (npc == null) return new Result(false, "NPC not found");
+        if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1)
+            return new Result(false,
+                    "You're talking to thin air. That NPC must be off doing NPC things. npc coordinates: " + npc.getX() + " "  + npc.getY());
         lastNPC = npc;
         npc.addFriendShipPoints(player, 20);
-        return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().toString()));
+        return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().name()));
     }
 
     public Result giftNPC(String input) {
         int CIndex = input.indexOf('C');
         int iIndex = input.indexOf('-');
         String npcName = input.substring(CIndex + 1, iIndex).trim();
-        String itemName = input.substring(iIndex + 1).trim();
+        String itemName = input.substring(iIndex + 2).trim();
         NPC npc = Game.getNPCByName(npcName);
         if (npc == null) return new Result(false, "NPC not found");
-        Item item = Game.getDatabase().getItem(itemName);
-        if (item == null) return new Result(false, "Item not found");
         Player player = Game.getCurrentPlayer();
+        Item item = player.getBackPack().getFromInventory(itemName);
+        if (Game.getDatabase().getItem(itemName) == null && item == null) return new Result(false, "Item not found");
+        if (item == null)
+            return Result.error("You don't have that item in your inventory");
         npc.recieveGift(item, player);
         if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1)
             return new Result(false,
@@ -747,8 +753,8 @@ public class GameMenuController extends MenuController {
         if (item instanceof Tool<?>)
             return new Result(false,
                     "Gifting your old tools? What’s next—handing out used socks?");
-
-        if (npc.isFavorite(item)) {
+        lastNPC = npc;
+        if (npc.isFavorite(itemName)) {
             npc.addFriendShipPoints(player, 200);
             return new Result(true,
                     "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
@@ -766,7 +772,7 @@ public class GameMenuController extends MenuController {
         for (Map.Entry<String, Integer> entry : lastNPC.getRequests().entrySet()) {
             index++;
             output.append("\n").append(index).append(". ")
-                    .append(entry.getValue()).append(" ").append(Game.getDatabase().getItem(entry.getKey()).getName()).append("(s)");
+                    .append(entry.getValue()).append(" ").append(entry.getKey()).append("(s)");
             if (index == lastNPC.getNumOfUnlockedQuests(player)) break;
         }
 
@@ -800,9 +806,11 @@ public class GameMenuController extends MenuController {
             return new Result(false,
                     "Whoops! You're still a few shy of the total. Harvest more and pop back over!");
         }
-        Map.Entry<Item, Integer> reward = lastNPC.finishQuest(player, questIndex);
+        Map.Entry<String, Integer> reward = lastNPC.finishQuest(player, questIndex);
+        if (reward.getKey().equalsIgnoreCase("gold coin"))
+            player.addGold(reward.getValue());
         return new Result(true,
-                "You got " + reward.getValue() + " " + reward.getKey().getName() +
+                "You got " + reward.getValue() + " " + reward.getKey() +
                         "(s) from " + lastNPC.getName() + " for finishing this quest.");
     }
 
@@ -1056,7 +1064,7 @@ public class GameMenuController extends MenuController {
                 return Result.error("Invalid format. Usage: cheat weather set <Type>");
             }
 
-            String weatherType = tokens[3].toUpperCase();
+            String weatherType = tokens[3];
 
             Weather newForecastedWeather;
             try {

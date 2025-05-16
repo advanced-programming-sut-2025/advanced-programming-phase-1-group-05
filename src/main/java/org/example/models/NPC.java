@@ -22,16 +22,31 @@ public class NPC {
         this.favorites.addAll(favorites);
         this.requests.putAll(requests);
         this.rewards.putAll(rewards);
-        for (Player player : Game.getAllPlayers()){
-            friendshipPoints.put(player, 0);
-            unlockedQuests.put(player, 1);
-        }
+        setXandY();
         for(int i = 1; i < 4; i++){
             questsStatus.put(i, false);
         }
         Random rand = new Random();
         daysToUnlockThirdQuest = rand.nextInt(19) + 10;
         // this.residence = residence
+    }
+
+    public void setXandY () {
+        if (name.equalsIgnoreCase("Sebastian")){
+            x = 73; y= 46;
+        }
+        else if (name.equalsIgnoreCase("Abigail")) {
+            x = 43; y = 19;
+        }
+        else  if (name.equalsIgnoreCase("Harvey")) {
+            x = 72; y = 44;
+        }
+        else if (name.equalsIgnoreCase("Leah")) {
+            x = 13; y= 39;
+        }
+        else if (name.equalsIgnoreCase("Robin")) {
+            x = 1; y = 54;
+        }
     }
 
     public int getX() {
@@ -46,6 +61,12 @@ public class NPC {
         return name;
     }
 
+    public void initializeFriendships() {
+        for (Player player : Game.getAllPlayers()){
+            friendshipPoints.put(player, 0);
+            unlockedQuests.put(player, 1);
+        }
+    }
     public int getDaysToUnlockThirdQuest() {
         return daysToUnlockThirdQuest;
     }
@@ -56,8 +77,11 @@ public class NPC {
         // this method will check if the gift is a favorite
         // and will add to friendshipLevel of the player accordingly
     }
-    public boolean isFavorite(Item item) {
-        return favorites.contains(item);
+    public boolean isFavorite(String itemName) {
+        for (String favorite : favorites ) {
+            if (favorite.equalsIgnoreCase(itemName)) return true;
+        }
+        return false;
     }
     public void addFriendShipPoints(Player player, int points) {
         friendshipPoints.merge(player, points, Integer::sum);
@@ -83,20 +107,21 @@ public class NPC {
         }
         return null;
     }
-    public Map.Entry<Item, Integer> finishQuest(Player player, int questIndex) {
+    public Map.Entry<String, Integer> finishQuest(Player player, int questIndex) {
         questsStatus.put(questIndex, true);
-        Item rewardItem = null;
-        int quantity = 0;
+        String rewardItem = "";
+        int quantity;
+        int index = 1;
         for (Map.Entry<String, Integer> entry : rewards.entrySet()) {
-            rewardItem = Game.getDatabase().getItem(entry.getKey());
-            break;
+            if (index == questIndex)  rewardItem = entry.getKey();
+            index++;
         }
-        if (rewardItem != null) {
-            quantity = rewards.get(rewardItem);
-            if (getFriendshipLevel(player) >= 2) quantity *= 2;
-            player.getBackPack().addToInventory(rewardItem, quantity);
-            rewards.remove(rewardItem);
-        }
+
+        quantity = rewards.get(rewardItem);
+        if (getFriendshipLevel(player) >= 2) quantity *= 2;
+        player.getBackPack().addToInventory(new BasicItem(rewardItem, 100), quantity);
+
+
         return new AbstractMap.SimpleEntry<>(rewardItem, quantity);
     }
     public Map<String, Integer> getRequests() {

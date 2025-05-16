@@ -15,7 +15,84 @@ game map 1
 game map2
 game map 2
 game map 3
+
+
+وجود آیتم های فصلی
+set coordinates * 50 15
+cheat add 1000 dollars
+purchase tomato seeds
+داشتن قیمت متفاوت بر اساس فصل
+set coordinates * 30 40
+season
+show all products
+وجود ساعت کاری برای فروشگاه ها
+time
+cheat advance time 9h
+time
+purchase tomato seeds -n 1
+وجود محدودیت روزانه در خرید
+cheat advance time 7h
 next turn
+cheat add 7000 dollars
+set coordinates * 30 40
+purchase tomato seeds -n 5
+purchase tomato seeds -n 1
+نشان دادن محصولات موجود
+show all available products
+الزام برای حضور در فروشگاه
+set coordinates * 5 60
+purchase tomato seeds -n 1
+نشان دادن کلیه محصولات فروشگاه
+set coordinates * 30 40
+show all products
+کم شدن پول بازیکن و اضافه شدن آیتم به inventory هنگام خرید
+show money
+purchase Artichoke Seeds -n 1
+show money
+show inventory
+اختیاری بودن فلگ n-
+purchase Artichoke seeds
+خطا های فروشگاه :
+- نبود بازیکن در یک فروشگاه
+set coordinates * 5 60
+purchase tomato seeds -n 1
+ نداشتن پول به میزان کافی
+set coordinates * 60 90
+purchase Iridium rod
+- وجود نداشتن آیتم گفته شده
+set coordinates * 30 40
+purchase blalala
+- وجود نداشتن آیتم در این فروشگاه
+purchase iridium rod
+- بیشتر بودن مقدار n از ظرفیت روزانه باقی مانده از آیتم
+purchase tomato seeds -n 2
+اضافه کردن پول به بازیکن
+cheat add 100 dollars
+وجود سطل های فروش محصول
+get shipping bin coordinates ??
+اضافه شدن پول فروش آیتم ها پس از یک روز
+set coordinates * 24 5
+sell tomato seeds -n 1
+cheat advance time 14h
+وجود دستور فروش
+sell tomato seeds -n 1
+اختیاری بودن فلگ n-
+sell tomato seeds
+خطاهای دستور فروش
+- وجود نداشتن آیتم نام برده شده
+sell blablabla
+ نداشتن آیتم در inventory
+sell iridium rod
+- وجود نداشتن آیتم به میزان کافی در inventory
+sell artichoke seeds -n 3
+- نبودن کنار سطل‌های فروش
+set coordinates * 30 10
+sell artichoke seeds -n 1
+ غیر قابل فروش بودن محصول (مانند ابزارها)
+set coordinates * 24 5
+sell hoe
+
+
 قابلیت نمایش سطوح دوستی با سایر بازیکنان
 friendships
 قابلیت صحبت کردن با بازیکنان
@@ -182,79 +259,44 @@ trade -u Nil-a11 -t offer -i copper ore -a 1 -p 100
 - نامعتبر بودن فیلد آیتم یا amoun
 trade -u Nil-a11 -t offer -i coppee -a 1 -p 100
 trade -u Nil-a11 -t offer request -i copper ore -a 1 -p 100
+stop trade
 
-
-وجود آیتم های فصلی
-set coordinates * 50 15
-cheat add 1000 dollars
-purchase tomato seeds
-داشتن قیمت متفاوت بر اساس فصل
-set coordinates * 30 40
-season
-show all products
-وجود ساعت کاری برای فروشگاه ها
-time
-cheat advance time 9h
-time
-purchase tomato seeds -n 1
-وجود محدودیت روزانه در خرید
-cheat advance time 7h
+حرف زدن با NPCها (سیستم دیالوگ)
+meet NPC Leah
+set coordinates * 13 38
+cheat weather set Storm
+تغییر دیالوگ‌ها بر اساس عوامل مختلف
+cheat advance date 1d
+meet NPC Leah
+تاثیر حرف زدن روی امتیاز دوستی
+friendship NPC list
+- معتبر نبودن نام NPC
+meet NPC blalaal
+gift NPC Leah -i wedding ring
+تاثیر بیشتر هدیه مورد علاقه در افزایش امتیاز دوستی
+cheat add item -n salad -c 1
+gift NPC Leah -i salad
+ نباید بتوانیم ابزارآلات یا سایر آیتم‌های غیر قابل فروش را هدیه دهیم.
+gift NPC Leah -i hoe
+لازم است که در یکی از 8 خانه اطراف NPC باشیم تا بتوانیم هدیه دهیم
+set coordinates * 10 38
+gift NPC Leah -i salad
+friendship NPC list
+quests list
+فعال شدن ماموریت‌ها در شرایط مختلف
+cheat advance date
+.
+.
+.
+امکان پایان ماموریت و دریافت پاداش
+set coordinates * 13 38
+- نداشتن آیتم مورد نیاز به اندازه کافی
+quests finish -i 3
+cheat add item -n wood -c 220
+quests finish -i 3
+قط اولین بازیکنی که ماموریت را انجام می‌دهد می‌تواند پاداش دریافت کند
 next turn
-cheat add 7000 dollars
-set coordinates * 30 40
-purchase tomato seeds -n 5
-purchase tomato seeds -n 1
-نشان دادن محصولات موجود
-show all available products
-الزام برای حضور در فروشگاه
-set coordinates * 5 60
-purchase tomato seeds -n 1
-نشان دادن کلیه محصولات فروشگاه
-set coordinates * 30 40
-show all products
-کم شدن پول بازیکن و اضافه شدن آیتم به inventory هنگام خرید
-show money
-purchase Artichoke Seeds -n 1
-show money
-show inventory
-اختیاری بودن فلگ n-
-purchase Artichoke seeds
-خطا های فروشگاه :
-- نبود بازیکن در یک فروشگاه
-set coordinates * 5 60
-purchase tomato seeds -n 1
- نداشتن پول به میزان کافی
-set coordinates * 60 90
-purchase Iridium rod
-- وجود نداشتن آیتم گفته شده
-set coordinates * 30 40
-purchase blalala
-- وجود نداشتن آیتم در این فروشگاه
-purchase iridium rod
-- بیشتر بودن مقدار n از ظرفیت روزانه باقی مانده از آیتم
-purchase tomato seeds -n 2
-اضافه کردن پول به بازیکن
-cheat add 100 dollars
-وجود سطل های فروش محصول
-get shipping bin coordinates ??
-اضافه شدن پول فروش آیتم ها پس از یک روز
-set coordinates * 24 5
-sell tomato seeds -n 1
-cheat advance time 14h
-وجود دستور فروش
-sell tomato seeds -n 1
-اختیاری بودن فلگ n-
-sell tomato seeds
-خطاهای دستور فروش
-- وجود نداشتن آیتم نام برده شده
-sell blablabla
- نداشتن آیتم در inventory
-sell iridium rod
-- وجود نداشتن آیتم به میزان کافی در inventory
-sell artichoke seeds -n 3
-- نبودن کنار سطل‌های فروش
-set coordinates * 30 10
-sell artichoke seeds -n 1
- غیر قابل فروش بودن محصول (مانند ابزارها)
-set coordinates * 24 5
-sell hoe
+set coordinates * 13 38
+meet NPC Leah
+quests finish -i 3
+quests finish -i 73
