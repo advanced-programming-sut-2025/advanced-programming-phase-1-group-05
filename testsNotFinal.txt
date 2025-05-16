@@ -65,7 +65,7 @@ gift -u Mamad-a11 -i tulip bulb -a 1
 - نبود آیتم مورد نظر در inventory بازیکن هدیه دهنده به تعداد کافی
 set coordinates * 50 60
 gift -u Mamad-a11 -i tulip bulb -a 3
- نداشتن سطح دوستی کافی با بازیکن گیرنده
+نداشتن سطح دوستی کافی با بازیکن گیرنده
 next turn
 next turn
 set coordinates * 49 59
@@ -109,7 +109,33 @@ ask marriage -u Melika-a11
 الزام برای پر شدن xp سطح دوستی 3 برای درخواست ازدواج کردن
 cheat add friendship -u Melika-a11 -a 400
 ask marriage -u Melika-a11
+امکان قبول کردن یا رد کردن درخواست ازدواج
+next turn
+next turn
+respond -accept -u Mamad-a11
+خروج حلقه ازدواج از بازیکن درخواست کننده و دریافت آن توسط گیرنده
+show inventory
+respond -accept -u Mamad-a11
+تاثیرات جواب درخواست ازدواج روی سطح دوستی
+friendships
 
+
+
+
+تاثیرات ازدواج روی میزان انرژی
+respond -reject -u Mamad-a11
+next turn
+cheat advance time 20h
+show energy
+
+
+
+- قابلیت حرکت در زمین همدیگر
+walk -l 80 30
+- ترکیب شدن پول دو بازیکن با هم
+next turn
+cheat add 100 dollars
+show money
 
 وجود آیتم های فصلی
 set coordinates * 50 15

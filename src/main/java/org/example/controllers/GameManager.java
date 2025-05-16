@@ -44,7 +44,10 @@ public class GameManager {
                 player.setEnergy(100);
                 player.decrementProposalRejectionDaysLeft();
             }
-            else player.setEnergy(200);
+            else {
+                if(!Game.getCurrentPlayer().isEnergyUnlimited())
+                    player.setEnergy(200);
+            }
         }
     }
     public static void checkNPCGifts(){

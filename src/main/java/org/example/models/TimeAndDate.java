@@ -66,10 +66,9 @@ public class TimeAndDate {
         Game.getGameMap().growPlants();
         Game.getGameMap().setForagingItems();
         Game.getGameMap().setForagingMinerals();
-        if(!Game.getCurrentPlayer().isEnergyUnlimited()) Game.getCurrentPlayer().resetEnergy();
         Game.setForecastedWeatherBySeason(season);
         Game.getGameMap().crowDamage();
-        //GameManager.nextDay();
+        GameManager.nextDay();
     }
     public Season getCurrentSeason() { return season; }
     public int getDay() { return day; }

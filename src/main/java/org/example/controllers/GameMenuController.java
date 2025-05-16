@@ -4,8 +4,11 @@ import org.example.models.*;
 import org.example.models.Enums.*;
 import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Tool;
+import org.w3c.dom.Node;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -562,6 +565,7 @@ public class GameMenuController extends MenuController {
             return Result.error("You hold out your gift... and reality holds out a calculator.");
         if (currentPlayer.getFriendshipLevel(targetPlayer) < 1)
             return Result.error("Maybe get to know them a little better before tossing gifts their way?");
+
         currentPlayer.getBackPack().getInventory().remove(item, amount);
         targetPlayer.getBackPack().getInventory().put(item, amount);
         Game.addGift(new Gift(currentPlayer, targetPlayer, item, amount));
@@ -621,6 +625,9 @@ public class GameMenuController extends MenuController {
         if (!currentPlayer.canHug(targetPlayer))
             return Result.error("They awkwardly sidestep the hug. Friendship takes time, pal.");
         currentPlayer.changeFriendshipXP(60, targetPlayer);
+        if (currentPlayer.isMarriedTo(targetPlayer)) {
+            currentPlayer.increaseEnergy(50);
+        }
         return new Result(true, "You hugged them tight. Even the cows felt the love.");
     }
 
@@ -687,15 +694,18 @@ public class GameMenuController extends MenuController {
                 return Result.error("You dramatically accept... nothing. Nobody proposed, drama queen.");
             currentPlayer.changeLevel(targetPlayer, 4);
             currentPlayer.getBackPack().getInventory().put(ring, 1);
+            if (targetPlayer.getItemQuantity(ring) < 1)
+                return Result.error("You tried to accept, but their ring mysteriously disappeared. Awkward...");
             targetPlayer.getBackPack().getInventory().remove(ring, 1);
             currentPlayer.setSpouse(targetPlayer);
             targetPlayer.setSpouse(currentPlayer);
-            // TODO add messages here
+            return Result.success("You said yes! The wedding bells will ring soon.");
         } else if (input.contains("reject")) {
             if (!targetPlayer.hasProposed(currentPlayer))
                 return Result.error("That's a bold rejection for someone who hasn't been proposed to.");
             currentPlayer.changeLevel(targetPlayer, 0);
             targetPlayer.setProposalRejectionDaysLeft(7);
+            return Result.success("Well... that could’ve gone better.");
         }
         return new Result(true, "");
     }
@@ -1142,6 +1152,128 @@ public class GameMenuController extends MenuController {
         }
         return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
     }
+
+    public Result walkPlayer(Matcher matcher) {
+        try {
+            if (matcher.group("x") != null && matcher.group("y") != null) {
+                int targetX = Integer.parseInt(matcher.group("x"));
+                int targetY = Integer.parseInt(matcher.group("y"));
+
+                if (!Game.getGameMap().isInBounds(targetX, targetY)) {
+                    return new Result(false, "Target coordinates are out of bounds.");
+                }
+
+                // بررسی مزرعه دیگران
+                if (!canWalk(targetX, targetY)) {
+                    return new Result(false, "You cannot enter another player's farm!");
+                }
+
+                Player currentPlayer = Game.getCurrentPlayer();
+                int startX = currentPlayer.getX();
+                int startY = currentPlayer.getY();
+
+                //بررسی کردن موانع
+                GameTile targetTile = Game.getGameMap().getTile(targetX, targetY);
+                if (targetTile == null || targetTile.getTileType() == TileType.Water ||
+                        targetTile.getTileType() == TileType.Stone || targetTile.isOccupied()) {
+                    return new Result(false, "Target tile is blocked.");
+                }
+
+                // یافتن کوتاه‌ترین مسیر با BFS
+                List<Point> path = findShortestPath(startX, startY, targetX, targetY);
+
+                if (path.isEmpty()) {
+                    return new Result(false, "No valid path to target.");
+                }
+
+                // فقط آخرین نقطه مسیر (مقصد نهایی)
+                Point finalStep = path.get(path.size() - 1);
+                GameTile previousTile = Game.getGameMap().getTile(currentPlayer.getX(), currentPlayer.getY());
+                if (previousTile != null) {
+                    previousTile.setTileType(TileType.Flat);
+                    previousTile.setOccupied(false);
+                }
+
+                currentPlayer.setCoordinate(finalStep.x, finalStep.y);
+
+                GameTile newTile = Game.getGameMap().getTile(finalStep.x, finalStep.y);
+                if (newTile != null) {
+                    newTile.setTileType(TileType.Player);
+                    newTile.setOccupied(true);
+                }
+                return new Result(true, "Player moved to (" + finalStep.x + "," + finalStep.y + ")");
+            }
+        } catch (Exception e) {
+            return new Result(false, "Invalid input format.");
+        }
+        return new Result(false, "Invalid command.");
+    }
+
+    private List<Point> findShortestPath(int startX, int startY, int targetX, int targetY) {
+        Queue<Node> queue = new LinkedList<>();
+        boolean[][] visited = new boolean[GameMap.MAP_WIDTH][GameMap.MAP_HEIGHT];
+        int[][] directions = {{0,1}, {1,0}, {0,-1}, {-1,0}}; // راست، پایین، چپ، بالا
+
+        queue.add(new Node(startX, startY, null));
+        visited[startX][startY] = true;
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+
+            //بررسی اینکه به مقصدمون رسیدیم یا نرسیدیم
+            if (current.x == targetX && current.y == targetY) {
+                return reconstructPath(current);
+            }
+
+            // بررسی خانه های اطراف
+            for (int[] dir : directions) {
+                int newX = current.x + dir[0];
+                int newY = current.y + dir[1];
+
+                if (Game.getGameMap().isInBounds(newX, newY) &&
+                        !visited[newX][newY] &&
+                        isWalkable(newX, newY)) {
+
+                    visited[newX][newY] = true;
+                    queue.add(new Node(newX, newY, current));
+                }
+            }
+        }
+
+        return Collections.emptyList();
+    }
+
+    private boolean isWalkable(int x, int y) {
+        GameTile tile = Game.getGameMap().getTile(x, y);
+        return tile != null &&
+                tile.getTileType() != TileType.Water &&
+                tile.getTileType() != TileType.Stone &&
+                !tile.isOccupied() &&
+                canWalk(x, y);
+    }
+    private static class Node {
+        int x, y;
+        Node parent;
+
+        public Node(int x, int y, Node parent) {
+            this.x = x;
+            this.y = y;
+            this.parent = parent;
+        }
+    }
+
+    // بازسازی مسیر از آخرین گره
+    private List<Point> reconstructPath(Node node) {
+        List<Point> path = new ArrayList<>();
+        while (node != null) {
+            path.add(new Point(node.x, node.y));
+            node = node.parent;
+        }
+        Collections.reverse(path);
+        return path.subList(1, path.size()); //delete start location
+    }
+
+
 
     private boolean canWalk(int x, int y) {
         for (Player player : Game.getAllPlayers()) {

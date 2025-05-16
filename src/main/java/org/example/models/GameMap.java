@@ -320,7 +320,7 @@ public class GameMap {
 //TODO HElloooo
     public static GameTile getTile(int x, int y) {
         if (isInBounds(x, y)) {
-            return map[x - 1][y - 1];
+            return map[x][y];
         }
         return null;
     }
@@ -332,7 +332,7 @@ public class GameMap {
     }
 
     public static boolean isInBounds(int x, int y) {
-        return x > 0 && y > 0 && x <= map.length && y <= map[0].length;
+        return x >= 0 && y >= 0 && x < map.length && y < map[0].length;
     }
     public void printFullMap() {
         for (int i = 0; i < map.length; i++) {

@@ -76,7 +76,7 @@ public class Player {
     public void setEnergy(int energy) {
         this.energy = energy;
         if(energy <= 0) {
-            energy = 0;
+            this.energy = 0;
             faint();
         }
     }

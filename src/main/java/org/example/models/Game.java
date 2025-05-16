@@ -92,6 +92,9 @@ public class Game {
 
 
             initializeFarms();
+            for (Player player : players) {
+                System.out.println(player.getFarm() == null);
+            }
             Player.initializeFriendships(players);
             GameManager.getGameClock().setDay(1);
             GameManager.getGameClock().setSeason(Season.SPRING);
