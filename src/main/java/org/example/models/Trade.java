@@ -29,6 +29,10 @@ public class Trade {
         return answered;
     }
 
+    public void setAnswered(boolean answered) {
+        this.answered = answered;
+    }
+
     public int getId() {
         return id;
     }

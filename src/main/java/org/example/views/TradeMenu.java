@@ -17,17 +17,21 @@ public class TradeMenu implements AppMenu {
         this.menuController = menuController;
     }
 
-    public static TradeMenu getTradeMenu(){
-        if (tradeMenu != null) return tradeMenu;
-        return new TradeMenu(TradingController.getInstance(), MenuController.getController());
-    }
     @Override
     public void handleUserInput(String input) {
-        if (input.matches("trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-a\\s+\\d+\\s+.*")){
+        if (input.startsWith("trade")) {
+            if (input.contains("offer") && input.contains("request"))
+                System.out.println("You're being a little too ambitious-choose to give or get, not both.");
+
+        }
+        if (input.matches("trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-i\\s+.*-a\\s+\\d+\\s+.*")){
             System.out.println(tradingController.trade(input).getMessage());
         }
         else if (input.matches("trade\\s+response\\s+(-accept|-reject)\\s+-i\\s+\\d+")){
             System.out.println(tradingController.respondToTrade(input));
+        }
+        else if (input.equals("trade history")) {
+            System.out.println(tradingController.printTradeHistory());
         }
         else if (input.equals("trade list")){
             System.out.println(tradingController.showTradeList());

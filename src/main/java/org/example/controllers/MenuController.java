@@ -20,10 +20,6 @@ public class MenuController {
         this.currentMenu = new RegisterMenu(this, registerController, this.getScanner());
     }
 
-    public static MenuController getController() {
-        if (menuController == null) menuController =  new MenuController(Game.getScanner());
-        return menuController;
-    }
 
     public Result enterMenu(String menuName) {
         try {
@@ -43,6 +39,7 @@ public class MenuController {
     private boolean canSwitchToMenu(AppMenu current, Menu target) {
         String currentMenuName = current.getMenuName();
 
+
         if (target == Menu.MAIN) return true;
         if ((currentMenuName.equals("Main Menu") && target == Menu.GAME) ||
                 (currentMenuName.equals("Main Menu") && target == Menu.PROFILE) ||
@@ -50,7 +47,10 @@ public class MenuController {
                 (currentMenuName.equals("Main Menu") && target == Menu.LOGIN) ||
                 (currentMenuName.equals("Main Menu") && target == Menu.REGISTER) ||
                 (currentMenuName.equals("Game Menu") && target == Menu.HOME) ||
-                (currentMenuName.equals("Home Menu") && target == Menu.GAME)) {
+                (currentMenuName.equals("Home Menu") && target == Menu.GAME)||
+                (currentMenuName.equals("Game Menu") && target == Menu.TRADE) ||
+                (currentMenuName.equals("trade menu") && target == Menu.GAME)
+        ) {
             return true;
         }
 
@@ -87,7 +87,7 @@ public class MenuController {
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
                 return new RegisterMenu(this, registerController, this.getScanner());
             case TRADE: {
-                return TradeMenu.getTradeMenu();
+                return new TradeMenu(TradingController.getInstance(), this);
             }
             case HOME: {
                 return new HomeMenu(this);

@@ -124,6 +124,7 @@ friendships
 
 تاثیرات ازدواج روی میزان انرژی
 respond -reject -u Mamad-a11
+friendships
 next turn
 cheat advance time 20h
 show energy
@@ -133,14 +134,60 @@ show energy
 - قابلیت حرکت در زمین همدیگر
 walk -l 80 30
 - ترکیب شدن پول دو بازیکن با هم
+cheat add 100 dollars
 next turn
 cheat add 100 dollars
 show money
+خطاهای مربوط به درخواست ازدواج
+- الزام کنار هم بودن بازیکنان هنگام دادن درخواست ازدواج
+ask marriage -u Melika-a11
+داشتن حلقه ازدواج هنگام درخواست ازدواج دادن
+next turn
+set coordinates * 50 12
+next turn
+next turn
+ask marriage -u Nil-a11
+cheat add item -n wedding ring -c 1
+- نیاز به پر بودن xp سطح 3 برای درخواست ازدواج دادن
+ask marriage -u Nil-a11
+- فقط بازیکن پسر می‌تواند به یک بازیکن دختر درخواست ازدواج دهد
+next turn
+set coordinates * 50 12
+next turn
+set coordinates * 49 12
+ask marriage -u Mamad-a11
+وجود منوی داد و ستد
+cheat add item -n parsnip seeds -c 2
+cheat add item -n tulip bulb -c 1
+start trade
+show current menu
+امکان دادن درخواست trade
+trade -u Nil-a11 -t request -i parsnip seeds -a 1 -p 100
+وجود دو نوع offer و request
+trade -u Nil-a11 -t offer -i tulip bulb -a 1 -ti parsnip seeds -ta 1
+امکان دیدن لیست تمام درخواست های پاسخ داده نشده
+menu enter Game
+next turn
+start trade
+trade list
+امکان قبول یا رد کردن درخواست داد و ستد
+trade response -accept -i 2
+امکان مشاهده تاریخچه کل درخواست های داد و ستد
+trade history
+- نبود بازیکن نام برده شده
+start trade
+trade -u blalalal -t request -i parsnip seeds -a 1 -p 100
+- نداشتن آیتم‌ یا پول به میزان کافی مطابق درخواست
+trade -u Nil-a11 -t offer -i copper ore -a 1 -p 100
+- نامعتبر بودن فیلد آیتم یا amoun
+trade -u Nil-a11 -t offer -i coppee -a 1 -p 100
+trade -u Nil-a11 -t offer request -i copper ore -a 1 -p 100
+
 
 وجود آیتم های فصلی
 set coordinates * 50 15
 cheat add 1000 dollars
-purchase tomato seed
+purchase tomato seeds
 داشتن قیمت متفاوت بر اساس فصل
 set coordinates * 30 40
 season
@@ -149,34 +196,35 @@ show all products
 time
 cheat advance time 9h
 time
-purchase tomato seed -n 1
+purchase tomato seeds -n 1
 وجود محدودیت روزانه در خرید
 cheat advance time 7h
-next turn 
+next turn
 cheat add 7000 dollars
-purchase tomato seed -n 5
-purchase tomato seed -n 1
+set coordinates * 30 40
+purchase tomato seeds -n 5
+purchase tomato seeds -n 1
 نشان دادن محصولات موجود
 show all available products
 الزام برای حضور در فروشگاه
-set coordinates * 20 40
-purchase tomato seed -n 1
+set coordinates * 5 60
+purchase tomato seeds -n 1
 نشان دادن کلیه محصولات فروشگاه
 set coordinates * 30 40
 show all products
 کم شدن پول بازیکن و اضافه شدن آیتم به inventory هنگام خرید
 show money
-purchase Artichoke Seed -n 1
+purchase Artichoke Seeds -n 1
 show money
 show inventory
 اختیاری بودن فلگ n-
-purchase Artichoke Seed
+purchase Artichoke seeds
 خطا های فروشگاه :
 - نبود بازیکن در یک فروشگاه
-set coordinates * 20 40
-purchase tomato seed -n 1
+set coordinates * 5 60
+purchase tomato seeds -n 1
  نداشتن پول به میزان کافی
-set coordinates * 80 90
+set coordinates * 60 90
 purchase Iridium rod
 - وجود نداشتن آیتم گفته شده
 set coordinates * 30 40
@@ -184,29 +232,29 @@ purchase blalala
 - وجود نداشتن آیتم در این فروشگاه
 purchase iridium rod
 - بیشتر بودن مقدار n از ظرفیت روزانه باقی مانده از آیتم
-purchase tomato seed -n 2
+purchase tomato seeds -n 2
 اضافه کردن پول به بازیکن
 cheat add 100 dollars
 وجود سطل های فروش محصول
 get shipping bin coordinates ??
 اضافه شدن پول فروش آیتم ها پس از یک روز
 set coordinates * 24 5
-sell tomato seed -n 1
-cheat advance time 10h
+sell tomato seeds -n 1
+cheat advance time 14h
 وجود دستور فروش
-sell tomato seed -n 1
+sell tomato seeds -n 1
 اختیاری بودن فلگ n-
-sell tomato seed
+sell tomato seeds
 خطاهای دستور فروش
 - وجود نداشتن آیتم نام برده شده
 sell blablabla
  نداشتن آیتم در inventory
 sell iridium rod
 - وجود نداشتن آیتم به میزان کافی در inventory
-sell artichoke seed -n 3
+sell artichoke seeds -n 3
 - نبودن کنار سطل‌های فروش
 set coordinates * 30 10
-sell artichoke seed -n 1
+sell artichoke seeds -n 1
  غیر قابل فروش بودن محصول (مانند ابزارها)
 set coordinates * 24 5
 sell hoe
