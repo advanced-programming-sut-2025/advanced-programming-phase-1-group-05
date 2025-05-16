@@ -145,7 +145,7 @@ public class GameMenu implements org.example.views.AppMenu {
             gameMenuController.helpReadingMap();
         }
         else if ((matcher = GameMenuCommands.Walk.getMatcher(input)) != null) {
-          // System.out.println(gameMenuController.walkPlayer(matcher));
+            System.out.println(gameMenuController.walkPlayer(matcher));
         }
         else if ((matcher = GameMenuCommands.ShowEnergy.getMatcher(input)) != null) {
             System.out.println(gameMenuController.showEnergy().getMessage());

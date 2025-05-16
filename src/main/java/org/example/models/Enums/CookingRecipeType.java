@@ -81,7 +81,9 @@ public enum CookingRecipeType implements Material, Item {
 
     public static CookingRecipeType fromString(String name) {
         for (CookingRecipeType recipeType : CookingRecipeType.values()) {
-            if (recipeType.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
+            System.out.println(recipeType.getName());
+            System.out.println(name);
+            if (recipeType.getName().contains(name)) {
                 return recipeType;
             }
         }

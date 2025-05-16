@@ -148,7 +148,7 @@ public class HomeMenuController {
     //show learnt recipes
     public Result showLearntRecipes() {
         StringBuilder output = new StringBuilder();
-        output.append("** Your Learnt Recipes **\n");
+        output.append("** Your Learnt Cooking Recipes **\n");
         for(CookingRecipeType recipe : Game.getCurrentPlayer().getBackPack().getLearntCookingRecipe()) {
             output.append(recipe.getName()).append("\n");
         }

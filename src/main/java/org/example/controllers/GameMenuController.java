@@ -5,7 +5,9 @@ import org.example.models.Enums.*;
 import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Tool;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -942,7 +944,7 @@ public class GameMenuController extends MenuController {
         else if (MineralType.fromString(name) != null) item = MineralType.fromString(name);
 
         if (item == null) return new Result(false, "** No item with that name exists **");
-        if(count <= 0) return new Result(false, "** Not a valid count **");
+        if (count <= 0) return new Result(false, "** Not a valid count **");
         if (item.getName().contains("Pack")) {
             if (item.getName().equals("Large Pack")) {
                 Game.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Big);
@@ -961,7 +963,7 @@ public class GameMenuController extends MenuController {
             } else if (item.getName().equals("Iridium Trash Can")) {
                 Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iridium);
             }
-            return new Result(true, "Upgraded");
+            return new Result(true, "Upgraded successfully");
             //add craft recipes to learnt recipes
         } else if (item.getName().contains("Recipe")) {
             if (item.getName().equals("Dehydrator Recipe")) {
@@ -972,13 +974,13 @@ public class GameMenuController extends MenuController {
                 Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
             } else {
                 String recipeName = item.getName().replace("Recipe", "");
-                CookingRecipeType type = CookingRecipeType.fromString(name);
+                CookingRecipeType type = CookingRecipeType.fromString(recipeName);
                 Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
             }
             return new Result(true, "Recipe added successfully");
         }
-            Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
-            return new Result(true, "** " + count + " of " + name + " added to your inventory **");
+        Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
+        return new Result(true, "** " + count + " of " + name + " added to your inventory **");
 
     }
 
@@ -987,8 +989,8 @@ public class GameMenuController extends MenuController {
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(x, y);
         Item hoe = Game.getCurrentPlayer().getBackPack().getToolFromInventory("Hoe");
-        if(tile.getTileType().equals(TileType.Flat))
-            Game.getCurrentPlayer().getFarmingSkill().plowTile(tile, (Hoe)hoe);
+        if (tile.getTileType().equals(TileType.Flat))
+            Game.getCurrentPlayer().getFarmingSkill().plowTile(tile, (Hoe) hoe);
         return new Result(true, "Tile plowed successfully");
     }
 
@@ -1077,9 +1079,9 @@ public class GameMenuController extends MenuController {
                 }
 
                 System.out.println("Printing map section at (" + x + "," + y + ") with size " + size + ":");
-                map.printMapSection1(x,y,size);
-                map.printMapSection2(x,y,size);
-                map.printMapSection3(x,y,size);
+                map.printMapSection1(x, y, size);
+                map.printMapSection2(x, y, size);
+                map.printMapSection3(x, y, size);
                 map.printMapSection4(x, y, size);
                 return new Result(true, "Map section printed.");
             } else {
@@ -1092,16 +1094,15 @@ public class GameMenuController extends MenuController {
         }
     }
 
-    public Result eatFood(String foodName){
+    public Result eatFood(String foodName) {
         Item food = Game.getCurrentPlayer().getBackPack().getFromInventory(foodName);
         if (food == null) return new Result(false, "You don't have that food in your inventory.");
-        else if(food instanceof Food){
-            int energy = ((Food)food).getEnergy();
+        else if (food instanceof Food) {
+            int energy = ((Food) food).getEnergy();
             Game.getCurrentPlayer().increaseEnergy(energy);
             Game.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
             return new Result(true, "You consumed the food successfully!");
-        }
-        else return new Result(false, "That's...not edible.");
+        } else return new Result(false, "That's...not edible.");
     }
 
 
@@ -1118,9 +1119,8 @@ public class GameMenuController extends MenuController {
     }
 
 
-
     public Result cheatThor(Matcher matcher) {
-        int i = 0,j = 0;
+        int i = 0, j = 0;
         boolean done = false;
         try {
             if (matcher.group("x") != null && matcher.group("y") != null) {
@@ -1129,13 +1129,12 @@ public class GameMenuController extends MenuController {
                 i = x;
                 j = y;
                 //todo: اگر گلخانه بود تاثیر نداره
-                if (Game.getGameMap().getTile(x,y).getTileType().equals(TileType.Tree)) {
-                    Game.getGameMap().getTile(x,y).setTileType(TileType.Flat);
+                if (Game.getGameMap().getTile(x, y).getTileType().equals(TileType.Tree)) {
+                    Game.getGameMap().getTile(x, y).setTileType(TileType.Flat);
                 }
-                if (Game.getGameMap().getTile(x,y).getTileType().equals(TileType.GreenHouse)){
+                if (Game.getGameMap().getTile(x, y).getTileType().equals(TileType.GreenHouse)) {
                     return new Result(false, "Cheat Thor failed!");
-                }
-                else Game.getGameMap().getTile(x,y).setTileType(TileType.CheatThor);
+                } else Game.getGameMap().getTile(x, y).setTileType(TileType.CheatThor);
             }
         } catch (Exception e) {
             return new Result(false, "Invalid input format.");
@@ -1160,7 +1159,7 @@ public class GameMenuController extends MenuController {
         Game.canBuildGreenHouse = true;
         Item item = Game.getDatabase().getItem("wood");
         for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100 ; j++) {
+            for (int j = 0; j < 100; j++) {
                 GameTile.greenHouseBuilt = true;
 //                if(Game.getGameMap().getTile(i,j).getTileType().equals(TileType.GreenHouse)) {
 //                    if (GameTile.greenHouseBuilt && i >= 0 && i <= 50 &&
@@ -1183,19 +1182,17 @@ public class GameMenuController extends MenuController {
 //                }
             }
         }
-        System.out.println("before building GreenHouse : Wood-> " + currentPlayer.getItemQuantity(item));
-        System.out.println("before building GreenHouse : Gold-> " + currentPlayer.getGold());
         if (currentPlayer.getMapNum() == 1) {
-            currentPlayer.getBackPack().removeFromInventory(item , -500);
+            currentPlayer.getBackPack().removeFromInventory(item, -500);
             currentPlayer.addGold(-1000);
         } else if (currentPlayer.getMapNum() == 2) {
-            currentPlayer.getBackPack().removeFromInventory(item , -500);
+            currentPlayer.getBackPack().removeFromInventory(item, -500);
             currentPlayer.addGold(-1000);
         } else if (currentPlayer.getMapNum() == 3) {
-            currentPlayer.getBackPack().removeFromInventory(item , -500);
+            currentPlayer.getBackPack().removeFromInventory(item, -500);
             currentPlayer.addGold(-1000);
         } else if (currentPlayer.getMapNum() == 4) {
-            currentPlayer.getBackPack().removeFromInventory(item , -500);
+            currentPlayer.getBackPack().removeFromInventory(item, -500);
             currentPlayer.addGold(-1000);
         }
         System.out.println("after building GreenHouse : Gold-> " + currentPlayer.getGold());
@@ -1203,4 +1200,141 @@ public class GameMenuController extends MenuController {
 
         return new Result(true, "Green House built!");
     }
+
+    public Result walkPlayer(Matcher matcher) {
+        try {
+            if (matcher.group("x") != null && matcher.group("y") != null) {
+                int targetX = Integer.parseInt(matcher.group("x"));
+                int targetY = Integer.parseInt(matcher.group("y"));
+
+                if (!GameMap.isInBounds(targetX, targetY)) {
+                    return new Result(false, "Target coordinates are out of bounds.");
+                }
+
+                // بررسی مزرعه دیگران
+                if (!canWalk(targetX, targetY)) {
+                    return new Result(false, "You cannot enter another player's farm!");
+                }
+
+                Player currentPlayer = Game.getCurrentPlayer();
+                int startX = currentPlayer.getX();
+                int startY = currentPlayer.getY();
+
+                //بررسی کردن موانع
+                GameTile targetTile = GameMap.getTile(targetX, targetY);
+                if (targetTile == null || targetTile.getTileType() == TileType.Water ||
+                        targetTile.getTileType() == TileType.Stone || targetTile.isOccupied()) {
+                    return new Result(false, "Target tile is blocked.");
+                }
+
+                // یافتن کوتاه‌ترین مسیر با BFS
+                List<Point> path = findShortestPath(startX, startY, targetX, targetY);
+
+                if (path.isEmpty()) {
+                    return new Result(false, "No valid path to target.");
+                }
+
+                // فقط آخرین نقطه مسیر (مقصد نهایی)
+                Point finalStep = path.get(path.size() - 1);
+                GameTile previousTile = GameMap.getTile(currentPlayer.getX(), currentPlayer.getY());
+                if (previousTile != null) {
+                    previousTile.setTileType(TileType.Flat);
+                    previousTile.setOccupied(false);
+                }
+
+                currentPlayer.setCoordinate(finalStep.x, finalStep.y);
+
+                GameTile newTile = GameMap.getTile(finalStep.x, finalStep.y);
+                if (newTile != null) {
+                    newTile.setTileType(TileType.Player);
+                    newTile.setOccupied(true);
+                }
+                return new Result(true, "Player moved to (" + finalStep.x + "," + finalStep.y + ")");
+            }
+        } catch (Exception e) {
+            return new Result(false, "Invalid input format.");
+        }
+        return new Result(false, "Invalid command.");
+    }
+
+//    // برای بررسی امکان حرکت به مزرعه دیگران
+//    private boolean canWalk(int x, int y) {
+//        for (Player player : Game.getAllPlayers()) {
+//            if (player != Game.getCurrentPlayer() && player.getFarm() != null) {
+//                if (player.getFarm().isInFarm(x, y)) {
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
+//    }
+
+    // پیاده‌سازی الگوریتم BFS برای یافتن کوتاه‌ترین مسیر
+    private List<Point> findShortestPath(int startX, int startY, int targetX, int targetY) {
+        Queue<Node> queue = new LinkedList<>();
+        boolean[][] visited = new boolean[GameMap.MAP_WIDTH][GameMap.MAP_HEIGHT];
+        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}}; // راست، پایین، چپ، بالا
+
+        queue.add(new Node(startX, startY, null));
+        visited[startX][startY] = true;
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+
+            //بررسی اینکه به مقصدمون رسیدیم یا نرسیدیم
+            if (current.x == targetX && current.y == targetY) {
+                return reconstructPath(current);
+            }
+
+            // بررسی خانه های اطراف
+            for (int[] dir : directions) {
+                int newX = current.x + dir[0];
+                int newY = current.y + dir[1];
+
+                if (Game.getGameMap().isInBounds(newX, newY) &&
+                        !visited[newX][newY] &&
+                        isWalkable(newX, newY)) {
+
+                    visited[newX][newY] = true;
+                    queue.add(new Node(newX, newY, current));
+                }
+            }
+        }
+
+        return Collections.emptyList();
+    }
+
+    // بررسی قابل امکان رد شدن از یک تایل
+    private boolean isWalkable(int x, int y) {
+        GameTile tile = GameMap.getTile(x, y);
+        return tile != null &&
+                tile.getTileType() != TileType.Water &&
+                tile.getTileType() != TileType.Stone &&
+                !tile.isOccupied() &&
+                canWalk(x, y);
+    }
+
+    //  برای ذخیره مسیر
+    private static class Node {
+        int x, y;
+        Node parent;
+
+        public Node(int x, int y, Node parent) {
+            this.x = x;
+            this.y = y;
+            this.parent = parent;
+        }
+    }
+
+    // بازسازی مسیر از آخرین گره
+    private List<Point> reconstructPath(Node node) {
+        List<Point> path = new ArrayList<>();
+        while (node != null) {
+            path.add(new Point(node.x, node.y));
+            node = node.parent;
+        }
+        Collections.reverse(path);
+        return path.subList(1, path.size()); //delete start location
+    }
+
 }
