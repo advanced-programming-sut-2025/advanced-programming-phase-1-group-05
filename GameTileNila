@@ -39,7 +39,16 @@ public class GameTile {
         this.tileType = tileType;
     }
     public boolean isTileValidForPlanting(){
-        if(itemOnTile == null) return true;
+        for(FruitAndVegetable f: Game.getGameMap().getPlants()) {
+            if(f.getCoordinates().getKey() == x && f.getCoordinates().getValue() == y) {
+                return true;
+            }
+        }
+        for(Tree tree: Game.getGameMap().getTrees()) {
+            if(tree.getCoordinates().getKey() == x && tree.getCoordinates().getValue() == y) {
+                return true;
+            }
+        }
         return false;
     }
     public int getX() {
@@ -77,16 +86,11 @@ public class GameTile {
         }
         if (isOccupied) return "♥️";
         if (itemOnTile != null) {
-            if(itemOnTile instanceof FruitAndVegetable) {
-                if(((FruitAndVegetable)itemOnTile).isGiant()) return "\uD83C\uDF49";
-                else return "🍎";
-            }
+            if(itemOnTile instanceof FruitAndVegetable) return "🍎";
             else if(itemOnTile instanceof Tree) return "\uD83C\uDF33";
             else if(itemOnTile instanceof Mineral) return "\uD83D\uDC8E";
             else if(itemOnTile instanceof ForagingItem) return "🍎";
             else if(itemOnTile.getName().equals("Wood")) return "\uD83E\uDEB5";
-            else if(itemOnTile.getName().equals("Fiber")) return "\uD83C\uDF3F";
-            else if(itemOnTile instanceof Craft) return "\uD83D\uDEE0\uFE0F";
         }
         if (tileType == TileType.Building) return "🏠";
         if (tileType == TileType.Water) return "🌊";

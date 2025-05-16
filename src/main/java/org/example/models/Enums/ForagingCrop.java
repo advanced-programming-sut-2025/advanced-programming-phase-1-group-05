@@ -28,7 +28,19 @@ public enum ForagingCrop implements Material, Item {
     CrystalFruit("Crystal Fruit", List.of(Season.WINTER), 150, 63),
     Holly("Holly", List.of(Season.WINTER), 80, -37),
     SnowYam("Snow Yam", List.of(Season.WINTER), 100, 30),
-    WinterRoot("Winter Root", List.of(Season.WINTER), 70, 25);
+    WinterRoot("Winter Root", List.of(Season.WINTER), 70, 25),
+    Apricot("Apricot", List.of(Season.SPRING), 59, 38),
+    Cherry("Cherry", List.of(Season.SPRING), 80, 38),
+    Banana("Banana", List.of(Season.SUMMER), 150, 75),
+    Mango("Mango", List.of(Season.SUMMER), 130, 100),
+    Orange("Orange", List.of(Season.SUMMER), 100, 38),
+    Peach("Peach", List.of(Season.SUMMER), 140, 38),
+    Apple("Apple", List.of(Season.FALL), 100, 38),
+    Pomegranate("Pomegranate", List.of(Season.FALL), 140, 38),
+    OakResin("Oak Resin", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER), 150, 0),
+    MapleSyrup("Maple Syrup", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER), 200, 0),
+    Sap("Sap", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER), 2, -2),
+    MysticSyrup("Mystic Syrup", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER), 1000, 500);
 
     private final String name;
     private final List<Season> seasons;

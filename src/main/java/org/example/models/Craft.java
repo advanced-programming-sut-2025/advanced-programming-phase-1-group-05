@@ -23,7 +23,7 @@ public class Craft extends BasicItem implements Item {
         return type;
     }
 
-    public Map<Material, Integer> getIngredients() {
+    public Map<Item, Integer> getIngredients() {
         return type.getIngredients();
     }
 
@@ -37,20 +37,15 @@ public class Craft extends BasicItem implements Item {
 
     //build craft
     public boolean buildCraft() {
-        Map<Material, Integer> ingredients = type.getIngredients();
+        Map<Item, Integer> ingredients = type.getIngredients();
         HashMap<Item, Integer> inventory = Game.getCurrentPlayer().getBackPack().getInventory();
-        for(Item item : inventory.keySet()) {
-            if(ingredients.containsKey(((BasicItem)item).getMaterial())) {
-                if(inventory.get(item) < ingredients.get(((BasicItem)item).getMaterial())) {
-                    return false;
-                }
-            }
+        for(Item item : ingredients.keySet()) {
+            if(!inventory.containsKey(item) ||
+                    (inventory.get(item) < ingredients.get(item))) return false;
         }
         Game.getCurrentPlayer().increaseEnergy(-2);
-        for(Item item : inventory.keySet()) {
-            if(ingredients.containsKey(((BasicItem)item).getMaterial())) {
-                Game.getCurrentPlayer().getBackPack().removeFromInventory(item, ingredients.get(((BasicItem)item).getMaterial()));
-            }
+        for(Item item : ingredients.keySet()) {
+            Game.getCurrentPlayer().getBackPack().removeFromInventory(item, ingredients.get(item));
         }
         return true;
 

@@ -43,6 +43,9 @@ public class Pickaxe implements Tool <ItemLevel> {
             if(item instanceof Mineral) {
                 ((Mining) mining).mine(tile, this);
                 return new Result(true, "Successfully mined a mineral");
+            } else if(item instanceof Craft) {
+                Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
+                tile.setItemOnTile(null);
             }
             else Game.getCurrentPlayer().getForagingSkill().forageItem(tile);
         }

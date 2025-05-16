@@ -8,9 +8,10 @@ public class Farm {
     private List<Player> owner = new ArrayList<>();
     private HashMap<Food, Integer> refrigeratedFoods = new HashMap<>();
     private final ArrayList<FruitAndVegetable> crops = new ArrayList<>();
-
+    private final ArrayList<Tree> trees = new ArrayList<>();
     private final int startX , startY, endX, endY ;
     private final ShippingBin shippingBin;
+
 
 
     public Farm (Player player, int startX, int startY){
@@ -73,6 +74,13 @@ public class Farm {
         return endY;
     }
 
+    public ArrayList<Tree> getTrees() {
+        return trees;
+    }
+    public void addTree(Tree tree) {
+        trees.add(tree);
+    }
+
     public static class ShippingBin {
         int startX, startY, endX, endY;
 
@@ -91,6 +99,8 @@ public class Farm {
         public void getCoordinates() {
             System.out.println(startX + "to" + endX + "," + startY + "to" + endY);
         }
+
     }
+
 
 }

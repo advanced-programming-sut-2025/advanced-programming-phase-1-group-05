@@ -114,13 +114,7 @@ public class StoreController {
                 CookingRecipeType type = CookingRecipeType.fromString(name);
                 Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
             }
-//        } else if(productName.contains("Pole")) {
-//            if(productName.equals("Fishing Pole")) {
-//                Game.getCurrentPlayer().getBackPack().addToInventory(new FishingPole(), 1);
-//            } else if(productName.equals("Bamboo Pole")) {
-//                Game.getCurrentPlayer().getBackPack().
-//            }
-//        }
+
         } else {
             player.getBackPack().addToInventory(product, count);
         }

@@ -65,7 +65,6 @@ public class TimeAndDate {
         }
         Game.getGameMap().growPlants();
         Game.getGameMap().setForagingItems();
-        //TODO implement
         Game.getGameMap().setForagingMinerals();
         if(!Game.getCurrentPlayer().isEnergyUnlimited()) Game.getCurrentPlayer().resetEnergy();
         Game.setForecastedWeatherBySeason(season);

@@ -24,19 +24,23 @@ public class HomeMenuController {
         StringBuilder output = new StringBuilder();
         String error1 = "(you haven't learned this recipe yet)";
         String error2 = "(you don't have enough ingredients)";
-
+        boolean errorDetected = false;
         for (CraftType c : CraftType.values()) {
             output.append(c.getName()).append(" ");
-            if (!Game.getCurrentPlayer().getBackPack().getLearntRecipes().contains(c))
+            if (!Game.getCurrentPlayer().getBackPack().getLearntRecipes().contains(c)) {
                 output.append(error1).append("\n");
+                errorDetected = true;
+            }
             else {
                 for (Material item : c.getIngredients().keySet()) {
                     if (!Game.getCurrentPlayer().getBackPack().getInventory().containsKey(item)) {
                         output.append(error2).append("\n");
+                        errorDetected = true;
                         break;
                     }
                 }
             }
+            if(!errorDetected) output.append("\n");
         }
         return new Result(true, output.toString());
     }
@@ -62,12 +66,17 @@ public class HomeMenuController {
                 selectedCraftType = r;
             }
         }
-        selectedRecipe = new Craft(selectedCraftType);
-        if (selectedCraftType == null) return new Result(false, "No recipe exits with that name");
+        if (selectedCraftType == null) {
+            if(CraftType.fromString(itemName) != null) {
+                return new Result(false, "You haven't learned this recipe yet");
+            }
+            return new Result(false, "No recipe with that name exists");
+        }
         else if(Game.getCurrentPlayer().getBackPack().getLevel().getCapacity() ==
                 Game.getCurrentPlayer().getBackPack().getInventory().size())
             return new Result(false, "Your inventory is full");
         boolean success = false;
+        selectedRecipe = new Craft(selectedCraftType);
         success = selectedRecipe.buildCraft();
         if(success) {
             Game.getCurrentPlayer().getBackPack().addToInventory(selectedRecipe, 1);

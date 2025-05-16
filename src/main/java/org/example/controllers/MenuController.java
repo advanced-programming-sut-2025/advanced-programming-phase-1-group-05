@@ -44,13 +44,13 @@ public class MenuController {
         String currentMenuName = current.getMenuName();
 
         if (target == Menu.MAIN) return true;
-
         if ((currentMenuName.equals("Main Menu") && target == Menu.GAME) ||
                 (currentMenuName.equals("Main Menu") && target == Menu.PROFILE) ||
                 (currentMenuName.equals("Main Menu") && target == Menu.AVATAR)||
                 (currentMenuName.equals("Main Menu") && target == Menu.LOGIN) ||
                 (currentMenuName.equals("Main Menu") && target == Menu.REGISTER) ||
-                (currentMenuName.equals("Game Menu") && target == Menu.HOME)){
+                (currentMenuName.equals("Game Menu") && target == Menu.HOME) ||
+                (currentMenuName.equals("Home Menu") && target == Menu.GAME)) {
             return true;
         }
 
@@ -90,7 +90,7 @@ public class MenuController {
                 return TradeMenu.getTradeMenu();
             }
             case HOME: {
-                return new HomeMenu();
+                return new HomeMenu(this);
             }
 
             default: throw new IllegalArgumentException("Unknown menu type");

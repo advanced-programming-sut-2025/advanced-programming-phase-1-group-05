@@ -173,9 +173,15 @@ public class FruitAndVegetable implements Item {
         return age;
     }
     public void grow(){
-        if(!hasBeenWatered) daysNoWater++;
-        if(daysNoWater == 2) alive = false;
-        if(hasBeenWatered && currentGrowthStage < growthTimeline.size()) {
+        if(!hasBeenWatered) {
+            daysNoWater++;
+            return;
+        }
+        if(daysNoWater == 2) {
+            alive = false;
+            return;
+        }
+        if(currentGrowthStage < growthTimeline.size()) {
             GrowthStep currentStage = growthTimeline.get(currentGrowthStage);
             if(hasBeenFertilized) {
                 if(isSpeedGro) {
@@ -184,7 +190,7 @@ public class FruitAndVegetable implements Item {
             }
             age++;
 
-            if(age > currentStage.getDays()) {
+            if(age >= currentStage.getDays()) {
                 currentGrowthStage++;
                 if(currentGrowthStage >= growthTimeline.size()) {
                     isFullyGrown = true;
@@ -219,7 +225,7 @@ public class FruitAndVegetable implements Item {
     }
     @Override
     public String toString() {
-        return "Name: " + type.getName() + "\n" + "Seed: " + type.getSource() + "\n" +"Growth stage: " + type.getStages() + "\n" +
-                "Has been watered today: " + hasBeenWatered +"\n" + "Has been fertilized: " + hasBeenFertilized;
+        return "Name: " + type.getName() + "\n" + "Seed: " + type.getSource() + "\n" +"Growth stages: " + type.getStages() + "\n" +
+                "Current Growth Stage: " + currentGrowthStage + "\n" + "Has been watered today: " + hasBeenWatered +"\n" + "Has been fertilized: " + hasBeenFertilized;
     }
 }
