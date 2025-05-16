@@ -43,6 +43,20 @@ public class GameMap {
     //crow damage during the night with 25% probability
     public Result crowDamage() {
         //TODO nothing from greenhouse
+        ArrayList<FruitAndVegetable> plants = new ArrayList<>();
+        ArrayList<Tree> trees = new ArrayList<>();
+        for(int i = 0; i < map.length; i++) {
+            for(int j = 0; j < map[0].length; j++) {
+                if(map[j][i].getItemOnTile()!=null) {
+                    if(map[j][i].getItemOnTile() instanceof FruitAndVegetable) {
+                        plants.add((FruitAndVegetable) map[j][i].getItemOnTile());
+                    } else if(map[j][i].getItemOnTile() instanceof Tree) {
+                        trees.add((Tree) map[j][i].getItemOnTile());
+                    }
+                }
+            }
+        }
+
         int groupOf16 = (plants.size() + trees.size()) / 16;
         Random random = new Random();
         for (int i = 0; i < groupOf16; i++) {
@@ -54,11 +68,11 @@ public class GameMap {
                     FruitAndVegetable fruitAndVegetable = plants.get(index);
                     if(fruitAndVegetable.isProtectedByScareCrow())
                         return new Result(false, "Your plant was protected by scare crow.");
-                    GameTile tile = this.getTile(fruitAndVegetable.getCoordinates().getKey(),
+                    GameTile tile = getTile(fruitAndVegetable.getCoordinates().getKey(),
                             fruitAndVegetable.getCoordinates().getValue());
-                    if(tile.getTileType().equals(TileType.GreenHouse))
+                    if(tile.getTileType() != null && tile.getTileType().equals(TileType.GreenHouse))
                         return new Result(true, "Your plant was protected in the green house.");
-                    plants.remove(index);
+                    tile.setItemOnTile(null);
                     return new Result(true, "A crow destroyed your plant during the night");
                 } else if (targetPlant && !trees.isEmpty()) {
                     int index = random.nextInt(trees.size());
@@ -135,7 +149,7 @@ public class GameMap {
             if(f.isAlive()) f.grow();
             else {
                 //remove dead plants
-                GameTile tile = Game.getGameMap().getTile(f.getCoordinates().getKey(), f.getCoordinates().getValue());
+                GameTile tile = GameMap.getTile(f.getCoordinates().getKey(), f.getCoordinates().getValue());
                 tile.setItemOnTile(null);
                 Game.getGameMap().getPlants().remove(f);
             }
@@ -247,9 +261,8 @@ public class GameMap {
             ForagingCrop type = ForagingCrop.getRandomForagingCrop(GameManager.getSeason());
             TreeType type1 = TreeType.getRandomTreeType(GameManager.getSeason());
             Tree newTree = new Tree(type1);
-            MineralType mineralType = MineralType.getRandomMineralType();
             newTree.setFullyGrown();
-            if(x%2 == 0) tile.setItemOnTile(new ForagingItem(type, type.getName(), type.getPrice()));
+            if(x%4 == 0) tile.setItemOnTile(new ForagingItem(type, type.getName(), type.getPrice()));
             else tile.setItemOnTile(newTree);
         }
     }

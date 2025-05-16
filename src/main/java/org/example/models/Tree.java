@@ -42,13 +42,13 @@ public class Tree implements Item{
                     GrowthStep currentStage = treeGrowthTimeLine.get(currentGrowthStep);
                     if (treeAge > currentStage.getDays()) {
                         currentGrowthStep++;
-                        if (currentGrowthStep == treeGrowthTimeLine.size()) {
+                        if (currentGrowthStep >= treeGrowthTimeLine.size()) {
                             fullyGrown = true;
                         }
                     }
-                } else {
-                    startFruitCycle();
                 }
+            } else {
+                if (!isFruitGrown) startFruitCycle();
             }
         }
 
@@ -63,11 +63,15 @@ public class Tree implements Item{
         public Result harvestFruit() {
             if(isFruitGrown){
                 isHarvested = true;
+                isFruitGrown = false;
                 fruitGrowthCounter = 0;
                 return new Result(true, "Successfully harvested from the tree");
             } else {
                 return new Result(false, "No fruit ready to be harvested");
             }
+        }
+        public ForagingItem getHarvestedFruit(){
+            return new ForagingItem(ForagingCrop.fromString(treeType.getFruit()), treeType.getFruit(), treeType.getFruitPrice());
         }
 
         public void thunderEffect() {
@@ -86,6 +90,21 @@ public class Tree implements Item{
         }
         public void setProtectedByScareCrow(boolean protectedByScareCrow) {
             this.protectedByScareCrow = protectedByScareCrow;
+        }
+        @Override
+        public String toString() {
+            StringBuilder str = new StringBuilder();
+            str.append("Name : ").append(treeType.getName()).append("\n")
+                    .append("Fruit Name : ").append(treeType.getFruit()).append("\n")
+                    .append("Tree Age : ").append(treeAge).append("\n")
+                    .append("Tree Growth Stages :").append(treeType.getStages()).append("\n")
+                    .append("Current Growth Step : ").append(currentGrowthStep).append("\n")
+                    .append("Is tree grown : ").append(fullyGrown).append("\n")
+                    .append("Is fruit grown : ").append(isFruitGrown).append("\n");
+                    if(!isFruitGrown)str.append("Days left for harvest : ").append(treeType.getFruitHarvestCycle() - fruitGrowthCounter).append("\n");
+
+            return str.toString();
+
         }
 
         public Map.Entry<Integer,Integer> getCoordinates(){

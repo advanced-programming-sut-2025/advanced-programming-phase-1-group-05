@@ -791,13 +791,23 @@ public class GameMenuController extends MenuController {
         GameTile tile = map.getTile(Game.getCurrentPlayer().getCoordinate().getKey() + dir[1], Game.getCurrentPlayer().getCoordinate().getValue() + dir[0]);
         //errors
         if (tile == null) return new Result(false, "Tile not found");
+        if(tile.getX() == Game.getCurrentPlayer().getCoordinate().getKey() && tile.getY() == Game.getCurrentPlayer().getCoordinate().getValue()) {
+            return new Result(false, "You stare at your boots. The boots stare back. Nothing grows.");
+        }
         if (tile.getTileType() != TileType.Soil)
             return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
         if (!tile.isTileValidForPlanting()) return new Result(false,
                 "You can't plant cause the tile is occupied!");
         boolean successful = Game.getCurrentPlayer().getFarmingSkill().plantSeed(seed, tile);
-        if (successful) return new Result(true, "Successfully planted " + seed);
-        else return new Result(false, "That's not a valid seed!");
+        if (successful) {
+            Game.getCurrentPlayer().getBackPack().removeFromInventory(
+                    Game.getCurrentPlayer().getBackPack().getFromInventory(seed), 1
+            );
+            return new Result(true, "Successfully planted " + seed);
+        }
+        else if(Game.getCurrentPlayer().getBackPack().getFromInventory(seed) == null)
+            return new Result(false, "You don't have that seed in your inventory!");
+        return new Result(false, "That's not a valid seed!");
     }
 
     //show the plant on a specific tile
@@ -806,11 +816,23 @@ public class GameMenuController extends MenuController {
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         Item item = tile.getItemOnTile();
         if(item == null) return new Result(false, "Nothing planted on this tile");
-        FruitAndVegetable plant = (FruitAndVegetable) item;
-        StringBuilder output = new StringBuilder();
-        output.append("** plant information **\n")
-                .append(plant.toString());
-        return new Result(true, output.toString());
+        if(item instanceof FruitAndVegetable) {
+            FruitAndVegetable plant = (FruitAndVegetable) item;
+            StringBuilder output = new StringBuilder();
+            output.append("** plant information **\n")
+                    .append(plant.toString());
+            return new Result(true, output.toString());
+
+        }
+        else if(item instanceof Tree) {
+            Tree tree = (Tree) item;
+            StringBuilder output = new StringBuilder();
+            output.append("** tree information **\n")
+                    .append(tree.toString());
+            return new Result(true, output.toString());
+        } else {
+            return new Result(false, "Nothing planted on this tile");
+        }
     }
 
     //fertilize crop
@@ -859,7 +881,6 @@ public class GameMenuController extends MenuController {
     }
 
     //get coordinates changes based on direction input
-    //TODO add four other directions
     public int[] getDirections(String direction) {
         int[] directions = new int[2];
         if (direction.equals("up")) {
@@ -874,6 +895,22 @@ public class GameMenuController extends MenuController {
         } else if (direction.equals("right")) {
             directions[0] = 1;
             return directions;
+        } else if(direction.equals("up-right")) {
+            directions[0] = 1;
+            directions[1] = -1;
+            return directions;
+        } else if(direction.equals("up-left")) {
+            directions[0] = -1;
+            directions[1] = -1;
+            return directions;
+        } else if(direction.equals("down-right")) {
+            directions[0] = 1;
+            directions[1] = 1;
+            return directions;
+        } else if(direction.equals("down-left")) {
+            directions[0] = -1;
+            directions[1] = 1;
+            return directions;
         }
         return null;
     }
@@ -886,8 +923,8 @@ public class GameMenuController extends MenuController {
         else if(ForagingTreeSourceType.fromString(name) != null) item = ForagingTreeSourceType.fromString(name);
         else if(ForagingCrop.fromString(name) != null) item = ForagingCrop.fromString(name);
         else if(ForagingSeedType.fromString(name) != null) item = ForagingSeedType.fromString(name);
-        else if(CraftType.fromString(name) != null) item = CraftType.fromString(name);
-        else if(CookingRecipeType.fromString(name) != null) item = CookingRecipeType.fromString(name);
+        //else if(CraftType.fromString(name) != null) item = CraftType.fromString(name);
+       // else if(CookingRecipeType.fromString(name) != null) item = CookingRecipeType.fromString(name);
         else if(Fish.fromString(name)!=null) item = Fish.fromString(name);
         else if(MineralType.fromString(name) != null) item = MineralType.fromString(name);
 

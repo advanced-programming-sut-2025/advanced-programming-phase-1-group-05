@@ -1,0 +1,86 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww16000\viewh9300\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs48 \cf0 //test for croptypes and stuff\
+\pard\pardeftab560\slleading20\partightenfactor0
+
+\f1\fs26 \cf0 register -u Nil-a11 -p Nil3333a%11 Nil3333a%11 -n nilalllala -e Nila.-a11@gma-il.com -g female\
+pick question -q 2 -a Tehran -c Tehran\
+menu enter Main\
+menu enter Register\
+register -u Melika-a11 -p Nil3333a%11 Nil3333a%11 -n nilalllala -e Nila.-a11@gma-il.com -g female\
+pick question -q 2 -a Tehran -c Tehran\
+login -u Nil-a11 -p Nil3333a%11\
+menu enter Game\
+game new -u Melika-a11\
+game map 1\
+game map 2\
+//all crops\
+show craft info -n Green Bean\
+show craft info -n Strawberry\
+show craft info -n Hot Pepper\
+show craft info -n Fairy Rose\
+show craft info -n Ancient Fruit\
+//all trees\
+show craft info -n Apricot Tree\
+show craft info -n Mushroom Tree\
+show craft info -n Oak Tree\
+//foraging crops\
+show craft info -n Leek\
+show craft info -n Blackberry\
+show craft info -n Wild Plum\
+//foraging trees\
+show craft info -n Acorns\
+show craft info -n Mahogany Seeds\
+//giant crop\
+cheat add item -n Melon Seeds -c 4\
+set coordinates * 5 5\
+plant -s Melon Seeds -d down\
+set coordinates * 5 4\
+plant -s Melon Seeds -d down\
+set coordinates * 7 3\
+plant -s Melon Seeds -d right\
+set coordinates * 8 5\
+plant -s Melon Seeds -d up\
+//mixed seeds\
+cheat add item -n Mixed Seeds -c 1\
+plant -s Mixed Seeds -d up\
+//check one time crops\
+set coordinates * 98 10\
+cheat add item -n Blueberry Seeds -c 1\
+plant -s Blueberry Seeds -d up\
+show plant -l 97 10\
+equip tool Watering Can\
+use tool -d up\
+cheat advance date 15d\
+equip tool Scythe\
+use tool -d up\
+//check tree mechanism\
+cheat add item -n Peach Sapling -c 1\
+plant -s Peach Sapling -d left\
+show plant -l 98 9\
+cheat advance date 29d\
+show plant -l 98 9\
+equip tool Scythe\
+use tool -d left\
+show plant -l 98 9\
+//check crow damage effect\
+cheat add item -n Jazz Seeds -c 20\
+plant -s Jazz Seeds -d down\
+plant -s Jazz Seeds -d right\
+//check foraging items\
+cheat advance date 100000d\
+print map\
+//fertilize\
+cheat add item -n Speed-gro -c 1\
+fertilize -f Speed-gro -d 97 10\
+plant -s Jazz Seeds -d up\
+equip tool Watering Can\
+use tool -d up\
+show plant -l 97 10\
+cheat advance date 1d\
+}

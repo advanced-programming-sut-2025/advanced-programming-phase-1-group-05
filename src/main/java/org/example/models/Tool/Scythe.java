@@ -35,13 +35,22 @@ public class Scythe implements Tool<ItemLevel> {
                 if(!((FruitAndVegetable) item).isFullyGrown())
                     return new Result(false, "The crop isn't ready for harvest");
                 Game.getCurrentPlayer().getFarmingSkill().harvestCrop(tile);
+                return new Result(true, item.getName() + " harvested successfully");
             } else if(item == database.getItem("Fiber")) {
                 Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
                 tile.setItemOnTile(null);
+                return new Result(true, item.getName() + " harvested successfully");
             } else if(item instanceof ForagingItem) {
                 Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
                 tile.setItemOnTile(null);
                 return new Result(true, item.getName() + " harvested successfully");
+            } else if(item instanceof Tree) {
+                Result result = ((Tree)item).harvestFruit();
+                if(result.isSuccess()) {
+                    ForagingItem fruit = ((Tree) item).getHarvestedFruit();
+                    Game.getCurrentPlayer().getBackPack().addToInventory(fruit, 1);
+                }
+                return result;
             }
         }
         return new Result(true, "");
