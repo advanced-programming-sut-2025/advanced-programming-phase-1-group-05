@@ -263,6 +263,12 @@ public class Player {
         return friendship.getFriendshipLevel();
     }
 
+    public int getFriendshipPoints(Player a) {
+        Friendship friendship = getFriendship(this, a);
+        if (friendship == null) return 0;
+        return friendship.getXpPoints();
+    }
+
     public void changeLevel(Player a, int level) {
         Friendship friendship = getFriendship(a, this);
         if (friendship != null)
@@ -282,6 +288,16 @@ public class Player {
         return spouse.equals(a);
     }
 
+    public boolean canHug(Player a) {
+        Friendship friendship = getFriendship(a, this);
+        if (friendship != null) return friendship.canHug();
+        return false;
+    }
+    public boolean canGiveBouquet(Player a) {
+        Friendship friendship = getFriendship(a, this);
+        if (friendship != null) return friendship.canGiveBouquet();
+        return false;
+    }
     public boolean canAskMarriage(Player a) {
         Friendship friendship = getFriendship(a, this);
         if (friendship != null) return friendship.canAskMarriage();
@@ -364,6 +380,10 @@ public class Player {
             xpPoints += amount;
             if (xpPoints > 300) friendshipLevel = 2;
             else if (xpPoints > 100) friendshipLevel = 1;
+        }
+
+        public int getXpPoints() {
+            return xpPoints;
         }
 
         public boolean canHug() {

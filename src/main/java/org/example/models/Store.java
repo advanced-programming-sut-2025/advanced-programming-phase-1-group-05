@@ -1,6 +1,7 @@
 package org.example.models;
 
 import org.example.models.Enums.BuildingType;
+import org.example.models.Enums.TileType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class Store {
     private void setOccupied() {
         for (int i = xEnd; i >= xStart; i--) {
             for (int j = yEnd; j >= yStart; j--) {
-//                Game.getGameMap().getTile(i, j).setBuilding(BuildingType.Store);
+                Game.getGameMap().getTile(i, j).setTileType(TileType.Building);
             }
         }
     }

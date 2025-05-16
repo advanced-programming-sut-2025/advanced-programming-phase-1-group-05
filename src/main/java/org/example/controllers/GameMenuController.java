@@ -488,10 +488,10 @@ public class GameMenuController extends MenuController {
     public Result showFriendshipLevels() {
         StringBuilder builder = new StringBuilder();
         Player currentPlayer = Game.getCurrentPlayer();
-        builder.append("friendship levels: \n");
         for (Player player : Game.getAllPlayers()) {
             if (!player.equals(currentPlayer)) {
-                builder.append(player.getName()).append(" : ").append(currentPlayer.getFriendshipLevel(player)).append("\n");
+                builder.append(player.getName()).append("\tfriendship level: ").append(currentPlayer.getFriendshipLevel(player));
+                builder.append("\t friendship points: ").append(currentPlayer.getFriendshipPoints(player)).append("\n");
             }
         }
         return new Result(true, builder.toString());
@@ -558,8 +558,9 @@ public class GameMenuController extends MenuController {
         currentPlayer.getBackPack().getInventory().remove(item, amount);
         targetPlayer.getBackPack().getInventory().put(item, amount);
         Game.addGift(new Gift(currentPlayer, targetPlayer, item, amount));
-        return new Result(true, targetPlayer.getName() +
+        targetPlayer.addNotification(targetPlayer.getName() +
                 "! You've been gifted! Hope it's not rocks again.");
+        return new Result(true, "You handed over the gift with a smile. Let's hope they like it!");
     }
 
     public Result showGiftList() {
@@ -585,7 +586,7 @@ public class GameMenuController extends MenuController {
                     "You stare into your empty hands and give it a " + rating + ". Interesting.");
         Player targetPlayer = gift.getSender();
         currentPlayer.changeFriendshipXP(((rating - 3) * 30 + 15), targetPlayer);
-        return new Result(true, "");
+        return new Result(true, "They say don’t look a gift horse in the mouth-but you just did.");
     }
 
     public Result showGiftHistory(String username) {
@@ -593,7 +594,7 @@ public class GameMenuController extends MenuController {
         Player player = Game.getPlayerByUsername(username);
         for (Gift gift : Game.getAllGifts()) {
             if (gift.getSender().equals(player) || gift.getReceiver().equals(player)) {
-                output.append(gift.getSender()).append(" gave ").append(gift.getReceiver()).append(" ")
+                output.append(gift.getSender().getName()).append(" gave ").append(gift.getReceiver().getName()).append(" ")
                         .append(gift.getAmount()).append(" ").append(gift.getName()).append(" (s).\n");
             }
         }
@@ -609,6 +610,8 @@ public class GameMenuController extends MenuController {
         if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 ||
                 Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
             return new Result(false, "They're not here to catch your hug. Maybe next time!");
+        if (!currentPlayer.canHug(targetPlayer))
+            return Result.error("They awkwardly sidestep the hug. Friendship takes time, pal.");
         currentPlayer.changeFriendshipXP(60, targetPlayer);
         return new Result(true, "You hugged them tight. Even the cows felt the love.");
     }
@@ -623,6 +626,8 @@ public class GameMenuController extends MenuController {
                 Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
             return Result.error
                     ("You wave the bouquet around like a romantic maniac, but there's no one nearby to impress");
+        if (!currentPlayer.canGiveBouquet(targetPlayer))
+            return Result.error("You try to hand over the bouquet-they smile politely and change the subject");
         if (currentPlayer.getItemQuantity(bouquet) < 1)
             return Result.error("You reach for the bouquet... but your inventory says 'not today, Romeo'.");
         currentPlayer.getBackPack().getInventory().remove(bouquet, 1);
@@ -646,7 +651,7 @@ public class GameMenuController extends MenuController {
             return new Result(false, "You reach for the ring... but your pockets are full of nothing");
         if (!currentPlayer.canAskMarriage(targetPlayer))
             return new Result(false, "Slow down, lovebird-you're still just friendly acquaintances");
-        if (!currentPlayer.getGender().equals("boy"))
+        if (!currentPlayer.getGender().equals("male"))
             return new Result(false,
                     "Only the boys can propose... for now. Rules of the valley, not mine!");
 

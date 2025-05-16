@@ -6,7 +6,7 @@ register -u Melika-a11 -p Nil3333a%11 Nil3333a%11 -n melika -e Nila.-a11@gma-il.
 pick question -q 2 -a Tehran -c Tehran
 menu enter Main
 menu enter Register
-register -u Mamad-a11 -p Nil3333a%11 Nil3333a%11 -n mamad -e Nila.-a11@gma-il.com -g female
+register -u Mamad-a11 -p Nil3333a%11 Nil3333a%11 -n mamad -e Nila.-a11@gma-il.com -g male
 pick question -q 2 -a Tehran -c Tehran
 login -u Nil-a11 -p Nil3333a%11
 menu enter Game
@@ -20,6 +20,8 @@ next turn
 friendships
 قابلیت صحبت کردن با بازیکنان
 talk -u Melika-a11 -m Hey there!
+بالا رفتن xp دوستی با صحبت کردن
+friendships
 دریافت شدن اعلان توسط بازیکنی که با او صحبت شده
 next turn
 نمایش تاریخچه صحبت با هر بازیکن
@@ -30,10 +32,85 @@ next turn
 set coordinates * 30 12
 talk -u Melika-a11 -m Hey there!
 قابلیت هدیه دادن به بازیکنان
+set coordinates * 51 60
 cheat add item -n tulip bulb -c 1
+gift -u Melika-a11 -i tulip bulb -a 1
+باز شدن قابلیت هدیه دادن پس از رسیدن به سطح 1 دوستی
 cheat add friendship -u Melika-a11 -a 101
 gift -u Melika-a11 -i tulip bulb -a 1
+خارج شدن آیتم از inventory بازیکن هدیه دهنده و دریافت آن توسط گیرنده
+show inventory
+next turn
+اعلان دریافت هدیه برای گیرنده
+next turn
+show inventory
+مشاهده لیست هدیه‌های دریافت شده
+gift list
+امکان امتیاز دادن به هدیه دریافت شده
+gift rate -i 1 -r 5
+اضافه یا کاهش سطح دوستی براساس امتیاز هدیه
 friendships
+نمایش تاریخچه هدیه‌های دریافت شده و ارسال شده
+gift history -u Mamad-a11
+خطاهای مربوط به امتیاز دادن هدیه
+- نبود هدیه با آن شماره
+gift rate -i 10 -r 2
+ دادن امتیاز نامعتبر
+gift rate -i 1 -r 13
+خطاهای مربوط به هدیه دادن
+- نبودن دو بازیکن کنار هم هنگام هدیه دادن
+set coordinates * 30 12
+cheat add item -n tulip bulb -c 1
+gift -u Mamad-a11 -i tulip bulb -a 1
+- نبود آیتم مورد نظر در inventory بازیکن هدیه دهنده به تعداد کافی
+set coordinates * 50 60
+gift -u Mamad-a11 -i tulip bulb -a 3
+ نداشتن سطح دوستی کافی با بازیکن گیرنده
+next turn
+next turn
+set coordinates * 49 59
+next turn
+gift -u Nil-a11 -i tulip bulb -a 1
+قابلیت بغل کردن بازیکنان
+cheat add friendship -u Mamad-a11 -a 200
+hug -u Mamad-a11
+باز شدن قابلیت بغل کردن پس از رسیدن به سطح دوستی 2
+hug -u Nil-a11
+افزایش سطح دوستی با بغل کردن
+friendships
+ححضور بازیکنان کنار هم هنگام بغل کردن
+set coordinates * 70 12
+hug -u Mamad-a11
+قابلیت گل دادن به بازیکنان
+الزام برای پر شدن xp سطح دوستی 2 برای گل دادن
+set coordinates * 50 60
+flower -u Mamad-a11
+رسیدن به سطح دوستی 3 پس از گل دادن
+cheat add friendship -u Mamad-a11 -a 200
+cheat add item -n bouquet -c 1
+flower -u Mamad-a11
+friendships
+خروج گل از inventory بازیکن هدیه دهنده و دریافت آن توسط گیرنده
+show inventory
+next turn
+show inventory
+- الزام حضور بازیکنان کنار هم برای گل دادن
+set coordinates * 50 12
+flower -u Melika-a11
+وجود گل در inventory هدیه دهنده
+next turn
+next turn
+set coordinates * 50 13
+flower -u Mamad-a11
+قابلیت درخواست ازدواج
+next turn
+cheat add item -n wedding ring -c 1
+ask marriage -u Melika-a11
+الزام برای پر شدن xp سطح دوستی 3 برای درخواست ازدواج کردن
+cheat add friendship -u Melika-a11 -a 400
+ask marriage -u Melika-a11
+
+
 وجود آیتم های فصلی
 set coordinates * 50 15
 cheat add 1000 dollars

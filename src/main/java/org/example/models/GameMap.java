@@ -153,7 +153,6 @@ public class GameMap {
         generateFarm(0, 70, 30, 30, 2);         // Farm B
         generateFarm(70, 0, 30, 30, 3);         // Farm C
         generateFarm(70, 70, 30, 30, 4);        // Farm D
-        generateVillageCenter();
 
     }
 
@@ -196,15 +195,6 @@ public class GameMap {
         }
     }
 
-    private void generateVillageCenter() {
-        int centerX = MAP_HEIGHT / 2;
-        int centerY = MAP_WIDTH / 2;
-        for (int i = centerX - 5; i <= centerX + 5; i++) {
-            for (int j = centerY - 5; j <= centerY + 5; j++) {
-                setTile(i, j, new GameTile(i, j, TileType.Soil));
-            }
-        }
-    }
     private void placeRandomDecorations(int startX, int startY, int width, int height,
                                         int cropCount, int stoneCount,
                                         List<Rectangle> occupiedAreas, Random random) {
