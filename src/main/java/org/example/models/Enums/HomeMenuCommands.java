@@ -5,10 +5,12 @@ import java.util.regex.Pattern;
 
 public enum HomeMenuCommands {
     CraftingRecipes("crafting show recipes"),
-    CraftItem("crafting item <item_name>"),
+    CraftItem("crafting item -n (?<itemName>\\S+(\\s*\\S+)*)"),
     CookingRefrigerator("cooking refrigerator (?<action>\\S+) (?<item>\\S+)"),
-    CookingPrepare("cooking prepare (?<recipe_name>\\S+)"),
-    ShowCookingRecipes("cooking show recipes");
+    CookingPrepare("cooking prepare (?<recipeName>\\S+)"),
+    ShowCookingRecipes("cooking show recipes"),
+    ShowOptions("show options"),
+    Back("back");
 
     private final String pattern;
     HomeMenuCommands(String pattern) {

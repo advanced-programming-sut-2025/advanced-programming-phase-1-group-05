@@ -85,6 +85,7 @@ public class GameMenuController extends MenuController {
         return Result.success(selectedPlayers.get(0).getUsername() +
                 ", please choose your map (1-4):");
     }
+
     public Result chooseMap(String input) {
         if (!canChooseMap) {
             return Result.error("Not in map selection phase!");
@@ -152,7 +153,7 @@ public class GameMenuController extends MenuController {
             }
         }
         if (currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername()) ||
-                currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())|| done) {
+                currentUser.getUsername().equals(selectedPlayers.get(0).getUsername()) || done) {
             pendingGame = null;
             canLoadGame = true;
             DBController.saveGameState();
@@ -160,7 +161,6 @@ public class GameMenuController extends MenuController {
         }
         return Result.error("You can't exit the game!");
     }
-
 
 
     public Result nextTurn() {
@@ -178,7 +178,7 @@ public class GameMenuController extends MenuController {
 
         Game.advanceToNextPlayer();
         //reset energy for next turn??
-        if(!Game.getCurrentPlayer().isEnergyUnlimited()) {
+        if (!Game.getCurrentPlayer().isEnergyUnlimited()) {
             Game.getCurrentPlayer().resetEnergy();
         }
 
@@ -190,7 +190,7 @@ public class GameMenuController extends MenuController {
         Scanner scanner = Game.getScanner();
         int[] OK = new int[selectedPlayers.size()];
         System.out.println("Vote to delete the game (1 for yes, 0 for no):");
-        for (int i = 0 ; i < selectedPlayers.size(); i++) {
+        for (int i = 0; i < selectedPlayers.size(); i++) {
             Player player = selectedPlayers.get(i);
             System.out.print(player.getUsername() + "'s vote: ");
             OK[i] = scanner.nextInt();
@@ -304,13 +304,12 @@ public class GameMenuController extends MenuController {
     }
 
 
-
     //use tool
     public Result useTool(String direction) {
-        int[]dir = getDirections(direction);
+        int[] dir = getDirections(direction);
         Item currentItem = Game.getCurrentPlayer().getCurrentItem();
-        if(currentItem instanceof Tool) {
-            String message = ((Tool)currentItem).use(new AbstractMap.SimpleEntry<>(Game.getCurrentPlayer().getCoordinate().getKey() + dir[1],
+        if (currentItem instanceof Tool) {
+            String message = ((Tool) currentItem).use(new AbstractMap.SimpleEntry<>(Game.getCurrentPlayer().getCoordinate().getKey() + dir[1],
                     Game.getCurrentPlayer().getCoordinate().getValue() + dir[0])).getMessage();
             return new Result(true, message);
         } else return new Result(true, "You aren't equipped with any tool");
@@ -323,11 +322,11 @@ public class GameMenuController extends MenuController {
         ForagingTreeSourceType foragingTreeSourceType = ForagingTreeSourceType.fromString(name);
         ForagingCrop foragingCrop = ForagingCrop.fromString(name);
         MineralType mineralType = MineralType.fromString(name);
-        if(cropType != null) return new Result(true, cropType.toString());
-        else if(treeType != null ) return new Result(true, treeType.toString());
-        else if(foragingTreeSourceType != null ) return new Result(true, foragingTreeSourceType.toString());
-        else if(foragingCrop != null ) return new Result(true, foragingCrop.toString());
-        else if(mineralType != null ) return new Result(true, mineralType.toString());
+        if (cropType != null) return new Result(true, cropType.toString());
+        else if (treeType != null) return new Result(true, treeType.toString());
+        else if (foragingTreeSourceType != null) return new Result(true, foragingTreeSourceType.toString());
+        else if (foragingCrop != null) return new Result(true, foragingCrop.toString());
+        else if (mineralType != null) return new Result(true, mineralType.toString());
 
         return new Result(true, "Couldn’t find the craft you're looking for");
     }
@@ -340,8 +339,8 @@ public class GameMenuController extends MenuController {
         }
         Player currentPlayer = Game.getCurrentPlayer();
         if (Math.abs(animal.getX() - currentPlayer.getX()) > 1 ||
-        Math.abs(animal.getY() - currentPlayer.getY()) > 1) {
-            return Result.error("You need to get closer to the animal. animal coordinates: " + animal.getX() +" " + animal.getY());
+                Math.abs(animal.getY() - currentPlayer.getY()) > 1) {
+            return Result.error("You need to get closer to the animal. animal coordinates: " + animal.getX() + " " + animal.getY());
         }
         animal.adjustFriendshipPoints(15);
         animal.setPetToday(true);
@@ -352,7 +351,7 @@ public class GameMenuController extends MenuController {
         String animalName = m.group("animalName");
         int amount = Integer.parseInt(m.group("amount"));
         Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
-        if (animal == null ) return Result.error("animal doesn't exist or isn't yours");
+        if (animal == null) return Result.error("animal doesn't exist or isn't yours");
         animal.setFriendshipPoints(amount);
         return Result.success("Friendship boosted! Nothing says ‘bonding’ like a little… code magic. Your animal is now contractually obligated to adore you");
     }
@@ -368,6 +367,7 @@ public class GameMenuController extends MenuController {
         }
         return Result.success(output.toString());
     }
+
     public Result feedHay(Matcher m) {
         String animalName = m.group("animalName");
         Player player = Game.getCurrentPlayer();
@@ -379,6 +379,7 @@ public class GameMenuController extends MenuController {
         return Result.success("You offer food. The animal accepts. A bond is forged through snacks.");
 
     }
+
     public Result printUncollectedProduce() {
         Player player = Game.getCurrentPlayer();
         List<Animal> animals = player.getAllAnimals();
@@ -390,6 +391,7 @@ public class GameMenuController extends MenuController {
         }
         return Result.success(builder.toString());
     }
+
     public Result collectProduce(Matcher m) {
         String animalName = m.group("name");
         Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
@@ -414,7 +416,7 @@ public class GameMenuController extends MenuController {
             return Result.error("Selected animal doesn't exist or isn't yours");
 
         int basePrice = Game.getDatabase().getItem(animal.getType().toString()).getPrice();
-        int price = (int) (basePrice * ((animal.getFriendshipPoints()/1000) + 0.3));
+        int price = (int) (basePrice * ((animal.getFriendshipPoints() / 1000) + 0.3));
         Player player = Game.getCurrentPlayer();
         player.addGold(price);
         player.removeAnimal(animal);
@@ -424,17 +426,18 @@ public class GameMenuController extends MenuController {
     public Result startFishing(Matcher m) {
         String poleName = m.group("fishingPole");
         FishingPoleType pole = FishingPoleType.fromString(poleName);
-        if (pole ==null) return Result.error("invalid pole type.");
+        if (pole == null) return Result.error("invalid pole type.");
         Player player = Game.getCurrentPlayer();
         if (player.getItemQuantity(Game.getDatabase().getItem(poleName)) <= 0)
             return Result.error("You don't have that pole in your inventory");
         int fishingLevel = player.getFishingSkill().getLevel();
         Fish caughtFish = Fish.getRandomFish(GameManager.getSeason(), fishingLevel);
-        if (caughtFish == null) return Result.error("Your bobber danced, your hopes rose… and then? Nothing. The fish must be laughing underwater.");
+        if (caughtFish == null)
+            return Result.error("Your bobber danced, your hopes rose… and then? Nothing. The fish must be laughing underwater.");
         Random rand = new Random();
         double weatherCoefficient = Game.getCurrentWeather().getFishingCoefficient();
-        int numOfFish =Math.min((int) (rand.nextDouble() * weatherCoefficient * (fishingLevel + 2)), 6) ;
-        int qualityScore = (int) ((rand.nextDouble()*(fishingLevel + 2) * pole.getFishingCoefficient())/(7 - weatherCoefficient));
+        int numOfFish = Math.min((int) (rand.nextDouble() * weatherCoefficient * (fishingLevel + 2)), 6);
+        int qualityScore = (int) ((rand.nextDouble() * (fishingLevel + 2) * pole.getFishingCoefficient()) / (7 - weatherCoefficient));
         ItemLevel level;
         if (qualityScore <= 0.5) level = ItemLevel.Normal;
         else if (qualityScore <= 0.7) level = ItemLevel.Brass;
@@ -444,12 +447,13 @@ public class GameMenuController extends MenuController {
         product.setItemLevel(level);
         Result result = player.getBackPack().addToInventory(product, numOfFish);
         player.getFishingSkill().increaseCapacity();
-        if (result.isSuccess()) return Result.success("You caught " + numOfFish + " " + level.getName() + " " + caughtFish.getName());
+        if (result.isSuccess())
+            return Result.success("You caught " + numOfFish + " " + level.getName() + " " + caughtFish.getName());
         return result;
 
     }
 
-    public Result useArtisan(Matcher m ) {
+    public Result useArtisan(Matcher m) {
         String args = m.group("args");
         ArtisanType artisan = ArtisanType.getArtisan(args);
         if (artisan == null)
@@ -480,11 +484,13 @@ public class GameMenuController extends MenuController {
         }
         return Result.success(builder.toString());
     }
-    public Result cheatAddMoney(int amount){
+
+    public Result cheatAddMoney(int amount) {
         Player player = Game.getCurrentPlayer();
         player.addGold(amount);
         return Result.success("added " + amount + " gold");
     }
+
     public Result showFriendshipLevels() {
         StringBuilder builder = new StringBuilder();
         Player currentPlayer = Game.getCurrentPlayer();
@@ -537,10 +543,11 @@ public class GameMenuController extends MenuController {
         Player currentPlayer = Game.getCurrentPlayer();
         Player targetPlayer = Game.getPlayerByUsername(m.group("username"));
         if (targetPlayer == null) return Result.error("");
-        int amount =Integer.parseInt(m.group("amount"));
+        int amount = Integer.parseInt(m.group("amount"));
         currentPlayer.changeFriendshipXP(amount, targetPlayer);
         return Result.success("added " + amount + " friendship points to " + targetPlayer.getName());
     }
+
     public Result giftPlayer(Matcher matcher) {
         String username = matcher.group("username"), itemName = matcher.group("itemName");
         int amount = Integer.parseInt(matcher.group("amount"));
@@ -574,6 +581,7 @@ public class GameMenuController extends MenuController {
             return Result.success("Still waiting for that surprise delivery. It'll happen... probably");
         return Result.success(output.toString());
     }
+
     public Result rateTheGift(int giftNumber, int rating) {
 
         if (rating < 1 || rating > 5)
@@ -786,12 +794,12 @@ public class GameMenuController extends MenuController {
 
     //plant seed on a specific tile
     public Result plantSeed(String seed, String direction) {
-        int[]dir = getDirections(direction);
+        int[] dir = getDirections(direction);
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(Game.getCurrentPlayer().getCoordinate().getKey() + dir[1], Game.getCurrentPlayer().getCoordinate().getValue() + dir[0]);
         //errors
         if (tile == null) return new Result(false, "Tile not found");
-        if(tile.getX() == Game.getCurrentPlayer().getCoordinate().getKey() && tile.getY() == Game.getCurrentPlayer().getCoordinate().getValue()) {
+        if (tile.getX() == Game.getCurrentPlayer().getCoordinate().getKey() && tile.getY() == Game.getCurrentPlayer().getCoordinate().getValue()) {
             return new Result(false, "You stare at your boots. The boots stare back. Nothing grows.");
         }
         if (tile.getTileType() != TileType.Soil)
@@ -804,8 +812,7 @@ public class GameMenuController extends MenuController {
                     Game.getCurrentPlayer().getBackPack().getFromInventory(seed), 1
             );
             return new Result(true, "Successfully planted " + seed);
-        }
-        else if(Game.getCurrentPlayer().getBackPack().getFromInventory(seed) == null)
+        } else if (Game.getCurrentPlayer().getBackPack().getFromInventory(seed) == null)
             return new Result(false, "You don't have that seed in your inventory!");
         return new Result(false, "That's not a valid seed!");
     }
@@ -815,16 +822,15 @@ public class GameMenuController extends MenuController {
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         Item item = tile.getItemOnTile();
-        if(item == null) return new Result(false, "Nothing planted on this tile");
-        if(item instanceof FruitAndVegetable) {
+        if (item == null) return new Result(false, "Nothing planted on this tile");
+        if (item instanceof FruitAndVegetable) {
             FruitAndVegetable plant = (FruitAndVegetable) item;
             StringBuilder output = new StringBuilder();
             output.append("** plant information **\n")
                     .append(plant.toString());
             return new Result(true, output.toString());
 
-        }
-        else if(item instanceof Tree) {
+        } else if (item instanceof Tree) {
             Tree tree = (Tree) item;
             StringBuilder output = new StringBuilder();
             output.append("** tree information **\n")
@@ -840,13 +846,12 @@ public class GameMenuController extends MenuController {
         GameMap map = Game.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         Item item = tile.getItemOnTile();
-        if(item == null) {
+        if (item == null) {
             tile.fertilze(fertilizer);
             return new Result(false, "Fertilized tile successfully!");
-        }
-        else if(item instanceof FruitAndVegetable) {
+        } else if (item instanceof FruitAndVegetable) {
             FruitAndVegetable fruit = (FruitAndVegetable) item;
-            if(fruit.getAge() == 0) {
+            if (fruit.getAge() == 0) {
                 boolean successful = Game.getCurrentPlayer().getFarmingSkill().fertilizeCrop(coordinates, fertilizer);
                 if (successful) return new Result(true, "Successfully fertilized with " + fertilizer);
                 else return new Result(false, "You don't have that kind of fertilizer");
@@ -873,10 +878,13 @@ public class GameMenuController extends MenuController {
         if (item == null) return new Result(false, "No such item in your inventory");
         else if (directions == null) return new Result(false, "Invalid direction");
         GameMap map = Game.getGameMap();
-        GameTile tile = map.getTile(directions[0], directions[1]);
-        if(tile.getItemOnTile() != null)
-            return new Result(false,"The tile is already occupied.");
+        GameTile tile = GameMap.getTile(Game.getCurrentPlayer().getCoordinate().getKey() + directions[1],
+                Game.getCurrentPlayer().getCoordinate().getValue() + directions[0]);
+        if (tile != null && tile.getItemOnTile() != null)
+            return new Result(false, "The tile is already occupied.");
+        assert tile != null;
         tile.setItemOnTile(item);
+        Game.getCurrentPlayer().getBackPack().removeFromInventory(tile.getItemOnTile(), 1);
         return new Result(true, "Item placed successfully");
     }
 
@@ -895,19 +903,19 @@ public class GameMenuController extends MenuController {
         } else if (direction.equals("right")) {
             directions[0] = 1;
             return directions;
-        } else if(direction.equals("up-right")) {
+        } else if (direction.equals("up-right")) {
             directions[0] = 1;
             directions[1] = -1;
             return directions;
-        } else if(direction.equals("up-left")) {
+        } else if (direction.equals("up-left")) {
             directions[0] = -1;
             directions[1] = -1;
             return directions;
-        } else if(direction.equals("down-right")) {
+        } else if (direction.equals("down-right")) {
             directions[0] = 1;
             directions[1] = 1;
             return directions;
-        } else if(direction.equals("down-left")) {
+        } else if (direction.equals("down-left")) {
             directions[0] = -1;
             directions[1] = 1;
             return directions;
@@ -918,19 +926,55 @@ public class GameMenuController extends MenuController {
     //add item cheat code
     public Result addItemCheatCode(String name, int count) {
         Item item = null;
-        if(Game.getDatabase().getItem(name) != null) item = Game.getDatabase().getItem(name);
-        else if(CropType.fromString(name) != null) item = CropType.fromString(name);
-        else if(ForagingTreeSourceType.fromString(name) != null) item = ForagingTreeSourceType.fromString(name);
-        else if(ForagingCrop.fromString(name) != null) item = ForagingCrop.fromString(name);
-        else if(ForagingSeedType.fromString(name) != null) item = ForagingSeedType.fromString(name);
-        //else if(CraftType.fromString(name) != null) item = CraftType.fromString(name);
-       // else if(CookingRecipeType.fromString(name) != null) item = CookingRecipeType.fromString(name);
-        else if(Fish.fromString(name)!=null) item = Fish.fromString(name);
-        else if(MineralType.fromString(name) != null) item = MineralType.fromString(name);
+        if (Game.getDatabase().getItem(name) != null) item = Game.getDatabase().getItem(name);
+        else if (CropType.fromString(name) != null) item = CropType.fromString(name);
+        else if (ForagingTreeSourceType.fromString(name) != null) item = ForagingTreeSourceType.fromString(name);
+        else if (ForagingCrop.fromString(name) != null) item = ForagingCrop.fromString(name);
+        else if (ForagingSeedType.fromString(name) != null) item = ForagingSeedType.fromString(name);
+            //else if(CraftType.fromString(name) != null) item = CraftType.fromString(name);
+            // else if(CookingRecipeType.fromString(name) != null) item = CookingRecipeType.fromString(name);
+        else if (Fish.fromString(name) != null) item = Fish.fromString(name);
+        else if (MineralType.fromString(name) != null) item = MineralType.fromString(name);
 
         if (item == null) return new Result(false, "** No item with that name exists **");
-        Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
-        return new Result(true, "** " + count + " of " + name + " added to your inventory **");
+        if(count <= 0) return new Result(false, "** Not a valid count **");
+        if (item.getName().contains("Pack")) {
+            if (item.getName().equals("Large Pack")) {
+                Game.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Big);
+            } else if (item.getName().equals("Deluxe Pack")) {
+                Game.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Deluxe);
+            }
+            return new Result(true, "Upgraded successfully");
+            //change trash can
+        } else if (item.getName().contains("Trash Can")) {
+            if (item.getName().equals("Copper Trash Can")) {
+                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Brass);
+            } else if (item.getName().equals("Steel Trash Can")) {
+                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iron);
+            } else if (item.getName().equals("Gold Trash Can")) {
+                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Gold);
+            } else if (item.getName().equals("Iridium Trash Can")) {
+                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iridium);
+            }
+            return new Result(true, "Upgraded");
+            //add craft recipes to learnt recipes
+        } else if (item.getName().contains("Recipe")) {
+            if (item.getName().equals("Dehydrator Recipe")) {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
+            } else if (item.getName().equals("Grass Starter Recipe")) {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
+            } else if (item.getName().equals("Fish Smoker Recipe")) {
+                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
+            } else {
+                String recipeName = item.getName().replace("Recipe", "");
+                CookingRecipeType type = CookingRecipeType.fromString(name);
+                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
+            }
+            return new Result(true, "Recipe added successfully");
+        }
+            Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
+            return new Result(true, "** " + count + " of " + name + " added to your inventory **");
+
     }
 
     //plow tile
