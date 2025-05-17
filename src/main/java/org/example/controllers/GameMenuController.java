@@ -875,6 +875,50 @@ public class GameMenuController extends MenuController {
         return Result.success("Current time: " + String.format("%02d:00", hour));
     }
 
+    public Result cheatAdvanceDate(String input) {
+        Matcher matcher;
+        Pattern pattern = Pattern.compile("^cheat advance date (\\d+)d$");
+        matcher = pattern.matcher(input.trim());
+
+        if (matcher.matches()) {
+            int days = Integer.parseInt(matcher.group(1));
+            if (days <= 0) {
+//                System.out.println("Error: Number of days must be positive.");
+                return Result.error("Error: Number of days must be positive.");
+            }
+            for (int i = 0; i < days; i++) {
+                GameManager.getGameClock().advanceDay();
+            }
+//            System.out.println("Advanced " + days + " day(s).");
+            return Result.success("Advanced " + days + " day(s).");
+        } else {
+//            System.out.println("Invalid format! Use: cheat advance date <X>d");
+            return Result.error("Invalid format! Use: cheat advance date <X>d");
+        }
+//        return Result.error("");
+    }
+
+    public Result cheatAdvanceTime(String input) {
+        input = input.trim();
+        try {
+            String[] parts = input.split(" ");
+            String hoursPart = parts[3];
+            int hours = Integer.parseInt(hoursPart.replace("h", ""));
+            if (hours < 0) {
+//                System.out.println("Error: You cannot go back in time.");
+                return Result.error("Error: You cannot go back in time.");
+            } else {
+                GameManager.getGameClock().advanceTime(hours * 60);
+//                System.out.println("Time advanced by " + hours + " hours.");
+                return Result.success("Time advanced by " + hours + " hours.");
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid format.m" + e.getMessage());
+        }
+        return Result.error("");
+
+    }
+
     public Result showDayOfTheWeek() {
         String dayOfWeek = GameManager.getDayOfTheWeek();
         return Result.success("Today is: " + dayOfWeek);

@@ -10,7 +10,9 @@ public class TimeAndWeatherTest {
 
 //    AppMenu menu = MenuController.; // فرض بر اینه که کلاس Game دارای executeCommand هست
 
-    private final GameMenuController gameMenuController = new GameMenuController(Game.getScanner(), RegisterMenuController.currentUser);
+    private final GameMenuController gameMenuController =
+            new GameMenuController(Game.getScanner(), RegisterMenuController.currentUser);
+
     @Test
     void testInitialTime() {
         String result = gameMenuController.showTime().getMessage();
@@ -34,7 +36,7 @@ public class TimeAndWeatherTest {
         String result = gameMenuController.showDayOfTheWeek().getMessage();
         assertEquals("Today is: Saturday", result);
     }
-
+//
     @Test
     void testAdvanceTimeBackwardsFails() {
         String result = gameMenuController.cheatAdvanceTime("cheat advance time -2h").getMessage();
@@ -50,61 +52,45 @@ public class TimeAndWeatherTest {
         assertEquals("Current time: 11:00", timeCheck);
     }
 
-//    @Test
-//    void testAdvanceDateInvalidFormat() {
-//        String result = game.executeCommand("cheat advance date -2d");
-//        assertEquals("Invalid format! Use: cheat advance date <X>d", result);
-//    }
+    @Test
+    void testAdvanceDateInvalidFormat() {
+        String result = gameMenuController.cheatAdvanceDate("cheat advance date -2d").getMessage();
+        assertEquals("Invalid format! Use: cheat advance date <X>d", result);
+    }
 
-//    @Test
-//    void testAdvanceDate2Days() {
-//        String result = game.executeCommand("cheat advance date 2d");
-//        assertEquals("Advanced 2 day(s).", result);
 //
-//        String dateCheck = game.executeCommand("date");
-//        assertEquals("Current date: Day 3 of Spring", dateCheck);
-//    }
+    @Test
+    void testSeasonRemainsSpringAfter2Days() {
+        String result = gameMenuController.showSeason().getMessage();
+        assertEquals("Current season: SPRING", result);
+    }
 //
-//    @Test
-//    void testSeasonRemainsSpringAfter2Days() {
-//        String result = game.executeCommand("season");
-//        assertEquals("Current season: SPRING", result);
-//    }
+    @Test
+    void testWeatherCheck() {
+        String result = gameMenuController.showWeather().getMessage();
+        assertEquals("Current weather: Sunny ☀️", result);
+    }
 //
-//    @Test
-//    void testAdvanceDateToSummer() {
-//        String result = game.executeCommand("cheat advance date 27d");
-//        assertEquals("Advanced 27 day(s).", result);
+    @Test
+    void testSetWeatherSunny() {
+        String result = gameMenuController.cheatWeatherSet("cheat weather set SUNNY").getMessage();
+        assertEquals("Forecasted weather for tomorrow set to: Sunny ☀️", result);
+    }
+
+     //
+    @Test
+    void testAdvanceTime12Hours() {
+        String result = gameMenuController.cheatAdvanceTime("cheat advance time 12h").getMessage();
+        assertEquals("Time advanced by 12 hours.", result);
+
+        String dateCheck = gameMenuController.showDate().getMessage();
+        assertEquals("Current date: Day 1 of Spring", dateCheck);
+    }
 //
-//        String seasonCheck = game.executeCommand("season");
-//        assertEquals("Current season: SUMMER", seasonCheck);
-//    }
-//
-//    @Test
-//    void testWeatherCheck() {
-//        String result = game.executeCommand("weather");
-//        assertEquals("Current weather: Sunny ☀️", result);
-//    }
-//
-//    @Test
-//    void testSetWeatherSunny() {
-//        String result = game.executeCommand("cheat weather set SUNNY");
-//        assertEquals("Forecasted weather for tomorrow set to: Sunny ☀️", result);
-//    }
-//
-//    @Test
-//    void testAdvanceTime12Hours() {
-//        String result = game.executeCommand("cheat advance time 12h");
-//        assertEquals("Time advanced by 12 hours.", result);
-//
-//        String dateCheck = game.executeCommand("date");
-//        assertEquals("Current date: Day 3 of Summer", dateCheck);
-//    }
-//
-//    @Test
-//    void testWeatherStillSunnyAfterTimeAdvance() {
-//        String result = game.executeCommand("weather");
-//        assertEquals("Current weather: Sunny ☀️", result);
-//    }
+    @Test
+    void testWeatherStillSunnyAfterTimeAdvance() {
+        String result = gameMenuController.showWeather().getMessage();
+        assertEquals("Current weather: Sunny ☀️", result);
+    }
 }
 

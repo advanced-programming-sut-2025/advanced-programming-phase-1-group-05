@@ -81,38 +81,42 @@ public class GameMenu implements org.example.views.AppMenu {
             System.out.println(result.getMessage());
         }
         else if (input.startsWith("cheat advance time")) {
-            input = input.trim();
-            try {
-                String[] parts = input.split(" ");
-                String hoursPart = parts[3];
-                int hours = Integer.parseInt(hoursPart.replace("h", ""));
-                if (hours < 0) {
-                    System.out.println("Error: You cannot go back in time.");
-                } else {
-                    GameManager.getGameClock().advanceTime(hours * 60);
-                    System.out.println("Time advanced by " + hours + " hours.");
-                }
-            } catch (Exception e) {
-                System.out.println("Invalid format.m" + e.getMessage());
-            }
+            Result result = gameMenuController.cheatAdvanceTime(input);
+            System.out.println(result.getMessage());
+//            input = input.trim();
+//            try {
+//                String[] parts = input.split(" ");
+//                String hoursPart = parts[3];
+//                int hours = Integer.parseInt(hoursPart.replace("h", ""));
+//                if (hours < 0) {
+//                    System.out.println("Error: You cannot go back in time.");
+//                } else {
+//                    GameManager.getGameClock().advanceTime(hours * 60);
+//                    System.out.println("Time advanced by " + hours + " hours.");
+//                }
+//            } catch (Exception e) {
+//                System.out.println("Invalid format.m" + e.getMessage());
+//            }
         }
         else if (input.startsWith("cheat advance date")) {
-            Pattern pattern = Pattern.compile("^cheat advance date (\\d+)d$");
-            matcher = pattern.matcher(input.trim());
-
-            if (matcher.matches()) {
-                int days = Integer.parseInt(matcher.group(1));
-                if (days <= 0) {
-                    System.out.println("Error: Number of days must be positive.");
-                    return;
-                }
-                for (int i = 0; i < days; i++) {
-                    GameManager.getGameClock().advanceDay();
-                }
-                System.out.println("Advanced " + days + " day(s).");
-            } else {
-                System.out.println("Invalid format! Use: cheat advance date <X>d");
-            }
+            Result result = gameMenuController.cheatAdvanceDate(input);
+            System.out.println(result.getMessage());
+//            Pattern pattern = Pattern.compile("^cheat advance date (\\d+)d$");
+//            matcher = pattern.matcher(input.trim());
+//
+//            if (matcher.matches()) {
+//                int days = Integer.parseInt(matcher.group(1));
+//                if (days <= 0) {
+//                    System.out.println("Error: Number of days must be positive.");
+//                    return;
+//                }
+//                for (int i = 0; i < days; i++) {
+//                    GameManager.getGameClock().advanceDay();
+//                }
+//                System.out.println("Advanced " + days + " day(s).");
+//            } else {
+//                System.out.println("Invalid format! Use: cheat advance date <X>d");
+//            }
         }
 
         else if (input.equals("season")) {
