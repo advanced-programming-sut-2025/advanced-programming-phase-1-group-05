@@ -6,6 +6,7 @@ import org.example.models.Enums.Menu;
 import org.example.models.User;
 import org.example.views.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -106,7 +107,7 @@ public class MenuController {
         return new Result(true, "Current menu: " + currentMenu.getMenuName());
     }
 
-    public void run() {
+    public void run() throws IOException {
         while (true) {
 
             String input = scanner.nextLine().trim();
