@@ -115,12 +115,12 @@ public class HomeMenuController {
     //get food by name
     public Food getFoodByName(String foodName) {
         Item food = Game.getDatabase().getItem(foodName);
-        if(food == null) return null;
+        CookingRecipeType foodRecipe = CookingRecipeType.fromString(foodName);
+        if(food == null && foodRecipe == null) return null;
         else if(food instanceof Food) {
             return (Food) food;
         } else {
-            CookingRecipeType recipeType = CookingRecipeType.valueOf(foodName);
-            return new Food(recipeType);
+            return new Food(foodRecipe);
         }
     }
 
@@ -162,7 +162,7 @@ public class HomeMenuController {
         if(food == null) return new Result(false, "No food with that name");
         if(!Game.getCurrentPlayer().getBackPack().getLearntCookingRecipe().contains(food.getRecipeType()))
             return new Result(false, "Aww you don't know how to cook this food");
-        for(Material f : food.getIngredients().keySet()) {
+        for(Item f : food.getIngredients().keySet()) {
             if(!Game.getCurrentPlayer().getBackPack().getInventory().containsKey(f))
                 return new Result(false, "You don't have all the ingredients in your inventory");
         }

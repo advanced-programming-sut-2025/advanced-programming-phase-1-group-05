@@ -1,12 +1,9 @@
 package org.example.models.Skills;
 
-import org.example.models.BasicItem;
+import org.example.models.*;
 import org.example.models.Enums.CookingRecipeType;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.Material;
-import org.example.models.Food;
-import org.example.models.Game;
-import org.example.models.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,9 +16,8 @@ public class Cooking implements Skill{
 
 
     public void cookFood(Food food) {
-        for(Material f : food.getIngredients().keySet()) {
-            Game.getCurrentPlayer().getBackPack().removeFromInventory
-                    (new BasicItem(f.getName(), f.getPrice()), Game.getCurrentPlayer().getBackPack().getInventory().get(f));
+        for(Item f : food.getIngredients().keySet()) {
+            Game.getCurrentPlayer().getBackPack().removeFromInventory(f, food.getIngredients().get(f));
         }
         Game.getCurrentPlayer().increaseEnergy(-3);
         Game.getCurrentPlayer().getBackPack().addToInventory(food, 1);

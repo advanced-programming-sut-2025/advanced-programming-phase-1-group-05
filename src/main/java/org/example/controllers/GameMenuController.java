@@ -264,8 +264,8 @@ public class GameMenuController extends MenuController {
     }
 
     //removing from inventory
-    public Result removeFromInventory(String name, int quantity, boolean flag) {
-        Game.getCurrentPlayer().getTrashCan().removeFromInventory(name, quantity, flag);
+    public Result removeFromInventory(String name, int quantity) {
+        Game.getCurrentPlayer().getTrashCan().removeFromInventory(name, quantity);
         return new Result(true, quantity + " of " + name + " was removed from inventory");
     }
 
@@ -989,8 +989,9 @@ public class GameMenuController extends MenuController {
             } else if (item.getName().equals("Fish Smoker Recipe")) {
                 Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
             } else {
-                String recipeName = item.getName().replace("Recipe", "");
+                String recipeName = item.getName().replace("Recipe", "").trim();
                 CookingRecipeType type = CookingRecipeType.fromString(recipeName);
+                System.out.println(type);
                 Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
             }
             return new Result(true, "Recipe added successfully");
@@ -1138,23 +1139,21 @@ public class GameMenuController extends MenuController {
     public Result cheatThor(Matcher matcher) {
         int i = 0, j = 0;
         boolean done = false;
-        try {
+
             if (matcher.group("x") != null && matcher.group("y") != null) {
                 int x = Integer.parseInt(matcher.group("x"));
                 int y = Integer.parseInt(matcher.group("y"));
                 i = x;
                 j = y;
                 //todo: اگر گلخانه بود تاثیر نداره
-                if (Game.getGameMap().getTile(x, y).getTileType().equals(TileType.Tree)) {
-                    Game.getGameMap().getTile(x, y).setTileType(TileType.Flat);
+                if (Game.getGameMap().getTile(x, y).getItemOnTile() instanceof Tree) {
+                    ((Tree)Game.getGameMap().getTile(x, y).getItemOnTile()).thunderEffect(GameMap.getTile(x, y));
                 }
                 if (Game.getGameMap().getTile(x, y).getTileType().equals(TileType.GreenHouse)) {
                     return new Result(false, "Cheat Thor failed!");
                 } else Game.getGameMap().getTile(x, y).setTileType(TileType.CheatThor);
             }
-        } catch (Exception e) {
-            return new Result(false, "Invalid input format.");
-        }
+
         return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
     }
 
@@ -1352,6 +1351,14 @@ public class GameMenuController extends MenuController {
         }
         Collections.reverse(path);
         return path.subList(1, path.size()); //delete start location
+    }
+
+    //put back item in hand
+    public Result putBack(){
+        Item item = Game.getCurrentPlayer().getCurrentItem();
+        if(item == null) return new Result(false, "You don't have anything in hand!");
+        Game.getCurrentPlayer().getBackPack().addToInventory(item, 1);
+        return new Result(true, item.getName() + " is back in you inventory!");
     }
 
 }

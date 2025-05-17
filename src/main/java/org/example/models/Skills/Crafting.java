@@ -8,16 +8,11 @@ public class Crafting implements Skill{
     int level = 0;
     int capacity = 0;
 
-//    public Result craftItem(String itemType, Inventory inventory) {}
-
-    public void placeItemOnGround(String item, GameTile tile) {}
-
     @Override
     public int getLevel() {
         return level;
     }
 
-    //    public void addItemToInventory(String item, Inventory inventory) {}
     @Override
     public void setLevel(int level) {
         this.level = level;

@@ -20,7 +20,7 @@ public enum Weather {
         GameTile tile = map.getTile(x, y);
         Item item = tile.getItemOnTile();
         if(item instanceof Tree) {
-            ((Tree) item).thunderEffect();
+            ((Tree) item).thunderEffect(tile);
         }
         return null;
     }

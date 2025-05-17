@@ -48,6 +48,7 @@ public class Farm {
     }
 
     public void removeRefrigeratedFood(Food food, int amount) {
+        if(!refrigeratedFoods.containsKey(food)) return;
         refrigeratedFoods.put(food, refrigeratedFoods.get(food) - amount);
     }
 

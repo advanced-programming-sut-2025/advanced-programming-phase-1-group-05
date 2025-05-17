@@ -47,8 +47,14 @@ public class BackPack implements Tool <BackPackType>{
     }
     public Result addToInventory(Item item, int amount) {
         if(isStorageUnlimited) {
-            if(!inventory.containsKey(item)) inventory.put(item, inventory.getOrDefault(item, 0) + amount);
-            else inventory.put(item, inventory.get(item) + amount);
+            for(Item stuff : inventory.keySet()) {
+                if(stuff.getName().equals(item.getName())) {
+                    inventory.put(stuff, inventory.get(stuff) + amount);
+                    return new Result(true, item.getName() + " successfully added to your inventory");
+                }
+            }
+
+            inventory.put(item, inventory.getOrDefault(item, 0) + amount);
             return new Result(true, item.getName() + " successfully added to your inventory");
 
         } else {
@@ -70,6 +76,10 @@ public class BackPack implements Tool <BackPackType>{
     }
     public Result removeFromInventory(Item item, int amount) {
         if(!inventory.containsKey(item)) return new Result(false, "No such item in your inventory");
+        if(inventory.get(item) - amount <=0) {
+            inventory.remove(item);
+            return new Result(true, "Successfully removed " + item.getName() + " from your inventory");
+        }
         inventory.put(item, inventory.get(item) - amount);
         return new Result(true, "Successfully removed " + amount + " of " + item.getName() + " from your inventory");
     }

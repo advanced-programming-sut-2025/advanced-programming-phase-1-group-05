@@ -17,7 +17,7 @@ public class Food implements Item{
     public CookingRecipeType getRecipeType() {
         return recipeType;
     }
-    public Map<Material, Integer> getIngredients() {
+    public Map<Item, Integer> getIngredients() {
         return recipeType.getIngredients();
     }
     public int getEnergy() {
