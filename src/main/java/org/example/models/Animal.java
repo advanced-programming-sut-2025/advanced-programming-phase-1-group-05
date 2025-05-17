@@ -165,4 +165,5 @@ public class Animal implements Item{
     public boolean isOut() {
         return isOut;
     }
+
 }

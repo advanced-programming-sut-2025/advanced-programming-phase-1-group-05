@@ -9,17 +9,14 @@ import java.util.Map;
 public class TrashCan implements Tool <ItemLevel> {
     ItemLevel level = ItemLevel.Normal;
 
-    public void removeFromInventory(String name, int quantity, boolean flag){
-        HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
-        for(Item item : items.keySet()){
-            if(!flag) quantity = items.get(item);
-            if(item.getName().equals(name)){
-                //remove selected amount
-                items.put(item, items.get(item) - quantity);
-                //return a certain percent of the item's price
-                Game.getCurrentPlayer().addGold((int) (item.getPrice()*level.getTrashcanCoeff()));
+    public void removeFromInventory(String name, int quantity){
+        Item itemToRemove = null;
+        for(Item item : Game.getCurrentPlayer().getBackPack().getInventory().keySet()) {
+            if(item.getName().equals(name)) {
+                itemToRemove = item;
             }
         }
+        Game.getCurrentPlayer().getBackPack().removeFromInventory(itemToRemove, quantity);
     }
 
     public void setLevel(ItemLevel level){

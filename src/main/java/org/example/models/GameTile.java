@@ -90,6 +90,7 @@ public class GameTile {
             else if(itemOnTile.getName().equals("Wood")) return "\uD83E\uDEB5";
             else if(itemOnTile.getName().equals("Fiber")) return "\uD83C\uDF3F";
             else if(itemOnTile instanceof Craft) return "\uD83D\uDEE0\uFE0F";
+            else if(itemOnTile.getName().equals("Coal")) return "X";
         }
         if (tileType == TileType.Building) return "🏠";
         if (tileType == TileType.Water) return "🌊";

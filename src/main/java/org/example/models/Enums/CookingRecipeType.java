@@ -38,13 +38,13 @@ public enum CookingRecipeType implements Material, Item {
     MinersTreat("Miner's Treat", () -> Map.of(CropType.Carrot, 1, Game.getDatabase().getItem("Egg"), 1, Game.getDatabase().getItem("Milk"), 1), 125, "Mining (5 hours)", "Mining level 1", 100);
 
     private final String name;
-    private final Supplier<Map<Material, Integer>> ingredientsSupplier;
+    private final Supplier<Map<Item, Integer>> ingredientsSupplier;
     private final int energy;
     private final String buff;
     private final String source;
     private final int price;
 
-    CookingRecipeType(String name, Supplier<Map<Material, Integer>> ingredientsSupplier, int energy, String buff, String source, int price) {
+    CookingRecipeType(String name, Supplier<Map<Item, Integer>> ingredientsSupplier, int energy, String buff, String source, int price) {
         this.name = name;
         this.ingredientsSupplier = ingredientsSupplier;
         this.energy = energy;
@@ -58,7 +58,7 @@ public enum CookingRecipeType implements Material, Item {
         return name;
     }
 
-    public Map<Material, Integer> getIngredients() {
+    public Map<Item, Integer> getIngredients() {
         return ingredientsSupplier.get();
     }
 
@@ -81,8 +81,6 @@ public enum CookingRecipeType implements Material, Item {
 
     public static CookingRecipeType fromString(String name) {
         for (CookingRecipeType recipeType : CookingRecipeType.values()) {
-            System.out.println(recipeType.getName());
-            System.out.println(name);
             if (recipeType.getName().contains(name)) {
                 return recipeType;
             }

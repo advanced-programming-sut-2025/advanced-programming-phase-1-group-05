@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 public enum HomeMenuCommands {
     CraftingRecipes("crafting show recipes"),
     CraftItem("crafting item -n (?<itemName>\\S+(\\s*\\S+)*)"),
-    CookingRefrigerator("cooking refrigerator (?<action>\\S+) (?<item>\\S+)"),
-    CookingPrepare("cooking prepare (?<recipeName>\\S+)"),
+    CookingRefrigerator("cooking refrigerator -a (?<action>\\S+(\\s*\\S+)*) -i (?<item>\\S+(\\s*\\S+)*)"),
+    CookingPrepare("cooking prepare (?<recipeName>\\S+(\\s*\\S+)*)"),
     ShowCookingRecipes("cooking show recipes"),
     ShowOptions("show options"),
     Back("back");

@@ -158,7 +158,7 @@ public class GameMenu implements org.example.views.AppMenu {
         } else if ((matcher = GameMenuCommands.InventoryTrash.getMatcher(input)) != null) {
             //boolean hasFlag = matcher.group("-n") != null;
             System.out.println(gameMenuController.removeFromInventory(matcher.group("itemName"),
-                    Integer.parseInt(matcher.group("number")), true));
+                    Integer.parseInt(matcher.group("number"))));
         } else if ((matcher = GameMenuCommands.EquipTool.getMatcher(input)) != null) {
             System.out.println(gameMenuController.equipTool(matcher.group("toolName")));
         } else if ((matcher = GameMenuCommands.ShowCurrentTool.getMatcher(input)) != null) {
@@ -304,6 +304,8 @@ public class GameMenu implements org.example.views.AppMenu {
         }
         else if (input.equals("get shipping bin coordinates")) {
             Game.getCurrentPlayer().getFarm().getShippingBin().getCoordinates();
+        } else if((matcher = GameMenuCommands.PutBack.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.putBack());
         }
         else {
             System.out.println("Invalid Command!");

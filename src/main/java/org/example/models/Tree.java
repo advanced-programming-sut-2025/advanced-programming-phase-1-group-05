@@ -74,9 +74,8 @@ public class Tree implements Item{
             return new ForagingItem(ForagingCrop.fromString(treeType.getFruit()), treeType.getFruit(), treeType.getFruitPrice());
         }
 
-        public void thunderEffect() {
+        public void thunderEffect(GameTile tile) {
             GameMap map = Game.getGameMap();
-            GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
             tile.setItemOnTile(new BasicItem(MineralType.Coal.getName(), MineralType.Coal.getPrice()));
             map.getTrees().remove(this);
         }
