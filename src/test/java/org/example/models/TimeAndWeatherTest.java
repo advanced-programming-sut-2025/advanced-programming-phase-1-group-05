@@ -87,6 +87,7 @@ public class TimeAndWeatherTest {
         assertEquals("Current date: Day 1 of Spring", dateCheck);
     }
 //
+
     @Test
     void testWeatherStillSunnyAfterTimeAdvance() {
         String result = gameMenuController.showWeather().getMessage();
