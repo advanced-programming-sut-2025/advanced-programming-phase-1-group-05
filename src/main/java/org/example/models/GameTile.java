@@ -77,6 +77,9 @@ public class GameTile {
         }
         if (isOccupied) return "♥️";
         if (itemOnTile != null) {
+            if (itemOnTile instanceof Animal) {
+                return ((Animal) itemOnTile).getType().toString();
+            }
             if(itemOnTile instanceof FruitAndVegetable) {
                 if(((FruitAndVegetable)itemOnTile).isGiant()) return "\uD83C\uDF49";
                 else return "🍎";

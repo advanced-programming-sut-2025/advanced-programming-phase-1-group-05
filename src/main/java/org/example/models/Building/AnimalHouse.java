@@ -22,6 +22,7 @@ public class AnimalHouse extends Building{
 
     public void addAnimal(Animal animal) {
         animals.add(animal);
+
     }
 
     public int getCapacity() {

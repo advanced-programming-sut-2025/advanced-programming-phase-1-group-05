@@ -347,7 +347,7 @@ public class GameMenuController extends MenuController {
         }
         animal.adjustFriendshipPoints(15);
         animal.setPetToday(true);
-        return Result.success("");
+        return Result.success("You gently pet "+ animal.getName() +". It seems happy and lets out a content sound.");
     }
 
     public Result cheatSetFriendship(Matcher m) {
@@ -371,13 +371,32 @@ public class GameMenuController extends MenuController {
         return Result.success(output.toString());
     }
 
+    public Result shepherdAnimal(Matcher m) {
+        String animalName = m.group("animalName");
+        int x = Integer.parseInt(m.group("x"));
+        int y = Integer.parseInt(m.group("y"));
+        Player player = Game.getCurrentPlayer();
+        Animal animal = player.getAnimal(animalName);
+        if (animal == null) return Result.error("animal doesn't exist or isn't yours");
+        GameTile tile = Game.getGameMap().getTile(x, y);
+        if (tile == null || tile.isOccupied() || !player.getFarm().containsTile(x , y)) {
+            return Result.error("invalid tile");
+        }
+        animal.setXY(x, y);
+        animal.shepherd();
+        animal.setFeedingStatus(true);
+        return Result.success( animal.getName()  +" follows your lead, trotting along obediently.");
+    }
     public Result feedHay(Matcher m) {
         String animalName = m.group("animalName");
         Player player = Game.getCurrentPlayer();
         Animal animal = player.getAnimal(animalName);
+        Item hay = Game.getDatabase().getItem("Hay");
         if (animal == null) return Result.error("animal doesn't exist or isn't yours");
+        if (player.getItemQuantity(hay) < 1)
+            return Result.error("you don't have enough hay");
         animal.setFeedingStatus(true);
-        player.getBackPack().removeFromInventory(Game.getDatabase().getItem("Hay"), 1);
+        player.getBackPack().removeFromInventory(hay, 1);
         animal.adjustFriendshipPoints(8);
         return Result.success("You offer food. The animal accepts. A bond is forged through snacks.");
 
@@ -418,12 +437,12 @@ public class GameMenuController extends MenuController {
         if (animal == null)
             return Result.error("Selected animal doesn't exist or isn't yours");
 
-        int basePrice = Game.getDatabase().getItem(animal.getType().toString()).getPrice();
+        int basePrice = Game.getDatabase().getItem(animal.getType().name()).getPrice();
         int price = (int) (basePrice * ((animal.getFriendshipPoints() / 1000) + 0.3));
         Player player = Game.getCurrentPlayer();
         player.addGold(price);
         player.removeAnimal(animal);
-        return Result.success("Your animal looked back one last time before leaving… but you were already gone.");
+        return Result.success( animal.getName() +" looked back one last time before leaving… but you were already gone.");
     }
 
     public Result startFishing(Matcher m) {
@@ -446,12 +465,12 @@ public class GameMenuController extends MenuController {
         else if (qualityScore <= 0.7) level = ItemLevel.Brass;
         else if (qualityScore <= 0.9) level = ItemLevel.Gold;
         else level = ItemLevel.Iridium;
-        Product product = new Product(caughtFish.getName(), caughtFish.getPrice(), -1, null, null, null);
+        Product product = new Product(caughtFish.getName(), caughtFish.getPrice(), -1, null, List.of(), Map.of());
         product.setItemLevel(level);
         Result result = player.getBackPack().addToInventory(product, numOfFish);
         player.getFishingSkill().increaseCapacity();
         if (result.isSuccess())
-            return Result.success("You caught " + numOfFish + " " + level.getName() + " " + caughtFish.getName());
+            return Result.success("You caught " + numOfFish + " " + level.toString() + " " + caughtFish.getName());
         return result;
 
     }
@@ -728,7 +747,7 @@ public class GameMenuController extends MenuController {
         if (npc == null) return new Result(false, "NPC not found");
         if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1)
             return new Result(false,
-                    "You're talking to thin air. That NPC must be off doing NPC things. npc coordinates: " + npc.getX() + " "  + npc.getY());
+                    "You're talking to thin air. That NPC must be off doing NPC things.");
         lastNPC = npc;
         npc.addFriendShipPoints(player, 20);
         return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().name()));

@@ -168,10 +168,10 @@ public class StoreController {
         }
         AnimalHouse animalHouse = player.hasThisEnclosureType(product.getBuildingType());
         if (animalHouse == null) {
-            return Result.error("You don't have an empty " + enclosureType);
+            return Result.error("You don't have an empty " + enclosureType.toString().toLowerCase());
         }
         AnimalType type = AnimalType.fromString(m.group("animalType"));
-        animalHouse.addAnimal(new Animal(m.group("name"), type, player));
+        animalHouse.addAnimal(new Animal(m.group("animalName"), type, player));
         player.addGold(-product.getPrice());
         return Result.success("animal bought successfully!");
     }
@@ -184,6 +184,8 @@ public class StoreController {
 
         Product product = store.getProduct(m.group("buildingName"));
         EnclosureType type;
+        if (product == null)
+            return Result.error("invalid enclosure type");
         if (product.getName().contains("Coop")) {
             type = EnclosureType.COOP;
         }
@@ -197,7 +199,7 @@ public class StoreController {
         for (int i = x; i < type.getRows() + x; i++) {
             for (int j = y; j < type.getColumns() + y; j++) {
                 GameTile tile = Game.getGameMap().getTile(i, j);
-                if (tile == null || !tile.getTileType().equals(TileType.Flat)) {
+                if (tile == null || !tile.getTileType().equals(TileType.Soil)) {
                     return Result.error("You can’t build here. The area must be completely flat.");
                 }
                 if (!player.getFarm().containsTile(i , j))
@@ -221,10 +223,12 @@ public class StoreController {
             for (int j = y; j < type.getColumns() + y; j++) {
                 GameTile tile = Game.getGameMap().getTile(i, j);
                 tile.setTileType(TileType.Building);
+                // اینجا باید چک شه که نباشه چیزی ولی خب
+                tile.setItemOnTile(null);
                 tile.setBuilding(animalHouse.getType());
             }
         }
-        return Result.success(type + " built successfully!");
+        return Result.success(product.getName() + " built successfully!");
 
     }
 
@@ -242,7 +246,7 @@ public class StoreController {
             Item item = Game.getDatabase().getItem(cost.getKey());
             int quantity = cost.getValue();
             Player currentPlayer = Game.getCurrentPlayer();
-            currentPlayer.getBackPack().getInventory().remove(item, quantity);
+            currentPlayer.getBackPack().removeFromInventory(item, quantity);
         }
         return true;
     }

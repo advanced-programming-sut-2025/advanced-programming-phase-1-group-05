@@ -25,7 +25,7 @@ public class GameManager {
                      if (animal.wasFed())
                          animal.produce();
                      else animal.adjustFriendshipPoints(-20);
-                     if (!animal.wasPetToday()) animal.adjustFriendshipPoints(10 - animal.getFriendshipPoints()/200);
+                     if (!animal.wasPetToday()) animal.adjustFriendshipPoints(animal.getFriendshipPoints()/200 - 10);
                      if (animal.isOut()) animal.adjustFriendshipPoints(-20);
                      animal.setPetToday(false);
                      animal.setFeedingStatus(false);

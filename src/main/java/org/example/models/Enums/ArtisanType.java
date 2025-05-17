@@ -257,9 +257,9 @@ public enum ArtisanType {
                 for (Map.Entry<String, Integer> ingredient : entry.getKey().entrySet()) {
                     if (input.contains(ingredient.getKey().toLowerCase().replaceAll(" ", ""))) {
 
-                        if (Game.getCurrentPlayer().getItemQuantity(Game.getDatabase().getItem(ingredient.getKey())) < ingredient.getValue()) {
-                            canAfford = false;
-                        }
+//                        if (Game.getCurrentPlayer().getItemQuantity(Game.getDatabase().getItem(ingredient.getKey())) < ingredient.getValue()) {
+//                            canAfford = false;
+//                        }
 
                         newInput = newInput.replaceAll(ingredient.getKey().toLowerCase().replaceAll(" ", ""), "");
                     } else {
@@ -268,14 +268,15 @@ public enum ArtisanType {
                     }
                 }
 
-                if (found && !canAfford) {
-                    System.out.println("not enough ingredients in inventory");
-                    return;
-                }
+//                if (found && !canAfford) {
+//                    System.out.println("not enough ingredients in inventory");
+//                    return;
+//                }
                 if (found && newInput.isEmpty()) {
                     System.out.print(entry.getValue().getName() + " will be ready in " + entry.getValue().getProcessingTime() + " hours");
                     ArtisanProduct product = entry.getValue();
                     products.add(new ArtisanProduct(product.getName(), product.getEnergy(), product.getProcessingTime(), product.getPrice()));
+
                     return;
                 }
                 if (found && !newInput.isEmpty()) {

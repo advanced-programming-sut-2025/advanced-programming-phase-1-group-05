@@ -29,6 +29,7 @@ public enum GameMenuCommands {
     BuyAnimal("buy\\s+animal\\s+-a\\s+(?<animalType>\\S+)\\s+-n\\s+(?<animalName>.+?)"),
     PetAnimal("pet\\s+-n\\s+(?<animalName>.+?)"),
     SetFriendshipCC("cheat\\s+set\\s+friendship\\s+-n\\s+(?<animalName>.+?)\\s+-c\\s+(?<amount>\\d+)"),
+    ShepherdAnimal("shepherd\\s+animals\\s+-n\\s+(?<animalName>.+?)\\s+-l\\s+(?<x>\\d+)\\s+(?<y>\\d+)"),
     FeedHay("feed\\s+hay\\s+-n\\s+(?<animalName>.+)"),
     CollectProduce("collect\\s+produce\\s+-n\\s+(?<name>\\S+)"),
     SellAnimal("sell\\s+animal\\s+-n\\s+(?<animalName>.+?)"),

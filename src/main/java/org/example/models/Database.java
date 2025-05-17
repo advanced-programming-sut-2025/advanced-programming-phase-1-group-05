@@ -66,7 +66,7 @@ public class Database {
                 String productName = storeProductObject.get("name").getAsString();
                 int price = storeProductObject.get("price").getAsInt();
                 int limit = storeProductObject.get("limit").getAsInt();
-                String buildingType = safeGetAsString(storeProductObject, "buildingType");
+                String buildingType = safeGetAsString(storeProductObject, "buildingRequired");
                 JsonArray seasons = storeProductObject.has("season") && !storeProductObject.get("season").isJsonNull()
                         ? storeProductObject.get("season").getAsJsonArray()
                         : null;

@@ -35,6 +35,10 @@ public class Animal implements Item{
         return y;
     }
 
+    public void setXY(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
     private void setCoordinates(Player player) {
         Farm farm = player.getFarm();
         int startX = farm.getStartX(), startY = farm.getStartY(), endX = farm.getEndX(), endY = farm.getEndY();
@@ -48,6 +52,7 @@ public class Animal implements Item{
             if (!tile.isOccupied()) {
                 this.x = x;
                 this.y = y;
+                tile.setItemOnTile(this);
                 break;
             }
         }
@@ -66,7 +71,7 @@ public class Animal implements Item{
                 if (random.nextInt(100) > chance) index = 1;
             }
             Item item = products.get(index);
-            Product product = new Product(item.getName(), item.getPrice(), 0, null, null, null);
+            Product product = new Product(item.getName(), item.getPrice(), 0, null, List.of(), Map.of());
             unCollectedProducts.add(product);
             int levelValue = (int) ((friendshipPoints/1000) * (0.5 + random.nextDouble()));
             ItemLevel level;

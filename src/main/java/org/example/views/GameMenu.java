@@ -199,11 +199,23 @@ public class GameMenu implements org.example.views.AppMenu {
         else if ((matcher = GameMenuCommands.BuyAnimal.getMatcher(input)) != null) {
             System.out.println(storeController.buyAnimal(matcher));
         }
+        else if ((matcher = GameMenuCommands.PetAnimal.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.petAnimal(matcher));
+        }
         else if ((matcher = GameMenuCommands.SetFriendshipCC.getMatcher(input)) != null) {
             System.out.println(gameMenuController.cheatSetFriendship(matcher));
         }
+        else if (input.equals("animals")) {
+            System.out.println(gameMenuController.printAnimalsInfo());
+        }
+        else if ((matcher = GameMenuCommands.ShepherdAnimal.getMatcher(input)) != null) {
+            System.out.println(gameMenuController.shepherdAnimal(matcher));
+        }
         else if ((matcher = GameMenuCommands.FeedHay.getMatcher(input)) != null) {
             System.out.println(gameMenuController.feedHay(matcher));
+        }
+        else if (input.equals("produces")) {
+            System.out.println(gameMenuController.printUncollectedProduce());
         }
         else if ((matcher = GameMenuCommands.CollectProduce.getMatcher(input)) != null) {
             System.out.println(gameMenuController.collectProduce(matcher));
@@ -213,6 +225,9 @@ public class GameMenu implements org.example.views.AppMenu {
         }
         else if ((matcher = GameMenuCommands.StartFishing.getMatcher(input)) != null) {
             System.out.println(gameMenuController.startFishing(matcher));
+        }
+        else if (input.startsWith("cheat max fishing skill")) {
+            Game.getCurrentPlayer().getFishingSkill().setLevel(4);
         }
         else if ((matcher = GameMenuCommands.ArtisanUSe.getMatcher(input)) != null) {
             System.out.println(gameMenuController.useArtisan(matcher));

@@ -14,7 +14,7 @@ public class ArtisanProduct implements Item {
         processingHours = processingTime;
         this.sellPrice = sellPrice;
         Game.getDatabase().itemDatabase.add(this);
-        startHour = GameManager.getCurrentHour();
+        startHour = GameManager.getGameClock().getTotalHours();
     }
 
     public boolean isReady () {
