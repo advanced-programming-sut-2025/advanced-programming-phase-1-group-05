@@ -69,9 +69,7 @@ public class RegisterMenuController {
             return new Result(false, "Username already exists!");
         }
 
-        createUser(username,password,nickname,email,gender);
-
-
+        createUser(username, password, nickname, email, gender);
         return new Result(true, "User registered successfully!");
     }
 
@@ -79,13 +77,13 @@ public class RegisterMenuController {
                                     ,String email,String gender) {
         User newUser = new User();
         newUser.setUsername(username);
-        newUser.setPassword(password);
+        newUser.setPassword(DBController.hashPassword(password));
         newUser.setNickName(nickname);
         newUser.setEmail(email);
         newUser.setGender(gender);
-        DBController.saveUsers();
         RegisterMenuController.currentUser = newUser;
-        DBController.saveCurrentUser();
+        UserDatabase.addUser(newUser);
+        DBController.saveAllUsers();
     }
 
     public String generateRandomPassword() {
@@ -343,6 +341,7 @@ public class RegisterMenuController {
                 }
 
                 saveSecurityQuestion(questionNumber, answer);
+
                 return new Result(true, "Registration completed successfully!");
             } else if (input.equalsIgnoreCase("back")) {
                 return new Result(false, "Returning to registration menu");

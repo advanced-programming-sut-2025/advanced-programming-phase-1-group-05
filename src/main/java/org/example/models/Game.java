@@ -13,7 +13,7 @@ public class Game {
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static List<Message> messages = new ArrayList<>();
     private static List<Gift> gifts = new ArrayList<>();
-    private static Weather currentWeather = Weather.Sunny;
+    public static Weather currentWeather = Weather.Sunny;
     private static Weather forecastedWeather = Weather.Sunny;
     private static final Database database = new Database();
     public static int currentPlayerIndex = 0;

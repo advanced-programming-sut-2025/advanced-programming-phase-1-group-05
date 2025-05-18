@@ -30,8 +30,8 @@ public class LoginMenuController extends MenuController {
         if (user == null) {
             return new Result(false, "Username not found!");
         }
-
-        if (!user.getPassword().equals(password)) {
+        String hashedInput = DBController.hashPassword(password);
+        if (!user.getPassword().equals(hashedInput)) {
             return new Result(false, "Incorrect password!");
         }
         if (stayLoggedIn) {
@@ -74,8 +74,8 @@ public class LoginMenuController extends MenuController {
         }
 
         currentUser.setPassword(newPassword);
-        DBController.saveUsers();
-        DBController.saveCurrentUser();
+        DBController.saveAllUsers();
+//        DBController.saveCurrentUser();
 //        currentUser = null;
         return Result.success("Password changed successfully!");
     }

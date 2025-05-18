@@ -69,7 +69,6 @@ public class GameMenuController extends MenuController {
                 selectedPlayers.add(player);
                 currentUser.addFriend(username);
                 user.incrementGamesPlayed();
-                UserDatabase.updateUser(user);
             }
         }
 

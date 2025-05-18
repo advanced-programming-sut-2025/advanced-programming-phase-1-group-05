@@ -3,6 +3,7 @@ package org.example.controllers;
 import org.example.models.*;
 import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.Season;
+import org.example.models.Enums.Weather;
 
 import java.util.Map;
 import java.util.Random;
@@ -16,8 +17,14 @@ public class GameManager {
         checkForThirdQuest();
         giveBackSoldItemGolds();
         getAnimalProducts();
+        manageWeather();
     }
 
+    public static void manageWeather() {
+        Game.currentWeather = Game.getForecastedWeather();
+        Weather[] values = Weather.values();
+        Game.setForecastedWeather(values[new Random().nextInt(values.length)]);
+    }
     public static void getAnimalProducts() {
         for (Player player : Game.getAllPlayers()) {
             for (AnimalHouse animalHouse : player.getCoopsAndBarns()) {

@@ -77,9 +77,7 @@ public class ProfileMenuController extends MenuController {
         }
 
         currentUser.setUsername(newUsername);
-        UserDatabase.updateUser(currentUser);
-        DBController.saveUsers();
-        DBController.saveCurrentUser();
+        DBController.saveAllUsers();
         return Result.success("Username changed successfully!");
     }
 
@@ -98,9 +96,7 @@ public class ProfileMenuController extends MenuController {
         }
 
         currentUser.setPassword(newPassword);
-        UserDatabase.updateUser(currentUser);
-        DBController.saveUsers();
-        DBController.saveCurrentUser();
+        DBController.saveAllUsers();
         return Result.success("Password changed successfully!");
     }
 
@@ -113,9 +109,7 @@ public class ProfileMenuController extends MenuController {
         }
 
         currentUser.setEmail(newEmail);
-        UserDatabase.updateUser(currentUser);
-        DBController.saveUsers();
-        DBController.saveCurrentUser();
+        DBController.saveAllUsers();
         return Result.success("Email changed successfully!");
     }
 
@@ -128,9 +122,7 @@ public class ProfileMenuController extends MenuController {
         }
 
         currentUser.setNickName(newNickname);
-        UserDatabase.updateUser(currentUser);
-        DBController.saveUsers();
-        DBController.saveCurrentUser();
+        DBController.saveAllUsers();
         return Result.success("Nickname changed successfully!");
     }
 
