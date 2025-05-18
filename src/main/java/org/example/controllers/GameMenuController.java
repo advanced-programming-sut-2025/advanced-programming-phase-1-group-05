@@ -266,6 +266,17 @@ public class GameMenuController extends MenuController {
     //removing from inventory
     public Result removeFromInventory(String name, int quantity) {
         Game.getCurrentPlayer().getTrashCan().removeFromInventory(name, quantity);
+        ItemLevel itemLevel = Game.getCurrentPlayer().getTrashCan().getLevel();
+        Item itemToRemove = null;
+        for(Item item : Game.getCurrentPlayer().getBackPack().getInventory().keySet()) {
+            if(item.getName().equals(name)) {
+                itemToRemove = item;
+            }
+        }
+        if (itemToRemove != null) {
+            int moneyAdded = (int) (itemToRemove.getPrice()*itemLevel.getTrashcanCoeff());
+            Game.getCurrentPlayer().addGold(moneyAdded);
+        }
         return new Result(true, quantity + " of " + name + " was removed from inventory");
     }
 
