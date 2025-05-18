@@ -265,6 +265,17 @@ public class GameMenuController extends MenuController {
     //removing from inventory
     public Result removeFromInventory(String name, int quantity) {
         Game.getCurrentPlayer().getTrashCan().removeFromInventory(name, quantity);
+        ItemLevel itemLevel = Game.getCurrentPlayer().getTrashCan().getLevel();
+        Item itemToRemove = null;
+        for(Item item : Game.getCurrentPlayer().getBackPack().getInventory().keySet()) {
+            if(item.getName().equals(name)) {
+                itemToRemove = item;
+            }
+        }
+        if (itemToRemove != null) {
+            int moneyAdded = (int) (itemToRemove.getPrice()*itemLevel.getTrashcanCoeff());
+            Game.getCurrentPlayer().addGold(moneyAdded);
+        }
         return new Result(true, quantity + " of " + name + " was removed from inventory");
     }
 
@@ -1134,7 +1145,8 @@ public class GameMenuController extends MenuController {
         if (food == null) return new Result(false, "You don't have that food in your inventory.");
         else if (food instanceof Food) {
             int energy = ((Food) food).getEnergy();
-            Game.getCurrentPlayer().increaseEnergy(energy);
+            if(((Food) food).getRecipeType().Buff()) Game.getCurrentPlayer().setEnergy(200);
+            else Game.getCurrentPlayer().increaseEnergy(energy);
             Game.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
             return new Result(true, "You consumed the food successfully!");
         } else return new Result(false, "That's...not edible.");
@@ -1314,8 +1326,19 @@ public class GameMenuController extends MenuController {
                     return new Result(false, "No valid path to target.");
                 }
 
-                // فقط آخرین نقطه مسیر (مقصد نهایی)
+                int tilesWalked = path.size();
+                int turns = countTurns(path);
+                int energyCost = (int)((tilesWalked + (10 * turns))/20.0);
+
+                boolean faint = false;
+                if (Game.getCurrentPlayer().getEnergy() < energyCost) {
+                    faint = true;
+                }
+                Game.getCurrentPlayer().increaseEnergy(-energyCost);
+
+                if(faint) return new Result(false, "You fainted while walking!");
                 Point finalStep = path.get(path.size() - 1);
+
                 GameTile previousTile = GameMap.getTile(currentPlayer.getX(), currentPlayer.getY());
                 if (previousTile != null) {
                     previousTile.setTileType(TileType.Flat);
@@ -1378,5 +1401,26 @@ public class GameMenuController extends MenuController {
         Game.getCurrentPlayer().getBackPack().addToInventory(item, 1);
         return new Result(true, item.getName() + " is back in you inventory!");
     }
+
+    //count turns the player makes when walking
+    private int countTurns(List<Point> path) {
+        if (path.size() < 2) return 0;
+
+        int turns = 0;
+        int prevDx = path.get(1).x - path.get(0).x;
+        int prevDy = path.get(1).y - path.get(0).y;
+
+        for (int i = 2; i < path.size(); i++) {
+            int dx = path.get(i).x - path.get(i - 1).x;
+            int dy = path.get(i).y - path.get(i - 1).y;
+            if (dx != prevDx || dy != prevDy) {
+                turns++;
+            }
+            prevDx = dx;
+            prevDy = dy;
+        }
+        return turns;
+    }
+
 
 }

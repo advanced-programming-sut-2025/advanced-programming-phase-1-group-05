@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class Food implements Item{
     private CookingRecipeType recipeType;
+    
 
     public Food(CookingRecipeType cookingRecipeType) {
         this.recipeType = cookingRecipeType;
