@@ -323,11 +323,14 @@ public class RegisterMenu implements Screen {
 
                 RegisterMenuController controller = new RegisterMenuController();
                 Result result = controller.registerUser(username, nickname, email, password, confirm, gender);
+                System.out.println("Result: " + result.getMessage());
                 if (result.isSuccess()) {
                     String questionCode = "1";
                     if (question.contains("city")) questionCode = "2";
                     else if (question.contains("color")) questionCode = "3";
                     controller.saveSecurityQuestion(questionCode, answer);
+                    System.out.println("Registration passed, switching to LoginMenu");
+                    MenuNavigator.setSkin(skin);
                     MenuNavigator.showLoginMenu();
                 } else {
                     messageLabel.setText(result.getMessage());

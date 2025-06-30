@@ -22,4 +22,8 @@ public class MenuNavigator {
     public static void showLoginMenu() { game.setScreen(loginMenu); }
     public static void showRegisterMenu() { game.setScreen(registerMenu); }
     public static void showMainMenu() { game.setScreen(mainMenu); }
+
+    public static void setSkin(Skin sharedSkin) {
+        MenuNavigator.sharedSkin = sharedSkin;
+    }
 }

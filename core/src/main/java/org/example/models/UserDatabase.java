@@ -65,7 +65,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 public class UserDatabase {
-    private static final String USER_FILE = "src/main/resources/users.json";
+    private static final String USER_FILE = "users.json";
     private static final List<User> users = new ArrayList<>();
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final Map<String, Boolean> userInGameStatus = new HashMap<>();

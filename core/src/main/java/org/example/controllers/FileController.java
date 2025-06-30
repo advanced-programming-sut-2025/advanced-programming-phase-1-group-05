@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 public class FileController {
     public static void writeTextToFile(String text , String path) {
         try {
-            FileWriter fileWriter = new FileWriter("src/main/resources/users.json");
+            FileWriter fileWriter = new FileWriter("users.json");
             fileWriter.write(text);
             fileWriter.close();
         } catch (Exception e) {
@@ -19,7 +19,7 @@ public class FileController {
     public static String getTextOfFile(String path) {
         String text = "";
         try {
-            File file = new File("src/main/resources/users.json");
+            File file = new File("users.json");
             Scanner fileScanner = new Scanner(file);
             while (fileScanner.hasNextLine()) {
                 text += fileScanner.nextLine() + "\n";

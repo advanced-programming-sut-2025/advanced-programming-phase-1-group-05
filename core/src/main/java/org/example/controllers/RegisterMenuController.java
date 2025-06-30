@@ -362,6 +362,9 @@ public class RegisterMenuController {
 
     // متدی برای ثبت‌نام با داده‌های واردشده توسط UI
     public Result registerUser(String username, String nickname, String email, String password, String confirmPassword, String gender) {
+        System.out.println("Checking username: " + username);
+        System.out.println("Valid username? " + isValidUsername(username));
+        System.out.println("Valid email? " + isValidEmail(email));
         if (username == null || username.trim().isEmpty()) {
             return new Result(false, "Username cannot be empty!");
         }
