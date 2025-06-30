@@ -13,12 +13,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegisterMenuController {
-    private final Scanner scanner;
     public static User currentUser;
     private static final int MAX_PASSWORD_ATTEMPTS = 3;
 
-    public RegisterMenuController(Scanner scanner) {
-        this.scanner = scanner;
+    public RegisterMenuController() {
     }
 
     public Result registerUser(String input) {
@@ -232,24 +230,20 @@ public class RegisterMenuController {
                 System.out.println("1. Re-enter password manually");
                 System.out.println("2. Generate random password");
                 System.out.println("3. Back to registration menu");
-
-                String choice = scanner.nextLine().trim();
-                switch (choice) {
-                    case "1":
-                        System.out.println("Please enter your new password and confirmation:");
-                        System.out.println("Format: -p <newPassword> <confirmPassword>");
-                        String newPasswordInput = scanner.nextLine().trim();
-                        currentInput = updatePasswordInCommand(currentInput, newPasswordInput);
-                        break;
-                    case "2":
-                        return handleRandomPasswordOption(currentInput);
-                    case "3":
-                        return new Result(false, "Returning to registration menu");
-                    default:
-                        System.out.println("Invalid choice, please try again");
-                        attempts++;
-                        continue;
-                }
+//                switch (choice) {
+//                    case "1":
+//                        System.out.println("Please enter your new password and confirmation:");
+//                        System.out.println("Format: -p <newPassword> <confirmPassword>");
+//                        break;
+//                    case "2":
+//                        return handleRandomPasswordOption(currentInput);
+//                    case "3":
+//                        return new Result(false, "Returning to registration menu");
+//                    default:
+//                        System.out.println("Invalid choice, please try again");
+//                        attempts++;
+//                        continue;
+//                }
                 attempts++;
             } else {
                 return result; // خطاهای دیگر
@@ -295,7 +289,7 @@ public class RegisterMenuController {
         System.out.println("Do you want to use this password? (yes/no)");
 
         while (true) {
-            String response = scanner.nextLine().trim();
+            String response = "yes";
             if (response.equals("yes")) {
                 String updatedCommand = updatePasswordInCommand(originalCommand,
                         "-p " + randomPassword + " " + randomPassword);
@@ -306,7 +300,7 @@ public class RegisterMenuController {
                 System.out.println("1. Generate another random password");
                 System.out.println("2. Back to registration menu");
 
-                String choice = scanner.nextLine().trim();
+                String choice = "1";
                 if (choice.equals("1")) {
                     return handleRandomPasswordOption(originalCommand);
                 } else if (choice.equals("2")) {
@@ -326,29 +320,30 @@ public class RegisterMenuController {
         System.out.println("2. What city were you born in?");
         System.out.println("3. What is your favorite color?");
 
-        while (true) {
-            String input = scanner.nextLine().trim();
-            Matcher matcher = Pattern.compile(RegisterMenuCommand.PICK_QUESTION.getRegexPattern())
-                    .matcher(input);
-
-            if (matcher.matches()) {
-                String questionNumber = matcher.group("questionNumber");
-                String answer = matcher.group("answer");
-                String confirmAnswer = matcher.group("confirmAnswer");
-
-                if (!answer.equals(confirmAnswer)) {
-                    return new Result(false, "Answers do not match!");
-                }
-
-                saveSecurityQuestion(questionNumber, answer);
-
-                return new Result(true, "Registration completed successfully!");
-            } else if (input.equalsIgnoreCase("back")) {
-                return new Result(false, "Returning to registration menu");
-            } else {
-                System.out.println("Invalid command format!");
-            }
-        }
+//        while (true) {
+//            String input = scanner.nextLine().trim();
+//            Matcher matcher = Pattern.compile(RegisterMenuCommand.PICK_QUESTION.getRegexPattern())
+//                    .matcher(input);
+//
+//            if (matcher.matches()) {
+//                String questionNumber = matcher.group("questionNumber");
+//                String answer = matcher.group("answer");
+//                String confirmAnswer = matcher.group("confirmAnswer");
+//
+//                if (!answer.equals(confirmAnswer)) {
+//                    return new Result(false, "Answers do not match!");
+//                }
+//
+//                saveSecurityQuestion(questionNumber, answer);
+//
+//                return new Result(true, "Registration completed successfully!");
+//            } else if (input.equalsIgnoreCase("back")) {
+//                return new Result(false, "Returning to registration menu");
+//            } else {
+//                System.out.println("Invalid command format!");
+//            }
+//        }
+        return new Result(true, "Registration completed successfully!");
     }
 
 }

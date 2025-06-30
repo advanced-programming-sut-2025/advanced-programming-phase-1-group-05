@@ -12,12 +12,13 @@ import java.util.Scanner;
 
 public class MenuController {
     private static MenuController menuController;
+    private static LoginMenu loginMenu;
     private org.example.views.AppMenu currentMenu;
     private final Scanner scanner;
 
     public MenuController(Scanner scanner) {
         this.scanner = scanner;
-        RegisterMenuController registerController = new RegisterMenuController(scanner);
+        RegisterMenuController registerController = new RegisterMenuController();
 //        this.currentMenu = new RegisterMenu(this, registerController, this.getScanner());
     }
 
@@ -30,7 +31,7 @@ public class MenuController {
                 return new Result(false, "Invalid menu transition");
             }
 
-            currentMenu = createMenuInstance(targetMenu);
+//            currentMenu = createMenuInstance(targetMenu);
             return new Result(true, "Entered " + menuName + " menu");
         } catch (IllegalArgumentException e) {
             return new Result(false, "Invalid menu name");
@@ -66,37 +67,37 @@ public class MenuController {
 //        return false;
     }
 
-    private AppMenu createMenuInstance(Menu menu) {
-        switch (menu) {
-            case LOGIN:
-                LoginMenuController loginController = new LoginMenuController(this.getScanner());
-                return null;
-            case MAIN: return new MainMenu(this);
-            case PROFILE:
-                ProfileMenuController profileController = new ProfileMenuController(
-                        this.getScanner(),
-                        LoginMenuController.currentUser
-                );
-                return new ProfileMenu(this, profileController);
-            case GAME:
-                GameMenuController gameMenuController = new GameMenuController(
-                        this.scanner,
-                        LoginMenuController.currentUser
-                );
-                return new GameMenu(this ,gameMenuController);
-            case REGISTER:
-                RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
-                return null;
-            case TRADE: {
-                return new TradeMenu(TradingController.getInstance(), this);
-            }
-            case HOME: {
-                return new HomeMenu(this);
-            }
-
-            default: throw new IllegalArgumentException("Unknown menu type");
-        }
-    }
+//    private AppMenu createMenuInstance(Menu menu) {
+//        switch (menu) {
+//            case LOGIN:
+//                LoginMenuController loginController = new LoginMenuController(this.getScanner());
+//                return null;
+//            case MAIN: return new MainMenu(loginMenu.getGame());
+//            case PROFILE:
+//                ProfileMenuController profileController = new ProfileMenuController(
+//                        this.getScanner(),
+//                        LoginMenuController.currentUser
+//                );
+//                return new ProfileMenu(this, profileController);
+//            case GAME:
+//                GameMenuController gameMenuController = new GameMenuController(
+//                        this.scanner,
+//                        LoginMenuController.currentUser
+//                );
+//                return new GameMenu(this ,gameMenuController);
+//            case REGISTER:
+//                RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
+//                return null;
+//            case TRADE: {
+//                return new TradeMenu(TradingController.getInstance(), this);
+//            }
+//            case HOME: {
+//                return new HomeMenu(this);
+//            }
+//
+//            default: throw new IllegalArgumentException("Unknown menu type");
+//        }
+//    }
 
     public Result exitMenu() {
         System.out.println("Exiting app...");
@@ -124,7 +125,7 @@ public class MenuController {
 
     public Result logoutUser() {
         if (currentMenu.getMenuName().equals("Main Menu")) {
-            currentMenu = createMenuInstance(Menu.LOGIN);
+//            currentMenu = createMenuInstance(Menu.LOGIN);
             return new Result(true, "Logged out successfully! Redirected to login menu.");
         } else {
             return new Result(false, "You can only logout from Main Menu!");
