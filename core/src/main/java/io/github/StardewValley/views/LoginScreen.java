@@ -37,39 +37,53 @@ public class LoginScreen implements Screen {
         stage = new Stage(new FitViewport(800, 600));
         Gdx.input.setInputProcessor(stage);
 
-        // 👇 اسکین از GameAssetManager
         skin = GameAssetManager.getInstance().getSkin();
-        // 👇 تصویر پس‌زمینه
         bgTexture = new Texture(Gdx.files.internal("backgrounds/login_bg.png"));
 
-        Table table = new Table();
-        table.setFillParent(true);
-        table.setBackground(new TextureRegionDrawable(new TextureRegion(bgTexture)));
-        stage.addActor(table);
+        Table rootTable = new Table();
+        rootTable.setFillParent(true);
+        rootTable.setBackground(new TextureRegionDrawable(new TextureRegion(bgTexture)));
+        stage.addActor(rootTable);
+
+        // 🪧 لوگو بالا
+        Label title = new Label("LOGIN", skin, "title");
+        Table logoTable = new Table();
+        logoTable.add(title).padTop(50);
+        rootTable.add(logoTable).expandX().top().padTop(50).row();
+
+        // 🧾 فرم ورود
+        Table formTable = new Table();
 
         usernameField = new TextField("", skin);
-        table.add(new Label("Username:", skin)).pad(5);
-        table.add(usernameField).width(200).pad(5).row();
-
         passwordField = new TextField("", skin);
         passwordField.setPasswordMode(true);
         passwordField.setPasswordCharacter('*');
-        table.add(new Label("Password:", skin)).pad(5);
-        table.add(passwordField).width(200).pad(5).row();
+
+        formTable.add(new Label("Username:", skin, "subtitle")).right().pad(5);
+        formTable.add(usernameField).width(200).pad(5).row();
+
+        formTable.add(new Label("Password:", skin, "subtitle")).right().pad(5);
+        formTable.add(passwordField).width(200).pad(5).row();
 
         stayLoggedCheck = new CheckBox("Stay logged in", skin);
-        table.add(stayLoggedCheck).colspan(2).pad(5).row();
+        formTable.add(stayLoggedCheck).colspan(2).pad(5).left().row();
 
+        rootTable.add(formTable).expand().center().row();
+
+        // 🎮 دکمه‌ها
+        Table buttonTable = new Table();
         TextButton loginButton = new TextButton("Login", skin);
         TextButton registerButton = new TextButton("Register", skin);
-        table.add(loginButton).pad(5);
-        table.add(registerButton).pad(5).row();
-
         TextButton forgotButton = new TextButton("Forgot Password", skin);
-        table.add(forgotButton).colspan(2).pad(5).row();
+        errorLabel = new Label("", skin, "subtitle");
 
-        errorLabel = new Label("", skin);
-        table.add(errorLabel).colspan(2).pad(5);
+        buttonTable.add(loginButton).pad(5);
+        buttonTable.add(registerButton).pad(5).row();
+        buttonTable.add(forgotButton).colspan(2).pad(5).row();
+        buttonTable.add(errorLabel).colspan(2).pad(5).row();
+
+        rootTable.add(buttonTable).bottom().padBottom(40);
+
 
         loginButton.addListener(new ChangeListener() {
             @Override

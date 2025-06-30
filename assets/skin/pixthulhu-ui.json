@@ -12,7 +12,8 @@
     "highlight": { "r": 0.29411766, "g": 0.5529412, "b": 0.54509807, "a": 1 },
     "red": { "r": 0.8, "g": 0.3, "b": 0.5, "a": 1 },
     "stone": { "r": 0, "g": 0.25882354, "b": 0.2509804, "a": 1 },
-    "white": { "r": 1, "g": 1, "b": 1, "a": 1 }
+    "white": { "r": 1, "g": 1, "b": 1, "a": 1 },
+    "gold": { "r": 1, "g": 0.84, "b": 0, "a": 1 }
   },
 
   "com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable": {
@@ -125,7 +126,7 @@
   "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
     "default": {
       "font": "subtitle",
-      "fontColor": "white",
+      "fontColor": "gold",
       "up": "button",
       "down": "button-pressed",
       "overFontColor": "red"
