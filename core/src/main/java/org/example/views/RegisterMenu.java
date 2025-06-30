@@ -103,6 +103,7 @@ public class RegisterMenu implements Screen {
             "What city were you born in?",
             "What is your favorite color?"
         );
+
         table.add(new Label("Security Question:", skin)).pad(5);
         table.add(questionBox).width(300).pad(5).row();
 
