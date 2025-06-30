@@ -15,7 +15,7 @@ public class MenuNavigator {
         game = gameRef;
         sharedSkin = skin;
         loginMenu = new LoginMenu(sharedSkin);
-//        registerMenu = new RegisterMenu(sharedSkin);
+        registerMenu = new RegisterMenu(sharedSkin);
         mainMenu = new MainMenu(sharedSkin);
     }
 
