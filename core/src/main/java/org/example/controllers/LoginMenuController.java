@@ -172,6 +172,7 @@ public class LoginMenuController {
         if (user == null) {
             return new Result(false, "Username not found!");
         }
+
         String hashedInput = DBController.hashPassword(password);
         if (!user.getPassword().equals(hashedInput)) {
             return new Result(false, "Incorrect password!");
