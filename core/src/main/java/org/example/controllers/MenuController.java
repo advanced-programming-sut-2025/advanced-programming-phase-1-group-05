@@ -18,7 +18,7 @@ public class MenuController {
     public MenuController(Scanner scanner) {
         this.scanner = scanner;
         RegisterMenuController registerController = new RegisterMenuController(scanner);
-        this.currentMenu = new RegisterMenu(this, registerController, this.getScanner());
+//        this.currentMenu = new RegisterMenu(this, registerController, this.getScanner());
     }
 
 
@@ -70,7 +70,7 @@ public class MenuController {
         switch (menu) {
             case LOGIN:
                 LoginMenuController loginController = new LoginMenuController(this.getScanner());
-                return new LoginMenu(this, loginController, this.getScanner());
+                return null;
             case MAIN: return new MainMenu(this);
             case PROFILE:
                 ProfileMenuController profileController = new ProfileMenuController(
@@ -86,7 +86,7 @@ public class MenuController {
                 return new GameMenu(this ,gameMenuController);
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
-                return new RegisterMenu(this, registerController, this.getScanner());
+                return null;
             case TRADE: {
                 return new TradeMenu(TradingController.getInstance(), this);
             }
