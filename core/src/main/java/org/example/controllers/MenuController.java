@@ -18,7 +18,7 @@ public class MenuController {
     public MenuController(Scanner scanner) {
         this.scanner = scanner;
         RegisterMenuController registerController = new RegisterMenuController(scanner);
-        this.currentMenu = new RegisterMenu(this, registerController, this.getScanner());
+//        this.currentMenu = new RegisterMenu(this, registerController, this.getScanner());
     }
 
 
@@ -43,20 +43,20 @@ public class MenuController {
 
         if (target == Menu.MAIN) return true;
         if ((currentMenuName.equals("Main Menu") && target == Menu.GAME) ||
-                (currentMenuName.equals("Main Menu") && target == Menu.PROFILE) ||
-                (currentMenuName.equals("Main Menu") && target == Menu.AVATAR)||
-                (currentMenuName.equals("Main Menu") && target == Menu.LOGIN) ||
-                (currentMenuName.equals("Main Menu") && target == Menu.REGISTER) ||
-                (currentMenuName.equals("Game Menu") && target == Menu.HOME) ||
-                (currentMenuName.equals("Home Menu") && target == Menu.GAME)||
-                (currentMenuName.equals("Game Menu") && target == Menu.TRADE) ||
-                (currentMenuName.equals("trade menu") && target == Menu.GAME)
+            (currentMenuName.equals("Main Menu") && target == Menu.PROFILE) ||
+            (currentMenuName.equals("Main Menu") && target == Menu.AVATAR)||
+            (currentMenuName.equals("Main Menu") && target == Menu.LOGIN) ||
+            (currentMenuName.equals("Main Menu") && target == Menu.REGISTER) ||
+            (currentMenuName.equals("Game Menu") && target == Menu.HOME) ||
+            (currentMenuName.equals("Home Menu") && target == Menu.GAME)||
+            (currentMenuName.equals("Game Menu") && target == Menu.TRADE) ||
+            (currentMenuName.equals("trade menu") && target == Menu.GAME)
         ) {
             return true;
         }
 
         if ((currentMenuName.equals("Login Menu") && target == Menu.REGISTER) ||
-                (currentMenuName.equals("Register Menu") && target == Menu.LOGIN)) {
+            (currentMenuName.equals("Register Menu") && target == Menu.LOGIN)) {
             return true;
         }
         else {
@@ -70,23 +70,23 @@ public class MenuController {
         switch (menu) {
             case LOGIN:
                 LoginMenuController loginController = new LoginMenuController(this.getScanner());
-                return new LoginMenu(this, loginController, this.getScanner());
+                return null;
             case MAIN: return new MainMenu(this);
             case PROFILE:
                 ProfileMenuController profileController = new ProfileMenuController(
-                        this.getScanner(),
-                        LoginMenuController.currentUser
+                    this.getScanner(),
+                    LoginMenuController.currentUser
                 );
                 return new ProfileMenu(this, profileController);
             case GAME:
                 GameMenuController gameMenuController = new GameMenuController(
-                        this.scanner,
-                        LoginMenuController.currentUser
+                    this.scanner,
+                    LoginMenuController.currentUser
                 );
                 return new GameMenu(this ,gameMenuController);
             case REGISTER:
                 RegisterMenuController registerController = new RegisterMenuController(this.getScanner());
-                return new RegisterMenu(this, registerController, this.getScanner());
+                return null;
             case TRADE: {
                 return new TradeMenu(TradingController.getInstance(), this);
             }
