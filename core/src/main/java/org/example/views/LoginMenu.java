@@ -315,6 +315,7 @@ public class LoginMenu implements Screen {
     private final Stage stage;
     private final Skin skin;
     private final LoginMenuController controller;
+    CheckBox stayLoggedCheck;
 
     private TextField usernameField;
     private TextField passwordField;
@@ -348,6 +349,9 @@ public class LoginMenu implements Screen {
         root.add(new Label("Password:", skin)).right().pad(5);
         root.add(passwordField).width(200).pad(5).row();
 
+        stayLoggedCheck = new CheckBox("Stay logged in", skin);
+        root.add(stayLoggedCheck).colspan(2).pad(10).row();
+
         messageLabel = new Label("", skin);
         root.add(messageLabel).colspan(2).pad(10).row();
 
@@ -362,10 +366,12 @@ public class LoginMenu implements Screen {
         // Login handler
         loginButton.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor) {
                 String username = usernameField.getText().trim();
                 String password = passwordField.getText().trim();
-                Result result = controller.loginUser(username, password, false);
+                boolean stayLogged = stayLoggedCheck.isChecked();
+
+                Result result = controller.loginUser(username, password, stayLogged);
                 if (result.isSuccess()) {
                     messageLabel.setText("Welcome, " + username + "!");
                     MenuNavigator.showMainMenu();
