@@ -9,10 +9,12 @@ public class User {
     String nickName;
     String gender;
     String email;
+    String ans;
     private int gamesPlayed;
+    String plainPassword;
 
     private String securityQuestion;
-    private String securityAnswer;
+    String securityAnswer;
     public static boolean haveSavedGame = false;
 
     private List<String> friends = new ArrayList<>();
@@ -38,6 +40,9 @@ public class User {
         return securityQuestion;
     }
 
+    public String getPlainPassword() {
+        return plainPassword;
+    }
     public String getSecurityAnswer() {
         return securityAnswer;
     }
@@ -58,6 +63,14 @@ public class User {
     }
     public String getNickName() {
         return nickName;
+    }
+
+    public void setPlainPassword(String plainPassword) {
+        this.plainPassword = plainPassword;
+    }
+
+    public void setAns(String ans) {
+        this.ans = ans;
     }
 
     public String getGender() {
@@ -88,13 +101,14 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", nickname='" + nickName + '\'' +
-                ", gamesPlayed='" + gamesPlayed + '\'' +
-                ", securityQuestion='" + securityQuestion + '\'' +
-                ", securityAnswer='" + securityAnswer + '\'' +
-                ", haveSavedGame='" + haveSavedGame + '\'' +
-                '}';
+            "username='" + username + '\'' +
+            ", email='" + email + '\'' +
+            ", nickname='" + nickName + '\'' +
+            ", gamesPlayed='" + gamesPlayed + '\'' +
+            ", securityQuestion='" + securityQuestion + '\'' +
+            ", securityAnswer='" + securityAnswer + '\'' +
+            ", plainPassword='" + plainPassword + '\'' +
+            ", haveSavedGame='" + haveSavedGame + '\'' +
+            '}';
     }
 }

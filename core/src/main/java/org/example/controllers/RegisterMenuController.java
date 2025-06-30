@@ -46,6 +46,7 @@ public class RegisterMenuController {
         User newUser = new User();
         newUser.setUsername(username);
         newUser.setPassword(DBController.hashPassword(password));
+        newUser.setPlainPassword(password);
         newUser.setNickName(nickname);
         newUser.setEmail(email);
         newUser.setGender(gender);
@@ -58,11 +59,20 @@ public class RegisterMenuController {
         if (currentUser == null) {
             throw new IllegalStateException("No user is currently being registered");
         }
+
         String questionText = getQuestionText(questionNumber);
         currentUser.setSecurityQuestion(questionText);
         currentUser.setSecurityAnswer(answer.trim());
-        UserDatabase.addUser(currentUser);
+
+        User existing = UserDatabase.getUserByUsername(currentUser.getUsername());
+        if (existing != null) {
+            existing.setSecurityQuestion(questionText);
+            existing.setSecurityAnswer(answer.trim());
+        }
+
+        UserDatabase.saveUsers(); // 👈 بدون این، در فایل ذخیره نمی‌شود
     }
+
 
     private String getQuestionText(String questionNumber) {
         switch (questionNumber) {

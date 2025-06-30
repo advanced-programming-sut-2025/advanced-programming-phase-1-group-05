@@ -96,6 +96,7 @@ public class ProfileMenuController extends MenuController {
         }
 
         currentUser.setPassword(newPassword);
+        currentUser.setPlainPassword(newPassword);
         DBController.saveAllUsers();
         return Result.success("Password changed successfully!");
     }

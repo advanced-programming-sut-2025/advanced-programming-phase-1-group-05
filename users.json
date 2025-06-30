@@ -16,5 +16,37 @@
     "email": "Nila.-a11@gma-il.com",
     "gamesPlayed": 0,
     "friends": []
+  },
+  {
+    "username": "Roya-22",
+    "password": "c6970ca19eb41e00fb5edc85b568a83378e98cab1e15de187e2ebbab324a970a",
+    "nickName": "roya",
+    "gender": "Male",
+    "email": "Ali-Test1@domain.com",
+    "gamesPlayed": 0,
+    "friends": []
+  },
+  {
+    "username": "Nima-22",
+    "password": "b6e91a7dbb4e2a3b09fa62bfb12fc814c5fa4ccdfdd35cf6063331da30798786",
+    "nickName": "nimaa",
+    "gender": "Male",
+    "email": "Ali-Test1@domain.com",
+    "gamesPlayed": 0,
+    "securityQuestion": "What was your first pet\u0027s name?",
+    "securityAnswer": "rr",
+    "friends": []
+  },
+  {
+    "username": "Nima-2",
+    "password": "b6e91a7dbb4e2a3b09fa62bfb12fc814c5fa4ccdfdd35cf6063331da30798786",
+    "nickName": "nimaa",
+    "gender": "Male",
+    "email": "Ali-Test1@domain.com",
+    "gamesPlayed": 0,
+    "plainPassword": "!@Nima1184",
+    "securityQuestion": "What was your first pet\u0027s name?",
+    "securityAnswer": "qqq",
+    "friends": []
   }
 ]
