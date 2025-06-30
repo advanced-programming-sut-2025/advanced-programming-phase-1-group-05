@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import io.github.StardewValley.models.GameAssetManager;
 
 public class LoginScreen implements Screen {
     private Game game;
@@ -33,52 +34,43 @@ public class LoginScreen implements Screen {
 
     @Override
     public void show() {
-        // ایجاد Stage و تنظیم ورودی
         stage = new Stage(new FitViewport(800, 600));
-        Gdx.input.setInputProcessor(stage); // هدایت رویدادهای ورودی به Stage :contentReference[oaicite:9]{index=9}
+        Gdx.input.setInputProcessor(stage);
 
-        // بارگذاری منابع
+        // 👇 اسکین از GameAssetManager
+        skin = GameAssetManager.getInstance().getSkin();
+        // 👇 تصویر پس‌زمینه
         bgTexture = new Texture(Gdx.files.internal("backgrounds/login_bg.png"));
-        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        // فرض می‌شود فونت پیکسلی در skin تعریف شده یا از طریق فایل بارگذاری شده است:contentReference[oaicite:10]{index=10}
 
-        // ایجاد Table ریشه
         Table table = new Table();
         table.setFillParent(true);
-        table.setBackground(new TextureRegionDrawable(new TextureRegion(bgTexture))); // پس‌زمینه تصویر
+        table.setBackground(new TextureRegionDrawable(new TextureRegion(bgTexture)));
         stage.addActor(table);
 
-        // نام کاربری
         usernameField = new TextField("", skin);
         table.add(new Label("Username:", skin)).pad(5);
         table.add(usernameField).width(200).pad(5).row();
 
-        // رمز عبور (حالت ماسک)
         passwordField = new TextField("", skin);
         passwordField.setPasswordMode(true);
         passwordField.setPasswordCharacter('*');
         table.add(new Label("Password:", skin)).pad(5);
         table.add(passwordField).width(200).pad(5).row();
 
-        // چک‌باکس "مرا به خاطر بسپار"
         stayLoggedCheck = new CheckBox("Stay logged in", skin);
         table.add(stayLoggedCheck).colspan(2).pad(5).row();
 
-        // دکمه‌های Login و Register
         TextButton loginButton = new TextButton("Login", skin);
         TextButton registerButton = new TextButton("Register", skin);
         table.add(loginButton).pad(5);
         table.add(registerButton).pad(5).row();
 
-        // دکمه فراموشی رمز
         TextButton forgotButton = new TextButton("Forgot Password", skin);
         table.add(forgotButton).colspan(2).pad(5).row();
 
-        // لیبل پیام خطا (در ابتدا خالی)
         errorLabel = new Label("", skin);
         table.add(errorLabel).colspan(2).pad(5);
 
-        // مدیریت رویداد کلیک دکمه Login
         loginButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -87,10 +79,8 @@ public class LoginScreen implements Screen {
                 if (user.isEmpty() || pass.isEmpty()) {
                     errorLabel.setText("Please enter username and password");
                 } else {
-                    // بررسی اعتبار (در اینجا به‌صورت نمونه با مقادیر فرضی)
                     if (user.equals("user") && pass.equals("pass")) {
-                        // موفقیت: رفتن به صفحه MainMenu
-                        game.setScreen((Screen) new MainMenuScreen(game));
+                        game.setScreen(new MainMenuScreen(game));
                     } else {
                         errorLabel.setText("Invalid credentials");
                     }
@@ -98,7 +88,6 @@ public class LoginScreen implements Screen {
             }
         });
 
-        // کلیک دکمه Register: رفتن به صفحه ثبت‌نام
         registerButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -106,7 +95,6 @@ public class LoginScreen implements Screen {
             }
         });
 
-        // کلیک دکمه Forgot Password: (در اینجا فقط نمایش پیام ساده)
         forgotButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -123,18 +111,15 @@ public class LoginScreen implements Screen {
         stage.draw();
     }
 
-    @Override
-    public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true); // تطبیق Viewport با اندازه جدید:contentReference[oaicite:11]{index=11}
+    @Override public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
     }
-
-    @Override public void pause() { }
-    @Override public void resume() { }
-    @Override public void hide() { }
-    @Override
-    public void dispose() {
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
+    @Override public void dispose() {
         stage.dispose();
         bgTexture.dispose();
-        skin.dispose();
     }
 }
+

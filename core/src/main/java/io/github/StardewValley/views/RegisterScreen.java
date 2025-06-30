@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import io.github.StardewValley.models.GameAssetManager;
 
 public class RegisterScreen implements Screen {
     private Game game;
@@ -36,75 +37,61 @@ public class RegisterScreen implements Screen {
 
     @Override
     public void show() {
-        // ساخت Stage و تعیین ورودی
         stage = new Stage(new FitViewport(800, 600));
         Gdx.input.setInputProcessor(stage);
 
-        // بارگذاری منابع
+        // 👇 تغییر فقط در بارگذاری اسکین
+        skin = GameAssetManager.getInstance().getSkin();
         bgTexture = new Texture(Gdx.files.internal("backgrounds/register_bg.png"));
-        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        // فرض بر آن است که فونت پیکسلی نیز در skin تعریف شده باشد:contentReference[oaicite:13]{index=13}
 
-        // ایجاد Table
         Table table = new Table();
         table.setFillParent(true);
         table.setBackground(new TextureRegionDrawable(new TextureRegion(bgTexture)));
         stage.addActor(table);
 
-        // نام کاربری
         usernameField = new TextField("", skin);
         table.add(new Label("Username:", skin)).pad(5);
         table.add(usernameField).width(200).pad(5).row();
 
-        // نام نمایشی (nickname)
         nicknameField = new TextField("", skin);
         table.add(new Label("Nickname:", skin)).pad(5);
         table.add(nicknameField).width(200).pad(5).row();
 
-        // ایمیل
         emailField = new TextField("", skin);
         table.add(new Label("Email:", skin)).pad(5);
         table.add(emailField).width(200).pad(5).row();
 
-        // رمز عبور
         passwordField = new TextField("", skin);
         passwordField.setPasswordMode(true);
         passwordField.setPasswordCharacter('*');
         table.add(new Label("Password:", skin)).pad(5);
         table.add(passwordField).width(200).pad(5).row();
 
-        // تکرار رمز عبور
         confirmPasswordField = new TextField("", skin);
         confirmPasswordField.setPasswordMode(true);
         confirmPasswordField.setPasswordCharacter('*');
         table.add(new Label("Confirm Password:", skin)).pad(5);
         table.add(confirmPasswordField).width(200).pad(5).row();
 
-        // جنسیت (SelectBox)
         genderBox = new SelectBox<String>(skin);
-        genderBox.setItems("Male", "Female"); // می‌توان متن فارسی نیز قرار داد
+        genderBox.setItems("Male", "Female");
         table.add(new Label("Gender:", skin)).pad(5);
         table.add(genderBox).width(200).pad(5).row();
 
-        // دکمه تولید رمز تصادفی
         TextButton randomButton = new TextButton("Generate Random Password", skin);
         table.add(randomButton).colspan(2).pad(5).row();
 
-        // پیام خطا
         errorLabel = new Label("", skin);
         table.add(errorLabel).colspan(2).pad(5).row();
 
-        // دکمه ثبت‌نام نهایی و بازگشت (ابتدا تنها دکمه بازگشت اضافه می‌شود)
         TextButton registerButton = new TextButton("Register", skin);
         TextButton backButton = new TextButton("Back to Login", skin);
         table.add(registerButton).pad(5);
         table.add(backButton).pad(5).row();
 
-        // Listener دکمه تولید رمز تصادفی
         randomButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // تولید یک رمز ساده تصادفی (مثال)
                 String randomPass = "";
                 for (int i = 0; i < 8; i++) {
                     char c = (char)('a' + (int)(Math.random() * 26));
@@ -115,27 +102,23 @@ public class RegisterScreen implements Screen {
             }
         });
 
-        // Listener دکمه Register
         registerButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (!questionVisible) {
-                    // صحت‌سنجی اولیه فیلدها
                     String user = usernameField.getText().trim();
                     String nick = nicknameField.getText().trim();
                     String email = emailField.getText().trim();
                     String pass = passwordField.getText();
                     String confirmPass = confirmPasswordField.getText();
-                    if (user.isEmpty() || nick.isEmpty() || email.isEmpty() ||
-                        pass.isEmpty() || !pass.equals(confirmPass)) {
+                    if (user.isEmpty() || nick.isEmpty() || email.isEmpty() || pass.isEmpty() || !pass.equals(confirmPass)) {
                         errorLabel.setText("Please fill all fields correctly");
                     } else {
-                        // افزودن فیلدهای سؤال امنیتی به جدول
                         questionVisible = true;
                         table.clear();
                         table.setFillParent(true);
                         table.setBackground(new TextureRegionDrawable(new TextureRegion(bgTexture)));
-                        // بازافزودن تمام فیلدهای بالایی (داده‌های فعلی در TextField‌ها حفظ می‌شود)
+
                         table.add(new Label("Username:", skin)).pad(5);
                         table.add(usernameField).width(200).pad(5).row();
                         table.add(new Label("Nickname:", skin)).pad(5);
@@ -151,7 +134,6 @@ public class RegisterScreen implements Screen {
                         table.add(randomButton).colspan(2).pad(5).row();
                         table.add(errorLabel).colspan(2).pad(5).row();
 
-                        // ایجاد و افزودن ویجت‌های سؤال امنیتی
                         Label questionLabel = new Label("Security Question:", skin);
                         questionBox = new SelectBox<String>(skin);
                         questionBox.setItems("Your pet's name?", "Your birth city?", "Favorite color?");
@@ -166,25 +148,21 @@ public class RegisterScreen implements Screen {
                         table.add(confirmAnsLabel).pad(5);
                         table.add(confirmAnswerField).width(200).pad(5).row();
 
-                        // افزودن دوباره دکمه‌های نهایی ثبت و بازگشت
                         table.add(registerButton).pad(5);
                         table.add(backButton).pad(5).row();
                     }
                 } else {
-                    // پس از نمایش سوال امنیتی: صحت‌سنجی نهایی
                     String ans = answerField.getText().trim();
                     String ansConfirm = confirmAnswerField.getText().trim();
                     if (ans.isEmpty() || !ans.equals(ansConfirm)) {
                         errorLabel.setText("Answers do not match or are empty");
                     } else {
-                        // در صورت صحت: رفتن به MainMenu
-                        game.setScreen((Screen) new MainMenuScreen(game));
+                        game.setScreen(new MainMenuScreen(game));
                     }
                 }
             }
         });
 
-        // Listener دکمه Back
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -201,17 +179,14 @@ public class RegisterScreen implements Screen {
         stage.draw();
     }
 
-    @Override
-    public void resize(int width, int height) {
+    @Override public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
-    @Override public void pause() { }
-    @Override public void resume() { }
-    @Override public void hide() { }
-    @Override
-    public void dispose() {
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
+    @Override public void dispose() {
         stage.dispose();
         bgTexture.dispose();
-        skin.dispose();
     }
 }
