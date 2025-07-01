@@ -5,7 +5,10 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import org.example.controllers.DBController;
 import org.example.controllers.RegisterMenuController;
+import org.example.models.MyGame;
+import org.example.models.Player;
 import org.example.models.User;
 import org.example.models.UserDatabase;
 import org.example.views.MenuNavigator;
@@ -42,6 +45,7 @@ public class Main extends Game {
     }
 
     public static void checkAutoLogin() {
+        DBController.loadPlayersFromFile();
         UserDatabase.loadUsers();
         File file = new File("currentuser.json");
         if (!file.exists()) {
@@ -58,6 +62,8 @@ public class Main extends Game {
 
             if (stayLogged && username != null) {
                 User user = UserDatabase.getUserByUsername(username);
+                Player currentPlayer = MyGame.getPlayerByUsername(user.getUsername());
+                MyGame.setCurrentPlayer(currentPlayer);
                 if (user != null) {
                     RegisterMenuController.currentUser = user;
                     MenuNavigator.showMainMenu();

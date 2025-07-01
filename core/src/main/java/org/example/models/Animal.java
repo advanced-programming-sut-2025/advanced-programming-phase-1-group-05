@@ -96,42 +96,42 @@ public class Animal implements Item{
         switch (type) {
             case COW : {
                 enclosureType = EnclosureType.BARN;
-                products.add(Game.getDatabase().getItem("Milk"));
-                products.add(Game.getDatabase().getItem("Large milk"));
+                products.add(MyGame.getDatabase().getItem("Milk"));
+                products.add(MyGame.getDatabase().getItem("Large milk"));
                 break;
             }
             case GOAT : {
                 enclosureType = EnclosureType.BARN;
-                products.add(Game.getDatabase().getItem("Goat Milk"));
-                products.add(Game.getDatabase().getItem("Large goat milk"));
+                products.add(MyGame.getDatabase().getItem("Goat Milk"));
+                products.add(MyGame.getDatabase().getItem("Large goat milk"));
                 break;
             }
             case PIG : {
                 enclosureType = EnclosureType.BARN;
-                products.add(Game.getDatabase().getItem("Truffle"));
+                products.add(MyGame.getDatabase().getItem("Truffle"));
                 break;
             }
             case DUCK : {
                 enclosureType = EnclosureType.COOP;
-                products.add(Game.getDatabase().getItem("Duck feather"));
-                products.add(Game.getDatabase().getItem("Duck egg"));
+                products.add(MyGame.getDatabase().getItem("Duck feather"));
+                products.add(MyGame.getDatabase().getItem("Duck egg"));
                 break;
             }
             case RABBIT : {
                 enclosureType = EnclosureType.COOP;
-                products.add(Game.getDatabase().getItem("Wool"));
-                products.add(Game.getDatabase().getItem("Rabbit's foot"));
+                products.add(MyGame.getDatabase().getItem("Wool"));
+                products.add(MyGame.getDatabase().getItem("Rabbit's foot"));
                 break;
             }
             case SHEEP : {
                 enclosureType = EnclosureType.BARN;
-                products.add(Game.getDatabase().getItem("Wool"));
+                products.add(MyGame.getDatabase().getItem("Wool"));
                 break;
             }
             case CHICKEN : {
                 enclosureType = EnclosureType.COOP;
-                products.add(Game.getDatabase().getItem("Egg"));
-                products.add(Game.getDatabase().getItem("Large egg"));
+                products.add(MyGame.getDatabase().getItem("Egg"));
+                products.add(MyGame.getDatabase().getItem("Large egg"));
                 break;
             }
 

@@ -1,7 +1,6 @@
 package org.example.models;
 
 import org.example.models.Enums.BuildingType;
-import org.example.models.Enums.MineralType;
 import org.example.models.Enums.TileType;
 
 public class GameTile {
@@ -69,7 +68,7 @@ public class GameTile {
 
     @Override
     public String toString() {
-        Player currentPlayer = Game.getCurrentPlayer();
+        Player currentPlayer = MyGame.getCurrentPlayer();
         if (currentPlayer != null &&
                 currentPlayer.getX() == this.x &&
                 currentPlayer.getY() == this.y) {

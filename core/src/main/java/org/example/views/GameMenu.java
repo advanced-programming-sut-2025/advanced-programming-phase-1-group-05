@@ -133,6 +133,7 @@ public class GameMenu implements Screen {
     private final GameMenuController controller;
     private final List<TextField> playerFields = new ArrayList<>();
     private final Label resultLabel;
+    List<String> usernames = new ArrayList<>();
 
     public GameMenu(Skin skin, GameMenuController controller) {
         this.skin = skin;
@@ -176,7 +177,7 @@ public class GameMenu implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
                 resultLabel.setText("");
 
-                List<String> usernames = new ArrayList<>();
+//                List<String> usernames = new ArrayList<>();
                 for (TextField field : playerFields) {
                     String username = field.getText().trim();
                     if (username.isEmpty()) {
@@ -210,6 +211,16 @@ public class GameMenu implements Screen {
                         usernames.add(player.getUsername());
                     }
                     MenuNavigator.showMapSelectionScreen(usernames, skin, controller);
+                }
+                if (usernames == null) {
+                    resultLabel.setText("Please enter all 3 player names.");
+                    MenuNavigator.showGameMenu();
+                }
+                for (String username : usernames) {
+                    if (username.isEmpty() || username == null) {
+                        resultLabel.setText("Please enter all 3 player names.");
+                        return;
+                    }
                 }
             }
         });

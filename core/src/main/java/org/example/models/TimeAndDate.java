@@ -3,9 +3,6 @@ package org.example.models;
 import org.example.controllers.GameManager;
 import org.example.models.Enums.Season;
 
-import java.sql.Time;
-import java.util.Date;
-
 public class TimeAndDate {
     int day = 1;
     Season season;
@@ -63,11 +60,11 @@ public class TimeAndDate {
             day = 1;
             season = season.next();
         }
-        Game.getGameMap().growPlants();
-        Game.getGameMap().setForagingItems();
-        Game.getGameMap().setForagingMinerals();
-        Game.setForecastedWeatherBySeason(season);
-        Game.getGameMap().crowDamage();
+        MyGame.getGameMap().growPlants();
+        MyGame.getGameMap().setForagingItems();
+        MyGame.getGameMap().setForagingMinerals();
+        MyGame.setForecastedWeatherBySeason(season);
+        MyGame.getGameMap().crowDamage();
         GameManager.nextDay();
     }
     public Season getCurrentSeason() { return season; }

@@ -3,7 +3,6 @@ package org.example.controllers;
 import org.example.models.*;
 import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.*;
-import org.example.models.Tool.FishingPole;
 import org.example.models.Tool.Tool;
 
 import java.util.HashMap;
@@ -13,8 +12,8 @@ import java.util.regex.Matcher;
 public class StoreController {
 
     private Store getCurrentStore() {
-        Player player = Game.getCurrentPlayer();
-        for (Store store : Game.getDatabase().getStores()){
+        Player player = MyGame.getCurrentPlayer();
+        for (Store store : MyGame.getDatabase().getStores()){
             if (store.isInside(player.getX(), player.getY())){
                 return store;
             }
@@ -62,9 +61,9 @@ public class StoreController {
         }
         if (!store.isOpen(GameManager.getCurrentHour()))
             return Result.error("store not open right now.");
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
         Product product = store.getProduct(productName);
-        if (Game.getDatabase().getItem(productName) == null)
+        if (MyGame.getDatabase().getItem(productName) == null)
             return Result.error("That item doesn't exist. But hey, points for creativity!");
         if (product == null) {
             return Result.error("This store doesn't have that product. Maybe try shopping elsewhere.");
@@ -86,33 +85,33 @@ public class StoreController {
         //change backpack capacity
         if(productName.contains("Pack")) {
             if(productName.equals("Large Pack")) {
-                Game.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Big);
+                MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Big);
             } else if(productName.equals("Deluxe Pack")) {
-                Game.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Deluxe);
+                MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Deluxe);
             }
             //change trash can
         } else if(productName.contains("Trash Can")) {
             if(productName.equals("Copper Trash Can")) {
-                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Brass);
+                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Brass);
             } else if(productName.equals("Steel Trash Can")) {
-                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iron);
+                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iron);
             } else if(productName.equals("Gold Trash Can")) {
-                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Gold);
+                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Gold);
             } else if(productName.equals("Iridium Trash Can")) {
-                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iridium);
+                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iridium);
             }
             //add craft recipes to learnt recipes
         } else if(productName.contains("Recipe")) {
             if (productName.equals("Dehydrator Recipe")) {
-                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
             } else if (productName.equals("Grass Starter Recipe")) {
-                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
             } else if (productName.equals("Fish Smoker Recipe")) {
-                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
             } else {
                 String name = productName.replace("Recipe", "");
                 CookingRecipeType type = CookingRecipeType.fromString(name);
-                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
+                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
             }
 
         } else {
@@ -126,12 +125,12 @@ public class StoreController {
         int count;
 
         String productName = m.group("productName");
-        Player currentPlayer = Game.getCurrentPlayer();
+        Player currentPlayer = MyGame.getCurrentPlayer();
         Item item = currentPlayer.getBackPack().getFromInventory(productName);
         if (item instanceof Tool<?>) {
             return Result.error("Nice try, but the shipping bin has standards. Tools not accepted.");
         }
-        if (Game.getDatabase().getItem(productName) == null) return Result.error("try selling something that exists!");
+        if (MyGame.getDatabase().getItem(productName) == null) return Result.error("try selling something that exists!");
         if (currentPlayer.getItemQuantity(item) == 0 )
             return Result.error("You present your empty hands with confidence. Sadly, buyers prefer actual stuff");
         if (m.group("count") != null) count = Integer.parseInt(m.group("count"));
@@ -143,7 +142,7 @@ public class StoreController {
         if (!currentPlayer.getFarm().getShippingBin().isNear(currentPlayer.getX(), currentPlayer.getY()))
             return Result.error("You can't just toss things into air and hope for a sale. Find a shipping bin first.");
 
-        Game.soldItems.put(currentPlayer, item);
+        MyGame.soldItems.put(currentPlayer, item);
         return Result.success("You will receive the gold tomorrow morning!");
     }
 
@@ -157,7 +156,7 @@ public class StoreController {
         if (product == null) {
             return Result.error("Can't find animal type " + m.group("animalType"));
         }
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
         if (player.getGold() < product.getPrice()) {
             return Result.error("You do not have enough money to buy this animal!");
         }
@@ -195,10 +194,10 @@ public class StoreController {
         else   return Result.error("You can only build a coop or a barn.");
         int x = Integer.parseInt(m.group("x")), y = Integer.parseInt(m.group("y"));
 
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
         for (int i = x; i < type.getRows() + x; i++) {
             for (int j = y; j < type.getColumns() + y; j++) {
-                GameTile tile = Game.getGameMap().getTile(i, j);
+                GameTile tile = MyGame.getGameMap().getTile(i, j);
                 if (tile == null || !tile.getTileType().equals(TileType.Soil)) {
                     return Result.error("You can’t build here. The area must be completely flat.");
                 }
@@ -221,7 +220,7 @@ public class StoreController {
 
         for (int i = x; i < type.getRows() + x; i++) {
             for (int j = y; j < type.getColumns() + y; j++) {
-                GameTile tile = Game.getGameMap().getTile(i, j);
+                GameTile tile = MyGame.getGameMap().getTile(i, j);
                 tile.setTileType(TileType.Building);
                 // اینجا باید چک شه که نباشه چیزی ولی خب
                 tile.setItemOnTile(null);
@@ -236,16 +235,16 @@ public class StoreController {
 
     private boolean canAfford(Product product) {
         for (Map.Entry<String, Integer> cost : product.getCosts().entrySet()) {
-            Item item = Game.getDatabase().getItem(cost.getKey());
+            Item item = MyGame.getDatabase().getItem(cost.getKey());
             int quantity = cost.getValue();
-            if (Game.getCurrentPlayer().getItemQuantity(item) < quantity) {
+            if (MyGame.getCurrentPlayer().getItemQuantity(item) < quantity) {
                 return false;
             }
         }
         for (Map.Entry<String, Integer> cost : product.getCosts().entrySet()) {
-            Item item = Game.getDatabase().getItem(cost.getKey());
+            Item item = MyGame.getDatabase().getItem(cost.getKey());
             int quantity = cost.getValue();
-            Player currentPlayer = Game.getCurrentPlayer();
+            Player currentPlayer = MyGame.getCurrentPlayer();
             currentPlayer.getBackPack().removeFromInventory(item, quantity);
         }
         return true;
@@ -258,7 +257,7 @@ public class StoreController {
         if (store == null || !store.getStoreName().equals("Blacksmith")) {
             return Result.error("You can only upgrade tools in the blacksmith.");
         }
-        HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
+        HashMap<Item, Integer> items = MyGame.getCurrentPlayer().getBackPack().getInventory();
         for (Item item : items.keySet()) {
             if (item.getName().equalsIgnoreCase(name)) {
                 if (item instanceof Tool) {
@@ -272,10 +271,10 @@ public class StoreController {
                     Product product = store.getProduct(levelName + " tool");
                     if (product == null) return Result.success("can't upgrade tool");
                     int price  = store.getProduct(levelName + " tool").getPrice();
-                    Player player = Game.getCurrentPlayer();
+                    Player player = MyGame.getCurrentPlayer();
                     if (price > player.getGold())
                         return Result.error("You can't afford to upgrade this tool!");
-                    Game.getCurrentPlayer().addGold(-price);
+                    MyGame.getCurrentPlayer().addGold(-price);
                     ((Tool) item).upgradeLevel();
                     return new Result(true, item.getName() + " upgraded to level " + ((Tool) item).getLevel());
                 } else {

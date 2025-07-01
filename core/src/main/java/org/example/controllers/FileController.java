@@ -8,7 +8,17 @@ import java.util.logging.Logger;
 public class FileController {
     public static void writeTextToFile(String text , String path) {
         try {
-            FileWriter fileWriter = new FileWriter("users.json");
+            FileWriter fileWriter = new FileWriter(path);
+            fileWriter.write(text);
+            fileWriter.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void writeTextToFile2(String text) {
+        try {
+            FileWriter fileWriter = new FileWriter("game_state.json");
             fileWriter.write(text);
             fileWriter.close();
         } catch (Exception e) {

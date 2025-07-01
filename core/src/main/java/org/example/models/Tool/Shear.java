@@ -2,10 +2,8 @@ package org.example.models.Tool;
 
 import org.example.models.*;
 import org.example.models.Enums.ItemLevel;
-import org.example.models.Enums.TileType;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class Shear implements Tool<ItemLevel> {
     ItemLevel level;
@@ -25,7 +23,7 @@ public class Shear implements Tool<ItemLevel> {
         if(!reduceEnergy(4))
             return new Result(false, "You don't have enough energy");
 
-        GameMap map = Game.getGameMap();
+        GameMap map = MyGame.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
 
         Item item = tile.getItemOnTile();
@@ -34,17 +32,17 @@ public class Shear implements Tool<ItemLevel> {
         if(item == null) {
             return new Result(false, "No sheep on this tile!");
         } else if(item instanceof Animal) {
-            Game.getCurrentPlayer().getAnimalCare().shaveAnimal((Animal) item);
+            MyGame.getCurrentPlayer().getAnimalCare().shaveAnimal((Animal) item);
         }
-        
+
         return new Result(true, "");
     }
 
     @Override
     public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
-        if(Game.getCurrentPlayer().getEnergy() - amount < 0)return false;
-        Game.getCurrentPlayer().increaseEnergy(-amount);
+        if(MyGame.getCurrentPlayer().getEnergy() - amount < 0)return false;
+        MyGame.getCurrentPlayer().increaseEnergy(-amount);
         return true;
     }
     @Override

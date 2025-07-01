@@ -2,10 +2,9 @@ package org.example.models.Skills;
 
 import org.example.models.Enums.CookingRecipeType;
 import org.example.models.Enums.CraftType;
-import org.example.models.Game;
+import org.example.models.MyGame;
 import org.example.models.GameTile;
 import org.example.models.Item;
-import org.example.models.Tool.Axe;
 
 public class Foraging implements Skill{
     int level = 0;
@@ -14,7 +13,7 @@ public class Foraging implements Skill{
     //TODO add tool
     public void forageItem(GameTile tile) {
         Item item = tile.getItemOnTile();
-        Game.getCurrentPlayer().getBackPack().addToInventory(item, 1);
+        MyGame.getCurrentPlayer().getBackPack().addToInventory(item, 1);
         increaseCapacity();
     }
 
@@ -57,19 +56,19 @@ public class Foraging implements Skill{
     public void handleLevelChangeTrophies(int level){
         switch (level) {
             case 1: {
-                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.CharcoalKlin);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.CharcoalKlin);
                 break;
             }
             case 2: {
-                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.VegetableMedley);
+                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.VegetableMedley);
                 break;
             }
             case 3: {
-                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.SurvivalBurger);
+                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.SurvivalBurger);
                 break;
             }
             case 4: {
-                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.MysticTreeSeed);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.MysticTreeSeed);
                 break;
             }
         }

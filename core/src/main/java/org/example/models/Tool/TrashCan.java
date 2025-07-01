@@ -4,19 +4,18 @@ import org.example.models.*;
 import org.example.models.Enums.ItemLevel;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class TrashCan implements Tool <ItemLevel> {
     ItemLevel level = ItemLevel.Normal;
 
     public void removeFromInventory(String name, int quantity){
         Item itemToRemove = null;
-        for(Item item : Game.getCurrentPlayer().getBackPack().getInventory().keySet()) {
+        for(Item item : MyGame.getCurrentPlayer().getBackPack().getInventory().keySet()) {
             if(item.getName().equals(name)) {
                 itemToRemove = item;
             }
         }
-        Game.getCurrentPlayer().getBackPack().removeFromInventory(itemToRemove, quantity);
+        MyGame.getCurrentPlayer().getBackPack().removeFromInventory(itemToRemove, quantity);
     }
 
     public void setLevel(ItemLevel level){

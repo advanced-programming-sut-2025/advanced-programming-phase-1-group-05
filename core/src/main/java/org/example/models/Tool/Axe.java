@@ -6,7 +6,6 @@ import org.example.models.Enums.TileType;
 import org.example.models.Skills.Skill;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class Axe implements Tool <ItemLevel>{
     ItemLevel level = ItemLevel.Normal;
@@ -22,9 +21,9 @@ public class Axe implements Tool <ItemLevel>{
     }
     @Override
     public Result use(HashMap.Entry<Integer, Integer> coordinates){
-        GameMap map = Game.getGameMap();
+        GameMap map = MyGame.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
-        Skill foraging = Game.getCurrentPlayer().getForagingSkill();
+        Skill foraging = MyGame.getCurrentPlayer().getForagingSkill();
         int energyUsage = level.getEnergyUsage();
 
         Item item = tile.getItemOnTile();
@@ -43,14 +42,14 @@ public class Axe implements Tool <ItemLevel>{
             if (item instanceof Tree) {
                 tile.setItemOnTile(null);
                 Item wood = database.getItem("Wood");
-                Game.getCurrentPlayer().getBackPack().addToInventory(wood, 8);
+                MyGame.getCurrentPlayer().getBackPack().addToInventory(wood, 8);
                 Item sap = new BasicItem(((Tree) item).getName() + " sap", 0);
-                Game.getCurrentPlayer().getBackPack().addToInventory(sap, 2);
+                MyGame.getCurrentPlayer().getBackPack().addToInventory(sap, 2);
                 Result result = ((Tree)item).cutDownTree();
                 return result;
             } else if (item.getName().equals("Wood")) {
                 tile.setItemOnTile(null);
-                Game.getCurrentPlayer().getBackPack().addToInventory(item, 1);
+                MyGame.getCurrentPlayer().getBackPack().addToInventory(item, 1);
             } else {
                 if (foraging.isMaxLevel()) energyUsage--;
                 if (!reduceEnergy(energyUsage - 1)) {
@@ -70,8 +69,8 @@ public class Axe implements Tool <ItemLevel>{
     @Override
     public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
-        if(Game.getCurrentPlayer().getEnergy() - amount < 0)return false;
-        Game.getCurrentPlayer().increaseEnergy(-amount);
+        if(MyGame.getCurrentPlayer().getEnergy() - amount < 0)return false;
+        MyGame.getCurrentPlayer().increaseEnergy(-amount);
         return true;
     }
     @Override

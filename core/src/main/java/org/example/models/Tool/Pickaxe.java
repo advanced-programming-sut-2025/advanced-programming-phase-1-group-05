@@ -2,13 +2,11 @@ package org.example.models.Tool;
 
 import org.example.models.*;
 import org.example.models.Enums.ItemLevel;
-import org.example.models.Enums.MineralType;
 import org.example.models.Enums.TileType;
 import org.example.models.Skills.Mining;
 import org.example.models.Skills.Skill;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class Pickaxe implements Tool <ItemLevel> {
     ItemLevel level = ItemLevel.Normal;
@@ -23,9 +21,9 @@ public class Pickaxe implements Tool <ItemLevel> {
     }
     @Override
     public Result use(HashMap.Entry<Integer, Integer> coordinates){
-        GameMap map = Game.getGameMap();
+        GameMap map = MyGame.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
-        Skill mining = Game.getCurrentPlayer().getMiningSkill();
+        Skill mining = MyGame.getCurrentPlayer().getMiningSkill();
         int energyUsage = level.getEnergyUsage();
 
         Item item = tile.getItemOnTile();
@@ -44,10 +42,10 @@ public class Pickaxe implements Tool <ItemLevel> {
                 ((Mining) mining).mine(tile, this);
                 return new Result(true, "Successfully mined a mineral");
             } else if(item instanceof Craft) {
-                Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
+                MyGame.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
                 tile.setItemOnTile(null);
             }
-            else Game.getCurrentPlayer().getForagingSkill().forageItem(tile);
+            else MyGame.getCurrentPlayer().getForagingSkill().forageItem(tile);
         }
 
         return new Result(true, "");
@@ -56,8 +54,8 @@ public class Pickaxe implements Tool <ItemLevel> {
     @Override
     public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
-        if(Game.getCurrentPlayer().getEnergy() - amount < 0)return false;
-        Game.getCurrentPlayer().increaseEnergy(-amount);
+        if(MyGame.getCurrentPlayer().getEnergy() - amount < 0)return false;
+        MyGame.getCurrentPlayer().increaseEnergy(-amount);
         return true;
     }
     @Override

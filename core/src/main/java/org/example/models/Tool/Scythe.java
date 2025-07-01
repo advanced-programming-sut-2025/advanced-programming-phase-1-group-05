@@ -1,12 +1,9 @@
 package org.example.models.Tool;
 
 import org.example.models.*;
-import org.example.models.Enums.FishingPoleType;
 import org.example.models.Enums.ItemLevel;
-import org.example.models.Enums.TileType;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class Scythe implements Tool<ItemLevel> {
     ItemLevel level = ItemLevel.Normal;
@@ -23,7 +20,7 @@ public class Scythe implements Tool<ItemLevel> {
     public Result use(HashMap.Entry<Integer, Integer> coordinates) {
         if(!reduceEnergy(2))
             return new Result(false, "You don't have enough energy");
-        GameMap map = Game.getGameMap();
+        GameMap map = MyGame.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
 
         Item item = tile.getItemOnTile();
@@ -34,21 +31,21 @@ public class Scythe implements Tool<ItemLevel> {
             if(item instanceof FruitAndVegetable){
                 if(!((FruitAndVegetable) item).isFullyGrown())
                     return new Result(false, "The crop isn't ready for harvest");
-                Game.getCurrentPlayer().getFarmingSkill().harvestCrop(tile);
+                MyGame.getCurrentPlayer().getFarmingSkill().harvestCrop(tile);
                 return new Result(true, item.getName() + " harvested successfully");
             } else if(item == database.getItem("Fiber")) {
-                Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
+                MyGame.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
                 tile.setItemOnTile(null);
                 return new Result(true, item.getName() + " harvested successfully");
             } else if(item instanceof ForagingItem) {
-                Game.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
+                MyGame.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
                 tile.setItemOnTile(null);
                 return new Result(true, item.getName() + " harvested successfully");
             } else if(item instanceof Tree) {
                 Result result = ((Tree)item).harvestFruit();
                 if(result.isSuccess()) {
                     ForagingItem fruit = ((Tree) item).getHarvestedFruit();
-                    Game.getCurrentPlayer().getBackPack().addToInventory(fruit, 1);
+                    MyGame.getCurrentPlayer().getBackPack().addToInventory(fruit, 1);
                 }
                 return result;
             }
@@ -58,8 +55,8 @@ public class Scythe implements Tool<ItemLevel> {
     @Override
     public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
-        if(Game.getCurrentPlayer().getEnergy() - amount < 0)return false;
-        Game.getCurrentPlayer().increaseEnergy(-amount);
+        if(MyGame.getCurrentPlayer().getEnergy() - amount < 0)return false;
+        MyGame.getCurrentPlayer().increaseEnergy(-amount);
         return true;
     }
     @Override

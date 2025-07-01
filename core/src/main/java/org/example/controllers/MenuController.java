@@ -1,14 +1,10 @@
 package org.example.controllers;
 
-import org.example.models.Game;
 import org.example.models.Result;
 import org.example.models.Enums.Menu;
-import org.example.models.User;
 import org.example.views.*;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Scanner;
 
 public class MenuController {
     private static MenuController menuController;

@@ -1,9 +1,6 @@
 package org.example.models.Enums;
 
 import org.example.models.ArtisanProduct;
-import org.example.models.Game;
-import org.example.models.Item;
-import org.example.models.Product;
 
 import java.util.ArrayList;
 import java.util.List;

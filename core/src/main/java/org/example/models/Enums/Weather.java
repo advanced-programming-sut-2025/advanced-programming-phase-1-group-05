@@ -16,7 +16,7 @@ public enum Weather {
     }
 
     public Result thunder(int x, int y){
-        GameMap map = Game.getGameMap();
+        GameMap map = MyGame.getGameMap();
         GameTile tile = map.getTile(x, y);
         Item item = tile.getItemOnTile();
         if(item instanceof Tree) {

@@ -57,14 +57,14 @@ public class TradingController {
         }
         String itemName = builder.toString().trim();
         builder.setLength(0);
-        Item item = Game.getDatabase().getItem(itemName);
+        Item item = MyGame.getDatabase().getItem(itemName);
 
         if (item == null )
             return Result.error("item not found");
-        Player targetPlayer = Game.getPlayerByUsername(targetUsername);
+        Player targetPlayer = MyGame.getPlayerByUsername(targetUsername);
         if (targetPlayer == null) return new Result(false, "Trying to trade with imaginary friends again?");
       String type = input.contains("offer") ? "offer" : "request";
-       if (Game.getCurrentPlayer().getItemQuantity(item) < amount && type.equals("offer")) {
+       if (MyGame.getCurrentPlayer().getItemQuantity(item) < amount && type.equals("offer")) {
            return new Result(false, "You're trying to give away more than you own. Generous… but impossible.");
        }
 
@@ -79,25 +79,25 @@ public class TradingController {
             } catch (NumberFormatException e) {
                 return new Result(false, "invalid price");
             }
-            if (Game.getCurrentPlayer().getGold() < price)
+            if (MyGame.getCurrentPlayer().getGold() < price)
                 return Result.error("You don't have enough gold.");
-            trades.add(new Trade(Game.getCurrentPlayer(), targetPlayer, type, item, amount, price, null, null));
+            trades.add(new Trade(MyGame.getCurrentPlayer(), targetPlayer, type, item, amount, price, null, null));
         } else if (input.matches(tradeWithItem)) {
             for (int i = tiIndex + 1; i < taIndex; i++) {
                 builder.append(parts[i]).append(" ");
             }
             String targetItemName = builder.toString().trim();
             builder.setLength(0);
-            Item targetItem = Game.getDatabase().getItem(targetItemName);
+            Item targetItem = MyGame.getDatabase().getItem(targetItemName);
             int targetAmount;
             try {
                 targetAmount = Integer.parseInt(parts[taIndex + 1]);
             } catch (NumberFormatException e) {
                 return new Result(false, "invalid amount");
             }
-            trades.add(new Trade(Game.getCurrentPlayer(), targetPlayer, type, item, amount, null, targetItem, targetAmount));
+            trades.add(new Trade(MyGame.getCurrentPlayer(), targetPlayer, type, item, amount, null, targetItem, targetAmount));
         }
-        targetPlayer.addNotification("You've got a new offer from "+ Game.getCurrentPlayer().getName() +"! Check your requests to respond.");
+        targetPlayer.addNotification("You've got a new offer from "+ MyGame.getCurrentPlayer().getName() +"! Check your requests to respond.");
         return new Result(false, "trade request sent successfully");
     }
 
@@ -118,10 +118,10 @@ public class TradingController {
         if (trade == null) return new Result(false, "Trade with id " + tradeId + " not found");
         trade.setAnswered(true);
         if (accepted) {
-            trade.getSender().changeFriendshipXP(50, Game.getCurrentPlayer());
+            trade.getSender().changeFriendshipXP(50, MyGame.getCurrentPlayer());
             return Result.success("Deal struck! Hope you didn’t just get scammed.");
         } else {
-            trade.getSender().changeFriendshipXP(-30, Game.getCurrentPlayer());
+            trade.getSender().changeFriendshipXP(-30, MyGame.getCurrentPlayer());
             return Result.success("You rejected the offer. Hopefully they won’t take it personally.");
         }
     }
@@ -132,7 +132,7 @@ public class TradingController {
         if (trades.isEmpty()) return new Result(false, "No deals brewing yet. Why not start one?");
         for (Trade trade : trades) {
             if (!trade.isAnswered() &&
-                    (trade.getReceiver().equals(Game.getCurrentPlayer()) || trade.getSender().equals(Game.getCurrentPlayer()))) {
+                    (trade.getReceiver().equals(MyGame.getCurrentPlayer()) || trade.getSender().equals(MyGame.getCurrentPlayer()))) {
                 builder.append("\n").append("Id            : ").append(trade.getId()).append("\n");
                 builder.append("From          : ").append(trade.getSender().getName()).append("\n");
                 builder.append("To            : ").append(trade.getReceiver().getName()).append("\n");

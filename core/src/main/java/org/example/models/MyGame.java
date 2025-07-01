@@ -6,7 +6,7 @@ import org.example.models.Enums.Weather;
 
 import java.util.*;
 
-public class Game {
+public class MyGame {
     private static Scanner scanner = new Scanner(System.in);
     private static Player currentPlayer;
     private static GameMap gameMap = new GameMap();
@@ -26,7 +26,7 @@ public class Game {
         return currentPlayer;
     }
     public static void setCurrentPlayer(Player currentPlayer) {
-        Game.currentPlayer = currentPlayer;
+        MyGame.currentPlayer = currentPlayer;
     }
     public static void addPlayer(Player player) {
         players.add(player);
@@ -173,6 +173,6 @@ public class Game {
         return gifts;
     }
     public static void setForecastedWeather(Weather forecastedWeather) {
-        Game.forecastedWeather = forecastedWeather;
+        MyGame.forecastedWeather = forecastedWeather;
     }
 }

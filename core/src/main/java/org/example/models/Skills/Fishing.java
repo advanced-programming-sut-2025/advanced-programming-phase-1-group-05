@@ -1,8 +1,7 @@
 package org.example.models.Skills;
 
 import org.example.models.Enums.CookingRecipeType;
-import org.example.models.Enums.ItemLevel;
-import org.example.models.Game;
+import org.example.models.MyGame;
 import org.example.models.GameTile;
 import org.example.models.Tool.FishingPole;
 
@@ -49,11 +48,11 @@ public class Fishing implements Skill {
     public void handleLevelChangeTrophies(int level){
         switch(level){
             case 2: {
-                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.DishOTheSea);
+                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.DishOTheSea);
                 break;
             }
             case 3: {
-                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.SeaformPudding);
+                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.SeaformPudding);
                 break;
             }
         }

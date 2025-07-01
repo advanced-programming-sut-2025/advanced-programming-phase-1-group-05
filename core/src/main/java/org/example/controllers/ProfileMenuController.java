@@ -2,7 +2,6 @@ package org.example.controllers;
 
 import org.example.models.*;
 
-import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -132,16 +131,16 @@ public class ProfileMenuController extends MenuController {
 //        System.out.println(Game.getAllPlayers());
         info.append("Username: ").append(currentUser.getUsername()).append("\n");
         info.append("Nickname: ").append(currentUser.getNickName()).append("\n");
-        for (Player player : Game.getAllPlayers()) {
+        for (Player player : MyGame.getAllPlayers()) {
             if (player.getUsername().equals(currentUser.getUsername())) {
                 info.append("Money: ").append(player.getGold()).append("\n");
             } else {
                 info.append("This user hadn't any game!\n");
             }
         }
-        if (Game.getAllPlayers() == null || Game.getAllPlayers().isEmpty() || Game.getCurrentPlayer() == null)
+        if (MyGame.getAllPlayers() == null || MyGame.getAllPlayers().isEmpty() || MyGame.getCurrentPlayer() == null)
             info.append("Money: 0\n");
-        else info.append("Money: " + Game.getCurrentPlayer().getGold()).append("\n");
+        else info.append("Money: " + MyGame.getCurrentPlayer().getGold()).append("\n");
         info.append("Games played: ").append(currentUser.getGamesPlayed()).append("\n");
         return Result.success(info.toString());
     }

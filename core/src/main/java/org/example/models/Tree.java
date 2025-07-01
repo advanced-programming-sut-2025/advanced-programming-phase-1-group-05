@@ -75,7 +75,7 @@ public class Tree implements Item{
         }
 
         public void thunderEffect(GameTile tile) {
-            GameMap map = Game.getGameMap();
+            GameMap map = MyGame.getGameMap();
             tile.setItemOnTile(new BasicItem(MineralType.Coal.getName(), MineralType.Coal.getPrice()));
             map.getTrees().remove(this);
         }
@@ -83,8 +83,8 @@ public class Tree implements Item{
         public Result cutDownTree(){
             Random rand = new Random();
             int randomNum = rand.nextInt(2) + 1;
-            Game.getCurrentPlayer().getForagingSkill().cutDownTree();
-            Game.getCurrentPlayer().getBackPack().getInventory().put(new BasicItem(treeType.getSeed(), 0),randomNum);
+            MyGame.getCurrentPlayer().getForagingSkill().cutDownTree();
+            MyGame.getCurrentPlayer().getBackPack().getInventory().put(new BasicItem(treeType.getSeed(), 0),randomNum);
             return new Result(true, "The tree was cut down, giving you " + randomNum + " of its seeds!");
         }
         public void setProtectedByScareCrow(boolean protectedByScareCrow) {

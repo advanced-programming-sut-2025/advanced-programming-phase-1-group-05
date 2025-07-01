@@ -21,12 +21,12 @@ public class GameManager {
     }
 
     public static void manageWeather() {
-        Game.currentWeather = Game.getForecastedWeather();
+        MyGame.currentWeather = MyGame.getForecastedWeather();
         Weather[] values = Weather.values();
-        Game.setForecastedWeather(values[new Random().nextInt(values.length)]);
+        MyGame.setForecastedWeather(values[new Random().nextInt(values.length)]);
     }
     public static void getAnimalProducts() {
-        for (Player player : Game.getAllPlayers()) {
+        for (Player player : MyGame.getAllPlayers()) {
             for (AnimalHouse animalHouse : player.getCoopsAndBarns()) {
                 for (Animal animal : animalHouse.getAnimals()) {
                      if (animal.wasFed())
@@ -46,21 +46,21 @@ public class GameManager {
     }
 
     public static void resetEnergy() {
-        for (Player player : Game.getAllPlayers()) {
+        for (Player player : MyGame.getAllPlayers()) {
             if (player.getProposalRejectionDaysLeft() > 0) {
                 player.setEnergy(100);
                 player.decrementProposalRejectionDaysLeft();
             }
             else {
-                if(!Game.getCurrentPlayer().isEnergyUnlimited())
+                if(!MyGame.getCurrentPlayer().isEnergyUnlimited())
                     player.setEnergy(200);
             }
         }
     }
     public static void checkNPCGifts(){
         Random rand = new Random();
-        for (Player player : Game.getAllPlayers()){
-            for (NPC npc : Game.getAllNPCs()) {
+        for (Player player : MyGame.getAllPlayers()){
+            for (NPC npc : MyGame.getAllNPCs()) {
                 if (npc.getFriendshipLevel(player) >= 3 && rand.nextBoolean()) {
                     npc.sendGift(player);
                 }
@@ -69,8 +69,8 @@ public class GameManager {
     }
 
     public static void checkForThirdQuest(){
-        for (Player player : Game.getAllPlayers()){
-            for (NPC npc : Game.getAllNPCs()) {
+        for (Player player : MyGame.getAllPlayers()){
+            for (NPC npc : MyGame.getAllNPCs()) {
                 if (gameClock.getDay() == npc.getDaysToUnlockThirdQuest() && npc.getNumOfUnlockedQuests(player) == 2) {
                     npc.unlockThirdQuest(player);
                     System.out.println(npc.getName() + "'s third quest has been unlocked");
@@ -80,12 +80,12 @@ public class GameManager {
     }
 
     public static void giveBackSoldItemGolds(){
-        for (Map.Entry<Player, Item> entry : Game.soldItems.entrySet()) {
+        for (Map.Entry<Player, Item> entry : MyGame.soldItems.entrySet()) {
             entry.getKey().addGold(entry.getValue().getPrice());
             System.out.println("added " + entry.getValue().getPrice() + " gold to " +
                     entry.getKey().getUsername() + " for selling " + entry.getValue().getName());
         }
-        Game.soldItems.clear();
+        MyGame.soldItems.clear();
     }
 
     public static Season getSeason() {

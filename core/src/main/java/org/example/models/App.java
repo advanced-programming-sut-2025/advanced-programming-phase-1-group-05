@@ -1,10 +1,7 @@
 package org.example.models;
 
-import org.example.controllers.DBController;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class App {
     private static HashMap<String, User> users = new HashMap<>();
@@ -37,11 +34,11 @@ public class App {
     }
 
     //maybe need!
-    public static Game getCurrentGame() {
+    public static MyGame getCurrentGame() {
         return null;
     }
 
-    public static void setCurrentGame(Game currentGame) {
+    public static void setCurrentGame(MyGame currentGame) {
 
     }
 //    public static Map<String, User> getAllUsers() {

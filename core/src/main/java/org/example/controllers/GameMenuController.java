@@ -4,7 +4,6 @@ import org.example.models.*;
 import org.example.models.Enums.*;
 import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Tool;
-import org.w3c.dom.Node;
 
 import java.awt.*;
 import java.util.*;
@@ -15,14 +14,14 @@ import java.util.regex.Pattern;
 public class GameMenuController extends MenuController {
     public static User currentUser;
     public static List<Player> selectedPlayers;
-    private static Map<String, Game> activeGames = new HashMap<>();
-    private Game pendingGame;
+    private static Map<String, MyGame> activeGames = new HashMap<>();
+    private MyGame pendingGame;
     public static boolean canChooseMap = false;
     public static boolean canDeleteGame = false;
-    public static boolean canLoadGame = false;
+//    public static boolean canLoadGame = false;
     public static boolean[] canExitGame;
     private static Map<Integer, Integer> playerMapChoices = new HashMap<>();
-    private GameMap map = Game.getGameMap();
+    private GameMap map = MyGame.getGameMap();
     private List<User> players = new ArrayList<>();
 
 
@@ -81,9 +80,10 @@ public class GameMenuController extends MenuController {
             UserDatabase.setUserInGame(player.getUsername(), true);
         }
 
-        Game.currentPlayerIndex = 0;
+        MyGame.currentPlayerIndex = 0;
         playerMapChoices.clear();
-        Game.getAllPlayers().addAll(selectedPlayers);
+        MyGame.getAllPlayers().addAll(selectedPlayers);
+        DBController.savePlayersToFile();
 
         return Result.success("Now you can play Game:)");
     }
@@ -95,9 +95,49 @@ public class GameMenuController extends MenuController {
         if (selectedPlayers.size() < 3) {
             return new Result(false, "At least 3 players are needed to start the game.");
         }
+        if (selectedPlayers == null || selectedPlayers.isEmpty()) {
+            return new Result(false, "At least 3 players are needed to start the game.");
+        }
 
         canChooseMap = true;
         return new Result(true, "All players added. Please choose your maps.");
+    }
+
+    public Result submitAllMapSelections(Map<String, String> selections) {
+        Set<String> chosenMaps = new HashSet<>(selections.values());
+
+        if (chosenMaps.size() < selections.size()) {
+            return Result.error("Each player must choose a unique map!");
+        }
+
+        for (Player player : selectedPlayers) {
+            String mapName = selections.get(player.getUsername());
+            if (mapName == null) return Result.error("Missing map for player: " + player.getUsername());
+
+            int mapNum;
+            switch (mapName.toLowerCase()) {
+                case "map1": mapNum = 1; break;
+                case "map2": mapNum = 2; break;
+                case "map3": mapNum = 3; break;
+                case "map4": mapNum = 4; break;
+                default: return Result.error("Invalid map: " + mapName);
+            }
+
+            player.setMapNum(mapNum);
+        }
+
+        // ست کردن بازیکن فعلی
+        for (Player player : selectedPlayers) {
+            if (player.getUsername().equals(currentUser.getUsername())) {
+                MyGame.setCurrentPlayer(player);
+                break;
+            }
+        }
+
+        MyGame.getAllPlayers().clear();
+        MyGame.getAllPlayers().addAll(selectedPlayers);
+
+        return MyGame.startTheGame();
     }
 
 
@@ -112,38 +152,35 @@ public class GameMenuController extends MenuController {
         }
         int mapNumber = Integer.parseInt(matcher.group("mapNumber"));
 
-        Player currentPlayer = selectedPlayers.get(Game.currentPlayerIndex);
+        Player currentPlayer = selectedPlayers.get(MyGame.currentPlayerIndex);
         currentPlayer.setMapNum(mapNumber);
 
-        Game.setCurrentPlayer(selectedPlayers.get(Game.currentPlayerIndex));
-        playerMapChoices.put(Game.currentPlayerIndex, mapNumber);
+        MyGame.setCurrentPlayer(selectedPlayers.get(MyGame.currentPlayerIndex));
+        playerMapChoices.put(MyGame.currentPlayerIndex, mapNumber);
 
-        Game.currentPlayerIndex++;
-        if (Game.currentPlayerIndex < selectedPlayers.size()) {
-            return Result.success("Player " + selectedPlayers.get(Game.currentPlayerIndex).getUsername() +
+        MyGame.currentPlayerIndex++;
+        if (MyGame.currentPlayerIndex < selectedPlayers.size()) {
+            return Result.success("Player " + selectedPlayers.get(MyGame.currentPlayerIndex).getUsername() +
                     ", please choose your map (1-4):");
         } else {
             canChooseMap = false;
-            pendingGame = new Game();
-            Result startResult = Game.startTheGame();
+            pendingGame = new MyGame();
+            Result startResult = MyGame.startTheGame();
             if (startResult.isSuccess()) {
 //                activeGames.put(currentUser.getUsername(), pendingGame);
                 for (Player player : selectedPlayers) {
                     activeGames.put(player.getUsername(), pendingGame);
                 }
-                Game.setCurrentPlayer(selectedPlayers.get(0));
+                MyGame.setCurrentPlayer(selectedPlayers.get(0));
             }
-            Game.setCurrentPlayer(selectedPlayers.get(0));
+            MyGame.setCurrentPlayer(selectedPlayers.get(0));
             return startResult;
         }
     }
 
 
     public Result loadGame() {
-        if (!canLoadGame) {
-            return Result.error("You should first exit pending Game!");
-        }
-        if (!currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername())
+        if (!currentUser.getUsername().equals(MyGame.getCurrentPlayer().getUsername())
                 || !currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())) {
             for (int i = 0; i < selectedPlayers.size(); i++) {
                 if (currentUser.getUsername().equals(selectedPlayers.get(i).getUsername())) {
@@ -153,6 +190,15 @@ public class GameMenuController extends MenuController {
         }
         if (User.haveSavedGame) {
             DBController.loadGameState();
+            if (RegisterMenuController.currentUser != null) {
+                Player currentPlayer = MyGame.getPlayerByUsername(RegisterMenuController.currentUser.getUsername());
+                if (currentPlayer != null) {
+                    MyGame.setCurrentPlayer(currentPlayer);
+                    System.out.println("Current player set to: " + currentPlayer.getUsername());
+                } else {
+                    System.err.println("Could not find a player for the logged in user.");
+                }
+            }
             return Result.success("Game loaded successfully :)");
         }
         return Result.error("There is no Game to continue!");
@@ -167,10 +213,10 @@ public class GameMenuController extends MenuController {
                 }
             }
         }
-        if (currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername()) ||
+        if (currentUser.getUsername().equals(MyGame.getCurrentPlayer().getUsername()) ||
                 currentUser.getUsername().equals(selectedPlayers.get(0).getUsername()) || done) {
             pendingGame = null;
-            canLoadGame = true;
+//            canLoadGame = true;
             DBController.saveGameState();
             return Result.success("Exited Game successfully!");
         }
@@ -179,7 +225,7 @@ public class GameMenuController extends MenuController {
 
 
     public Result nextTurn() {
-        Game game = activeGames.get(currentUser.getUsername());
+        MyGame game = activeGames.get(currentUser.getUsername());
         if (game == null) {
             return Result.error("There is no active game.");
         }
@@ -189,20 +235,20 @@ public class GameMenuController extends MenuController {
 //            return Result.error("It's not your turn.");
 //        }
 
-        Game.getCurrentPlayer().increaseEnergy(-50);
+        MyGame.getCurrentPlayer().increaseEnergy(-50);
 
-        Game.advanceToNextPlayer();
+        MyGame.advanceToNextPlayer();
         //reset energy for next turn??
-        if (!Game.getCurrentPlayer().isEnergyUnlimited()) {
-            Game.getCurrentPlayer().resetEnergy();
+        if (!MyGame.getCurrentPlayer().isEnergyUnlimited()) {
+            MyGame.getCurrentPlayer().resetEnergy();
         }
 
-        return Result.success("Now it's " + Game.getCurrentPlayer().getUsername() + "'s turn." +
-                Game.getCurrentPlayer().getNotifications());
+        return Result.success("Now it's " + MyGame.getCurrentPlayer().getUsername() + "'s turn." +
+                MyGame.getCurrentPlayer().getNotifications());
     }
 
     public Result deleteGame() {
-        Scanner scanner = Game.getScanner();
+        Scanner scanner = MyGame.getScanner();
         int[] OK = new int[selectedPlayers.size()];
         System.out.println("Vote to delete the game (1 for yes, 0 for no):");
         for (int i = 0; i < selectedPlayers.size(); i++) {
@@ -231,10 +277,10 @@ public class GameMenuController extends MenuController {
 
             selectedPlayers.clear();
             canChooseMap = false;
-            Game.currentPlayerIndex = 0;
+            MyGame.currentPlayerIndex = 0;
             canDeleteGame = false;
 
-            Game.getAllPlayers().clear();
+            MyGame.getAllPlayers().clear();
 
             return Result.success("Game deleted successfully!");
         } catch (Exception e) {
@@ -244,24 +290,24 @@ public class GameMenuController extends MenuController {
 
     //for showing current player's energy level
     public Result showEnergy() {
-        return new Result(true, "energy :" + Game.getCurrentPlayer().getEnergy());
+        return new Result(true, "energy :" + MyGame.getCurrentPlayer().getEnergy());
     }
 
     //cheat code set energy
     public Result setEnergy(int value) {
-        Game.getCurrentPlayer().setEnergy(value);
+        MyGame.getCurrentPlayer().setEnergy(value);
         return new Result(true, "** your energy got increased by " + value + " **");
     }
 
     //cheat code unlimited energy
     public Result unlimitedEnergy() {
-        Game.getCurrentPlayer().setUnlimitedEnergy();
+        MyGame.getCurrentPlayer().setUnlimitedEnergy();
         return new Result(true, "** your energy is unlimited now **");
     }
 
     //showing the items in inventory
     public Result showInventory() {
-        HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
+        HashMap<Item, Integer> items = MyGame.getCurrentPlayer().getBackPack().getInventory();
         StringBuilder output = new StringBuilder();
         if (items.isEmpty()) return new Result(false, "Inventory is empty");
         for (Item item : items.keySet()) {
@@ -277,28 +323,28 @@ public class GameMenuController extends MenuController {
 
     //removing from inventory
     public Result removeFromInventory(String name, int quantity) {
-        Game.getCurrentPlayer().getTrashCan().removeFromInventory(name, quantity);
-        ItemLevel itemLevel = Game.getCurrentPlayer().getTrashCan().getLevel();
+        MyGame.getCurrentPlayer().getTrashCan().removeFromInventory(name, quantity);
+        ItemLevel itemLevel = MyGame.getCurrentPlayer().getTrashCan().getLevel();
         Item itemToRemove = null;
-        for(Item item : Game.getCurrentPlayer().getBackPack().getInventory().keySet()) {
+        for(Item item : MyGame.getCurrentPlayer().getBackPack().getInventory().keySet()) {
             if(item.getName().equals(name)) {
                 itemToRemove = item;
             }
         }
         if (itemToRemove != null) {
             int moneyAdded = (int) (itemToRemove.getPrice()*itemLevel.getTrashcanCoeff());
-            Game.getCurrentPlayer().addGold(moneyAdded);
+            MyGame.getCurrentPlayer().addGold(moneyAdded);
         }
         return new Result(true, quantity + " of " + name + " was removed from inventory");
     }
 
     //equip a certain tool
     public Result equipTool(String name) {
-        HashMap<Item, Integer> items = Game.getCurrentPlayer().getBackPack().getInventory();
+        HashMap<Item, Integer> items = MyGame.getCurrentPlayer().getBackPack().getInventory();
         for (Item item : items.keySet()) {
             if (item.getName().equals(name)) {
                 items.put(item, items.get(item) - 1);
-                Game.getCurrentPlayer().setCurrentItem(item);
+                MyGame.getCurrentPlayer().setCurrentItem(item);
                 return new Result(true, "You're now equipped with " + item.getName());
             }
         }
@@ -307,7 +353,7 @@ public class GameMenuController extends MenuController {
 
     //showing current tool
     public Result showCurrentTool() {
-        Item currentItem = Game.getCurrentPlayer().getCurrentItem();
+        Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
         if (currentItem instanceof Tool) {
             return new Result(true, "You are equipped with " + currentItem.getName());
         } else {
@@ -319,7 +365,7 @@ public class GameMenuController extends MenuController {
     public Result showAvailableTools() {
         boolean found = false;
         StringBuilder output = new StringBuilder();
-        for (Item i : Game.getCurrentPlayer().getBackPack().getInventory().keySet()) {
+        for (Item i : MyGame.getCurrentPlayer().getBackPack().getInventory().keySet()) {
             if (i instanceof Tool) {
                 output.append("* ").append(i.getName()).append("\n");
                 found = true;
@@ -333,10 +379,10 @@ public class GameMenuController extends MenuController {
     //use tool
     public Result useTool(String direction) {
         int[] dir = getDirections(direction);
-        Item currentItem = Game.getCurrentPlayer().getCurrentItem();
+        Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
         if (currentItem instanceof Tool) {
-            String message = ((Tool) currentItem).use(new AbstractMap.SimpleEntry<>(Game.getCurrentPlayer().getCoordinate().getKey() + dir[1],
-                    Game.getCurrentPlayer().getCoordinate().getValue() + dir[0])).getMessage();
+            String message = ((Tool) currentItem).use(new AbstractMap.SimpleEntry<>(MyGame.getCurrentPlayer().getCoordinate().getKey() + dir[1],
+                    MyGame.getCurrentPlayer().getCoordinate().getValue() + dir[0])).getMessage();
             return new Result(true, message);
         } else return new Result(true, "You aren't equipped with any tool");
     }
@@ -359,11 +405,11 @@ public class GameMenuController extends MenuController {
 
     public Result petAnimal(Matcher m) {
         String animalName = m.group("animalName");
-        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        Animal animal = MyGame.getCurrentPlayer().getAnimal(animalName);
         if (animal == null) {
             return Result.error("animal doesn't exist or isn't yours");
         }
-        Player currentPlayer = Game.getCurrentPlayer();
+        Player currentPlayer = MyGame.getCurrentPlayer();
         if (Math.abs(animal.getX() - currentPlayer.getX()) > 1 ||
                 Math.abs(animal.getY() - currentPlayer.getY()) > 1) {
             return Result.error("You need to get closer to the animal. animal coordinates: " + animal.getX() + " " + animal.getY());
@@ -376,7 +422,7 @@ public class GameMenuController extends MenuController {
     public Result cheatSetFriendship(Matcher m) {
         String animalName = m.group("animalName");
         int amount = Integer.parseInt(m.group("amount"));
-        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        Animal animal = MyGame.getCurrentPlayer().getAnimal(animalName);
         if (animal == null) return Result.error("animal doesn't exist or isn't yours");
         animal.setFriendshipPoints(amount);
         return Result.success("Friendship boosted! Nothing says ‘bonding’ like a little… code magic. Your animal is now contractually obligated to adore you");
@@ -384,7 +430,7 @@ public class GameMenuController extends MenuController {
 
     public Result printAnimalsInfo() {
 
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
         List<Animal> animals = player.getAllAnimals();
         StringBuilder output = new StringBuilder();
         output.append("Your animals: ").append("\n");
@@ -398,10 +444,10 @@ public class GameMenuController extends MenuController {
         String animalName = m.group("animalName");
         int x = Integer.parseInt(m.group("x"));
         int y = Integer.parseInt(m.group("y"));
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
         Animal animal = player.getAnimal(animalName);
         if (animal == null) return Result.error("animal doesn't exist or isn't yours");
-        GameTile tile = Game.getGameMap().getTile(x, y);
+        GameTile tile = MyGame.getGameMap().getTile(x, y);
         if (tile == null || tile.isOccupied() || !player.getFarm().containsTile(x , y)) {
             return Result.error("invalid tile");
         }
@@ -412,9 +458,9 @@ public class GameMenuController extends MenuController {
     }
     public Result feedHay(Matcher m) {
         String animalName = m.group("animalName");
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
         Animal animal = player.getAnimal(animalName);
-        Item hay = Game.getDatabase().getItem("Hay");
+        Item hay = MyGame.getDatabase().getItem("Hay");
         if (animal == null) return Result.error("animal doesn't exist or isn't yours");
         if (player.getItemQuantity(hay) < 1)
             return Result.error("you don't have enough hay");
@@ -426,7 +472,7 @@ public class GameMenuController extends MenuController {
     }
 
     public Result printUncollectedProduce() {
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
         List<Animal> animals = player.getAllAnimals();
         StringBuilder builder = new StringBuilder();
         for (Animal animal : animals) {
@@ -439,14 +485,14 @@ public class GameMenuController extends MenuController {
 
     public Result collectProduce(Matcher m) {
         String animalName = m.group("name");
-        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        Animal animal = MyGame.getCurrentPlayer().getAnimal(animalName);
         if (animal == null)
             return Result.error("Selected animal doesn't exist or isn't yours");
 
         List<Product> products = animal.getUnCollectedProducts();
         if (products.isEmpty()) return Result.error("no uncollected products found");
         for (Product product : products) {
-            Game.getCurrentPlayer().getBackPack().addToInventory(product, 1);
+            MyGame.getCurrentPlayer().getBackPack().addToInventory(product, 1);
         }
         products.clear();
         animal.adjustFriendshipPoints(5);
@@ -456,13 +502,13 @@ public class GameMenuController extends MenuController {
 
     public Result sellAnimal(Matcher m) {
         String animalName = m.group("animalName");
-        Animal animal = Game.getCurrentPlayer().getAnimal(animalName);
+        Animal animal = MyGame.getCurrentPlayer().getAnimal(animalName);
         if (animal == null)
             return Result.error("Selected animal doesn't exist or isn't yours");
 
-        int basePrice = Game.getDatabase().getItem(animal.getType().name()).getPrice();
+        int basePrice = MyGame.getDatabase().getItem(animal.getType().name()).getPrice();
         int price = (int) (basePrice * ((animal.getFriendshipPoints() / 1000) + 0.3));
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
         player.addGold(price);
         player.removeAnimal(animal);
         return Result.success( animal.getName() +" looked back one last time before leaving… but you were already gone.");
@@ -472,15 +518,15 @@ public class GameMenuController extends MenuController {
         String poleName = m.group("fishingPole");
         FishingPoleType pole = FishingPoleType.fromString(poleName);
         if (pole == null) return Result.error("invalid pole type.");
-        Player player = Game.getCurrentPlayer();
-        if (player.getItemQuantity(Game.getDatabase().getItem(poleName)) <= 0)
+        Player player = MyGame.getCurrentPlayer();
+        if (player.getItemQuantity(MyGame.getDatabase().getItem(poleName)) <= 0)
             return Result.error("You don't have that pole in your inventory");
         int fishingLevel = player.getFishingSkill().getLevel();
         Fish caughtFish = Fish.getRandomFish(GameManager.getSeason(), fishingLevel);
         if (caughtFish == null)
             return Result.error("Your bobber danced, your hopes rose… and then? Nothing. The fish must be laughing underwater.");
         Random rand = new Random();
-        double weatherCoefficient = Game.getCurrentWeather().getFishingCoefficient();
+        double weatherCoefficient = MyGame.getCurrentWeather().getFishingCoefficient();
         int numOfFish = Math.min((int) (rand.nextDouble() * weatherCoefficient * (fishingLevel + 2)), 6);
         int qualityScore = (int) ((rand.nextDouble() * (fishingLevel + 2) * pole.getFishingCoefficient()) / (7 - weatherCoefficient));
         ItemLevel level;
@@ -504,7 +550,7 @@ public class GameMenuController extends MenuController {
         if (artisan == null)
             return Result.error("That machine doesn’t seem to exist. Are you sure it’s real?");
 
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
 //        if (!player.getBackPack().hasThisCraft(artisan.getCraftType()))
 //            return Result.error("Nope, artisan machines don’t have Wi-Fi. Go stand next to it!");
         if (artisan != null) artisan.useArtisan(args);
@@ -523,7 +569,7 @@ public class GameMenuController extends MenuController {
         if (products.isEmpty())
             return Result.error("Hold tight! The machine’s still working on it.");
         for (ArtisanProduct product : products) {
-            Game.getCurrentPlayer().getBackPack().addToInventory(product, 1);
+            MyGame.getCurrentPlayer().getBackPack().addToInventory(product, 1);
             builder.append("added " + product.getName() + " to your inventory");
             artisan.products.remove(product);
         }
@@ -531,15 +577,15 @@ public class GameMenuController extends MenuController {
     }
 
     public Result cheatAddMoney(int amount) {
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
         player.addGold(amount);
         return Result.success("added " + amount + " gold");
     }
 
     public Result showFriendshipLevels() {
         StringBuilder builder = new StringBuilder();
-        Player currentPlayer = Game.getCurrentPlayer();
-        for (Player player : Game.getAllPlayers()) {
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        for (Player player : MyGame.getAllPlayers()) {
             if (!player.equals(currentPlayer)) {
                 builder.append(player.getName()).append("\tfriendship level: ").append(currentPlayer.getFriendshipLevel(player));
                 builder.append("\t friendship points: ").append(currentPlayer.getFriendshipPoints(player)).append("\n");
@@ -551,13 +597,13 @@ public class GameMenuController extends MenuController {
     public Result talkToPlayer(Matcher m) {
 
         String username = m.group("username"), message = m.group("message");
-        Player targetPlayer = Game.getPlayerByUsername(username);
-        Player currentPlayer = Game.getCurrentPlayer();
+        Player targetPlayer = MyGame.getPlayerByUsername(username);
+        Player currentPlayer = MyGame.getCurrentPlayer();
 
         if (targetPlayer == null) return new Result(false, "Hmmm... either they moved away, or they never existed!");
         if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
             return new Result(false, "You can't have a heart-to-heart with someone who's miles away!");
-        Game.addMessage(new Message(currentPlayer, targetPlayer, message));
+        MyGame.addMessage(new Message(currentPlayer, targetPlayer, message));
         currentPlayer.changeFriendshipXP(20, targetPlayer);
         if (currentPlayer.isMarriedTo(targetPlayer)) {
             currentPlayer.increaseEnergy(50);
@@ -569,10 +615,10 @@ public class GameMenuController extends MenuController {
     public Result talkHistory(String input) {
         int uIndex = input.indexOf('u');
         input = input.substring(uIndex + 1).trim();
-        Player player = Game.getPlayerByUsername(input);
+        Player player = MyGame.getPlayerByUsername(input);
         if (player == null) return new Result(false,
                 "Talking to ghosts again? That player isn't real.");
-        List<Message> messages = Game.getMessages(player, Game.getCurrentPlayer());
+        List<Message> messages = MyGame.getMessages(player, MyGame.getCurrentPlayer());
         if (messages.isEmpty()) return new Result(false,
                 "Looks like you two haven't broken the ice yet");
 
@@ -585,8 +631,8 @@ public class GameMenuController extends MenuController {
     }
 
     public Result cheatAddFriendshipPoints(Matcher m) {
-        Player currentPlayer = Game.getCurrentPlayer();
-        Player targetPlayer = Game.getPlayerByUsername(m.group("username"));
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        Player targetPlayer = MyGame.getPlayerByUsername(m.group("username"));
         if (targetPlayer == null) return Result.error("");
         int amount = Integer.parseInt(m.group("amount"));
         currentPlayer.changeFriendshipXP(amount, targetPlayer);
@@ -596,9 +642,9 @@ public class GameMenuController extends MenuController {
     public Result giftPlayer(Matcher matcher) {
         String username = matcher.group("username"), itemName = matcher.group("itemName");
         int amount = Integer.parseInt(matcher.group("amount"));
-        Item item = Game.getDatabase().getItem(itemName);
-        Player currentPlayer = Game.getCurrentPlayer();
-        Player targetPlayer = Game.getPlayerByUsername(username);
+        Item item = MyGame.getDatabase().getItem(itemName);
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        Player targetPlayer = MyGame.getPlayerByUsername(username);
         if (targetPlayer == null) return Result.error("Invisible friends don't accept gifts, you know!");
         if (Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1 ||
                 Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1)
@@ -610,7 +656,7 @@ public class GameMenuController extends MenuController {
 
         currentPlayer.getBackPack().getInventory().remove(item, amount);
         targetPlayer.getBackPack().getInventory().put(item, amount);
-        Game.addGift(new Gift(currentPlayer, targetPlayer, item, amount));
+        MyGame.addGift(new Gift(currentPlayer, targetPlayer, item, amount));
         targetPlayer.addNotification(targetPlayer.getName() +
                 "! You've been gifted! Hope it's not rocks again.");
         return new Result(true, "You handed over the gift with a smile. Let's hope they like it!");
@@ -618,8 +664,8 @@ public class GameMenuController extends MenuController {
 
     public Result showGiftList() {
         StringBuilder output = new StringBuilder();
-        Player currentPlayer = Game.getCurrentPlayer();
-        for (Gift gift : Game.getAllGifts()) {
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        for (Gift gift : MyGame.getAllGifts()) {
             if (gift.getReceiver().equals(currentPlayer))
                 output.append(gift.getId()).append(".  ").append(gift.getAmount()).append(" ")
                         .append(gift.getName()).append(" (s)\n");
@@ -633,8 +679,8 @@ public class GameMenuController extends MenuController {
 
         if (rating < 1 || rating > 5)
             return new Result(false, "Your rating confused the chickens. Please try again.");
-        Gift gift = Game.getGiftById(giftNumber);
-        Player currentPlayer = Game.getCurrentPlayer();
+        Gift gift = MyGame.getGiftById(giftNumber);
+        Player currentPlayer = MyGame.getCurrentPlayer();
         if (gift == null || !gift.getReceiver().equals(currentPlayer))
             return new Result(false,
                     "You stare into your empty hands and give it a " + rating + ". Interesting.");
@@ -645,8 +691,8 @@ public class GameMenuController extends MenuController {
 
     public Result showGiftHistory(String username) {
         StringBuilder output = new StringBuilder();
-        Player player = Game.getPlayerByUsername(username);
-        for (Gift gift : Game.getAllGifts()) {
+        Player player = MyGame.getPlayerByUsername(username);
+        for (Gift gift : MyGame.getAllGifts()) {
             if (gift.getSender().equals(player) || gift.getReceiver().equals(player)) {
                 output.append(gift.getSender().getName()).append(" gave ").append(gift.getReceiver().getName()).append(" ")
                         .append(gift.getAmount()).append(" ").append(gift.getName()).append(" (s).\n");
@@ -656,8 +702,8 @@ public class GameMenuController extends MenuController {
     }
 
     public Result hugPlayer(String username) {
-        Player targetPlayer = Game.getPlayerByUsername(username);
-        Player currentPlayer = Game.getCurrentPlayer();
+        Player targetPlayer = MyGame.getPlayerByUsername(username);
+        Player currentPlayer = MyGame.getCurrentPlayer();
         if (targetPlayer == null)
             return new Result(false,
                     "You open your arms wide... but there's no one by that name to recieve it");
@@ -674,9 +720,9 @@ public class GameMenuController extends MenuController {
     }
 
     public Result giveBouquet(String username) {
-        Player currentPlayer = Game.getCurrentPlayer();
-        Player targetPlayer = Game.getPlayerByUsername(username);
-        Item bouquet = Game.getDatabase().getItem("bouquet");
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        Player targetPlayer = MyGame.getPlayerByUsername(username);
+        Item bouquet = MyGame.getDatabase().getItem("bouquet");
         if (targetPlayer == null)
             return Result.error("Bouquet in hand, heart full of hope... too bad that player doesn't even exist.");
         if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 ||
@@ -696,9 +742,9 @@ public class GameMenuController extends MenuController {
 
     public Result askMarriage(Matcher m) {
         String username = m.group("username");
-        Player targetPlayer = Game.getPlayerByUsername(username);
-        Item ring = Game.getDatabase().getItem("Wedding Ring");
-        Player currentPlayer = Game.getCurrentPlayer();
+        Player targetPlayer = MyGame.getPlayerByUsername(username);
+        Item ring = MyGame.getDatabase().getItem("Wedding Ring");
+        Player currentPlayer = MyGame.getCurrentPlayer();
         if (targetPlayer == null) return new Result(false,
                 "Imaginary partners don't make great spouses.");
         if (Math.abs(currentPlayer.getX() - targetPlayer.getX()) > 1 ||
@@ -726,9 +772,9 @@ public class GameMenuController extends MenuController {
             }
         }
         String username = parts[uIndex + 1];
-        Player targetPlayer = Game.getPlayerByUsername(username);
-        Player currentPlayer = Game.getCurrentPlayer();
-        Item ring = Game.getDatabase().getItem("Wedding Ring");
+        Player targetPlayer = MyGame.getPlayerByUsername(username);
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        Item ring = MyGame.getDatabase().getItem("Wedding Ring");
         if (targetPlayer == null)
             return Result.error("");
         if (input.contains("accept")) {
@@ -754,9 +800,9 @@ public class GameMenuController extends MenuController {
 
     public Result NPCFriendshipLevels() {
         StringBuilder builder = new StringBuilder();
-        Player currentPlayer = Game.getCurrentPlayer();
+        Player currentPlayer = MyGame.getCurrentPlayer();
         builder.append("friendship status with NPCs: ");
-        for (NPC npc : Game.getAllNPCs()) {
+        for (NPC npc : MyGame.getAllNPCs()) {
             builder.append("\n").append(npc.getName()).append("\t")
                     .append("friendship level: ").append(npc.getFriendshipLevel(currentPlayer))
                     .append(" friendship points: ").append(npc.getFriendshipPoints(currentPlayer));
@@ -765,15 +811,15 @@ public class GameMenuController extends MenuController {
     }
 
     public Result meetNPC(String npcName) {
-        NPC npc = Game.getNPCByName(npcName);
-        Player player = Game.getCurrentPlayer();
+        NPC npc = MyGame.getNPCByName(npcName);
+        Player player = MyGame.getCurrentPlayer();
         if (npc == null) return new Result(false, "NPC not found");
         if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1)
             return new Result(false,
                     "You're talking to thin air. That NPC must be off doing NPC things.");
         lastNPC = npc;
         npc.addFriendShipPoints(player, 20);
-        return new Result(true, DialogueManager.getNpcDialogue(npcName, Game.getCurrentWeather().name()));
+        return new Result(true, DialogueManager.getNpcDialogue(npcName, MyGame.getCurrentWeather().name()));
     }
 
     public Result giftNPC(String input) {
@@ -781,11 +827,11 @@ public class GameMenuController extends MenuController {
         int iIndex = input.indexOf('-');
         String npcName = input.substring(CIndex + 1, iIndex).trim();
         String itemName = input.substring(iIndex + 2).trim();
-        NPC npc = Game.getNPCByName(npcName);
+        NPC npc = MyGame.getNPCByName(npcName);
         if (npc == null) return new Result(false, "NPC not found");
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
         Item item = player.getBackPack().getFromInventory(itemName);
-        if (Game.getDatabase().getItem(itemName) == null && item == null) return new Result(false, "Item not found");
+        if (MyGame.getDatabase().getItem(itemName) == null && item == null) return new Result(false, "Item not found");
         if (item == null)
             return Result.error("You don't have that item in your inventory");
         npc.recieveGift(item, player);
@@ -806,7 +852,7 @@ public class GameMenuController extends MenuController {
     }
 
     public Result showAllQuests() {
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
         StringBuilder output = new StringBuilder();
         if (lastNPC == null) return Result.error("No NPC chosen");
         output.append(lastNPC.getName()).append(" quests for you");
@@ -834,7 +880,7 @@ public class GameMenuController extends MenuController {
         if (lastNPC == null) return Result.error("No NPC chosen");
         Map.Entry<String, Integer> quest = lastNPC.getQuest(questIndex);
         if (quest == null) return new Result(false, "Quest not found");
-        Player player = Game.getCurrentPlayer();
+        Player player = MyGame.getCurrentPlayer();
         if (Math.abs(player.getX() - lastNPC.getX()) > 1 || Math.abs(player.getY() - lastNPC.getY()) > 1) {
             return new Result(false,
                     "You can't wrap this up from here. Get back to " + lastNPC.getName() + " first!");
@@ -843,7 +889,7 @@ public class GameMenuController extends MenuController {
             return new Result(false,
                     "Another farmer's already taken care of that one. Why not lend a hand elsewhere?");
         }
-        Item item = Game.getDatabase().getItem(quest.getKey());
+        Item item = MyGame.getDatabase().getItem(quest.getKey());
         if (player.getItemQuantity(item) < quest.getValue()) {
             return new Result(false,
                     "Whoops! You're still a few shy of the total. Harvest more and pop back over!");
@@ -860,31 +906,31 @@ public class GameMenuController extends MenuController {
     //plant seed on a specific tile
     public Result plantSeed(String seed, String direction) {
         int[] dir = getDirections(direction);
-        GameMap map = Game.getGameMap();
-        GameTile tile = map.getTile(Game.getCurrentPlayer().getCoordinate().getKey() + dir[1], Game.getCurrentPlayer().getCoordinate().getValue() + dir[0]);
+        GameMap map = MyGame.getGameMap();
+        GameTile tile = map.getTile(MyGame.getCurrentPlayer().getCoordinate().getKey() + dir[1], MyGame.getCurrentPlayer().getCoordinate().getValue() + dir[0]);
         //errors
         if (tile == null) return new Result(false, "Tile not found");
-        if (tile.getX() == Game.getCurrentPlayer().getCoordinate().getKey() && tile.getY() == Game.getCurrentPlayer().getCoordinate().getValue()) {
+        if (tile.getX() == MyGame.getCurrentPlayer().getCoordinate().getKey() && tile.getY() == MyGame.getCurrentPlayer().getCoordinate().getValue()) {
             return new Result(false, "You stare at your boots. The boots stare back. Nothing grows.");
         }
         if (tile.getTileType() != TileType.Soil)
             return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
         if (!tile.isTileValidForPlanting()) return new Result(false,
                 "You can't plant cause the tile is occupied!");
-        boolean successful = Game.getCurrentPlayer().getFarmingSkill().plantSeed(seed, tile);
+        boolean successful = MyGame.getCurrentPlayer().getFarmingSkill().plantSeed(seed, tile);
         if (successful) {
-            Game.getCurrentPlayer().getBackPack().removeFromInventory(
-                    Game.getCurrentPlayer().getBackPack().getFromInventory(seed), 1
+            MyGame.getCurrentPlayer().getBackPack().removeFromInventory(
+                    MyGame.getCurrentPlayer().getBackPack().getFromInventory(seed), 1
             );
             return new Result(true, "Successfully planted " + seed);
-        } else if (Game.getCurrentPlayer().getBackPack().getFromInventory(seed) == null)
+        } else if (MyGame.getCurrentPlayer().getBackPack().getFromInventory(seed) == null)
             return new Result(false, "You don't have that seed in your inventory!");
         return new Result(false, "That's not a valid seed!");
     }
 
     //show the plant on a specific tile
     public Result showPlant(Map.Entry<Integer, Integer> coordinates) {
-        GameMap map = Game.getGameMap();
+        GameMap map = MyGame.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         Item item = tile.getItemOnTile();
         if (item == null) return new Result(false, "Nothing planted on this tile");
@@ -908,7 +954,7 @@ public class GameMenuController extends MenuController {
 
     //fertilize crop
     public Result fertilizeCrop(String fertilizer, Map.Entry<Integer, Integer> coordinates) {
-        GameMap map = Game.getGameMap();
+        GameMap map = MyGame.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         Item item = tile.getItemOnTile();
         if (item == null) {
@@ -917,7 +963,7 @@ public class GameMenuController extends MenuController {
         } else if (item instanceof FruitAndVegetable) {
             FruitAndVegetable fruit = (FruitAndVegetable) item;
             if (fruit.getAge() == 0) {
-                boolean successful = Game.getCurrentPlayer().getFarmingSkill().fertilizeCrop(coordinates, fertilizer);
+                boolean successful = MyGame.getCurrentPlayer().getFarmingSkill().fertilizeCrop(coordinates, fertilizer);
                 if (successful) return new Result(true, "Successfully fertilized with " + fertilizer);
                 else return new Result(false, "You don't have that kind of fertilizer");
             } else return new Result(false, "You can only fertilize tile before or the day of planting!");
@@ -926,7 +972,7 @@ public class GameMenuController extends MenuController {
 
     //how much water left
     public Result howMuchWaterLeft() {
-        int waterLeft = Game.getCurrentPlayer().getWateringCan().getWaterlevel();
+        int waterLeft = MyGame.getCurrentPlayer().getWateringCan().getWaterlevel();
         return new Result(true, waterLeft + " water units left in your watering can");
     }
 
@@ -935,21 +981,21 @@ public class GameMenuController extends MenuController {
     public Result placeItem(String itemName, String direction) {
         Item item = null;
         int[] directions = getDirections(direction);
-        for (Item i : Game.getCurrentPlayer().getBackPack().getInventory().keySet()) {
+        for (Item i : MyGame.getCurrentPlayer().getBackPack().getInventory().keySet()) {
             if (i.getName().equals(itemName)) {
                 item = i;
             }
         }
         if (item == null) return new Result(false, "No such item in your inventory");
         else if (directions == null) return new Result(false, "Invalid direction");
-        GameMap map = Game.getGameMap();
-        GameTile tile = GameMap.getTile(Game.getCurrentPlayer().getCoordinate().getKey() + directions[1],
-                Game.getCurrentPlayer().getCoordinate().getValue() + directions[0]);
+        GameMap map = MyGame.getGameMap();
+        GameTile tile = GameMap.getTile(MyGame.getCurrentPlayer().getCoordinate().getKey() + directions[1],
+                MyGame.getCurrentPlayer().getCoordinate().getValue() + directions[0]);
         if (tile != null && tile.getItemOnTile() != null)
             return new Result(false, "The tile is already occupied.");
         assert tile != null;
         tile.setItemOnTile(item);
-        Game.getCurrentPlayer().getBackPack().removeFromInventory(tile.getItemOnTile(), 1);
+        MyGame.getCurrentPlayer().getBackPack().removeFromInventory(tile.getItemOnTile(), 1);
         return new Result(true, "Item placed successfully");
     }
 
@@ -991,7 +1037,7 @@ public class GameMenuController extends MenuController {
     //add item cheat code
     public Result addItemCheatCode(String name, int count) {
         Item item = null;
-        if (Game.getDatabase().getItem(name) != null) item = Game.getDatabase().getItem(name);
+        if (MyGame.getDatabase().getItem(name) != null) item = MyGame.getDatabase().getItem(name);
         else if (CropType.fromString(name) != null) item = CropType.fromString(name);
         else if (ForagingTreeSourceType.fromString(name) != null) item = ForagingTreeSourceType.fromString(name);
         else if (ForagingCrop.fromString(name) != null) item = ForagingCrop.fromString(name);
@@ -1005,51 +1051,51 @@ public class GameMenuController extends MenuController {
         if (count <= 0) return new Result(false, "** Not a valid count **");
         if (item.getName().contains("Pack")) {
             if (item.getName().equals("Large Pack")) {
-                Game.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Big);
+                MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Big);
             } else if (item.getName().equals("Deluxe Pack")) {
-                Game.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Deluxe);
+                MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Deluxe);
             }
             return new Result(true, "Upgraded successfully");
             //change trash can
         } else if (item.getName().contains("Trash Can")) {
             if (item.getName().equals("Copper Trash Can")) {
-                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Brass);
+                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Brass);
             } else if (item.getName().equals("Steel Trash Can")) {
-                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iron);
+                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iron);
             } else if (item.getName().equals("Gold Trash Can")) {
-                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Gold);
+                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Gold);
             } else if (item.getName().equals("Iridium Trash Can")) {
-                Game.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iridium);
+                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iridium);
             }
             return new Result(true, "Upgraded successfully");
             //add craft recipes to learnt recipes
         } else if (item.getName().contains("Recipe")) {
             if (item.getName().equals("Dehydrator Recipe")) {
-                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
             } else if (item.getName().equals("Grass Starter Recipe")) {
-                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
             } else if (item.getName().equals("Fish Smoker Recipe")) {
-                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
             } else {
                 String recipeName = item.getName().replace("Recipe", "").trim();
                 CookingRecipeType type = CookingRecipeType.fromString(recipeName);
                 System.out.println(type);
-                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
+                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
             }
             return new Result(true, "Recipe added successfully");
         }
-        Game.getCurrentPlayer().getBackPack().addToInventory(item, count);
+        MyGame.getCurrentPlayer().getBackPack().addToInventory(item, count);
         return new Result(true, "** " + count + " of " + name + " added to your inventory **");
 
     }
 
     //plow tile
     public Result plowTile(int x, int y) {
-        GameMap map = Game.getGameMap();
+        GameMap map = MyGame.getGameMap();
         GameTile tile = map.getTile(x, y);
-        Item hoe = Game.getCurrentPlayer().getBackPack().getToolFromInventory("Hoe");
+        Item hoe = MyGame.getCurrentPlayer().getBackPack().getToolFromInventory("Hoe");
         if (tile.getTileType().equals(TileType.Flat))
-            Game.getCurrentPlayer().getFarmingSkill().plowTile(tile, (Hoe) hoe);
+            MyGame.getCurrentPlayer().getFarmingSkill().plowTile(tile, (Hoe) hoe);
         return new Result(true, "Tile plowed successfully");
     }
 
@@ -1090,13 +1136,13 @@ public class GameMenuController extends MenuController {
 
 
     public Result showWeather() {
-        Weather currentWeather = Game.getCurrentWeather();
+        Weather currentWeather = MyGame.getCurrentWeather();
         return Result.success("Current weather: " + currentWeather.toString());
     }
 
 
     public Result weatherForecast() {
-        Weather forecast = Game.getForecastedWeather();
+        Weather forecast = MyGame.getForecastedWeather();
         return Result.success("Forecasted weather for tomorrow: " + forecast.toString());
     }
 
@@ -1116,7 +1162,7 @@ public class GameMenuController extends MenuController {
                 return Result.error("Invalid weather type. Valid types: SUNNY, RAIN, STORM, SNOW");
             }
 
-            Game.setForecastedWeather(newForecastedWeather);
+            MyGame.setForecastedWeather(newForecastedWeather);
             return Result.success("Forecasted weather for tomorrow set to: " + newForecastedWeather);
 
         } catch (Exception e) {
@@ -1154,13 +1200,13 @@ public class GameMenuController extends MenuController {
     }
 
     public Result eatFood(String foodName) {
-        Item food = Game.getCurrentPlayer().getBackPack().getFromInventory(foodName);
+        Item food = MyGame.getCurrentPlayer().getBackPack().getFromInventory(foodName);
         if (food == null) return new Result(false, "You don't have that food in your inventory.");
         else if (food instanceof Food) {
             int energy = ((Food) food).getEnergy();
-            if(((Food) food).getRecipeType().Buff()) Game.getCurrentPlayer().setEnergy(200);
-            else Game.getCurrentPlayer().increaseEnergy(energy);
-            Game.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
+            if(((Food) food).getRecipeType().Buff()) MyGame.getCurrentPlayer().setEnergy(200);
+            else MyGame.getCurrentPlayer().increaseEnergy(energy);
+            MyGame.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
             return new Result(true, "You consumed the food successfully!");
         } else return new Result(false, "That's...not edible.");
     }
@@ -1189,12 +1235,12 @@ public class GameMenuController extends MenuController {
                 i = x;
                 j = y;
                 //todo: اگر گلخانه بود تاثیر نداره
-                if (Game.getGameMap().getTile(x, y).getItemOnTile() instanceof Tree) {
-                    ((Tree)Game.getGameMap().getTile(x, y).getItemOnTile()).thunderEffect(GameMap.getTile(x, y));
+                if (MyGame.getGameMap().getTile(x, y).getItemOnTile() instanceof Tree) {
+                    ((Tree) MyGame.getGameMap().getTile(x, y).getItemOnTile()).thunderEffect(GameMap.getTile(x, y));
                 }
-                if (Game.getGameMap().getTile(x, y).getTileType().equals(TileType.GreenHouse)) {
+                if (MyGame.getGameMap().getTile(x, y).getTileType().equals(TileType.GreenHouse)) {
                     return new Result(false, "Cheat Thor failed!");
-                } else Game.getGameMap().getTile(x, y).setTileType(TileType.CheatThor);
+                } else MyGame.getGameMap().getTile(x, y).setTileType(TileType.CheatThor);
             }
 
         return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
@@ -1221,7 +1267,7 @@ public class GameMenuController extends MenuController {
                 int newX = current.x + dir[0];
                 int newY = current.y + dir[1];
 
-                if (Game.getGameMap().isInBounds(newX, newY) &&
+                if (MyGame.getGameMap().isInBounds(newX, newY) &&
                         !visited[newX][newY] &&
                         isWalkable(newX, newY)) {
 
@@ -1248,9 +1294,9 @@ public class GameMenuController extends MenuController {
 
 
     private boolean canWalk(int x, int y) {
-        for (Player player : Game.getAllPlayers()) {
+        for (Player player : MyGame.getAllPlayers()) {
             if (player.getFarm() != null) {
-                if (player.getFarm().isInFarm(x, y) && !player.getFarm().isOwner(Game.getCurrentPlayer())) {
+                if (player.getFarm().isInFarm(x, y) && !player.getFarm().isOwner(MyGame.getCurrentPlayer())) {
                     return false;
                 }
             }
@@ -1260,9 +1306,9 @@ public class GameMenuController extends MenuController {
     }
 
     public Result buildGreenHouse() {
-        Player currentPlayer = Game.getCurrentPlayer();
-        Game.canBuildGreenHouse = true;
-        Item item = Game.getDatabase().getItem("wood");
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        MyGame.canBuildGreenHouse = true;
+        Item item = MyGame.getDatabase().getItem("wood");
         for (int i = 0; i < 100; i++) {
             for (int j = 0; j < 100; j++) {
                 GameTile.greenHouseBuilt = true;
@@ -1321,7 +1367,7 @@ public class GameMenuController extends MenuController {
                     return new Result(false, "You cannot enter another player's farm!");
                 }
 
-                Player currentPlayer = Game.getCurrentPlayer();
+                Player currentPlayer = MyGame.getCurrentPlayer();
                 int startX = currentPlayer.getX();
                 int startY = currentPlayer.getY();
 
@@ -1344,10 +1390,10 @@ public class GameMenuController extends MenuController {
                 int energyCost = (int)((tilesWalked + (10 * turns))/20.0);
 
                 boolean faint = false;
-                if (Game.getCurrentPlayer().getEnergy() < energyCost) {
+                if (MyGame.getCurrentPlayer().getEnergy() < energyCost) {
                     faint = true;
                 }
-                Game.getCurrentPlayer().increaseEnergy(-energyCost);
+                MyGame.getCurrentPlayer().increaseEnergy(-energyCost);
 
                 if(faint) return new Result(false, "You fainted while walking!");
                 Point finalStep = path.get(path.size() - 1);
@@ -1409,9 +1455,9 @@ public class GameMenuController extends MenuController {
 
     //put back item in hand
     public Result putBack(){
-        Item item = Game.getCurrentPlayer().getCurrentItem();
+        Item item = MyGame.getCurrentPlayer().getCurrentItem();
         if(item == null) return new Result(false, "You don't have anything in hand!");
-        Game.getCurrentPlayer().getBackPack().addToInventory(item, 1);
+        MyGame.getCurrentPlayer().getBackPack().addToInventory(item, 1);
         return new Result(true, item.getName() + " is back in you inventory!");
     }
 

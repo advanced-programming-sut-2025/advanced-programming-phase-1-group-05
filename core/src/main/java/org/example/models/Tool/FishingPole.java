@@ -1,16 +1,14 @@
 package org.example.models.Tool;
 
 import org.example.models.Enums.FishingPoleType;
-import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.TileType;
-import org.example.models.Game;
+import org.example.models.MyGame;
 import org.example.models.GameMap;
 import org.example.models.GameTile;
 import org.example.models.Result;
 import org.example.models.Skills.Fishing;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class FishingPole implements Tool<FishingPoleType> {
     FishingPoleType level = FishingPoleType.Training;
@@ -25,16 +23,16 @@ public class FishingPole implements Tool<FishingPoleType> {
     }
     @Override
     public Result use(HashMap.Entry<Integer, Integer> coordinates){
-        GameMap map = Game.getGameMap();
+        GameMap map = MyGame.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
-        Fishing fishing = Game.getCurrentPlayer().getFishingSkill();
+        Fishing fishing = MyGame.getCurrentPlayer().getFishingSkill();
         int energyUsage = level.getEnergyUsage();
 
         if(tile.getTileType() == TileType.Water){
             if(fishing.isMaxLevel()) energyUsage --;
             if(!reduceEnergy(energyUsage))
                 return new Result(false, "You don't have enough energy");
-            Game.getCurrentPlayer().getFishingSkill().fishing(tile, this);
+            MyGame.getCurrentPlayer().getFishingSkill().fishing(tile, this);
             //TODO implement fishing
         } else {
             if(fishing.isMaxLevel()) energyUsage --;
@@ -51,8 +49,8 @@ public class FishingPole implements Tool<FishingPoleType> {
     @Override
     public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
-        if(Game.getCurrentPlayer().getEnergy() - amount < 0)return false;
-        Game.getCurrentPlayer().increaseEnergy(-amount);
+        if(MyGame.getCurrentPlayer().getEnergy() - amount < 0)return false;
+        MyGame.getCurrentPlayer().increaseEnergy(-amount);
         return true;
     }
     @Override

@@ -62,7 +62,7 @@ public class NPC {
     }
 
     public void initializeFriendships() {
-        for (Player player : Game.getAllPlayers()){
+        for (Player player : MyGame.getAllPlayers()){
             friendshipPoints.put(player, 0);
             unlockedQuests.put(player, 1);
         }
@@ -130,7 +130,7 @@ public class NPC {
     public void sendGift(Player player){
         Random rand = new Random();
         String giftName = favorites.get(rand.nextInt(favorites.size()));
-        Item gift = Game.getDatabase().getItem(giftName);
+        Item gift = MyGame.getDatabase().getItem(giftName);
         player.getBackPack().addToInventory(gift, rand.nextInt(4)+1);
 
         int messageNumber = rand.nextInt(3);

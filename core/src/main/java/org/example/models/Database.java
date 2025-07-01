@@ -43,7 +43,7 @@ public class Database {
         itemDatabase.add(new BasicItem("Truffle", 625));
         String json;
         try {
-            json = new String(Files.readAllBytes(Paths.get("src/main/resources/stores.json")));
+            json = new String(Files.readAllBytes(Paths.get("stores.json")));
         } catch (IOException e) {
             System.out.println("can't get json.");
             return;
@@ -108,7 +108,7 @@ public class Database {
     public void loadNPCs() {
         String json;
         try {
-            json = new String(Files.readAllBytes(Paths.get("src/main/resources/npcInfos.json")));
+            json = new String(Files.readAllBytes(Paths.get("npcInfos.json")));
         } catch (IOException e) {
             System.out.println("can't get json.");
             return;

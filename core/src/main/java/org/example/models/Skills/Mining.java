@@ -3,9 +3,7 @@ package org.example.models.Skills;
 import org.example.models.*;
 import org.example.models.Enums.CookingRecipeType;
 import org.example.models.Enums.CraftType;
-import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.MineralType;
-import org.example.models.Tool.FishingPole;
 import org.example.models.Tool.Pickaxe;
 
 public class Mining implements Skill{
@@ -14,12 +12,12 @@ public class Mining implements Skill{
 
     public void mine(GameTile tile, Pickaxe pickaxe) {
         Item stone = tile.getItemOnTile();
-        Game.getCurrentPlayer().getBackPack().addToInventory(stone, 1);
+        MyGame.getCurrentPlayer().getBackPack().addToInventory(stone, 1);
         tile.setItemOnTile(null);
         increaseCapacity();
         if(level >=2) {
             Item addedItem = MineralType.getRandomMineralType();
-            Game.getCurrentPlayer().getBackPack().addToInventory(addedItem, 1);
+            MyGame.getCurrentPlayer().getBackPack().addToInventory(addedItem, 1);
         }
     }
 
@@ -59,16 +57,16 @@ public class Mining implements Skill{
     public void handleLevelChangeTrophies(int level){
         switch(level){
             case 1: {
-                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.CherryBomb);
-                Game.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.MinersTreat);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.CherryBomb);
+                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.MinersTreat);
                 break;
             }
             case 2: {
-                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Bomb);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Bomb);
                 break;
             }
             case 3: {
-                Game.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.MegaBomb);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.MegaBomb);
                 break;
             }
         }

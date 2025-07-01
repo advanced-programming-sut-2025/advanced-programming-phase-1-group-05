@@ -5,7 +5,6 @@ import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.TileType;
 import org.example.models.Skills.Farming;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class WateringCan implements Tool<ItemLevel> {
@@ -14,9 +13,9 @@ public class WateringCan implements Tool<ItemLevel> {
 
     @Override
     public Result use(Map.Entry<Integer, Integer> coordinates){
-        GameMap map = Game.getGameMap();
+        GameMap map = MyGame.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
-        Farming farming = Game.getCurrentPlayer().getFarmingSkill();
+        Farming farming = MyGame.getCurrentPlayer().getFarmingSkill();
         int energyUsage = level.getEnergyUsage();
 
         Item item = tile.getItemOnTile();
@@ -33,7 +32,7 @@ public class WateringCan implements Tool<ItemLevel> {
                 if(farming.isMaxLevel()) energyUsage --;
                 if(!reduceEnergy(energyUsage))
                     return new Result(false, "You don't have enough energy");
-                Game.getCurrentPlayer().getFarmingSkill().waterCrop((FruitAndVegetable)item);
+                MyGame.getCurrentPlayer().getFarmingSkill().waterCrop((FruitAndVegetable)item);
                 if(waterlevel - 1 < 9) waterlevel = 0;
                 else waterlevel--;
                 return new Result(true, "Crop was successfully watered!");
@@ -61,8 +60,8 @@ public class WateringCan implements Tool<ItemLevel> {
     @Override
     public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
-        if(Game.getCurrentPlayer().getEnergy() - amount < 0)return false;
-        Game.getCurrentPlayer().increaseEnergy(-amount);
+        if(MyGame.getCurrentPlayer().getEnergy() - amount < 0)return false;
+        MyGame.getCurrentPlayer().increaseEnergy(-amount);
         return true;
     }
     @Override

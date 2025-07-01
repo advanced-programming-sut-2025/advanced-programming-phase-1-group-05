@@ -2,13 +2,12 @@ package org.example.models.Tool;
 
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.TileType;
-import org.example.models.Game;
+import org.example.models.MyGame;
 import org.example.models.GameMap;
 import org.example.models.GameTile;
 import org.example.models.Result;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class Hoe implements Tool <ItemLevel> {
     ItemLevel level = ItemLevel.Normal;
@@ -25,7 +24,7 @@ public class Hoe implements Tool <ItemLevel> {
     public Result use(HashMap.Entry<Integer, Integer> coordinates){
         if(!reduceEnergy(level.getEnergyUsage()))
             return new Result(false, "You don't have enough energy.");
-        GameMap map = Game.getGameMap();
+        GameMap map = MyGame.getGameMap();
         GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         if(tile.getTileType() == TileType.Flat) {
             tile.setTileType(TileType.Soil);
@@ -37,8 +36,8 @@ public class Hoe implements Tool <ItemLevel> {
     @Override
     public boolean reduceEnergy(int amount){
         if(amount < 0) amount = 0;
-        if(Game.getCurrentPlayer().getEnergy() - amount < 0)return false;
-        Game.getCurrentPlayer().increaseEnergy(-amount);
+        if(MyGame.getCurrentPlayer().getEnergy() - amount < 0)return false;
+        MyGame.getCurrentPlayer().increaseEnergy(-amount);
         return true;
     }
     @Override

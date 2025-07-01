@@ -1,13 +1,10 @@
 package org.example.models;
 
 import org.example.models.Enums.CraftType;
-import org.example.models.Enums.Material;
 import org.example.models.Enums.MineralType;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Craft extends BasicItem implements Item {
@@ -38,14 +35,14 @@ public class Craft extends BasicItem implements Item {
     //build craft
     public boolean buildCraft() {
         Map<Item, Integer> ingredients = type.getIngredients();
-        HashMap<Item, Integer> inventory = Game.getCurrentPlayer().getBackPack().getInventory();
+        HashMap<Item, Integer> inventory = MyGame.getCurrentPlayer().getBackPack().getInventory();
         for(Item item : ingredients.keySet()) {
             if(!inventory.containsKey(item) ||
                     (inventory.get(item) < ingredients.get(item))) return false;
         }
-        Game.getCurrentPlayer().increaseEnergy(-2);
+        MyGame.getCurrentPlayer().increaseEnergy(-2);
         for(Item item : ingredients.keySet()) {
-            Game.getCurrentPlayer().getBackPack().removeFromInventory(item, ingredients.get(item));
+            MyGame.getCurrentPlayer().getBackPack().removeFromInventory(item, ingredients.get(item));
         }
         return true;
 
@@ -55,7 +52,7 @@ public class Craft extends BasicItem implements Item {
         int x = currentTile.getX();
         int y = currentTile.getY();
         ArrayList<GameTile> tiles = new ArrayList<>();
-        GameMap map = Game.getGameMap();
+        GameMap map = MyGame.getGameMap();
 
         for (int dx = -2; dx <= 2; dx++) {
             for (int dy = -2; dy <= 2; dy++) {
@@ -73,7 +70,7 @@ public class Craft extends BasicItem implements Item {
 
         return tiles;
     }
-    
+
     public Result useCraft(GameTile currentTile) {
         ArrayList<GameTile> adjacentTiles = getTiles(currentTile);
         if(type.getName().contains("Bomb")){
@@ -104,11 +101,11 @@ public class Craft extends BasicItem implements Item {
             }
             return new Result(true, "The Sprinkler watered " + watered + " crops");
         } else if(type.getName().equals("Charcoal Klin")) {
-            Item wood = Game.getDatabase().getItem("Wood");
-            if(Game.getCurrentPlayer().getBackPack().getInventory().containsKey(wood)) {
-                if (Game.getCurrentPlayer().getBackPack().getInventory().get(wood) < 10)
+            Item wood = MyGame.getDatabase().getItem("Wood");
+            if(MyGame.getCurrentPlayer().getBackPack().getInventory().containsKey(wood)) {
+                if (MyGame.getCurrentPlayer().getBackPack().getInventory().get(wood) < 10)
                     return new Result(false, "Not enough wood");
-                else Game.getCurrentPlayer().getBackPack().removeFromInventory(wood, 10);
+                else MyGame.getCurrentPlayer().getBackPack().removeFromInventory(wood, 10);
                 BasicItem coal = new BasicItem("Coal", MineralType.Coal.getPrice());
                 coal.setMaterial(MineralType.Coal);
                 currentTile.setItemOnTile(coal);
@@ -141,7 +138,7 @@ public class Craft extends BasicItem implements Item {
         }
         return null;
     }
-    
+
     @Override
     public String getName() {
         return type.getName();

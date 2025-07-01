@@ -8,18 +8,18 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import org.example.controllers.DBController;
 import org.example.controllers.GameMenuController;
 import org.example.models.Result;
 
-import java.util.HashMap;
-import java.util.List; // ✅ اضافه کردن import درست
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 public class MapSelectionScreen implements Screen {
     private final Stage stage;
     private final Skin skin;
     private final GameMenuController controller;
-    private final List<String> usernames;  // حالا درست شده
+    private final List<String> usernames;
     private final Map<String, SelectBox<String>> playerMapSelections = new HashMap<>();
     private final Label resultLabel;
 
@@ -40,7 +40,7 @@ public class MapSelectionScreen implements Screen {
         for (String username : usernames) {
             table.add(new Label(username + "'s Map:", skin)).pad(5);
             SelectBox<String> mapBox = new SelectBox<>(skin);
-            mapBox.setItems("1", "2", "3", "4"); // اصلاح نام نقشه‌ها بر اساس منطق کد backend
+            mapBox.setItems("Map1", "Map2", "Map3", "Map4");
             playerMapSelections.put(username, mapBox);
             table.add(mapBox).width(200).pad(5).row();
         }
@@ -55,20 +55,19 @@ public class MapSelectionScreen implements Screen {
         confirmBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Map<String, String> chosenMaps = new HashMap<>();
+                Map<String, String> selections = new HashMap<>();
                 for (String username : usernames) {
                     String selectedMap = playerMapSelections.get(username).getSelected();
-
-                    if (chosenMaps.containsValue(selectedMap)) {
-                        resultLabel.setText("Duplicate map selected! Each player must choose a different map.");
-                        return;
-                    }
-
-                    chosenMaps.put(username, selectedMap);
+                    selections.put(username, selectedMap);
                 }
-
-                resultLabel.setText("Game started!");
-                // MenuNavigator.showGameUI();  // فعال کن وقتی صفحه بازی آماده شد
+                Result result = controller.submitAllMapSelections(selections);
+                if (!result.isSuccess()) {
+                    resultLabel.setText(result.getMessage());
+                } else {
+                    DBController.saveGameState();
+                    resultLabel.setText("Game started!");
+//                    MenuNavigator.showGameUI();
+                }
             }
         });
     }

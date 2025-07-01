@@ -1,19 +1,12 @@
 package org.example.models;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.example.controllers.GameManager;
-import org.example.controllers.GameMenuController;
 import org.example.models.Building.GreenHouse;
 import org.example.models.Enums.*;
 
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.io.*;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 
@@ -109,11 +102,11 @@ public class GameMap {
                     item = new ForagingItem(type, type.getName(), type.getPrice());
                     tile.setItemOnTile(item);
                 } else if(chosen % 4 == 2) {
-                    item = Game.getDatabase().getItem("Wood");
+                    item = MyGame.getDatabase().getItem("Wood");
 
                     tile.setItemOnTile(item);
                 } else {
-                    item = Game.getDatabase().getItem("Fiber");
+                    item = MyGame.getDatabase().getItem("Fiber");
                     tile.setItemOnTile(item);
                 }
             }
@@ -151,7 +144,7 @@ public class GameMap {
                 //remove dead plants
                 GameTile tile = GameMap.getTile(f.getCoordinates().getKey(), f.getCoordinates().getValue());
                 tile.setItemOnTile(null);
-                Game.getGameMap().getPlants().remove(f);
+                MyGame.getGameMap().getPlants().remove(f);
             }
         }
         for(Tree t: trees){
@@ -199,7 +192,7 @@ public class GameMap {
         }
 
         // Set player coordinates
-        Game.getCurrentPlayer().setCoordinate(startX, startY);
+        MyGame.getCurrentPlayer().setCoordinate(startX, startY);
 
         // Mark the tile as occupied
         // TODO ; HELLo
@@ -456,7 +449,7 @@ public class GameMap {
             for(int j = 1; j < MAP_WIDTH; j ++) {
                 GameTile tile = getTile(i, j);
                 if(tile.getTileType().equals(TileType.Building)) {
-                    Game.getCurrentPlayer().setCoordinate(i, j);
+                    MyGame.getCurrentPlayer().setCoordinate(i, j);
                 }
             }
         }
