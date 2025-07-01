@@ -16,8 +16,8 @@ public class ProfileMenuController extends MenuController {
             "(?<oldPassword>\\S+)\\s*$";
     private static final String USERINFO_REGEX = "^\\s*user\\s+info\\s*$";
 
-    public ProfileMenuController(Scanner scanner, User currentUser) {
-        super(scanner);
+    public ProfileMenuController(User currentUser) {
+        super();
         ProfileMenuController.currentUser = currentUser;
     }
 

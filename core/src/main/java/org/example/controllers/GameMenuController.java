@@ -25,7 +25,6 @@ public class GameMenuController extends MenuController {
     private GameMap map = Game.getGameMap();
 
     public GameMenuController(Scanner scanner, User currentUser) {
-        super(scanner);
         GameMenuController.currentUser = currentUser;
     }
 

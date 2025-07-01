@@ -14,10 +14,8 @@ public class MenuController {
     private static MenuController menuController;
     private static LoginMenu loginMenu;
     private org.example.views.AppMenu currentMenu;
-    private final Scanner scanner;
 
-    public MenuController(Scanner scanner) {
-        this.scanner = scanner;
+    public MenuController() {
         RegisterMenuController registerController = new RegisterMenuController();
 //        this.currentMenu = new RegisterMenu(this, registerController, this.getScanner());
     }
@@ -109,18 +107,7 @@ public class MenuController {
     }
 
     public void run() throws IOException {
-        while (true) {
 
-            String input = scanner.nextLine().trim();
-
-            if (input.equals("show current menu")) {
-                Result result = showCurrentMenu();
-                System.out.println(result.getMessage());
-            }
-            else {
-                currentMenu.handleUserInput(input);
-            }
-        }
     }
 
     public Result logoutUser() {
@@ -131,11 +118,6 @@ public class MenuController {
             return new Result(false, "You can only logout from Main Menu!");
         }
     }
-
-    public Scanner getScanner() {
-        return scanner;
-    }
-
     public void showMenus() {
         System.out.println("Register\nLogin\nMain\nProfile\nGame\nAvatar\nHome\nTrade");
     }

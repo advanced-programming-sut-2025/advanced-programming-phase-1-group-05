@@ -42,6 +42,7 @@ public class Main extends Game {
     }
 
     public static void checkAutoLogin() {
+        UserDatabase.loadUsers();
         File file = new File("currentuser.json");
         if (!file.exists()) {
             MenuNavigator.showLoginMenu();

@@ -47,7 +47,7 @@ public class MainMenu implements Screen {
 
         profileButton.addListener(new ChangeListener() {
             @Override public void changed(ChangeEvent event, Actor actor) {
-//                MenuNavigator.showProfileMenu();
+                MenuNavigator.showProfileMenu();
             }
         });
 
