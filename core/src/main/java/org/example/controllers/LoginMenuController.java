@@ -156,6 +156,9 @@ import org.example.models.Result;
 import org.example.models.User;
 import org.example.models.UserDatabase;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class LoginMenuController {
     public static User currentUser;
 
@@ -177,12 +180,38 @@ public class LoginMenuController {
         if (!user.getPassword().equals(hashedInput)) {
             return new Result(false, "Incorrect password!");
         }
+
         if (stayLoggedIn) {
-            // پیاده‌سازی منطق ذخیره وضعیت ورود
+            saveCurrentUser(username, true);
+        } else {
+            deleteCurrentUserFile(); // پاک کردن فایل اگر تیک stay logged نخورده بود
         }
+
         this.currentUser = user;
         RegisterMenuController.currentUser = user;
         return new Result(true, "Logged in successfully!");
+    }
 
+    private void saveCurrentUser(String username, boolean stayLogged) {
+        try {
+            String json = "{\n" +
+                "  \"username\": \"" + username + "\",\n" +
+                "  \"stayLogged\": " + stayLogged + "\n" +
+                "}";
+
+            FileWriter writer = new FileWriter("currentuser.json");
+            writer.write(json);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void deleteCurrentUserFile() {
+        java.io.File file = new java.io.File("currentuser.json");
+        if (file.exists()) {
+            file.delete();
+        }
     }
 }
