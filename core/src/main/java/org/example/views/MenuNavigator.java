@@ -2,9 +2,12 @@ package org.example.views;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import org.example.controllers.GameMenuController;
 import org.example.controllers.ProfileMenuController;
 import org.example.controllers.RegisterMenuController;
 import org.example.views.*;
+
+import java.util.List;
 
 public class MenuNavigator {
     private static Game game;
@@ -13,6 +16,8 @@ public class MenuNavigator {
     private static RegisterMenu registerMenu;
     private static MainMenu mainMenu;
     private static ProfileMenu profileMenu;
+    private static GameMenu gameMenuScreen;
+    private static MapSelectionScreen mapSelectionScreen;
 
     public static void init(Game gameRef, Skin skin) {
         game = gameRef;
@@ -20,7 +25,6 @@ public class MenuNavigator {
         loginMenu = new LoginMenu(sharedSkin);
         registerMenu = new RegisterMenu(sharedSkin);
         mainMenu = new MainMenu(sharedSkin);
-//        profileMenu = new ProfileMenu(sharedSkin , new ProfileMenuController(RegisterMenuController.currentUser));
     }
 
     public static void showProfileMenu() {
@@ -30,19 +34,17 @@ public class MenuNavigator {
         game.setScreen(profileMenu);
     }
 
-//    public static void showProfileMenu() {
-//        if (RegisterMenuController.currentUser == null) {
-//            System.out.println("کاربر لاگین نشده و profileMenu قابل ساخت نیست");
-//            showLoginMenu();
-//            return;
-//        }
-//
-//        if (profileMenu == null) {
-//            profileMenu = new ProfileMenu(sharedSkin, new ProfileMenuController(RegisterMenuController.currentUser));
-//        }
-//
-//        game.setScreen(profileMenu);
-//    }
+    public static void showMapSelectionScreen(List<String> usernames, Skin skin, GameMenuController controller) {
+        mapSelectionScreen = new MapSelectionScreen(usernames, skin, controller);
+        game.setScreen(mapSelectionScreen);
+    }
+
+    public static void showGameMenu() {
+        if (gameMenuScreen == null) {
+            gameMenuScreen = new GameMenu(sharedSkin, new GameMenuController(RegisterMenuController.currentUser));
+        }
+        game.setScreen(gameMenuScreen);
+    }
 
     public static void showLoginMenu() { game.setScreen(loginMenu); }
     public static void showRegisterMenu() { game.setScreen(registerMenu); }

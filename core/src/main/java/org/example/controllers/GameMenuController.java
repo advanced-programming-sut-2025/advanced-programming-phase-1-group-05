@@ -23,8 +23,10 @@ public class GameMenuController extends MenuController {
     public static boolean[] canExitGame;
     private static Map<Integer, Integer> playerMapChoices = new HashMap<>();
     private GameMap map = Game.getGameMap();
+    private List<User> players = new ArrayList<>();
 
-    public GameMenuController(Scanner scanner, User currentUser) {
+
+    public GameMenuController(User currentUser) {
         GameMenuController.currentUser = currentUser;
     }
 
@@ -71,7 +73,7 @@ public class GameMenuController extends MenuController {
             }
         }
 
-        canChooseMap = true;
+//        canChooseMap = true;
         canExitGame = new boolean[selectedPlayers.size()];
         Arrays.fill(canExitGame, false);
 
@@ -83,9 +85,21 @@ public class GameMenuController extends MenuController {
         playerMapChoices.clear();
         Game.getAllPlayers().addAll(selectedPlayers);
 
-        return Result.success(selectedPlayers.get(0).getUsername() +
-                ", please choose your map (1-4):");
+        return Result.success("Now you can play Game:)");
     }
+
+    public Result startGameIfReady() {
+        if (canChooseMap) {
+            return new Result(false, "Game already started or in progress.");
+        }
+        if (selectedPlayers.size() < 3) {
+            return new Result(false, "At least 3 players are needed to start the game.");
+        }
+
+        canChooseMap = true;
+        return new Result(true, "All players added. Please choose your maps.");
+    }
+
 
     public Result chooseMap(String input) {
         if (!canChooseMap) {
