@@ -120,6 +120,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import org.example.controllers.DBController;
 import org.example.controllers.GameMenuController;
 import org.example.models.Player;
 import org.example.models.Result;
@@ -237,10 +238,11 @@ public class GameMenu implements Screen {
         deleteGameBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                Result result = controller.deleteGame();
-                resultLabel.setText(result.getMessage());
+                DBController.loadGameState();
+                MenuNavigator.showGameExitConfirmation(skin);
             }
         });
+
 
         backBtn.addListener(new ChangeListener() {
             @Override

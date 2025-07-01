@@ -39,6 +39,11 @@ public class MenuNavigator {
         game.setScreen(mapSelectionScreen);
     }
 
+    public static void showGameExitConfirmation(Skin skin) {
+        game.setScreen(new GameExitConfirmationScreen(skin));
+    }
+
+
     public static void showGameMenu() {
         if (gameMenuScreen == null) {
             gameMenuScreen = new GameMenu(sharedSkin, new GameMenuController(RegisterMenuController.currentUser));

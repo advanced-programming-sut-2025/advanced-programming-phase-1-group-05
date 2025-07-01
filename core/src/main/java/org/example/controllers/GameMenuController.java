@@ -180,15 +180,18 @@ public class GameMenuController extends MenuController {
 
 
     public Result loadGame() {
-        if (!currentUser.getUsername().equals(MyGame.getCurrentPlayer().getUsername())
-                || !currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())) {
-            for (int i = 0; i < selectedPlayers.size(); i++) {
-                if (currentUser.getUsername().equals(selectedPlayers.get(i).getUsername())) {
-                    canExitGame[i] = true;
-                }
-            }
-        }
+//        if (!currentUser.getUsername().equals(MyGame.getCurrentPlayer().getUsername())
+//                || !currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())) {
+//            for (int i = 0; i < selectedPlayers.size(); i++) {
+//                if (currentUser.getUsername().equals(selectedPlayers.get(i).getUsername())) {
+//                    canExitGame[i] = true;
+//                }
+//            }
+//        }
+        User.haveSavedGame = true;
         if (User.haveSavedGame) {
+            DBController.loadAllUsers(); // یا UserDatabase.loadUsers();
+            UserDatabase.loadUsers();
             DBController.loadGameState();
             if (RegisterMenuController.currentUser != null) {
                 Player currentPlayer = MyGame.getPlayerByUsername(RegisterMenuController.currentUser.getUsername());

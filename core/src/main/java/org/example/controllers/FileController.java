@@ -1,5 +1,8 @@
 package org.example.controllers;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.io.*;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -16,6 +19,23 @@ public class FileController {
         }
     }
 
+    public static boolean deleteGameOwnedBy(String ownerUsername) {
+        try {
+            // فرض بر این است که فایل game_state.json حاوی ownerUsername است
+            String json = getTextOfFile("game_state.json");
+            if (json == null || json.trim().isEmpty()) return false;
+
+            JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
+            if (obj.get("ownerUsername").getAsString().equals(ownerUsername)) {
+                return new File("game_state.json").delete();
+            }
+        } catch (Exception e) {
+            System.err.println("Error deleting game: " + e.getMessage());
+        }
+        return false;
+    }
+
+
     public static void writeTextToFile2(String text) {
         try {
             FileWriter fileWriter = new FileWriter("game_state.json");
@@ -26,19 +46,34 @@ public class FileController {
         }
     }
 
+//    public static String getTextOfFile(String path) {
+//        String text = "";
+//        try {
+//            File file = new File(path);
+//            Scanner fileScanner = new Scanner(file);
+//            while (fileScanner.hasNextLine()) {
+//                text += fileScanner.nextLine() + "\n";
+//            }
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
+//        return text;
+//    }
     public static String getTextOfFile(String path) {
-        String text = "";
+        StringBuilder text = new StringBuilder();
         try {
-            File file = new File("users.json");
+            File file = new File(path); // ✅ استفاده صحیح از ورودی
             Scanner fileScanner = new Scanner(file);
             while (fileScanner.hasNextLine()) {
-                text += fileScanner.nextLine() + "\n";
+                text.append(fileScanner.nextLine()).append("\n");
             }
+            fileScanner.close();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error reading file " + path + ": " + e.getMessage());
         }
-        return text;
+        return text.toString();
     }
+
 
     public static void copyFile(File source, File dest) throws IOException {
         InputStream is = null;

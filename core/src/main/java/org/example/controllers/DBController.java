@@ -53,13 +53,120 @@ public class DBController {
         return hashPassword(rawPassword).equals(hashedPassword);
     }
 
+//    public static void loadGameState() {
+//        try {
+//            String json = FileController.getTextOfFile("game_state.json");
+//            if (json == null || json.trim().isEmpty()) return;
+//
+//            Gson gson = new Gson();
+//            JsonObject gameState = JsonParser.parseString(json).getAsJsonObject();
+//
+//            String ownerUsername = gameState.get("ownerUsername").getAsString();
+//            JsonArray playersArray = gameState.getAsJsonArray("players");
+//
+//            GameMenuController.selectedPlayers.clear();
+//            MyGame.getAllPlayers().clear();
+//
+//            for (JsonElement element : playersArray) {
+//                JsonObject playerObj = element.getAsJsonObject();
+//                String username = playerObj.get("username").getAsString();
+//                int energy = playerObj.get("energy").getAsInt();
+//
+//                User user = UserDatabase.getUserByUsername(username);
+//                if (user == null) continue;
+//
+//                Player player = new Player(user);
+//                player.setEnergy(energy);
+//
+//                GameMenuController.selectedPlayers.add(player);
+//                MyGame.addPlayer(player);
+//                DBController.savePlayersToFile();
+//            }
+//
+//            MyGame.setCurrentPlayer(MyGame.getPlayerByUsername(ownerUsername));
+//
+//        } catch (Exception e) {
+//            System.err.println("Error loading game state: " + e.getMessage());
+//        }
+//    }
+
+//    public static void loadGameState() {
+//        try {
+//            // مرحله 1: بارگذاری فایل
+//            String json = FileController.getTextOfFile("game_state.json");
+//            if (json == null || json.trim().isEmpty()) {
+//                System.err.println("game_state.json is empty or missing.");
+//                return;
+//            }
+//
+//            System.out.println("Raw game_state.json:\n" + json);
+//
+//            // مرحله 2: پارس کردن JSON
+//            JsonObject gameState = JsonParser.parseString(json).getAsJsonObject();
+//            String ownerUsername = gameState.get("ownerUsername").getAsString();
+//            JsonArray playersArray = gameState.getAsJsonArray("players");
+//
+//            // مرحله 3: پاک کردن لیست‌ها
+//            GameMenuController.selectedPlayers.clear();
+//            MyGame.getAllPlayers().clear();
+//
+//            // مرحله 4: ساختن بازیکن‌ها
+//            for (JsonElement element : playersArray) {
+//                JsonObject playerObj = element.getAsJsonObject();
+//                String username = playerObj.get("username").getAsString();
+//                int energy = playerObj.get("energy").getAsInt();
+//
+//                User user = UserDatabase.getUserByUsername(username);
+//                if (user == null) {
+//                    System.err.println("User not found: " + username);
+//                    continue;
+//                }
+//
+//                Player player = new Player(user);
+//                player.setEnergy(energy);
+//
+//                GameMenuController.selectedPlayers.add(player);
+//                MyGame.addPlayer(player);
+//            }
+//
+//            // مرحله 5: تعیین بازیکن فعلی
+//            Player ownerPlayer = MyGame.getPlayerByUsername(ownerUsername);
+//            if (ownerPlayer != null) {
+//                MyGame.setCurrentPlayer(ownerPlayer);
+//                System.out.println("Current player set to: " + ownerPlayer.getUsername());
+//            } else {
+//                System.err.println("Owner username not found among players: " + ownerUsername);
+//            }
+//
+//        } catch (Exception e) {
+//            System.err.println("Error loading game state: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//    }
+
     public static void loadGameState() {
         try {
             String json = FileController.getTextOfFile("game_state.json");
-            if (json == null || json.trim().isEmpty()) return;
 
-            Gson gson = new Gson();
-            JsonObject gameState = JsonParser.parseString(json).getAsJsonObject();
+            if (json == null || json.trim().isEmpty()) {
+                System.err.println("game_state.json is empty or missing.");
+                return;
+            }
+
+            System.out.println("Raw game_state.json:\n" + json);
+
+            JsonElement root = JsonParser.parseString(json);
+            if (!root.isJsonObject()) {
+                System.err.println("Error: Expected JSON Object but got: " + root);
+                return;
+            }
+
+            JsonObject gameState = root.getAsJsonObject();
+
+            if (!gameState.has("ownerUsername") || !gameState.has("players")) {
+                System.err.println("Error: Missing required fields in game_state.json");
+                return;
+            }
 
             String ownerUsername = gameState.get("ownerUsername").getAsString();
             JsonArray playersArray = gameState.getAsJsonArray("players");
@@ -73,20 +180,29 @@ public class DBController {
                 int energy = playerObj.get("energy").getAsInt();
 
                 User user = UserDatabase.getUserByUsername(username);
-                if (user == null) continue;
+                if (user == null) {
+                    System.err.println("User not found in database: " + username);
+                    continue;
+                }
 
                 Player player = new Player(user);
                 player.setEnergy(energy);
 
                 GameMenuController.selectedPlayers.add(player);
                 MyGame.addPlayer(player);
-                DBController.savePlayersToFile();
             }
 
-            MyGame.setCurrentPlayer(MyGame.getPlayerByUsername(ownerUsername));
+            Player ownerPlayer = MyGame.getPlayerByUsername(ownerUsername);
+            if (ownerPlayer != null) {
+                MyGame.setCurrentPlayer(ownerPlayer);
+                System.out.println("✅ Current player set to: " + ownerPlayer.getUsername());
+            } else {
+                System.err.println("❌ Owner username not found among loaded players: " + ownerUsername);
+            }
 
         } catch (Exception e) {
             System.err.println("Error loading game state: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -164,7 +280,7 @@ public class DBController {
                     Player player = new Player(user);
                     player.setEnergy(energy);
                     MyGame.addPlayer(player);
-                    DBController.savePlayersToFile();
+//                    DBController.savePlayersToFile();
                 }
             }
 
