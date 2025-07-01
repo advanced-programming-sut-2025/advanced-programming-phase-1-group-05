@@ -82,11 +82,11 @@ public class ProfileMenuController extends MenuController {
     }
 
     private Result changePassword(String newPassword, String oldPassword) {
-        if (currentUser.getPassword().equals(newPassword)) {
+        if (currentUser.getPlainPassword().equals(newPassword)) {
             return Result.error("Your pass must be different from last one!");
         }
 
-        if (!currentUser.getPassword().equals(oldPassword)) {
+        if (!currentUser.getPlainPassword().equals(oldPassword)) {
             return Result.error("Old password is incorrect!");
         }
 
@@ -95,7 +95,7 @@ public class ProfileMenuController extends MenuController {
             return validation;
         }
 
-        currentUser.setPassword(newPassword);
+        currentUser.setPassword(DBController.hashPassword(newPassword));
         currentUser.setPlainPassword(newPassword);
         DBController.saveAllUsers();
         return Result.success("Password changed successfully!");
