@@ -24,18 +24,25 @@ public class MenuNavigator {
     }
 
     public static void showProfileMenu() {
-        if (RegisterMenuController.currentUser == null) {
-            System.out.println("کاربر لاگین نشده و profileMenu قابل ساخت نیست");
-            showLoginMenu();
-            return;
-        }
-
         if (profileMenu == null) {
             profileMenu = new ProfileMenu(sharedSkin, new ProfileMenuController(RegisterMenuController.currentUser));
         }
-
         game.setScreen(profileMenu);
     }
+
+//    public static void showProfileMenu() {
+//        if (RegisterMenuController.currentUser == null) {
+//            System.out.println("کاربر لاگین نشده و profileMenu قابل ساخت نیست");
+//            showLoginMenu();
+//            return;
+//        }
+//
+//        if (profileMenu == null) {
+//            profileMenu = new ProfileMenu(sharedSkin, new ProfileMenuController(RegisterMenuController.currentUser));
+//        }
+//
+//        game.setScreen(profileMenu);
+//    }
 
     public static void showLoginMenu() { game.setScreen(loginMenu); }
     public static void showRegisterMenu() { game.setScreen(registerMenu); }
