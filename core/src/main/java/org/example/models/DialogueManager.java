@@ -1,5 +1,7 @@
 package org.example.models;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.example.models.Enums.Weather;
@@ -15,11 +17,9 @@ public class DialogueManager {
 
     static {
         try {
-            InputStreamReader reader = new InputStreamReader(
-                    Objects.requireNonNull(DialogueManager.class.getResourceAsStream("/dialogues.json")), StandardCharsets.UTF_8
-            );
+            FileHandle file = Gdx.files.internal("jsonFiles/dialogues.json");
             Type type = new TypeToken<Map<String, Map<String, List<String>>>>() {}.getType();
-            Map<String, Map<String, List<String>>> data = new Gson().fromJson(reader, type);
+            Map<String, Map<String, List<String>>> data = new Gson().fromJson(file.reader("UTF-8"), type);
 
             npcDialogues.putAll(data);
         } catch (Exception e) {

@@ -1,11 +1,14 @@
 package org.example.models;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import org.example.models.Enums.BuildingType;
 import org.example.models.Enums.CropType;
 import org.example.models.Enums.Season;
 import org.example.models.BasicItem;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -23,7 +26,8 @@ public class Database {
     List<NPC> NPCs = new ArrayList<>();
 
     public Database() {
-        initializeStoresAndItems();loadNPCs();
+        initializeStoresAndItems();
+        loadNPCs();
     }
 
 
@@ -42,12 +46,8 @@ public class Database {
         itemDatabase.add(new BasicItem("Large goat milk", 345));
         itemDatabase.add(new BasicItem("Truffle", 625));
         String json;
-        try {
-            json = new String(Files.readAllBytes(Paths.get("stores.json")));
-        } catch (IOException e) {
-            System.out.println("can't get json.");
-            return;
-        }
+        FileHandle file = Gdx.files.internal("jsonFiles/stores.json");
+        json = file.readString();
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         JsonArray storesArray = jsonObject.get("stores").getAsJsonArray();
         for (JsonElement store : storesArray) {
@@ -68,8 +68,8 @@ public class Database {
                 int limit = storeProductObject.get("limit").getAsInt();
                 String buildingType = safeGetAsString(storeProductObject, "buildingRequired");
                 JsonArray seasons = storeProductObject.has("season") && !storeProductObject.get("season").isJsonNull()
-                        ? storeProductObject.get("season").getAsJsonArray()
-                        : null;
+                    ? storeProductObject.get("season").getAsJsonArray()
+                    : null;
                 Map<String, Integer> costs = new HashMap<>();
                 List<Season> seasonsInStock = new ArrayList<>();
                 if (seasons != null) {
@@ -93,6 +93,7 @@ public class Database {
             stores.add(new Store(storeName, products, xStart, xEnd, yStart, yEnd, openingTime, closingTime));
         }
     }
+
     public Item getItem(String name) {
         for (Item i : itemDatabase) {
             if (i.getName().equalsIgnoreCase(name)) {
@@ -105,14 +106,11 @@ public class Database {
     public List<Store> getStores() {
         return stores;
     }
+
     public void loadNPCs() {
         String json;
-        try {
-            json = new String(Files.readAllBytes(Paths.get("npcInfos.json")));
-        } catch (IOException e) {
-            System.out.println("can't get json.");
-            return;
-        }
+        FileHandle file = Gdx.files.internal("jsonFiles/npcInfos.json");
+        json = file.readString();
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         JsonArray npcsArray = jsonObject.getAsJsonArray("npcs");
 
