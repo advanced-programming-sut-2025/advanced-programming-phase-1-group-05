@@ -5,9 +5,15 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
+import org.example.models.Enums.Direction;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class GameAssetManager {
@@ -16,6 +22,8 @@ public class GameAssetManager {
     private final Skin skin;
     private final Map<String, Sound> sfxMap = new HashMap<>();
     private Music music;
+    private static final Map<String, Texture> textureCache = new HashMap<>();
+
 
     private GameAssetManager() {
         // Load skin from assets/skin/
@@ -57,5 +65,34 @@ public class GameAssetManager {
         for (Sound sfx : sfxMap.values()) {
             sfx.dispose();
         }
+        for (Texture tex : textureCache.values()) {
+            tex.dispose();
+        }
+        textureCache.clear();
     }
+
+    public Animation<TextureRegion> getNPCWalkingAnimation(NPC npc, Direction direction) {
+        Array<TextureRegion> frames = new Array<>();
+
+        String baseName = npc.getName().toLowerCase(Locale.ROOT);
+        String dir = direction.toString().toLowerCase(Locale.ROOT);
+
+        for (int i = 1; i < 4; i++) {
+            String path = "NPCs/" + baseName + "walk" + dir + i + ".png";
+
+            Texture texture = getOrLoadTexture(path);
+            TextureRegion region = new TextureRegion(texture);
+            frames.add(region);
+        }
+
+        return new Animation<>(0.1f, frames, Animation.PlayMode.LOOP);
+    }
+
+    public static Texture getOrLoadTexture(String path) {
+        if (!textureCache.containsKey(path)) {
+            textureCache.put(path, new Texture(Gdx.files.internal(path)));
+        }
+        return textureCache.get(path);
+    }
+
 }
