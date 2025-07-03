@@ -1,4 +1,5 @@
 package org.example.models;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,6 +19,7 @@ public class TileMapRenderer {
     private static final int PLAYER_FARM_HEIGHT = 70;
 
     private TileType[][] map;
+    private boolean[][] isTopLeft;
     private Map<TileType, Texture> textureMap;
     private Random random = new Random();
 
@@ -28,41 +30,36 @@ public class TileMapRenderer {
         }
 
         map = new TileType[MAP_HEIGHT][MAP_WIDTH];
+        isTopLeft = new boolean[MAP_HEIGHT][MAP_WIDTH];
 
-        // پر کردن کل نقشه با چمن
         for (int y = 0; y < MAP_HEIGHT; y++) {
             for (int x = 0; x < MAP_WIDTH; x++) {
                 map[y][x] = TileType.Flat;
+                isTopLeft[y][x] = false;
             }
         }
 
-        // ساخت هر چهار ربع نقشه با سازه‌های اختصاصی
         for (int playerId = 0; playerId < 4; playerId++) {
             int offsetX = (playerId % 2) * PLAYER_FARM_WIDTH;
             int offsetY = (playerId / 2) * PLAYER_FARM_HEIGHT;
 
-            // خاک کردن وسط مزرعه
             for (int y = offsetY + 10; y < offsetY + 60; y++) {
                 for (int x = offsetX + 10; x < offsetX + 60; x++) {
                     map[y][x] = TileType.Soil;
                 }
             }
 
-            // قرار دادن خانه در نقطه مشخص
             placeStructure(offsetX + 12, offsetY + 48, TileType.House);
 
-            // گلخانه
             placeStructure(offsetX + 18, offsetY + 48, TileType.GreenHouse);
 
-            // دو دریاچه
             fillArea(offsetX + 20, offsetY + 20, 5, 6, TileType.Water);
             fillArea(offsetX + 45, offsetY + 30, 3, 7, TileType.Water);
 
-            // درخت تصادفی
             for (int i = 0; i < 15; i++) {
                 int tx = offsetX + 10 + random.nextInt(50);
                 int ty = offsetY + 10 + random.nextInt(50);
-                if (map[ty][tx] == TileType.Soil) {
+                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
                     placeStructure(tx, ty, TileType.Tree);
                 }
             }
@@ -82,17 +79,21 @@ public class TileMapRenderer {
     }
 
     private void placeStructure(int x, int y, TileType type) {
-        map[y][x] = type;
-        int width = textureMap.get(type).getWidth() / TILE_SIZE;
-        int height = textureMap.get(type).getHeight() / TILE_SIZE;
+        Texture tex = textureMap.get(type);
+        int width = tex.getWidth() / TILE_SIZE;
+        int height = tex.getHeight() / TILE_SIZE;
 
         for (int dy = 0; dy < height; dy++) {
             for (int dx = 0; dx < width; dx++) {
-                if (dx == 0 && dy == 0) continue;
                 int nx = x + dx;
                 int ny = y + dy;
                 if (nx < MAP_WIDTH && ny < MAP_HEIGHT) {
-                    map[ny][nx] = TileType.Flat;
+                    if (dx == 0 && dy == 0) {
+                        map[ny][nx] = type;
+                        isTopLeft[ny][nx] = true;
+                    } else {
+                        isTopLeft[ny][nx] = false;
+                    }
                 }
             }
         }
@@ -117,12 +118,17 @@ public class TileMapRenderer {
             for (int x = startX; x <= endX; x++) {
                 TileType type = map[y][x];
                 if (type == null) continue;
-                Texture tex = textureMap.get(type);
 
-                if (type.isLargeStructure() && !isTopLeftCorner(x, y, type)) {
-                    continue;
+                if (type.isLargeStructure() && !isTopLeft[y][x]) continue;
+
+                TileType background = TileType.Flat;
+                if (type == TileType.Tree || type == TileType.House || type == TileType.GreenHouse) {
+                    background = inferBackground(x, y);
+                    Texture bgTex = textureMap.get(background);
+                    batch.draw(bgTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 }
 
+                Texture tex = textureMap.get(type);
                 int drawWidth = (type.isLargeStructure()) ? tex.getWidth() : TILE_SIZE;
                 int drawHeight = (type.isLargeStructure()) ? tex.getHeight() : TILE_SIZE;
 
@@ -131,8 +137,15 @@ public class TileMapRenderer {
         }
     }
 
-    private boolean isTopLeftCorner(int x, int y, TileType type) {
-        return map[y][x] == type;
+    private TileType inferBackground(int x, int y) {
+        for (int playerId = 0; playerId < 4; playerId++) {
+            int offsetX = (playerId % 2) * PLAYER_FARM_WIDTH;
+            int offsetY = (playerId / 2) * PLAYER_FARM_HEIGHT;
+            if (x >= offsetX + 10 && x < offsetX + 60 && y >= offsetY + 10 && y < offsetY + 60) {
+                return TileType.Soil;
+            }
+        }
+        return TileType.Flat;
     }
 
     public void dispose() {

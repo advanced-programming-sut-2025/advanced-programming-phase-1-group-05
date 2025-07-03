@@ -3,10 +3,16 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import org.example.models.Player;
 import org.example.models.TileMapRenderer;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.Color;
+import org.example.controllers.GameManager;
+import org.example.models.MyGame;
+
 
 public class GameScreen implements Screen {
     private OrthographicCamera camera;
@@ -17,12 +23,17 @@ public class GameScreen implements Screen {
     private static final int PLAYER_FARM_WIDTH = 70;
     private static final int PLAYER_FARM_HEIGHT = 70;
     private int playerId = 0;
+    private Texture energyBarBg;
+    private Texture energyBarFill;
+    private BitmapFont font;
+    private float timeAccumulator = 0f;  // برای محاسبه زمان واقعی
 
     private static final int TILE_SIZE = 64;
     private static final int MAP_WIDTH = 140;
     private static final int MAP_HEIGHT = 140;
     private static final int VIEW_WIDTH = 20;
     private static final int VIEW_HEIGHT = 15;
+
 
     public GameScreen() {
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
@@ -32,13 +43,19 @@ public class GameScreen implements Screen {
         float farmStartY = (playerId / 2) * PLAYER_FARM_HEIGHT * TILE_SIZE;
         camera.position.set(farmStartX + VIEW_WIDTH * TILE_SIZE / 2f,
             farmStartY + VIEW_HEIGHT * TILE_SIZE / 2f, 0);
+
         camera.update();
 
         batch = new SpriteBatch();
         mapRenderer = new TileMapRenderer();
 
-        player = new Player(new com.badlogic.gdx.graphics.Texture(Gdx.files.internal("frame_0_2.png")),
+        player = new Player(
             farmStartX, farmStartY, TILE_SIZE, TILE_SIZE);
+        energyBarBg = new Texture(Gdx.files.internal("ui/energy_bar_bg.png"));
+        energyBarFill = new Texture(Gdx.files.internal("ui/energy_bar_fill.png"));
+        font = new BitmapFont();
+        font.setColor(Color.BLACK); // یا رنگ دلخواه
+        font.getData().setScale(2); // بزرگ‌تر شدن فونت
     }
 
     @Override
@@ -94,13 +111,45 @@ public class GameScreen implements Screen {
             camera.position.y = MathUtils.clamp(camera.position.y, minY + halfH, maxY - halfH);
         }
 
+        timeAccumulator += delta;
+        if (timeAccumulator >= 30f) {
+            GameManager.getGameClock().advanceTime(60);
+            timeAccumulator = 0f;
+        }
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         mapRenderer.render(batch, camera);
         player.draw(batch);
+        drawEnergyBar(batch);
+        String time = String.format("%02d:%02d", GameManager.getCurrentHour(), GameManager.getGameClock().getMinute());
+        String season = GameManager.getSeason().toString();
+        String day = GameManager.getDayOfTheWeek() + ", Day " + GameManager.getDay();
+        int gold = MyGame.getCurrentPlayer().getGold();
+
+        float x = camera.position.x + camera.viewportWidth / 2 - 300;
+        float y = camera.position.y + camera.viewportHeight / 2 - 20;
+
+        font.draw(batch, "Gold: " + gold, x, y);
+        font.draw(batch, "Time: " + time, x, y - 30);
+        font.draw(batch, "Season: " + season, x, y - 60);
+        font.draw(batch, day, x, y - 90);
         batch.end();
     }
+
+    private void drawEnergyBar(SpriteBatch batch) {
+        float barWidth = 30;
+        float barHeight = 150;
+        float x = camera.position.x + camera.viewportWidth / 2 - barWidth - 10;
+        float y = camera.position.y - camera.viewportHeight / 2 + 10;
+
+        batch.draw(energyBarBg, x, y, barWidth, barHeight);
+
+        float energyPercent = player.getEnergy() / 200f;
+        float fillHeight = barHeight * energyPercent;
+        batch.draw(energyBarFill, x, y, barWidth, fillHeight);
+    }
+
 
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}
@@ -113,5 +162,6 @@ public class GameScreen implements Screen {
         batch.dispose();
         mapRenderer.dispose();
         player.dispose();
+        font.dispose();
     }
 }

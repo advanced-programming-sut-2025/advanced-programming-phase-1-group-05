@@ -70,4 +70,8 @@ public class TimeAndDate {
     public Season getCurrentSeason() { return season; }
     public int getDay() { return day; }
     public int getHour() { return hour; }
+
+    public int getMinute() {
+        return minute;
+    }
 }
