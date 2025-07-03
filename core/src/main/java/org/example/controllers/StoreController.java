@@ -221,7 +221,7 @@ public class StoreController {
         for (int i = x; i < type.getRows() + x; i++) {
             for (int j = y; j < type.getColumns() + y; j++) {
                 GameTile tile = MyGame.getGameMap().getTile(i, j);
-                tile.setTileType(TileType.Building);
+                tile.setTileType(TileType.House);
                 // اینجا باید چک شه که نباشه چیزی ولی خب
                 tile.setItemOnTile(null);
                 tile.setBuilding(animalHouse.getType());

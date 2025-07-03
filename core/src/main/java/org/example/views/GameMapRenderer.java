@@ -45,7 +45,7 @@ public class GameMapRenderer {
                     case Water:
                         tex = waterTexture;
                         break;
-                    case Building:
+                    case House:
                         tex = buildingTexture;
                         break;
                     case Tree:

@@ -15,7 +15,7 @@ import org.example.models.Tool.*;
 import java.util.*;
 
 public class Player {
-    private final User user;
+    private User user;
     private Player spouse;
     private int x, y;
     private WateringCan wateringCan = new WateringCan();
@@ -40,6 +40,10 @@ public class Player {
     private List<AnimalHouse> coopAndBarns = new ArrayList<>();
     private List<String> notifications = new ArrayList<>();
     private static int mapNum;
+    private Texture texture;
+    private float width, height;
+    private float speed = 200f;
+    private float X, Y;
 
     private Texture textureUp = new Texture("frame/frame_1_0.png");
     private Texture textureDown = new Texture("frame/frame_0_0.png");
@@ -56,6 +60,40 @@ public class Player {
         backPack.getInventory().put(new Axe(), 1);
         backPack.getInventory().put(new WateringCan(), 1);
     }
+
+    public Player(Texture texture, float startX, float startY,
+                  float width, float height) {
+        this.texture = texture;
+        this.X = startX;
+        this.Y = startY;
+        this.width = width;
+        this.height = height;
+    }
+
+    public void moveUp(float delta)    { Y += speed * delta; }
+    public void moveDown(float delta)  { Y -= speed * delta; }
+    public void moveLeft(float delta)  { X -= speed * delta; }
+    public void moveRight(float delta) { X += speed * delta; }
+
+    public void clampPosition(float minX, float minY, float maxX, float maxY) {
+        if (X < minX) X = minX;
+        if (Y < minY) Y = minY;
+        if (X > maxX) X = maxX;
+        if (Y > maxY) Y = maxY;
+    }
+
+    public void draw(SpriteBatch batch) {
+        batch.draw(texture, X, Y, width, height);
+    }
+
+    public void dispose() {
+        texture.dispose();
+    }
+
+    public float getXX() { return X; }
+    public float getYY() { return Y; }
+    public float getWidth() { return width; }
+    public float getHeight() { return height; }
 
     public void render(SpriteBatch batch, int tileSize) {
         batch.draw(currentTexture, x * tileSize, y * tileSize);

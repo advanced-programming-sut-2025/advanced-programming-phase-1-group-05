@@ -1,157 +1,117 @@
 package org.example.views;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import org.example.models.Player;
+import org.example.models.TileMapRenderer;
 
 public class GameScreen implements Screen {
+    private OrthographicCamera camera;
+    private SpriteBatch batch;
+    private TileMapRenderer mapRenderer;
+    private Player player;
+    private boolean overviewMode = false;
+    private static final int PLAYER_FARM_WIDTH = 70;
+    private static final int PLAYER_FARM_HEIGHT = 70;
+    private int playerId = 0;
+
     private static final int TILE_SIZE = 64;
-    private static final int VIEW_WIDTH = 40;
-    private static final int VIEW_HEIGHT = 24;
     private static final int MAP_WIDTH = 140;
     private static final int MAP_HEIGHT = 140;
+    private static final int VIEW_WIDTH = 20;
+    private static final int VIEW_HEIGHT = 15;
 
-    private SpriteBatch batch;
-    private Texture soilTexture, waterTexture, flatTexture, treeTexture, buildingTexture, greenHouseTexture, playerTexture;
-    private TileType[][] map;
-    private int playerX = 75, playerY = 35; // در محدوده زمین خود بازیکن
+    public GameScreen() {
+        camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
+        camera.setToOrtho(false);
 
-    @Override
-    public void show() {
+        float farmStartX = (playerId % 2) * PLAYER_FARM_WIDTH * TILE_SIZE;
+        float farmStartY = (playerId / 2) * PLAYER_FARM_HEIGHT * TILE_SIZE;
+        camera.position.set(farmStartX + VIEW_WIDTH * TILE_SIZE / 2f,
+            farmStartY + VIEW_HEIGHT * TILE_SIZE / 2f, 0);
+        camera.update();
+
         batch = new SpriteBatch();
-        loadTextures();
-        generateMap();
-    }
+        mapRenderer = new TileMapRenderer();
 
-    private void loadTextures() {
-        flatTexture = new Texture("Flat.png");
-        soilTexture = new Texture("Soil.png");
-        waterTexture = new Texture("Water.png");
-        treeTexture = new Texture("tree.png");
-        buildingTexture = new Texture("Building.png");
-        greenHouseTexture = new Texture("GreenHouse.png");
-        playerTexture = new Texture("frame_0_2.png");
-    }
-
-    private void generateMap() {
-        map = new TileType[MAP_WIDTH][MAP_HEIGHT];
-        for (int x = 0; x < MAP_WIDTH; x++) {
-            for (int y = 0; y < MAP_HEIGHT; y++) {
-                map[x][y] = TileType.Flat;
-            }
-        }
-
-        for (int x = 70; x < 140; x++) {
-            for (int y = 0; y < 70; y++) {
-                map[x][y] = TileType.Soil;
-            }
-        }
-
-        // Add lakes
-        for (int x = 72; x < 78; x++) {
-            for (int y = 50; y < 55; y++) {
-                map[x][y] = TileType.Water;
-            }
-        }
-
-        for (int x = 130; x < 135; x++) {
-            for (int y = 60; y < 65; y++) {
-                map[x][y] = TileType.Water;
-            }
-        }
-
-        map[75][10] = TileType.Building;
-        map[78][12] = TileType.GreenHouse;
-        map[90][25] = TileType.Tree;
+        player = new Player(new com.badlogic.gdx.graphics.Texture(Gdx.files.internal("frame_0_2.png")),
+            farmStartX, farmStartY, TILE_SIZE, TILE_SIZE);
     }
 
     @Override
     public void render(float delta) {
-        handleInput();
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0.6f, 0.8f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        batch.begin();
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.W)) {
+            player.moveUp(delta);
+        }
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.S)) {
+            player.moveDown(delta);
+        }
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.A)) {
+            player.moveLeft(delta);
+        }
+        if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.D)) {
+            player.moveRight(delta);
+        }
 
-        int startX = MathUtils.clamp(playerX - VIEW_WIDTH / 2, 0, MAP_WIDTH - VIEW_WIDTH);
-        int startY = MathUtils.clamp(playerY - VIEW_HEIGHT / 2, 0, MAP_HEIGHT - VIEW_HEIGHT);
+        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.M)) {
+            overviewMode = !overviewMode;
+            if (overviewMode) {
+                camera.viewportWidth = MAP_WIDTH * TILE_SIZE;
+                camera.viewportHeight = MAP_HEIGHT * TILE_SIZE;
+                camera.position.set(MAP_WIDTH * TILE_SIZE / 2f, MAP_HEIGHT * TILE_SIZE / 2f, 0);
+            } else {
+                camera.viewportWidth = VIEW_WIDTH * TILE_SIZE;
+                camera.viewportHeight = VIEW_HEIGHT * TILE_SIZE;
 
-        for (int x = 0; x < VIEW_WIDTH; x++) {
-            for (int y = 0; y < VIEW_HEIGHT; y++) {
-                int mapX = startX + x;
-                int mapY = startY + y;
-                TileType tile = map[mapX][mapY];
+                float farmStartX = (playerId % 2) * PLAYER_FARM_WIDTH * TILE_SIZE;
+                float farmStartY = (playerId / 2) * PLAYER_FARM_HEIGHT * TILE_SIZE;
 
-                if (tile == TileType.Flat || tile == TileType.Soil || tile == TileType.Water) {
-                    batch.draw(getTextureByType(tile), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                }
+                camera.position.set(farmStartX + VIEW_WIDTH * TILE_SIZE / 2f,
+                    farmStartY + VIEW_HEIGHT * TILE_SIZE / 2f, 0);
             }
+            camera.update();
         }
 
-        // Draw special structures
-        drawStructure(buildingTexture, 75, 10, 1024, 1536);
-        drawStructure(greenHouseTexture, 78, 12, 218, 270);
-        drawStructure(treeTexture, 90, 25, 150, 150);
+        if (!overviewMode) {
+            float minX = (playerId % 2) * PLAYER_FARM_WIDTH * TILE_SIZE;
+            float minY = (playerId / 2) * PLAYER_FARM_HEIGHT * TILE_SIZE;
+            float maxX = minX + PLAYER_FARM_WIDTH * TILE_SIZE - TILE_SIZE;
+            float maxY = minY + PLAYER_FARM_HEIGHT * TILE_SIZE - TILE_SIZE;
+            player.clampPosition(minX, minY, maxX, maxY);
 
-        // Draw player
-        batch.draw(playerTexture, (playerX - startX) * TILE_SIZE, (playerY - startY) * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            camera.position.set(player.getXX() + player.getWidth() / 2,
+                player.getYY() + player.getHeight() / 2, 0);
 
+            float halfW = camera.viewportWidth / 2;
+            float halfH = camera.viewportHeight / 2;
+            camera.position.x = MathUtils.clamp(camera.position.x, minX + halfW, maxX - halfW);
+            camera.position.y = MathUtils.clamp(camera.position.y, minY + halfH, maxY - halfH);
+        }
+
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        mapRenderer.render(batch, camera);
+        player.draw(batch);
         batch.end();
-    }
-
-    private void drawStructure(Texture texture, int mapX, int mapY, int pixelWidth, int pixelHeight) {
-        int startX = MathUtils.clamp(playerX - VIEW_WIDTH / 2, 0, MAP_WIDTH - VIEW_WIDTH);
-        int startY = MathUtils.clamp(playerY - VIEW_HEIGHT / 2, 0, MAP_HEIGHT - VIEW_HEIGHT);
-
-        float scale = TILE_SIZE / 64f; // Adjust based on expected ratio
-        float drawWidth = pixelWidth * scale;
-        float drawHeight = pixelHeight * scale;
-
-        float drawX = (mapX - startX) * TILE_SIZE;
-        float drawY = (mapY - startY) * TILE_SIZE;
-
-        batch.draw(texture, drawX, drawY, drawWidth, drawHeight);
-    }
-
-    private void handleInput() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) playerY++;
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) playerY--;
-        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) playerX--;
-        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) playerX++;
-
-        playerX = MathUtils.clamp(playerX, 70, 139);
-        playerY = MathUtils.clamp(playerY, 0, 69);
-    }
-
-    private Texture getTextureByType(TileType type) {
-        switch (type) {
-            case Soil: return soilTexture;
-            case Water: return waterTexture;
-            default: return flatTexture;
-        }
     }
 
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}
     @Override public void resume() {}
+    @Override public void show() {}
     @Override public void hide() {}
+
     @Override
     public void dispose() {
         batch.dispose();
-        flatTexture.dispose();
-        soilTexture.dispose();
-        waterTexture.dispose();
-        treeTexture.dispose();
-        buildingTexture.dispose();
-        greenHouseTexture.dispose();
-        playerTexture.dispose();
-    }
-
-    enum TileType {
-        Flat, Soil, Water, Tree, Building, GreenHouse
+        mapRenderer.dispose();
+        player.dispose();
     }
 }
