@@ -115,11 +115,13 @@ package org.example.views;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import org.example.Main;
 import org.example.controllers.DBController;
 import org.example.controllers.GameMenuController;
 import org.example.models.Player;
@@ -130,11 +132,15 @@ import java.util.List;
 
 public class GameMenu implements Screen {
     private final Stage stage;
+    private SpriteBatch batch;
     private final Skin skin;
     private final GameMenuController controller;
     private final List<TextField> playerFields = new ArrayList<>();
     private final Label resultLabel;
     List<String> usernames = new ArrayList<>();
+
+    //terminal window for cheat codes
+    private CheatCodeWindow cheatCodeWindow;
 
     public GameMenu(Skin skin, GameMenuController controller) {
         this.skin = skin;
@@ -188,7 +194,6 @@ public class GameMenu implements Screen {
                     usernames.add(username);
                 }
 
-                // ساختن دستور به صورت game new -u user1 -u user2 -u user3
                 StringBuilder command = new StringBuilder("game new");
                 for (String username : usernames) {
                     command.append(" -u ").append(username);
@@ -206,7 +211,6 @@ public class GameMenu implements Screen {
                 resultLabel.setText(result.getMessage());
 
                 if (result.isSuccess()) {
-                    // استخراج نام بازیکنان برای نمایش صفحه انتخاب مپ
                     List<String> usernames = new ArrayList<>();
                     for (Player player : GameMenuController.selectedPlayers) {
                         usernames.add(player.getUsername());
@@ -252,15 +256,26 @@ public class GameMenu implements Screen {
         });
     }
 
+
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
+        batch = new SpriteBatch();
+        cheatCodeWindow = new CheatCodeWindow(batch);
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        cheatCodeWindow.update(delta);
+
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.begin();
+        batch.end();
+
+        cheatCodeWindow.render();
         stage.act();
         stage.draw();
     }
