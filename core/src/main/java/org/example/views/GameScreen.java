@@ -51,10 +51,22 @@ public class GameScreen implements Screen {
             }
         }
 
+        // Add lakes
+        for (int x = 72; x < 78; x++) {
+            for (int y = 50; y < 55; y++) {
+                map[x][y] = TileType.Water;
+            }
+        }
+
+        for (int x = 130; x < 135; x++) {
+            for (int y = 60; y < 65; y++) {
+                map[x][y] = TileType.Water;
+            }
+        }
+
         map[75][10] = TileType.Building;
         map[78][12] = TileType.GreenHouse;
-        map[80][15] = TileType.Tree;
-        map[76][20] = TileType.Water;
+        map[90][25] = TileType.Tree;
     }
 
     @Override
@@ -83,7 +95,7 @@ public class GameScreen implements Screen {
         // Draw special structures
         drawStructure(buildingTexture, 75, 10, 1024, 1536);
         drawStructure(greenHouseTexture, 78, 12, 218, 270);
-        drawStructure(treeTexture, 80, 15, 150, 150);
+        drawStructure(treeTexture, 90, 25, 150, 150);
 
         // Draw player
         batch.draw(playerTexture, (playerX - startX) * TILE_SIZE, (playerY - startY) * TILE_SIZE, TILE_SIZE, TILE_SIZE);
