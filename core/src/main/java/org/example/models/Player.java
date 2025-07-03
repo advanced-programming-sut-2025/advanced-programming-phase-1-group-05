@@ -1,5 +1,9 @@
 package org.example.models;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.example.controllers.GameManager;
 import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.BackPackType;
@@ -37,24 +41,97 @@ public class Player {
     private List<String> notifications = new ArrayList<>();
     private static int mapNum;
 
-    public void setMapNum(int mapNum) {
-        this.mapNum = mapNum;
-    }
-
-    public int getMapNum() {
-        return this.mapNum;
-    }
+    private Texture textureUp = new Texture("frame/frame_1_0.png");
+    private Texture textureDown = new Texture("frame/frame_0_0.png");
+    private Texture textureLeft = new Texture("frame/frame_2_1.png");
+    private Texture textureRight = new Texture("frame/frame_3_0.png");
+    private Texture currentTexture = textureDown;
 
     public Player(User user) {
         this.user = user;
         this.energy = 200;
-        //base player tools
         backPack.getInventory().put(new Hoe(), 1);
         backPack.getInventory().put(new Pickaxe(), 1);
         backPack.getInventory().put(new Scythe(), 1);
         backPack.getInventory().put(new Axe(), 1);
         backPack.getInventory().put(new WateringCan(), 1);
     }
+
+    public void render(SpriteBatch batch, int tileSize) {
+        batch.draw(currentTexture, x * tileSize, y * tileSize);
+    }
+
+    public void update() {
+        int newX = x;
+        int newY = y;
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+            newY++;
+            currentTexture = textureUp;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            newY--;
+            currentTexture = textureDown;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+            newX--;
+            currentTexture = textureLeft;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+            newX++;
+            currentTexture = textureRight;
+        }
+
+        if (canMoveTo(newX, newY)) {
+            x = newX;
+            y = newY;
+        }
+    }
+
+    private boolean canMoveTo(int newX, int newY) {
+        int mapId = getMapNum();
+        if (mapId == 1 && newX < 70 && newY < 70) return true;
+        if (mapId == 2 && newX >= 70 && newY < 70) return true;
+        if (mapId == 3 && newX < 70 && newY >= 70) return true;
+        if (mapId == 4 && newX >= 70 && newY >= 70) return true;
+        return false;
+    }
+
+    public void setMapNum(int mapNum) {
+        Player.mapNum = mapNum;
+    }
+
+    public int getMapNum() {
+        return mapNum;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setCoordinate(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+//    public void setMapNum(int mapNum) {
+//        this.mapNum = mapNum;
+//    }
+//
+//    public int getMapNum() {
+//        return this.mapNum;
+//    }
+//
+//    public Player(User user) {
+//        this.user = user;
+//        this.energy = 200;
+//        //base player tools
+//        backPack.getInventory().put(new Hoe(), 1);
+//        backPack.getInventory().put(new Pickaxe(), 1);
+//        backPack.getInventory().put(new Scythe(), 1);
+//        backPack.getInventory().put(new Axe(), 1);
+//        backPack.getInventory().put(new WateringCan(), 1);
+//    }
 
     public void setFarm(int startX, int startY) {
         this.farm = new Farm(this, startX, startY);
@@ -79,14 +156,6 @@ public class Player {
             this.energy = 0;
             faint();
         }
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 
     public void addAnimalHouse(AnimalHouse animalHouse) {
@@ -171,12 +240,6 @@ public class Player {
     public Map.Entry<Integer, Integer> getCoordinate() {
         return new AbstractMap.SimpleEntry<>(x, y);
     }
-
-    public void setCoordinate(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
     public int getItemQuantity(Item item) {
         return backPack.getInventory().getOrDefault(item, 0);
     }
