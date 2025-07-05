@@ -133,6 +133,11 @@ public class Player {
     public float getWidth() { return width; }
     public float getHeight() { return height; }
 
+    public void setPosition(float X, float Y) {
+        this.X = X;
+        this.Y = Y;
+    }
+
     public void render(SpriteBatch batch, int tileSize) {
         batch.draw(currentTexture, x * tileSize, y * tileSize);
     }

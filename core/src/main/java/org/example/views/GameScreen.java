@@ -2,6 +2,7 @@ package org.example.views;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -11,6 +12,8 @@ import org.example.models.Enums.Season;
 import org.example.models.MyGame;
 import org.example.models.Player;
 import org.example.models.TileMapRenderer;
+
+import java.awt.*;
 
 public class GameScreen implements Screen {
     private OrthographicCamera camera;
@@ -28,6 +31,7 @@ public class GameScreen implements Screen {
     private float timeAccumulator = 0f;
     private boolean overviewMode = false;
     private Season currentSeason;
+    private Rectangle allowedArea;
 
     public GameScreen() {
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
@@ -38,10 +42,11 @@ public class GameScreen implements Screen {
         mapRenderer = new TileMapRenderer();
         mapRenderer.setSeason(currentSeason);
 
-        // دریافت موقعیت اولیه بازیکن از مپ انتخاب‌شده
         Player currentPlayer = MyGame.getCurrentPlayer();
         String selectedMap = GameMenuController.getMapForPlayer(currentPlayer.getUsername());
         Vector2 spawnPosition = getInitialPositionForMap(selectedMap);
+        allowedArea = getAllowedAreaForMap(selectedMap);
+
 
         player = new Player(spawnPosition.x, spawnPosition.y, TILE_SIZE, TILE_SIZE);
 
@@ -68,6 +73,17 @@ public class GameScreen implements Screen {
             default: return new Vector2(0, 0);
         }
     }
+
+    private Rectangle getAllowedAreaForMap(String mapName) {
+        switch (mapName.toLowerCase()) {
+            case "map1": return new Rectangle(10 * TILE_SIZE, 10 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
+            case "map2": return new Rectangle(80 * TILE_SIZE, 10 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
+            case "map3": return new Rectangle(10 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
+            case "map4": return new Rectangle(80 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
+            default: return new Rectangle(0, 0, 0, 0);
+        }
+    }
+
 
     @Override
     public void render(float delta) {
@@ -103,11 +119,15 @@ public class GameScreen implements Screen {
     }
 
     private void handleInput(float delta) {
+        Vector2 oldPos = new Vector2(player.getXX(), player.getYY());
         if (Gdx.input.isKeyPressed(Input.Keys.W)) player.moveUp(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.S)) player.moveDown(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.A)) player.moveLeft(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.D)) player.moveRight(delta);
 
+        if (!allowedArea.contains(player.getXX(), player.getYY())) {
+            player.setPosition(oldPos.x, oldPos.y);
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             toggleOverviewMode();
         }
