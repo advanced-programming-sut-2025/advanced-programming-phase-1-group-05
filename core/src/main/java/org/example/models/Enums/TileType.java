@@ -40,6 +40,22 @@ public enum TileType {
     HOUSE_14("house/14.png", true),
     HOUSE_15("house/15.png", true),
     HOUSE_16("house/16.png", true),
+    GREENHOUSE_1("greenhouse/1.png", true),
+    GREENHOUSE_2("greenhouse/2.png", true),
+    GREENHOUSE_3("greenhouse/3.png", true),
+    GREENHOUSE_4("greenhouse/4.png", true),
+    GREENHOUSE_5("greenhouse/5.png", true),
+    GREENHOUSE_6("greenhouse/6.png", true),
+    GREENHOUSE_7("greenhouse/7.png", true),
+    GREENHOUSE_8("greenhouse/8.png", true),
+    GREENHOUSE_9("greenhouse/9.png", true),
+    GREENHOUSE_10("greenhouse/10.png", true),
+    GREENHOUSE_11("greenhouse/11.png", true),
+    GREENHOUSE_12("greenhouse/12.png", true),
+    GREENHOUSE_13("greenhouse/13.png", true),
+    GREENHOUSE_14("greenhouse/14.png", true),
+    GREENHOUSE_15("greenhouse/15.png", true),
+    GREENHOUSE_16("greenhouse/16.png", true),
     Mine("default.png", false);
 
     private final String imagePath;

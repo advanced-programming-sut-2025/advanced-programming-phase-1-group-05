@@ -43,19 +43,24 @@ public class TileMapRenderer {
             int offsetX = (playerId % 2) * PLAYER_FARM_WIDTH;
             int offsetY = (playerId / 2) * PLAYER_FARM_HEIGHT;
 
+            // خاک کردن بخش داخلی مزرعه
             for (int y = offsetY + 10; y < offsetY + 60; y++) {
                 for (int x = offsetX + 10; x < offsetX + 60; x++) {
                     map[y][x] = TileType.Soil;
                 }
             }
 
-//            placeStructure(offsetX + 12, offsetY + 48, TileType.House);
+            // قرار دادن خونه 4x4
+            placeHouse(offsetX + 10, offsetY + PLAYER_FARM_HEIGHT - 4 - 10);
 
-            placeStructure(offsetX + 18, offsetY + 48, TileType.GreenHouse);
+            // قرار دادن گلخانه 4x4 با کاشی‌های جداگانه
+            placeGreenHouse(offsetX + 18, offsetY + 48);  // یا هر جای مناسب دیگر
 
+            // دریاچه‌ها
             fillArea(offsetX + 20, offsetY + 20, 5, 6, TileType.Water);
             fillArea(offsetX + 45, offsetY + 30, 3, 7, TileType.Water);
 
+            // درختان تصادفی
             for (int i = 0; i < 15; i++) {
                 int tx = offsetX + 10 + random.nextInt(50);
                 int ty = offsetY + 10 + random.nextInt(50);
@@ -63,9 +68,10 @@ public class TileMapRenderer {
                     placeStructure(tx, ty, TileType.Tree);
                 }
             }
-            placeHouse(offsetX + 10, offsetY + PLAYER_FARM_HEIGHT - 4 - 10);
         }
     }
+
+
     private void placeHouse(int startX, int startY) {
         int index = 1;
         for (int dy = 0; dy < 4; dy++) {
@@ -140,24 +146,52 @@ public class TileMapRenderer {
                 if (type == null) continue;
 
                 // فقط برای ساختارهای بزرگ غیر-HOUSE که top-left نیستند، رد شو
-                if (type.isLargeStructure() && !type.name().startsWith("HOUSE_") && !isTopLeft[y][x]) continue;
+                if (type.isLargeStructure()
+                    && !type.name().startsWith("HOUSE_")
+                    && !type.name().startsWith("GREENHOUSE_")
+                    && !isTopLeft[y][x]) continue;
+
 
                 // رسم پس‌زمینه برای برخی ساختارها
                 TileType background = TileType.Flat;
-                if (type == TileType.Tree || type == TileType.House || type == TileType.GreenHouse) {
+                if (type == TileType.Tree || type == TileType.House
+                    || type == TileType.GreenHouse || type.name().startsWith("HOUSE_") || type.name().startsWith("GREENHOUSE_")) {
                     background = inferBackground(x, y);
                     Texture bgTex = textureMap.get(background);
                     batch.draw(bgTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 }
 
                 Texture tex = textureMap.get(type);
-                int drawWidth = (type.isLargeStructure() && !type.name().startsWith("HOUSE_")) ? tex.getWidth() : TILE_SIZE;
-                int drawHeight = (type.isLargeStructure() && !type.name().startsWith("HOUSE_")) ? tex.getHeight() : TILE_SIZE;
+                int drawWidth = (type.isLargeStructure()
+                    && !type.name().startsWith("HOUSE_")
+                    && !type.name().startsWith("GREENHOUSE_"))
+                    ? tex.getWidth() : TILE_SIZE;
+                int drawHeight = (type.isLargeStructure()
+                    && !type.name().startsWith("HOUSE_")
+                    && !type.name().startsWith("GREENHOUSE_"))
+                    ? tex.getHeight() : TILE_SIZE;
 
                 batch.draw(tex, x * TILE_SIZE, y * TILE_SIZE, drawWidth, drawHeight);
+
             }
         }
     }
+
+    private void placeGreenHouse(int startX, int startY) {
+        int index = 1;
+        for (int dy = 0; dy < 4; dy++) {
+            for (int dx = 0; dx < 4; dx++) {
+                int tileX = startX + dx;
+                int tileY = startY + (3 - dy); // از بالا به پایین (مطابق با تصویر)
+                TileType tile = TileType.valueOf("GREENHOUSE_" + index);
+                map[tileY][tileX] = tile;
+                isTopLeft[tileY][tileX] = false;
+                index++;
+            }
+        }
+    }
+
+
 
 
     private TileType inferBackground(int x, int y) {
