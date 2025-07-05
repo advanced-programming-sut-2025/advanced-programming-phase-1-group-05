@@ -125,6 +125,7 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.A)) player.moveLeft(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.D)) player.moveRight(delta);
 
+        // can't go to round area
         if (!allowedArea.contains(player.getXX(), player.getYY())) {
             player.setPosition(oldPos.x, oldPos.y);
         }
