@@ -44,6 +44,7 @@ public class GameScreen implements Screen {
     public GameScreen() {
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
+        GameManager.setSeason(Season.WINTER);
 
         float farmStartX = (playerId % 2) * PLAYER_FARM_WIDTH * TILE_SIZE;
         float farmStartY = (playerId / 2) * PLAYER_FARM_HEIGHT * TILE_SIZE;
