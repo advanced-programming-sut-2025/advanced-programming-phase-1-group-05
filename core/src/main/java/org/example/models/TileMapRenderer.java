@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
+import org.example.controllers.GameManager;
 import org.example.models.Enums.TileType;
 import org.example.models.Enums.Season;
 
@@ -30,7 +31,7 @@ public class TileMapRenderer {
         isTopLeft = new boolean[MAP_HEIGHT][MAP_WIDTH];
         textureMap = new HashMap<>();
 
-        currentSeason = Season.SPRING; // مقدار پیش‌فرض اولیه
+        currentSeason = GameManager.getSeason();
 
         loadTextures();
 

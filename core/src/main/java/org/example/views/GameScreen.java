@@ -1,70 +1,72 @@
 package org.example.views;
 
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.Color;
-
+import com.badlogic.gdx.math.Vector2;
+import org.example.controllers.GameManager;
+import org.example.controllers.GameMenuController;
+import org.example.models.Enums.Season;
+import org.example.models.MyGame;
 import org.example.models.Player;
 import org.example.models.TileMapRenderer;
-import org.example.controllers.GameManager;
-import org.example.models.MyGame;
-import org.example.models.Enums.Season;
 
 public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private TileMapRenderer mapRenderer;
     private Player player;
-    private boolean overviewMode = false;
-    private static final int PLAYER_FARM_WIDTH = 70;
-    private static final int PLAYER_FARM_HEIGHT = 70;
-    private int playerId = 0;
-    private Texture energyBarBg;
-    private Texture energyBarFill;
+
+    private Texture energyBarBg, energyBarFill, overlay, blackOverlay;
     private BitmapFont font;
-    private float timeAccumulator = 0f;
-    private Texture overlay;
-    private Texture blackOverlay;
 
     private static final int TILE_SIZE = 64;
-    private static final int MAP_WIDTH = 140;
-    private static final int MAP_HEIGHT = 140;
     private static final int VIEW_WIDTH = 20;
     private static final int VIEW_HEIGHT = 15;
 
+    private float timeAccumulator = 0f;
+    private boolean overviewMode = false;
     private Season currentSeason;
 
     public GameScreen() {
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
-        GameManager.setSeason(Season.WINTER);
-
-        float farmStartX = (playerId % 2) * PLAYER_FARM_WIDTH * TILE_SIZE;
-        float farmStartY = (playerId / 2) * PLAYER_FARM_HEIGHT * TILE_SIZE;
-        camera.position.set(farmStartX + VIEW_WIDTH * TILE_SIZE / 2f,
-            farmStartY + VIEW_HEIGHT * TILE_SIZE / 2f, 0);
-
-        camera.update();
-
         batch = new SpriteBatch();
-        mapRenderer = new TileMapRenderer();
 
         currentSeason = GameManager.getSeason();
+        mapRenderer = new TileMapRenderer();
         mapRenderer.setSeason(currentSeason);
 
-        player = new Player(farmStartX, farmStartY, TILE_SIZE, TILE_SIZE);
+        // دریافت موقعیت اولیه بازیکن از مپ انتخاب‌شده
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        String selectedMap = GameMenuController.getMapForPlayer(currentPlayer.getUsername());
+        Vector2 spawnPosition = getInitialPositionForMap(selectedMap);
+
+        player = new Player(spawnPosition.x, spawnPosition.y, TILE_SIZE, TILE_SIZE);
+
+        camera.position.set(spawnPosition.x + player.getWidth() / 2f,
+            spawnPosition.y + player.getHeight() / 2f, 0);
+        camera.update();
+
         energyBarBg = new Texture(Gdx.files.internal("ui/energy_bar_bg.png"));
         energyBarFill = new Texture(Gdx.files.internal("ui/energy_bar_fill.png"));
+        overlay = new Texture("white.png");
+        blackOverlay = new Texture("black.png");
+
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
+    }
+
+    private Vector2 getInitialPositionForMap(String mapName) {
+        switch (mapName.toLowerCase()) {
+            case "map1": return new Vector2(10 * TILE_SIZE, 10 * TILE_SIZE);
+            case "map2": return new Vector2(80 * TILE_SIZE, 10 * TILE_SIZE);
+            case "map3": return new Vector2(10 * TILE_SIZE, 80 * TILE_SIZE);
+            case "map4": return new Vector2(80 * TILE_SIZE, 80 * TILE_SIZE);
+            default: return new Vector2(0, 0);
+        }
     }
 
     @Override
@@ -72,44 +74,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0.6f, 0.8f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) player.moveUp(delta);
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) player.moveDown(delta);
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) player.moveLeft(delta);
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) player.moveRight(delta);
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
-            overviewMode = !overviewMode;
-            if (overviewMode) {
-                camera.viewportWidth = MAP_WIDTH * TILE_SIZE;
-                camera.viewportHeight = MAP_HEIGHT * TILE_SIZE;
-                camera.position.set(MAP_WIDTH * TILE_SIZE / 2f, MAP_HEIGHT * TILE_SIZE / 2f, 0);
-            } else {
-                camera.viewportWidth = VIEW_WIDTH * TILE_SIZE;
-                camera.viewportHeight = VIEW_HEIGHT * TILE_SIZE;
-                float farmStartX = (playerId % 2) * PLAYER_FARM_WIDTH * TILE_SIZE;
-                float farmStartY = (playerId / 2) * PLAYER_FARM_HEIGHT * TILE_SIZE;
-                camera.position.set(farmStartX + VIEW_WIDTH * TILE_SIZE / 2f,
-                    farmStartY + VIEW_HEIGHT * TILE_SIZE / 2f, 0);
-            }
-            camera.update();
-        }
-
-        if (!overviewMode) {
-            float minX = (playerId % 2) * PLAYER_FARM_WIDTH * TILE_SIZE;
-            float minY = (playerId / 2) * PLAYER_FARM_HEIGHT * TILE_SIZE;
-            float maxX = minX + PLAYER_FARM_WIDTH * TILE_SIZE - TILE_SIZE;
-            float maxY = minY + PLAYER_FARM_HEIGHT * TILE_SIZE - TILE_SIZE;
-
-            player.clampPosition(minX, minY, maxX, maxY);
-
-            camera.position.set(player.getXX() + player.getWidth() / 2,
-                player.getYY() + player.getHeight() / 2, 0);
-
-            float halfW = camera.viewportWidth / 2;
-            float halfH = camera.viewportHeight / 2;
-            camera.position.x = MathUtils.clamp(camera.position.x, minX + halfW, maxX - halfW);
-            camera.position.y = MathUtils.clamp(camera.position.y, minY + halfH, maxY - halfH);
-        }
+        handleInput(delta);
 
         timeAccumulator += delta;
         if (timeAccumulator >= 5f) {
@@ -129,8 +94,61 @@ public class GameScreen implements Screen {
 
         mapRenderer.render(batch, camera);
         player.draw(batch);
-        drawEnergyBar(batch);
+        drawEnergyBar();
+        drawHUD();
 
+        applyLightingOverlay();
+
+        batch.end();
+    }
+
+    private void handleInput(float delta) {
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) player.moveUp(delta);
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) player.moveDown(delta);
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) player.moveLeft(delta);
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) player.moveRight(delta);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            toggleOverviewMode();
+        }
+
+        if (!overviewMode) {
+            camera.position.set(player.getXX() + player.getWidth() / 2f,
+                player.getYY() + player.getHeight() / 2f, 0);
+        }
+    }
+
+    private void toggleOverviewMode() {
+        overviewMode = !overviewMode;
+        if (overviewMode) {
+            camera.viewportWidth = 140 * TILE_SIZE;
+            camera.viewportHeight = 140 * TILE_SIZE;
+            camera.position.set(140 * TILE_SIZE / 2f, 140 * TILE_SIZE / 2f, 0);
+        } else {
+            camera.viewportWidth = VIEW_WIDTH * TILE_SIZE;
+            camera.viewportHeight = VIEW_HEIGHT * TILE_SIZE;
+
+            Player currentPlayer = MyGame.getCurrentPlayer();
+            String map = GameMenuController.getMapForPlayer(currentPlayer.getUsername());
+            Vector2 pos = getInitialPositionForMap(map);
+
+            camera.position.set(pos.x + player.getWidth() / 2f,
+                pos.y + player.getHeight() / 2f, 0);
+        }
+    }
+
+    private void drawEnergyBar() {
+        float barWidth = 30;
+        float barHeight = 150;
+        float x = camera.position.x + camera.viewportWidth / 2 - barWidth - 10;
+        float y = camera.position.y - camera.viewportHeight / 2 + 10;
+
+        batch.draw(energyBarBg, x, y, barWidth, barHeight);
+        float fill = barHeight * (player.getEnergy() / 200f);
+        batch.draw(energyBarFill, x, y, barWidth, fill);
+    }
+
+    private void drawHUD() {
         float x = camera.position.x + camera.viewportWidth / 2 - 300;
         float y = camera.position.y + camera.viewportHeight / 2 - 20;
 
@@ -138,8 +156,10 @@ public class GameScreen implements Screen {
         font.draw(batch, "Time: " + String.format("%02d:%02d", GameManager.getCurrentHour(), GameManager.getGameClock().getMinute()), x, y - 30);
         font.draw(batch, "Season: " + currentSeason.toString(), x, y - 60);
         font.draw(batch, GameManager.getDayOfTheWeek() + ", Day " + GameManager.getDay(), x, y - 90);
+    }
 
-        int hour = GameManager.getGameClock().getHour();
+    private void applyLightingOverlay() {
+        int hour = GameManager.getCurrentHour();
         if (hour >= 18 && hour < 22) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             batch.setColor(0.3f, 0.3f, 0.3f, 0.4f);
@@ -148,8 +168,7 @@ public class GameScreen implements Screen {
                 camera.viewportWidth, camera.viewportHeight);
             batch.setColor(1, 1, 1, 1);
             Gdx.gl.glDisable(GL20.GL_BLEND);
-        }
-        if (hour >= 22 && hour < 23) {
+        } else if (hour >= 22 && hour < 23) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             batch.setColor(0f, 0f, 0f, 1f);
             batch.draw(blackOverlay, camera.position.x - camera.viewportWidth / 2,
@@ -158,32 +177,12 @@ public class GameScreen implements Screen {
             batch.setColor(1, 1, 1, 1);
             Gdx.gl.glDisable(GL20.GL_BLEND);
         }
-
-        batch.end();
-    }
-
-    private void drawEnergyBar(SpriteBatch batch) {
-        float barWidth = 30;
-        float barHeight = 150;
-        float x = camera.position.x + camera.viewportWidth / 2 - barWidth - 10;
-        float y = camera.position.y - camera.viewportHeight / 2 + 10;
-
-        batch.draw(energyBarBg, x, y, barWidth, barHeight);
-
-        float energyPercent = player.getEnergy() / 200f;
-        float fillHeight = barHeight * energyPercent;
-        batch.draw(energyBarFill, x, y, barWidth, fillHeight);
     }
 
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}
     @Override public void resume() {}
-
-    @Override public void show() {
-        overlay = new Texture("white.png");
-        blackOverlay = new Texture("black.png");
-    }
-
+    @Override public void show() {}
     @Override public void hide() {}
 
     @Override

@@ -23,6 +23,7 @@ public class GameMenuController extends MenuController {
     private static Map<Integer, Integer> playerMapChoices = new HashMap<>();
     private GameMap map = MyGame.getGameMap();
     private List<User> players = new ArrayList<>();
+    private static final Map<String, String> playerMapSelections = new HashMap<>();
 
 
     public GameMenuController(User currentUser) {
@@ -110,6 +111,9 @@ public class GameMenuController extends MenuController {
             return Result.error("Each player must choose a unique map!");
         }
 
+        playerMapSelections.clear();
+        playerMapSelections.putAll(selections);
+
         for (Player player : selectedPlayers) {
             String mapName = selections.get(player.getUsername());
             if (mapName == null) return Result.error("Missing map for player: " + player.getUsername());
@@ -138,6 +142,10 @@ public class GameMenuController extends MenuController {
         MyGame.getAllPlayers().addAll(selectedPlayers);
 
         return MyGame.startTheGame();
+    }
+
+    public static String getMapForPlayer(String username) {
+        return playerMapSelections.get(username);
     }
 
 
