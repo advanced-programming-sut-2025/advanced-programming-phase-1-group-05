@@ -1,18 +1,4 @@
 package org.example.models.Enums;
-//
-//public enum TileType {
-//    Water,
-//    Soil,
-//    Flat,
-//    Stone,
-//    Tree,
-//    Mine,
-//    CheatThor,
-//    Building,
-//    GreenHouse,
-//    Player,
-//    Occupied;
-//}
 
 public enum TileType {
     Water("Water.png", false),
@@ -22,24 +8,24 @@ public enum TileType {
     GreenHouse("GreenHouse.png", true),
     Tree("tree.png", true),
     CheatThor("default.png", false),
-    Stone("default.png", false),
+    Stone("Stone.png", false),
     Player("frame_0_2.png", false),
-    HOUSE_1("house/1.png", true),
-    HOUSE_2("house/2.png", true),
-    HOUSE_3("house/3.png", true),
-    HOUSE_4("house/4.png", true),
-    HOUSE_5("house/5.png", true),
-    HOUSE_6("house/6.png", true),
-    HOUSE_7("house/7.png", true),
-    HOUSE_8("house/8.png", true),
-    HOUSE_9("house/9.png", true),
-    HOUSE_10("house/10.png", true),
-    HOUSE_11("house/11.png", true),
-    HOUSE_12("house/12.png", true),
-    HOUSE_13("house/13.png", true),
-    HOUSE_14("house/14.png", true),
-    HOUSE_15("house/15.png", true),
-    HOUSE_16("house/16.png", true),
+    HOUSE_1("house/1.png", false),
+    HOUSE_2("house/2.png", false),
+    HOUSE_3("house/3.png", false),
+    HOUSE_4("house/4.png", false),
+    HOUSE_5("house/5.png", false),
+    HOUSE_6("house/6.png", false),
+    HOUSE_7("house/7.png", false),
+    HOUSE_8("house/8.png", false),
+    HOUSE_9("house/9.png", false),
+    HOUSE_10("house/10.png", false),
+    HOUSE_11("house/11.png", false),
+    HOUSE_12("house/12.png", false),
+    HOUSE_13("house/13.png", false),
+    HOUSE_14("house/14.png", false),
+    HOUSE_15("house/15.png", false),
+    HOUSE_16("house/16.png", false),
     GREENHOUSE_1("greenhouse/1.png", true),
     GREENHOUSE_2("greenhouse/2.png", true),
     GREENHOUSE_3("greenhouse/3.png", true),
@@ -56,6 +42,7 @@ public enum TileType {
     GREENHOUSE_14("greenhouse/14.png", true),
     GREENHOUSE_15("greenhouse/15.png", true),
     GREENHOUSE_16("greenhouse/16.png", true),
+    Wood("Wood.png",false),
     Mine("default.png", false);
 
     private final String imagePath;

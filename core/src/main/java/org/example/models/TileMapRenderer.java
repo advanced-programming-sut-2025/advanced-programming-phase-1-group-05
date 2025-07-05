@@ -65,6 +65,20 @@ public class TileMapRenderer {
                     placeStructure(tx, ty, TileType.Tree);
                 }
             }
+            for (int i = 0; i < 15; i++) {
+                int tx = offsetX + 10 + random.nextInt(50);
+                int ty = offsetY + 10 + random.nextInt(50);
+                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
+                    placeStructure(tx, ty, TileType.Stone);
+                }
+            }
+            for (int i = 0; i < 15; i++) {
+                int tx = offsetX + 10 + random.nextInt(50);
+                int ty = offsetY + 10 + random.nextInt(50);
+                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
+                    placeStructure(tx, ty, TileType.Wood);
+                }
+            }
         }
     }
 
@@ -129,7 +143,8 @@ public class TileMapRenderer {
 
                 TileType background = TileType.Flat;
                 if (type == TileType.Tree || type == TileType.House
-                    || type == TileType.GreenHouse
+                    || type == TileType.GreenHouse ||
+                    type == TileType.Stone || type == TileType.Wood
                     || type.name().startsWith("HOUSE_")
                     || type.name().startsWith("GREENHOUSE_")) {
                     background = inferBackground(x, y);
