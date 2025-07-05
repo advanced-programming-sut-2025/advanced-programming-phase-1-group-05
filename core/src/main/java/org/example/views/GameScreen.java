@@ -1,4 +1,5 @@
 package org.example.views;
+
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
@@ -7,13 +8,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import org.example.models.Player;
-import org.example.models.TileMapRenderer;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.Color;
+
+import org.example.models.Player;
+import org.example.models.TileMapRenderer;
 import org.example.controllers.GameManager;
 import org.example.models.MyGame;
-
+import org.example.models.Enums.Season;
 
 public class GameScreen implements Screen {
     private OrthographicCamera camera;
@@ -28,16 +30,8 @@ public class GameScreen implements Screen {
     private Texture energyBarFill;
     private BitmapFont font;
     private float timeAccumulator = 0f;
-    private boolean isNightTransition = false;
-    private float nightTransitionTimer = 0f;
-    private boolean isDarkOverlay = false;
-    private static final float NIGHT_DURATION = 2f; // 2 ثانیه شب
-    Texture overlay;
-    private boolean isDayAdvanced = false;
+    private Texture overlay;
     private Texture blackOverlay;
-    private boolean showBlackOverlay = false;
-
-
 
     private static final int TILE_SIZE = 64;
     private static final int MAP_WIDTH = 140;
@@ -45,7 +39,7 @@ public class GameScreen implements Screen {
     private static final int VIEW_WIDTH = 20;
     private static final int VIEW_HEIGHT = 15;
 
-
+    private Season currentSeason;
 
     public GameScreen() {
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
@@ -61,8 +55,10 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
         mapRenderer = new TileMapRenderer();
 
-        player = new Player(
-            farmStartX, farmStartY, TILE_SIZE, TILE_SIZE);
+        currentSeason = GameManager.getSeason();
+        mapRenderer.setSeason(currentSeason);
+
+        player = new Player(farmStartX, farmStartY, TILE_SIZE, TILE_SIZE);
         energyBarBg = new Texture(Gdx.files.internal("ui/energy_bar_bg.png"));
         energyBarFill = new Texture(Gdx.files.internal("ui/energy_bar_fill.png"));
         font = new BitmapFont();
@@ -75,7 +71,6 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0.6f, 0.8f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Handle input
         if (Gdx.input.isKeyPressed(Input.Keys.W)) player.moveUp(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.S)) player.moveDown(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.A)) player.moveLeft(delta);
@@ -116,10 +111,15 @@ public class GameScreen implements Screen {
         }
 
         timeAccumulator += delta;
-        //todo : change time
         if (timeAccumulator >= 5f) {
             GameManager.getGameClock().advanceTime(60);
             timeAccumulator = 0f;
+        }
+
+        Season newSeason = GameManager.getSeason();
+        if (!newSeason.equals(currentSeason)) {
+            currentSeason = newSeason;
+            mapRenderer.setSeason(currentSeason);
         }
 
         camera.update();
@@ -130,27 +130,19 @@ public class GameScreen implements Screen {
         player.draw(batch);
         drawEnergyBar(batch);
 
-        String time = String.format("%02d:%02d", GameManager.getCurrentHour(), GameManager.getGameClock().getMinute());
-        String season = GameManager.getSeason().toString();
-        String day = GameManager.getDayOfTheWeek() + ", Day " + GameManager.getDay();
-        int gold = MyGame.getCurrentPlayer().getGold();
-
         float x = camera.position.x + camera.viewportWidth / 2 - 300;
         float y = camera.position.y + camera.viewportHeight / 2 - 20;
 
-        font.draw(batch, "Gold: " + gold, x, y);
-        font.draw(batch, "Time: " + time, x, y - 30);
-        font.draw(batch, "Season: " + season, x, y - 60);
-        font.draw(batch, day, x, y - 90);
+        font.draw(batch, "Gold: " + MyGame.getCurrentPlayer().getGold(), x, y);
+        font.draw(batch, "Time: " + String.format("%02d:%02d", GameManager.getCurrentHour(), GameManager.getGameClock().getMinute()), x, y - 30);
+        font.draw(batch, "Season: " + currentSeason.toString(), x, y - 60);
+        font.draw(batch, GameManager.getDayOfTheWeek() + ", Day " + GameManager.getDay(), x, y - 90);
 
         int hour = GameManager.getGameClock().getHour();
-        int minute = GameManager.getGameClock().getMinute();
-
-        // Gray overlay for dusk
         if (hour >= 18 && hour < 22) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             batch.setColor(0.3f, 0.3f, 0.3f, 0.4f);
-            batch.draw(new Texture("white.png"), camera.position.x - camera.viewportWidth / 2,
+            batch.draw(overlay, camera.position.x - camera.viewportWidth / 2,
                 camera.position.y - camera.viewportHeight / 2,
                 camera.viewportWidth, camera.viewportHeight);
             batch.setColor(1, 1, 1, 1);
@@ -159,18 +151,15 @@ public class GameScreen implements Screen {
         if (hour >= 22 && hour < 23) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             batch.setColor(0f, 0f, 0f, 1f);
-            batch.draw(blackOverlay,
-                camera.position.x - camera.viewportWidth / 2,
+            batch.draw(blackOverlay, camera.position.x - camera.viewportWidth / 2,
                 camera.position.y - camera.viewportHeight / 2,
-                camera.viewportWidth,
-                camera.viewportHeight);
+                camera.viewportWidth, camera.viewportHeight);
             batch.setColor(1, 1, 1, 1);
             Gdx.gl.glDisable(GL20.GL_BLEND);
         }
 
         batch.end();
     }
-
 
     private void drawEnergyBar(SpriteBatch batch) {
         float barWidth = 30;
@@ -185,14 +174,15 @@ public class GameScreen implements Screen {
         batch.draw(energyBarFill, x, y, barWidth, fillHeight);
     }
 
-
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}
     @Override public void resume() {}
+
     @Override public void show() {
         overlay = new Texture("white.png");
         blackOverlay = new Texture("black.png");
     }
+
     @Override public void hide() {}
 
     @Override
