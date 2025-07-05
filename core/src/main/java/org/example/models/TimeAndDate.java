@@ -48,7 +48,7 @@ public class TimeAndDate {
             minute -= 60;
             hour ++;
         }
-        if (hour >= 22) {
+        if (hour >= 23) {
             advanceDay();
         }
     }

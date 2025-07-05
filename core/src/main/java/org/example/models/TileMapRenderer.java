@@ -49,7 +49,7 @@ public class TileMapRenderer {
                 }
             }
 
-            placeStructure(offsetX + 12, offsetY + 48, TileType.House);
+//            placeStructure(offsetX + 12, offsetY + 48, TileType.House);
 
             placeStructure(offsetX + 18, offsetY + 48, TileType.GreenHouse);
 
@@ -63,8 +63,28 @@ public class TileMapRenderer {
                     placeStructure(tx, ty, TileType.Tree);
                 }
             }
+            placeHouse(offsetX + 10, offsetY + PLAYER_FARM_HEIGHT - 4 - 10);
         }
     }
+    private void placeHouse(int startX, int startY) {
+        int index = 1;
+        for (int dy = 0; dy < 4; dy++) {
+            for (int dx = 0; dx < 4; dx++) {
+                int tileX = startX + dx;
+                int tileY = startY + (3 - dy); // از بالا به پایین
+
+                TileType tile = TileType.valueOf("HOUSE_" + index);
+                map[tileY][tileX] = tile;
+
+                // نیازی نیست isTopLeft را true کنیم چون همه‌ی tileها باید رسم شوند
+                isTopLeft[tileY][tileX] = false;
+
+                index++;
+            }
+        }
+    }
+
+
 
     private void fillArea(int startX, int startY, int width, int height, TileType type) {
         for (int y = 0; y < height; y++) {
@@ -119,8 +139,10 @@ public class TileMapRenderer {
                 TileType type = map[y][x];
                 if (type == null) continue;
 
-                if (type.isLargeStructure() && !isTopLeft[y][x]) continue;
+                // فقط برای ساختارهای بزرگ غیر-HOUSE که top-left نیستند، رد شو
+                if (type.isLargeStructure() && !type.name().startsWith("HOUSE_") && !isTopLeft[y][x]) continue;
 
+                // رسم پس‌زمینه برای برخی ساختارها
                 TileType background = TileType.Flat;
                 if (type == TileType.Tree || type == TileType.House || type == TileType.GreenHouse) {
                     background = inferBackground(x, y);
@@ -129,13 +151,14 @@ public class TileMapRenderer {
                 }
 
                 Texture tex = textureMap.get(type);
-                int drawWidth = (type.isLargeStructure()) ? tex.getWidth() : TILE_SIZE;
-                int drawHeight = (type.isLargeStructure()) ? tex.getHeight() : TILE_SIZE;
+                int drawWidth = (type.isLargeStructure() && !type.name().startsWith("HOUSE_")) ? tex.getWidth() : TILE_SIZE;
+                int drawHeight = (type.isLargeStructure() && !type.name().startsWith("HOUSE_")) ? tex.getHeight() : TILE_SIZE;
 
                 batch.draw(tex, x * TILE_SIZE, y * TILE_SIZE, drawWidth, drawHeight);
             }
         }
     }
+
 
     private TileType inferBackground(int x, int y) {
         for (int playerId = 0; playerId < 4; playerId++) {
