@@ -2,6 +2,7 @@ package org.example.views;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -25,9 +26,6 @@ public class CheatCodeWindow implements InputProcessor {
     private boolean cursorVisible = true;
     private float cursorTimer = 0f;
 
-    private final float toggleKeyCooldown = 0.3f;
-    private float toggleKeyTimer = 0f;
-
     private final int maxLines = 10;
     private final float lineHeight = 20f;
     private final int padding = 10;
@@ -39,7 +37,6 @@ public class CheatCodeWindow implements InputProcessor {
         this.shapeRenderer = new ShapeRenderer();
         this.font = GameAssetManager.getSkin().getFont("subtitle");
         this.font.setColor(Color.GREEN);
-        Gdx.input.setInputProcessor(new InputMultiplexer(this, Gdx.input.getInputProcessor()));
     }
 
     public void update(float delta) {
@@ -50,32 +47,53 @@ public class CheatCodeWindow implements InputProcessor {
             cursorVisible = !cursorVisible; // :)
             cursorTimer = 0f;
         }
-        toggleKeyTimer += delta;
     }
 
     public void render() {
-        if(!isTerminalOpen) return;
+        if (!isTerminalOpen) return;
+
+        OrthographicCamera uiCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        uiCamera.setToOrtho(false);
+
+        shapeRenderer.setProjectionMatrix(uiCamera.combined);
+        batch.setProjectionMatrix(uiCamera.combined);
+
+        float windowWidth = 600;
+        float windowHeight = height;
+
+        float x = (Gdx.graphics.getWidth() - windowWidth) / 2f;
+        float y = (Gdx.graphics.getHeight() - windowHeight) / 2f;
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.BLACK);
-        shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), height);
+        shapeRenderer.rect(x, y, windowWidth, windowHeight);
         shapeRenderer.end();
 
         batch.begin();
 
-        int y = height - padding;
-        int start = Math.max(0, Math.min(history.size, maxLines));
+        font.setColor(Color.WHITE);
+        float titleY = y + windowHeight - padding;
+        font.draw(batch, "Cheat Code Window", x + padding, titleY);
+
+        float inputY = y + padding + font.getLineHeight();
+        String cursor = cursorVisible ? "_" : " ";
+        font.draw(batch, "> " + currentInput + cursor, x + padding, inputY);
+
+        int start = Math.max(0, history.size - maxLines);
+
+        float lineSpacing = font.getLineHeight() * 1.5f;
+
+        float lineY = inputY + lineSpacing;
+
         for (int i = start; i < history.size; i++) {
-            font.draw(batch, history.get(i), padding, y);
-            y -= lineHeight;
+            font.draw(batch, history.get(i), x + padding, lineY);
+            font.setColor(Color.GREEN);
+            lineY += lineSpacing;
         }
 
-        String cursor = "";
-        if(cursorVisible) cursor = "_";
-        else cursor = " ";
-        font.draw(batch, "> " + currentInput + cursor, padding, y);
         batch.end();
     }
+
 
     private void command(String input) {
         history.add("> " + input);
@@ -106,10 +124,10 @@ public class CheatCodeWindow implements InputProcessor {
 
     @Override
     public boolean keyDown(int i) {
+        System.out.println("key down");
         //using shortcut "C" to open cheat code window
-        if (i == Input.Keys.C && toggleKeyTimer > toggleKeyCooldown) {
+        if (i == Input.Keys.C) {
             isTerminalOpen = !isTerminalOpen;
-            toggleKeyTimer = 0f;
             return true;
         }
         return false;
@@ -123,6 +141,7 @@ public class CheatCodeWindow implements InputProcessor {
     @Override
     public boolean keyTyped(char c) {
         if (!isTerminalOpen) return false;
+        System.out.println("Typed: " + c); // ✅ see if it's even listening
 
         if (c == '\b') {
             if (currentInput.length() > 0)
@@ -132,7 +151,6 @@ public class CheatCodeWindow implements InputProcessor {
         } else if (Character.isLetterOrDigit(c) || Character.isSpaceChar(c) || c == '.' || c == '_') {
             currentInput.append(c);
         }
-
         return true;
     }
 
