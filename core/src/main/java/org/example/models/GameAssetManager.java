@@ -19,7 +19,8 @@ import java.util.Map;
 public class GameAssetManager {
     private static GameAssetManager instance;
 
-    private final Skin skin;
+    private static final Skin skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
+
     private final Map<String, Sound> sfxMap = new HashMap<>();
     private Music music;
     private static final Map<String, Texture> textureCache = new HashMap<>();
@@ -27,7 +28,6 @@ public class GameAssetManager {
 
     private GameAssetManager() {
         // Load skin from assets/skin/
-        skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
 
         // Optional: load cursor
         try {
@@ -49,7 +49,7 @@ public class GameAssetManager {
         return instance;
     }
 
-    public Skin getSkin() {
+    public static Skin getSkin() {
         return skin;
     }
 
@@ -94,5 +94,6 @@ public class GameAssetManager {
         }
         return textureCache.get(path);
     }
+
 
 }

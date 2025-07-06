@@ -1,0 +1,38 @@
+[
+  {
+    "username": "Nil-a11",
+    "password": "e3b6f9f12d7fc4ff32a57d09ac03897f6878e445cfc4f4e1bd5395943e78d934",
+    "nickName": "nilalllala",
+    "gender": "Female",
+    "email": "Nila.-a11@gma-il.com",
+    "gamesPlayed": 0,
+    "plainPassword": "Nil3333a%11",
+    "securityQuestion": "What city were you born in?",
+    "securityAnswer": "Tehran",
+    "friends": []
+  },
+  {
+    "username": "Melika-a11",
+    "password": "e3b6f9f12d7fc4ff32a57d09ac03897f6878e445cfc4f4e1bd5395943e78d934",
+    "nickName": "nilalllala",
+    "gender": "Female",
+    "email": "Nila.-a11@gma-il.com",
+    "gamesPlayed": 0,
+    "plainPassword": "Nil3333a%11",
+    "securityQuestion": "What city were you born in?",
+    "securityAnswer": "Tehran",
+    "friends": []
+  },
+  {
+    "username": "Bul-a11",
+    "password": "e3b6f9f12d7fc4ff32a57d09ac03897f6878e445cfc4f4e1bd5395943e78d934",
+    "nickName": "nilalllala",
+    "gender": "Male",
+    "email": "Nila.-a11@gma-il.com",
+    "gamesPlayed": 0,
+    "plainPassword": "Nil3333a%11",
+    "securityQuestion": "What city were you born in?",
+    "securityAnswer": "Karaj",
+    "friends": []
+  }
+]

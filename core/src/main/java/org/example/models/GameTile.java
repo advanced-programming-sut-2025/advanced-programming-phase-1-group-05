@@ -6,6 +6,7 @@ import org.example.models.Enums.TileType;
 public class GameTile {
     private int x, y;
     private TileType tileType;
+    private boolean isAnchor;
     private BuildingType building;
     private boolean occupied = false;
     private Item itemOnTile = null;
@@ -13,12 +14,35 @@ public class GameTile {
     private String fertilizer = "";
     private boolean isOccupied = false;
     public static boolean greenHouseBuilt = false;
+    private int assetWidthInTiles;
+    private int assetHeightInTiles;
     // can't be walked over if it's occupied
 
     public GameTile(int x, int y, TileType tileType) {
         this.x = x;
         this.y = y;
         this.tileType = tileType;
+    }
+
+    public GameTile(TileType tileType) {
+        this.tileType = tileType;
+        this.isAnchor = false;
+    }
+    public void setAsAnchor(int width, int height) {
+        this.isAnchor = true;
+        this.assetWidthInTiles = width;
+        this.assetHeightInTiles = height;
+    }
+
+    public boolean isAnchor() {
+        return isAnchor;
+    }
+    public int getAssetWidthInTiles() {
+        return assetWidthInTiles;
+    }
+
+    public int getAssetHeightInTiles() {
+        return assetHeightInTiles;
     }
     public Item getItemOnTile() {
         return itemOnTile;
@@ -91,7 +115,7 @@ public class GameTile {
             else if(itemOnTile instanceof Craft) return "\uD83D\uDEE0\uFE0F";
             else if(itemOnTile.getName().equals("Coal")) return "X";
         }
-        if (tileType == TileType.Building) return "🏠";
+        if (tileType == TileType.House) return "🏠";
         if (tileType == TileType.Water) return "🌊";
         if (tileType == TileType.Soil) return "🟫";
         if (tileType == TileType.Flat) return "🟩";

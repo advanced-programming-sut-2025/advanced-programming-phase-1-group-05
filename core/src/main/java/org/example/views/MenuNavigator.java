@@ -18,6 +18,7 @@ public class MenuNavigator {
     private static ProfileMenu profileMenu;
     private static GameMenu gameMenuScreen;
     private static MapSelectionScreen mapSelectionScreen;
+    private static GameScreen gameScreen;
 
     public static void init(Game gameRef, Skin skin) {
         game = gameRef;
@@ -43,6 +44,12 @@ public class MenuNavigator {
         game.setScreen(new GameExitConfirmationScreen(skin));
     }
 
+    public static void showGameScreen() {
+        if (gameScreen == null) {
+            gameScreen = new GameScreen();
+        }
+        game.setScreen(gameScreen);
+    }
 
     public static void showGameMenu() {
         if (gameMenuScreen == null) {

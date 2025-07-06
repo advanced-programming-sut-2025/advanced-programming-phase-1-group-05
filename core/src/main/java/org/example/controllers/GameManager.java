@@ -92,6 +92,8 @@ public class GameManager {
         return gameClock.getCurrentSeason();
     }
 
+    public static void setSeason(Season season) { gameClock.setSeason(season); }
+
     public static int getDay() {
         return gameClock.getDay();
     }
@@ -122,6 +124,7 @@ public class GameManager {
         }
         return "wtf intellij";
     }
+
 
     public static int getCurrentHour() {
         return gameClock.getHour();

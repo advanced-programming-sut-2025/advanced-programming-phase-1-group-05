@@ -1,5 +1,10 @@
 package org.example.models;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import org.example.controllers.GameManager;
 import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.BackPackType;
@@ -11,7 +16,7 @@ import org.example.models.Tool.*;
 import java.util.*;
 
 public class Player {
-    private final User user;
+    private User user;
     private Player spouse;
     private int x, y;
     private WateringCan wateringCan = new WateringCan();
@@ -36,24 +41,159 @@ public class Player {
     private List<AnimalHouse> coopAndBarns = new ArrayList<>();
     private List<String> notifications = new ArrayList<>();
     private static int mapNum;
+    private Texture texture;
+    private float width, height;
+    private float speed = 200f;
+    private float X, Y;
+    private Texture currentTexture;
+    private final float energyCostPerStep = 0.05f;
+    private float distanceTraveled = 0f;
 
-    public void setMapNum(int mapNum) {
-        this.mapNum = mapNum;
-    }
 
-    public int getMapNum() {
-        return this.mapNum;
-    }
+    private Texture textureUp = new Texture("frame/frame_1_0.png");
+    private Texture textureDown = new Texture("frame/frame_0_0.png");
+    private Texture textureLeft = new Texture("frame/frame_2_1.png");
+    private Texture textureRight = new Texture("frame/frame_3_0.png");
 
     public Player(User user) {
         this.user = user;
         this.energy = 200;
-        //base player tools
         backPack.getInventory().put(new Hoe(), 1);
         backPack.getInventory().put(new Pickaxe(), 1);
         backPack.getInventory().put(new Scythe(), 1);
         backPack.getInventory().put(new Axe(), 1);
         backPack.getInventory().put(new WateringCan(), 1);
+    }
+
+    public Player( float startX, float startY,
+                  float width, float height) {
+        this.energy = 200;
+        this.texture = textureDown;
+        this.currentTexture = textureDown;
+        this.X = startX;
+        this.Y = startY;
+        this.width = width;
+        this.height = height;
+    }
+
+    public void moveUp(float delta)    {
+        Y += speed * delta;
+        float dy = speed * delta;
+        currentTexture = textureUp;
+        reduceEnergyByStep(dy);
+    }
+    public void moveDown(float delta)  {
+        Y -= speed * delta;
+        float dy = speed * delta;
+        currentTexture = textureDown;
+        reduceEnergyByStep(dy);
+    }
+    public void moveLeft(float delta)  {
+        X -= speed * delta;
+        float dy = speed * delta;
+        currentTexture = textureLeft;
+        reduceEnergyByStep(dy);
+    }
+    public void moveRight(float delta) {
+        X += speed * delta;
+        float dy = speed * delta;
+        currentTexture = textureRight;
+        reduceEnergyByStep(dy);
+    }
+
+    private void reduceEnergyByStep(float distance) {
+        if (!unlimitedEnergy && energy > 0) {
+            distanceTraveled += distance;
+            if (distanceTraveled >= 100f) {
+                energy--;
+                distanceTraveled -= 100f;
+            }
+        }
+    }
+
+    public void clampPosition(float minX, float minY, float maxX, float maxY) {
+        X = MathUtils.clamp(X, minX, maxX);
+        Y = MathUtils.clamp(Y, minY, maxY);
+    }
+
+    public void draw(SpriteBatch batch) {
+        batch.draw(currentTexture, X, Y, width, height);
+    }
+
+    public void dispose() {
+        texture.dispose();
+        textureUp.dispose();
+        textureDown.dispose();
+        textureLeft.dispose();
+        textureRight.dispose();
+    }
+
+    public float getXX() { return X; }
+    public float getYY() { return Y; }
+    public float getWidth() { return width; }
+    public float getHeight() { return height; }
+
+    public void setPosition(float X, float Y) {
+        this.X = X;
+        this.Y = Y;
+    }
+
+    public void render(SpriteBatch batch, int tileSize) {
+        batch.draw(currentTexture, x * tileSize, y * tileSize);
+    }
+
+    public void update() {
+        int newX = x;
+        int newY = y;
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+            newY++;
+            currentTexture = textureUp;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            newY--;
+            currentTexture = textureDown;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+            newX--;
+            currentTexture = textureLeft;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+            newX++;
+            currentTexture = textureRight;
+        }
+
+        if (canMoveTo(newX, newY)) {
+            x = newX;
+            y = newY;
+        }
+    }
+
+    private boolean canMoveTo(int newX, int newY) {
+        int mapId = getMapNum();
+        if (mapId == 1 && newX < 70 && newY < 70) return true;
+        if (mapId == 2 && newX >= 70 && newY < 70) return true;
+        if (mapId == 3 && newX < 70 && newY >= 70) return true;
+        if (mapId == 4 && newX >= 70 && newY >= 70) return true;
+        return false;
+    }
+
+    public void setMapNum(int mapNum) {
+        Player.mapNum = mapNum;
+    }
+
+    public int getMapNum() {
+        return mapNum;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setCoordinate(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
     public void setFarm(int startX, int startY) {
@@ -79,14 +219,6 @@ public class Player {
             this.energy = 0;
             faint();
         }
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 
     public void addAnimalHouse(AnimalHouse animalHouse) {
@@ -133,7 +265,7 @@ public class Player {
     }
 
     public int getEnergy() {
-        return energy;
+        return  (int) energy;
     }
 
     public boolean hasEnoughEnergy(int required) {
@@ -171,12 +303,6 @@ public class Player {
     public Map.Entry<Integer, Integer> getCoordinate() {
         return new AbstractMap.SimpleEntry<>(x, y);
     }
-
-    public void setCoordinate(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
     public int getItemQuantity(Item item) {
         return backPack.getInventory().getOrDefault(item, 0);
     }

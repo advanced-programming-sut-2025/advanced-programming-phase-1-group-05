@@ -48,7 +48,7 @@ public class TimeAndDate {
             minute -= 60;
             hour ++;
         }
-        if (hour >= 22) {
+        if (hour >= 23) {
             advanceDay();
         }
     }
@@ -70,4 +70,8 @@ public class TimeAndDate {
     public Season getCurrentSeason() { return season; }
     public int getDay() { return day; }
     public int getHour() { return hour; }
+
+    public int getMinute() {
+        return minute;
+    }
 }

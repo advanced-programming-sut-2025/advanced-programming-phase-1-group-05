@@ -66,7 +66,7 @@ public class MapSelectionScreen implements Screen {
                 } else {
                     DBController.saveGameState();
                     resultLabel.setText("Game started!");
-//                    MenuNavigator.showGameUI();
+                    MenuNavigator.showGameScreen();
                 }
             }
         });
