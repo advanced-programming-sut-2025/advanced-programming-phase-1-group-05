@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import org.example.controllers.GameManager;
 import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.BackPackType;
@@ -196,8 +197,8 @@ public class Player {
         this.y = y;
     }
 
-    public void setFarm(int startX, int startY) {
-        this.farm = new Farm(this, startX, startY);
+    public void setFarm(Rectangle rectangle) {
+        this.farm = new Farm(this, rectangle);
     }
     public void addNotification(String message) {
         notifications.add(message);

@@ -201,7 +201,7 @@ public class StoreController {
                 if (tile == null || !tile.getTileType().equals(TileType.Soil)) {
                     return Result.error("You can’t build here. The area must be completely flat.");
                 }
-                if (!player.getFarm().containsTile(i , j))
+                if (!player.getFarm().isInFarm(i , j))
                     return Result.error("Nice try, but that patch of land isn’t yours. No trespassing… or building!");
             }
         }

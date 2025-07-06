@@ -41,12 +41,12 @@ public class Animal implements Item{
     }
     private void setCoordinates(Player player) {
         Farm farm = player.getFarm();
-        int startX = farm.getStartX(), startY = farm.getStartY(), endX = farm.getEndX(), endY = farm.getEndY();
+        float startX = farm.getStartX(), startY = farm.getStartY(), endX = farm.getEndX(), endY = farm.getEndY();
         Random random = new Random();
 
         while (true) {
-            int x = random.nextInt(endX - startX + 1) + startX;
-            int y = random.nextInt(endY - startY + 1) + startY;
+            int x = (int) (random.nextInt((int) (endX - startX + 1)) + startX);
+            int y = (int) (random.nextInt((int) (endY - startY + 1)) + startY);
             GameTile tile = GameMap.getTile(x, y);
 
             if (!tile.isOccupied()) {

@@ -4,7 +4,9 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import org.example.controllers.GameManager;
 import org.example.controllers.GameMenuController;
@@ -14,8 +16,12 @@ import org.example.models.Player;
 import org.example.models.TileMapRenderer;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameScreen implements Screen {
+    private ShapeRenderer shapeRenderer;
+
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private TileMapRenderer mapRenderer;
@@ -24,19 +30,26 @@ public class GameScreen implements Screen {
     private Texture energyBarBg, energyBarFill, overlay, blackOverlay;
     private BitmapFont font;
 
-    private static final int TILE_SIZE = 64;
+    static final int TILE_SIZE = 64;
     private static final int VIEW_WIDTH = 20;
     private static final int VIEW_HEIGHT = 15;
 
     private float timeAccumulator = 0f;
     private boolean overviewMode = false;
     private Season currentSeason;
-    private Rectangle allowedArea;
+    private ArrayList<Rectangle> allowedArea = new ArrayList<>();
+    private ArrayList<Player> players;
 
-    public GameScreen() {
+    private CheatCodeWindow cheatCodeWindow;
+
+    public GameScreen(ArrayList<Player> playerList) {
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
         batch = new SpriteBatch();
+        cheatCodeWindow = new CheatCodeWindow(batch);
+        players = playerList;
+
+        shapeRenderer = new ShapeRenderer();
 
         currentSeason = GameManager.getSeason();
         mapRenderer = new TileMapRenderer();
@@ -45,7 +58,7 @@ public class GameScreen implements Screen {
         Player currentPlayer = MyGame.getCurrentPlayer();
         String selectedMap = GameMenuController.getMapForPlayer(currentPlayer.getUsername());
         Vector2 spawnPosition = getInitialPositionForMap(selectedMap);
-        allowedArea = getAllowedAreaForMap(selectedMap);
+        allowedArea.add(getAllowedAreaForMap(selectedMap));
 
 
         player = new Player(spawnPosition.x, spawnPosition.y, TILE_SIZE, TILE_SIZE);
@@ -65,6 +78,7 @@ public class GameScreen implements Screen {
     }
 
     private Vector2 getInitialPositionForMap(String mapName) {
+
         switch (mapName.toLowerCase()) {
             case "map1": return new Vector2(10 * TILE_SIZE, 10 * TILE_SIZE);
             case "map2": return new Vector2(80 * TILE_SIZE, 10 * TILE_SIZE);
@@ -76,7 +90,7 @@ public class GameScreen implements Screen {
 
     private Rectangle getAllowedAreaForMap(String mapName) {
         switch (mapName.toLowerCase()) {
-            case "map1": return new Rectangle(10 * TILE_SIZE, 10 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
+            case "map1": return new Rectangle(10f * TILE_SIZE, 10f * TILE_SIZE, 50f * TILE_SIZE, 50f * TILE_SIZE);
             case "map2": return new Rectangle(80 * TILE_SIZE, 10 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
             case "map3": return new Rectangle(10 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
             case "map4": return new Rectangle(80 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
@@ -91,6 +105,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         handleInput(delta);
+        cheatCodeWindow.update(delta);
 
         timeAccumulator += delta;
         if (timeAccumulator >= 5f) {
@@ -116,6 +131,8 @@ public class GameScreen implements Screen {
         applyLightingOverlay();
 
         batch.end();
+        cheatCodeWindow.render();
+
     }
 
     private void handleInput(float delta) {
@@ -126,7 +143,12 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.D)) player.moveRight(delta);
 
         // can't go to round area
-        if (!allowedArea.contains(player.getXX(), player.getYY())) {
+//        if (!allowedArea.contains(player.getXX(), player.getYY())) {
+//            player.setPosition(oldPos.x, oldPos.y);
+//        }
+        float px = player.getXX() + player.getWidth() / 2f;
+        float py = player.getYY() + player.getHeight() / 2f;
+        if (!canWalk(px, py)) {
             player.setPosition(oldPos.x, oldPos.y);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
@@ -189,7 +211,7 @@ public class GameScreen implements Screen {
                 camera.viewportWidth, camera.viewportHeight);
             batch.setColor(1, 1, 1, 1);
             Gdx.gl.glDisable(GL20.GL_BLEND);
-        } else if (hour >= 22 && hour < 23) {
+        } else if (hour == 22) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             batch.setColor(0f, 0f, 0f, 1f);
             batch.draw(blackOverlay, camera.position.x - camera.viewportWidth / 2,
@@ -203,7 +225,14 @@ public class GameScreen implements Screen {
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void show() {}
+    @Override public void show() {
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(cheatCodeWindow);
+
+        Gdx.input.setInputProcessor(multiplexer);
+        System.out.println("InputMultiplexer set with cheatCodeWindow");
+    }
+
     @Override public void hide() {}
 
     @Override
@@ -215,4 +244,22 @@ public class GameScreen implements Screen {
         overlay.dispose();
         blackOverlay.dispose();
     }
+
+    private boolean canWalk(float x, float y) {
+//        if (x > 140 || y > 140 || x < 0 || y < 0)
+//            return false;
+        for (Player player : players) {
+            if (player.getFarm() != null) {
+                System.out.println(player.getUsername());
+                System.out.println(player.getFarm().isInFarm(x, y));
+                if (player.getFarm().isInFarm(x, y) && !player.getFarm().isOwner(MyGame.getCurrentPlayer())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+
 }

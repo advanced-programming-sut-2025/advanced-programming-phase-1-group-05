@@ -1,28 +1,44 @@
 package org.example.models;
 
+
+import com.badlogic.gdx.math.Rectangle;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class Farm {
-    private List<Player> owner = new ArrayList<>();
+    private List<String> owner = new ArrayList<>();
     private HashMap<Food, Integer> refrigeratedFoods = new HashMap<>();
     private final ArrayList<FruitAndVegetable> crops = new ArrayList<>();
     private final ArrayList<Tree> trees = new ArrayList<>();
-    private final int startX , startY, endX, endY ;
+    //private final int startX , startY, endX, endY ;
     private final ShippingBin shippingBin;
+    private Rectangle bounds;
 
 
-
-    public Farm (Player player, int startX, int startY){
-        owner.add(player);
-        this.startX = startX;
-        this.startY = startY;
-        endX = startX + 30;
-        endY = startY + 30;
-        shippingBin = new ShippingBin(startY, endX);
+    public Farm (Player player, Rectangle bounds){
+        owner.add(player.getUsername());
+        this.bounds = bounds;
+        shippingBin = new ShippingBin( bounds.y + bounds.height, bounds.x);
     }
 
+    public Rectangle getBounds() {
+        return bounds;
+    }
+    public float getStartX() {
+        return bounds.x;
+    }
+    public float getStartY() {
+        return bounds.y;
+    }
+    public float getEndX() {
+        return bounds.x + bounds.width;
+    }
+    public float getEndY() {
+        return bounds.y + bounds.height;
+    }
     public ArrayList<FruitAndVegetable> getCrops() {
         return crops;
     }
@@ -31,14 +47,14 @@ public class Farm {
         crops.add(fruitAndVegetable);
     }
 
-    public boolean isInFarm(int x, int y) {
-        return x >= startX && x <= endX && y >= startY && y <= endY;
+    public boolean isInFarm(float x, float y) {
+        return bounds.contains(x, y);
     }
     public boolean isOwner(Player player) {
-        return  owner.contains(player);
+        return  owner.contains(player.getUsername());
     }
     public void addOwner(Player player){
-        owner.add(player);
+        owner.add(player.getUsername());
     }
     public HashMap<Food, Integer> getRefrigeratedFoods() {
         return refrigeratedFoods;
@@ -52,27 +68,11 @@ public class Farm {
         refrigeratedFoods.put(food, refrigeratedFoods.get(food) - amount);
     }
 
-    public boolean containsTile (int x, int y) {
-        return (x >= startX && x <= endX) && (y >= startY && y <= endY);
-    }
+//    public boolean containsTile (int x, int y) {
+//        return (x >= startX && x <= endX) && (y >= startY && y <= endY);
+//    }
     public ShippingBin getShippingBin() {
         return shippingBin;
-    }
-
-    public int getStartX() {
-        return startX;
-    }
-
-    public int getStartY() {
-        return startY;
-    }
-
-    public int getEndX() {
-        return endX;
-    }
-
-    public int getEndY() {
-        return endY;
     }
 
     public ArrayList<Tree> getTrees() {
@@ -83,9 +83,9 @@ public class Farm {
     }
 
     public static class ShippingBin {
-        int startX, startY, endX, endY;
+        float startX, startY, endX, endY;
 
-        public ShippingBin(int farmStartY, int farmEndX) {
+        public ShippingBin(float farmStartY, float farmEndX) {
             startX = farmEndX - 5;
             startY = farmStartY + 5;
             endX = startX + 2;

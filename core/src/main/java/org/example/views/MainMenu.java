@@ -66,9 +66,13 @@ public class MainMenu implements Screen {
         logoutButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                clearCurrentUserFile();
-                RegisterMenuController.currentUser = null;
-                MenuNavigator.showLoginMenu();
+                try {
+                    clearCurrentUserFile();
+                    RegisterMenuController.currentUser = null;
+                    MenuNavigator.showLoginMenu();
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
             }
         });
     }

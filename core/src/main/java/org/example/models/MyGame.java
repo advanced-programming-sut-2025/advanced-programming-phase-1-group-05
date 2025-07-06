@@ -84,17 +84,17 @@ public class MyGame {
     }
 
     public static void initializeFarms() {
-        int[][] farmCoords = {
-                {0, 0},     // A
-                {0, 70},    // B
-                {70, 0},    // C
-                {70, 70}    // D
-        };
-        int i = 0;
-        for (Player player : players) {
-            int[] coords = farmCoords[i++];
-            player.setFarm(coords[0], coords[1]);
-        }
+//        int[][] farmCoords = {
+//                {0, 0},     // A
+//                {0, 70},    // B
+//                {70, 0},    // C
+//                {70, 70}    // D
+//        };
+//        int i = 0;
+//        for (Player player : players) {
+//            int[] coords = farmCoords[i++];
+//            player.setFarm(coords[0], coords[1]);
+//        }
     }
 
     public static Result startTheGame() {

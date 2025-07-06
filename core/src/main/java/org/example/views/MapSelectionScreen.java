@@ -3,17 +3,25 @@ package org.example.views;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.controllers.DBController;
 import org.example.controllers.GameMenuController;
+import org.example.models.Player;
 import org.example.models.Result;
+import org.example.models.User;
+import org.example.models.UserDatabase;
 
+import java.awt.*;
 import java.util.*;
 import java.util.List;
+
+import static org.example.views.GameScreen.TILE_SIZE;
 
 public class MapSelectionScreen implements Screen {
     private final Stage stage;
@@ -64,9 +72,38 @@ public class MapSelectionScreen implements Screen {
                 if (!result.isSuccess()) {
                     resultLabel.setText(result.getMessage());
                 } else {
+                    ArrayList<Player> players = new ArrayList<>();
+                    for (String username : usernames) {
+                        User user = UserDatabase.getUserByUsername(username);
+                        Player player = new Player(user);
+                        players.add(player);
+                        switch (selections.get(username).toLowerCase()) {
+                            case "map1" : {
+                                player.setFarm(new Rectangle(10f * TILE_SIZE, 10f * TILE_SIZE, 50f * TILE_SIZE, 50f * TILE_SIZE));
+                                System.out.println("set " + username + "'s farm");
+                                break;
+                            }
+                            case "map2" : {
+                                player.setFarm(new Rectangle(80 * TILE_SIZE, 10 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
+                                System.out.println("set " + username + "'s farm");
+                                break;
+                            }
+                            case "map3" : {
+                                player.setFarm(new Rectangle(10 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
+                                System.out.println("set " + username + "'s farm");
+                                break;
+                            }
+                            case "map4" : {
+                                player.setFarm(new Rectangle(80 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
+                                System.out.println("set " + username + "'s farm");
+                                break;
+                            }
+                        }
+                    }
                     DBController.saveGameState();
                     resultLabel.setText("Game started!");
-                    MenuNavigator.showGameScreen();
+                    //MenuNavigator.showGameScreen();
+                    MenuNavigator.showGameScreen(players);
                 }
             }
         });

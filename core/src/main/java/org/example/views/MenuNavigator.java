@@ -5,8 +5,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.example.controllers.GameMenuController;
 import org.example.controllers.ProfileMenuController;
 import org.example.controllers.RegisterMenuController;
+import org.example.models.Player;
 import org.example.views.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MenuNavigator {
@@ -44,10 +46,10 @@ public class MenuNavigator {
         game.setScreen(new GameExitConfirmationScreen(skin));
     }
 
-    public static void showGameScreen() {
-        if (gameScreen == null) {
-            gameScreen = new GameScreen();
-        }
+    public static void showGameScreen(ArrayList<Player> players) {
+
+        gameScreen = new GameScreen(players);
+
         game.setScreen(gameScreen);
     }
 
@@ -58,9 +60,18 @@ public class MenuNavigator {
         game.setScreen(gameMenuScreen);
     }
 
-    public static void showLoginMenu() { game.setScreen(loginMenu); }
-    public static void showRegisterMenu() { game.setScreen(registerMenu); }
-    public static void showMainMenu() { game.setScreen(mainMenu); }
+    public static void showLoginMenu() {
+        game.setScreen(loginMenu);
+    }
+
+    public static void showRegisterMenu() {
+        game.setScreen(registerMenu);
+    }
+
+    public static void showMainMenu() {
+        game.setScreen(mainMenu);
+    }
+
     public static void setSkin(Skin sharedSkin) {
         MenuNavigator.sharedSkin = sharedSkin;
     }

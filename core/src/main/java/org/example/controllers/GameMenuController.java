@@ -93,10 +93,11 @@ public class GameMenuController extends MenuController {
         if (canChooseMap) {
             return new Result(false, "Game already started or in progress.");
         }
-        if (selectedPlayers.size() < 3) {
+        if (selectedPlayers == null || selectedPlayers.isEmpty()) {
             return new Result(false, "At least 3 players are needed to start the game.");
         }
-        if (selectedPlayers == null || selectedPlayers.isEmpty()) {
+
+        if (selectedPlayers.size() < 3) {
             return new Result(false, "At least 3 players are needed to start the game.");
         }
 
@@ -459,7 +460,7 @@ public class GameMenuController extends MenuController {
         Animal animal = player.getAnimal(animalName);
         if (animal == null) return Result.error("animal doesn't exist or isn't yours");
         GameTile tile = MyGame.getGameMap().getTile(x, y);
-        if (tile == null || tile.isOccupied() || !player.getFarm().containsTile(x , y)) {
+        if (tile == null || tile.isOccupied() || !player.getFarm().isInFarm(x , y)) {
             return Result.error("invalid tile");
         }
         animal.setXY(x, y);

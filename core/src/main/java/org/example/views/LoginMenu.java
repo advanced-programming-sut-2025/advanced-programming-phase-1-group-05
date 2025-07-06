@@ -14,9 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import org.example.controllers.LoginMenuController;
-import org.example.models.Result;
-import org.example.models.User;
-import org.example.models.UserDatabase;
+import org.example.models.*;
 
 public class LoginMenu implements Screen {
     private final Stage stage;

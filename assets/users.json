@@ -34,5 +34,17 @@
     "securityQuestion": "What city were you born in?",
     "securityAnswer": "Karaj",
     "friends": []
+  },
+  {
+    "username": "Sara-dd13",
+    "password": "11a086e9e8301c899201046f3ec344f772a299ee9a72f14cc9c04ea87c51b856",
+    "nickName": "sara",
+    "gender": "Female",
+    "email": "Nila.-a11@gma-il.com",
+    "gamesPlayed": 0,
+    "plainPassword": "S%rowjaso20349",
+    "securityQuestion": "What city were you born in?",
+    "securityAnswer": "tehran",
+    "friends": []
   }
 ]
