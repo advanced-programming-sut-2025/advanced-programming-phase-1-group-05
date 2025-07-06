@@ -1,5 +1,6 @@
 package org.example.models.Tool;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.*;
 import org.example.models.Enums.ItemLevel;
 
@@ -68,5 +69,9 @@ public class Scythe implements Tool<ItemLevel> {
         if (!level.isMaxLevel()) {
             level = level.upgradeLevel();
         }
+    }
+    @Override
+    public TextureRegion getTexture() {
+        return level.getToolTextureRegion(this);
     }
 }

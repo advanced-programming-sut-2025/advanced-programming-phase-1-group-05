@@ -1,5 +1,6 @@
 package org.example.models.Tool;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.*;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.TileType;
@@ -83,5 +84,10 @@ public class Axe implements Tool <ItemLevel>{
             level = level.upgradeLevel();
             System.out.println(getName() + " upgraded to " + level.getName());
         }
+    }
+
+    @Override
+    public TextureRegion getTexture() {
+       return level.getToolTextureRegion(this);
     }
 }

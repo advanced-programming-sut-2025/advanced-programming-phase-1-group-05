@@ -1,5 +1,6 @@
 package org.example.models.Tool;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Item;
 import org.example.models.Result;
@@ -12,5 +13,5 @@ public interface Tool<T extends Enum<T>> extends Item {
     boolean reduceEnergy(int amount);
     T getLevel();
     void upgradeLevel();
-    //TODO upgrade level system
+    TextureRegion getTexture();
 }

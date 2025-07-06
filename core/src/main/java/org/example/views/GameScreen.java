@@ -230,6 +230,7 @@ public class GameScreen implements Screen {
     }
 
     public void showInventory(SpriteBatch batch) {
+        //TODO show items in inventory + trashcan
         if (!isInvenotryOpen) return;
 
         TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack().getLevel().getInventoryTexture();
