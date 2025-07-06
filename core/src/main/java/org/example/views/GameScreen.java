@@ -32,11 +32,13 @@ public class GameScreen implements Screen {
     private boolean overviewMode = false;
     private Season currentSeason;
     private Rectangle allowedArea;
+    private CheatCodeWindow cheatCodeWindow;
 
     public GameScreen() {
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
         batch = new SpriteBatch();
+        cheatCodeWindow = new CheatCodeWindow(batch);
 
         currentSeason = GameManager.getSeason();
         mapRenderer = new TileMapRenderer();
@@ -91,7 +93,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         handleInput(delta);
-
+        cheatCodeWindow.update(delta);
         timeAccumulator += delta;
         if (timeAccumulator >= 5f) {
             GameManager.getGameClock().advanceTime(60);
@@ -116,6 +118,8 @@ public class GameScreen implements Screen {
         applyLightingOverlay();
 
         batch.end();
+        cheatCodeWindow.render();
+
     }
 
     private void handleInput(float delta) {
@@ -203,7 +207,14 @@ public class GameScreen implements Screen {
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void show() {}
+    @Override public void show() {
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(cheatCodeWindow);
+
+        Gdx.input.setInputProcessor(multiplexer);
+        System.out.println("InputMultiplexer set with cheatCodeWindow");
+
+    }
     @Override public void hide() {}
 
     @Override
