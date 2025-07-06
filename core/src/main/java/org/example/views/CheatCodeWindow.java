@@ -95,7 +95,7 @@ public class CheatCodeWindow implements InputProcessor {
 
         batch.end();
     }
-    
+
     private void command(String input) {
         history.add("> " + input);
         processCommand(input);

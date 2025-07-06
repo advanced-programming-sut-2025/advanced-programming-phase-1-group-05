@@ -42,6 +42,8 @@ public class GameScreen implements Screen {
 
     private CheatCodeWindow cheatCodeWindow;
 
+    private boolean isInvenotryOpen = false;
+
     public GameScreen(ArrayList<Player> playerList) {
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
@@ -107,6 +109,7 @@ public class GameScreen implements Screen {
         handleInput(delta);
         cheatCodeWindow.update(delta);
 
+
         timeAccumulator += delta;
         if (timeAccumulator >= 5f) {
             GameManager.getGameClock().advanceTime(60);
@@ -132,6 +135,10 @@ public class GameScreen implements Screen {
 
         batch.end();
         cheatCodeWindow.render();
+        showInventory(batch);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            isInvenotryOpen = !isInvenotryOpen;
+        }
 
     }
 
@@ -221,6 +228,27 @@ public class GameScreen implements Screen {
             Gdx.gl.glDisable(GL20.GL_BLEND);
         }
     }
+
+    public void showInventory(SpriteBatch batch) {
+        if (!isInvenotryOpen) return;
+
+        TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack().getLevel().getInventoryTexture();
+
+        float scale = 0.5f;
+        float originalWidth = inventory.getRegionWidth();
+        float originalHeight = inventory.getRegionHeight();
+
+        float scaledWidth = originalWidth * scale;
+        float scaledHeight = originalHeight * scale;
+
+        float x = camera.position.x - scaledWidth / 2f;
+        float y = camera.position.y - scaledHeight / 2f;
+
+        batch.begin();
+        batch.draw(inventory, x, y, scaledWidth, scaledHeight);
+        batch.end();
+    }
+
 
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}

@@ -122,6 +122,7 @@ public class BackPack implements Tool <BackPackType>{
     public void addLearntCookingRecipe(CookingRecipeType recipe) {
         learntCookingRecipe.add(recipe);
     }
+
     @Override
     public String getName() {
         return "BackPack";
