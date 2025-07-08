@@ -58,8 +58,8 @@ public class CheatCodeWindow implements InputProcessor {
         shapeRenderer.setProjectionMatrix(uiCamera.combined);
         batch.setProjectionMatrix(uiCamera.combined);
 
-        float windowWidth = 600;
-        float windowHeight = height;
+        float windowWidth = 700;
+        float windowHeight = height + 100;
 
         float x = (Gdx.graphics.getWidth() - windowWidth) / 2f;
         float y = (Gdx.graphics.getHeight() - windowHeight) / 2f;
@@ -71,29 +71,30 @@ public class CheatCodeWindow implements InputProcessor {
 
         batch.begin();
 
-        font.setColor(Color.WHITE);
+        BitmapFont titleFont = GameAssetManager.getSkin().getFont("subtitle");
+        titleFont.setColor(Color.WHITE);
         float titleY = y + windowHeight - padding;
-        font.draw(batch, "Cheat Code Window", x + padding, titleY);
+        titleFont.draw(batch, "Cheat Code Window", x + padding, titleY);
 
+        font.setColor(Color.WHITE);
         float inputY = y + padding + font.getLineHeight();
         String cursor = cursorVisible ? "_" : " ";
         font.draw(batch, "> " + currentInput + cursor, x + padding, inputY);
 
-        int start = Math.max(0, history.size - maxLines);
-
         float lineSpacing = font.getLineHeight() * 1.5f;
+        float availableHeight = titleY - inputY - lineSpacing;
+        int maxVisibleLines = (int)(availableHeight / lineSpacing);
+        int start = Math.max(0, history.size - maxVisibleLines);
 
         float lineY = inputY + lineSpacing;
-
+        font.setColor(Color.GREEN);
         for (int i = start; i < history.size; i++) {
             font.draw(batch, history.get(i), x + padding, lineY);
-            font.setColor(Color.GREEN);
             lineY += lineSpacing;
         }
 
         batch.end();
     }
-
 
     private void command(String input) {
         history.add("> " + input);
@@ -117,14 +118,13 @@ public class CheatCodeWindow implements InputProcessor {
         } else if((matcher = GameMenuCommands.CheatAddMoney.getMatcher(input)) != null) {
             controller.cheatAddMoney(Integer.parseInt(matcher.group("count")));
         } else {
-            //TODO implement invalid command
+            //TODO implement invalid command + other cheat codes
         }
     }
 
 
     @Override
     public boolean keyDown(int i) {
-        System.out.println("key down");
         //using shortcut "C" to open cheat code window
         if (i == Input.Keys.C) {
             isTerminalOpen = !isTerminalOpen;
@@ -141,7 +141,6 @@ public class CheatCodeWindow implements InputProcessor {
     @Override
     public boolean keyTyped(char c) {
         if (!isTerminalOpen) return false;
-        System.out.println("Typed: " + c); // ✅ see if it's even listening
 
         if (c == '\b') {
             if (currentInput.length() > 0)

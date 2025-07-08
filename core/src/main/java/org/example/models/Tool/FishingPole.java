@@ -1,5 +1,6 @@
 package org.example.models.Tool;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.Enums.FishingPoleType;
 import org.example.models.Enums.TileType;
 import org.example.models.MyGame;
@@ -62,5 +63,9 @@ public class FishingPole implements Tool<FishingPoleType> {
         if (!level.isMaxLevel()) {
             level = level.nextLevel();
         }
+    }
+    @Override
+    public TextureRegion getTexture() {
+        return null;
     }
 }

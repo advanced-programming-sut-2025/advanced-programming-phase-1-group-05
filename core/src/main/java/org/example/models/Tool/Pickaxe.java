@@ -1,5 +1,6 @@
 package org.example.models.Tool;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.*;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.TileType;
@@ -67,6 +68,10 @@ public class Pickaxe implements Tool <ItemLevel> {
         if (!level.isMaxLevel()) {
             level = level.upgradeLevel();
         }
+    }
+    @Override
+    public TextureRegion getTexture() {
+        return level.getToolTextureRegion(this);
     }
 
 }

@@ -1,7 +1,7 @@
 package org.example.models.Enums;
 
 public enum TileType {
-    Water("Water.png", false),
+    Water("water2.png", false),
     Soil("Soil.png", false),
     Flat("Flat.png", false),
     House("Building.png", true),

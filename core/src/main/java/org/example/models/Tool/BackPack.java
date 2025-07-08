@@ -1,5 +1,6 @@
 package org.example.models.Tool;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.Craft;
 import org.example.models.Enums.BackPackType;
 import org.example.models.Enums.CookingRecipeType;
@@ -122,6 +123,7 @@ public class BackPack implements Tool <BackPackType>{
     public void addLearntCookingRecipe(CookingRecipeType recipe) {
         learntCookingRecipe.add(recipe);
     }
+
     @Override
     public String getName() {
         return "BackPack";
@@ -147,6 +149,10 @@ public class BackPack implements Tool <BackPackType>{
         if (!level.isMaxLevel()) {
             level = level.nextLevel();
         }
+    }
+    @Override
+    public TextureRegion getTexture() {
+        return null;
     }
 
 }
