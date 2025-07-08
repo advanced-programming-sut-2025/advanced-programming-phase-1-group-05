@@ -41,6 +41,8 @@ public class GameAssetManager {
 
         // Optional: preload sounds (example)
         // sfxMap.put("click", Gdx.audio.newSound(Gdx.files.internal("AudioClip/click.wav")));
+
+        loadNPCAvatars();
     }
 
     public static GameAssetManager getInstance() {
@@ -49,7 +51,7 @@ public class GameAssetManager {
         return instance;
     }
 
-    public static Skin getSkin() {
+    public Skin getSkin() {
         return skin;
     }
 
@@ -88,7 +90,15 @@ public class GameAssetManager {
         return new Animation<>(0.1f, frames, Animation.PlayMode.LOOP);
     }
 
-    public static Texture getOrLoadTexture(String path) {
+    private void loadNPCAvatars() {
+        String[] names = {"abigail", "harvey", "leah", "robin", "sebastian"};
+        for (String name : names) {
+            String path = "NPCs/" + name + "/avatar.png";
+            getOrLoadTexture(path);
+        }
+    }
+
+    public Texture getOrLoadTexture(String path) {
         if (!textureCache.containsKey(path)) {
             textureCache.put(path, new Texture(Gdx.files.internal(path)));
         }

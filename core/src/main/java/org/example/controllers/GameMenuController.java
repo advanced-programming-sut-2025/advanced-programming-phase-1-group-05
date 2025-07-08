@@ -846,7 +846,6 @@ public class GameMenuController extends MenuController {
         if (MyGame.getDatabase().getItem(itemName) == null && item == null) return new Result(false, "Item not found");
         if (item == null)
             return Result.error("You don't have that item in your inventory");
-        npc.recieveGift(item, player);
         if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1)
             return new Result(false,
                     "Nice thought! But you can’t give a gift to thin air. Find " + npcName + " first!");
@@ -1430,18 +1429,6 @@ public class GameMenuController extends MenuController {
         }
         return new Result(false, "Invalid command.");
     }
-
-//    // برای بررسی امکان حرکت به مزرعه دیگران
-//    private boolean canWalk(int x, int y) {
-//        for (Player player : Game.getAllPlayers()) {
-//            if (player != Game.getCurrentPlayer() && player.getFarm() != null) {
-//                if (player.getFarm().isInFarm(x, y)) {
-//                    return false;
-//                }
-//            }
-//        }
-//        return true;
-//    }
 
 
     // بررسی قابل امکان رد شدن از یک تایل

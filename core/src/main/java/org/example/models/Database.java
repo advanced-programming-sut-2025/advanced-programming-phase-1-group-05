@@ -3,17 +3,8 @@ package org.example.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
 import org.example.models.Enums.BuildingType;
-import org.example.models.Enums.CropType;
 import org.example.models.Enums.Season;
-import org.example.models.BasicItem;
-
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -127,21 +118,36 @@ public class Database {
                 favorites.add(favoriteElement.getAsString());
             }
 
-            Map<String, Integer> requests = new HashMap<>();
+            List<String> requestItems = new ArrayList<>();
+            List<Integer> requestAmounts = new ArrayList<>();
             for (Map.Entry<String, JsonElement> entry : requestsObject.entrySet()) {
                 String item = entry.getKey();
                 int quantity = entry.getValue().getAsInt();
-                requests.put(item, quantity);
+                requestItems.add(item);
+                requestAmounts.add(quantity);
             }
 
-            Map<String, Integer> rewards = new HashMap<>();
+            List<String> rewardItems = new ArrayList<>();
+            List<Integer> rewardAmounts = new ArrayList<>();
             for (Map.Entry<String, JsonElement> entry : rewardsObject.entrySet()) {
                 String item = entry.getKey();
                 int quantity = entry.getValue().getAsInt();
-                rewards.put(item, quantity);
+                rewardItems.add(item);
+                rewardAmounts.add(quantity);
             }
 
-            NPC npc = new NPC(name, favorites, requests, rewards);
+            List<Mission> missions = new ArrayList<>();
+            for (int i = 0; i < 3; i++) {
+                String itemRequired = requestItems.get(i);
+                int amountRequired = requestAmounts.get(i);
+                Mission mission = new Mission("Deliver " + amountRequired + " " + itemRequired + "(s)",
+                    itemRequired, amountRequired, rewardItems.get(i), rewardAmounts.get(i));
+                if (i != 0) {
+                    mission.setStatus(Mission.Status.LOCKED);
+                }
+                missions.add(mission);
+            }
+            NPC npc = new NPC(name, favorites, missions);
             NPCs.add(npc);
         }
     }

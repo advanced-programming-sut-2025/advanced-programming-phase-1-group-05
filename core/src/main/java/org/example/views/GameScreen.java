@@ -8,19 +8,25 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.controllers.GameManager;
 import org.example.controllers.GameMenuController;
+import org.example.models.*;
 import org.example.models.Enums.Season;
-import org.example.models.MyGame;
-import org.example.models.Player;
-import org.example.models.TileMapRenderer;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GameScreen implements Screen {
     private ShapeRenderer shapeRenderer;
+    Stage stage;
+    Table missionListTable;
+    Skin skin;
 
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -43,6 +49,7 @@ public class GameScreen implements Screen {
     private CheatCodeWindow cheatCodeWindow;
 
     public GameScreen(ArrayList<Player> playerList) {
+        skin = GameAssetManager.getInstance().getSkin();
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
         batch = new SpriteBatch();
@@ -226,11 +233,20 @@ public class GameScreen implements Screen {
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void show() {
+        stage = new Stage(new ScreenViewport());
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(cheatCodeWindow);
+        multiplexer.addProcessor(stage);
 
         Gdx.input.setInputProcessor(multiplexer);
         System.out.println("InputMultiplexer set with cheatCodeWindow");
+
+        missionListTable = new Table();
+        missionListTable.setVisible(false);
+        missionListTable.setFillParent(true);
+        stage.addActor(missionListTable);
+
+
     }
 
     @Override public void hide() {}
@@ -246,8 +262,6 @@ public class GameScreen implements Screen {
     }
 
     private boolean canWalk(float x, float y) {
-//        if (x > 140 || y > 140 || x < 0 || y < 0)
-//            return false;
         for (Player player : players) {
             if (player.getFarm() != null) {
                 System.out.println(player.getUsername());
@@ -260,6 +274,62 @@ public class GameScreen implements Screen {
 
         return true;
     }
+    private void showMissionList(NPC npc) {
+        missionListTable.clear();
+        missionListTable.setVisible(true);
+
+        Table innerPanel = new Table(skin);
+        //innerPanel.setBackground("default-round");
+        //TODO add background
+        innerPanel.pad(30);
+
+        for (Mission mission : npc.getMissions()) {
+            Label label = new Label(mission.getTitle(), skin);
+            Image icon = new Image(getStatusDrawable(mission));
+
+            Table row = new Table();
+            row.add(label).padRight(10);
+            row.add(icon).size(32).pad(5);
+            innerPanel.add(row).padBottom(10).row();
+        }
+
+        TextButton closeButton = new TextButton("close", skin);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                missionListTable.setVisible(false);
+            }
+        });
+
+        innerPanel.add(closeButton).padTop(20).colspan(2).center();
+        missionListTable.add(innerPanel).center();
+    }
+
+    private Drawable getStatusDrawable(Mission mission) {
+        Mission.Status status = mission.getStatus();
+        if (!mission.getPlayerUsername().isEmpty() &&
+            !mission.getPlayerUsername().equals(MyGame.getCurrentPlayer().getUsername()))
+            status = Mission.Status.DONE_BY_OTHER;
+        switch (status) {
+            case COMPLETED: {
+                Texture texture = new Texture(Gdx.files.internal("missionStatus/icon_completed.png"));
+                return new TextureRegionDrawable(new TextureRegion(texture));
+            }
+            case LOCKED: {
+                Texture texture = new Texture(Gdx.files.internal("missionStatus/icon_locked.png"));
+                return new TextureRegionDrawable(new TextureRegion(texture));
+            }
+            case DONE_BY_OTHER: {
+                Texture texture = new Texture(Gdx.files.internal("missionStatus/icon_x.png"));
+                return new TextureRegionDrawable(new TextureRegion(texture));
+            }
+            default: {
+                Texture texture = new Texture(Gdx.files.internal("missionStatus/icon_available.png"));
+                return new TextureRegionDrawable(new TextureRegion(texture));
+            }
+        }
+    }
+
 
 
 }

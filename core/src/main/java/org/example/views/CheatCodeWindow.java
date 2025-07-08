@@ -35,7 +35,7 @@ public class CheatCodeWindow implements InputProcessor {
     public CheatCodeWindow(SpriteBatch batch) {
         this.batch = batch;
         this.shapeRenderer = new ShapeRenderer();
-        this.font = GameAssetManager.getSkin().getFont("subtitle");
+        this.font = GameAssetManager.getInstance().getSkin().getFont("subtitle");
         this.font.setColor(Color.GREEN);
     }
 

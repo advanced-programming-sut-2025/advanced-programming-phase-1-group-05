@@ -53,6 +53,10 @@ public class MenuNavigator {
         game.setScreen(gameScreen);
     }
 
+    public static void showTestScreen() {
+        game.setScreen(new TestScreen());
+    }
+
     public static void showGameMenu() {
         if (gameMenuScreen == null) {
             gameMenuScreen = new GameMenu(sharedSkin, new GameMenuController(RegisterMenuController.currentUser));
