@@ -81,7 +81,7 @@ public class GameScreen implements Screen {
         allowedArea.add(getAllowedAreaForMap(selectedMap));
 
 
-        player = new Player(spawnPosition.x, spawnPosition.y, TILE_SIZE, TILE_SIZE);
+        player = new Player(spawnPosition.x, spawnPosition.y, 49, 122);
 
         camera.position.set(spawnPosition.x + player.getWidth() / 2f,
             spawnPosition.y + player.getHeight() / 2f, 0);
@@ -461,6 +461,7 @@ public class GameScreen implements Screen {
                     world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
 
                     slot.item = draggedItem;
+                    MyGame.getCurrentPlayer().setCurrentItem(slot.item);
                     draggedItem = null;
                     selectedSlot = null;
                     updateInventorySlots();

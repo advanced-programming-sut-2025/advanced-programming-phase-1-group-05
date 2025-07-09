@@ -9,7 +9,7 @@ public enum TileType {
     Tree("tree.png", true),
     CheatThor("default.png", false),
     Stone("Stone.png", false),
-    Player("frame_0_2.png", false),
+    Player("player-female/front still.png", false),
     HOUSE_1("house/1.png", false),
     HOUSE_2("house/2.png", false),
     HOUSE_3("house/3.png", false),
