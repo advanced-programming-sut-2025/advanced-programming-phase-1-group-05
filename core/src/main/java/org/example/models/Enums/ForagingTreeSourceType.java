@@ -1,5 +1,7 @@
 package org.example.models.Enums;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.Item;
 
 import java.util.ArrayList;
@@ -7,17 +9,19 @@ import java.util.List;
 import java.util.Random;
 
 public enum ForagingTreeSourceType implements Material, Item {
-    Acorns("Acorns", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER)),
-    MapleSeeds("Maple Seeds", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER)),
-    PineCones("Pine Cones", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER)),
-    MahoganySeeds("Mahogany Seeds", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER)),
-    MushroomTreeSeeds("Mushroom Tree Seeds", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER));
+    Acorns("Acorns", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER),"Stardew_Valley_Images-main/Trees/Acorn.png"),
+    MapleSeeds("Maple Seeds", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER),"Stardew_Valley_Images-main/Trees/Maple_Seed.png"),
+    PineCones("Pine Cones", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER),"Stardew_Valley_Images-main/Trees/Pine_Cone.png"),
+    MahoganySeeds("Mahogany Seeds", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER),"Stardew_Valley_Images-main/Trees/Mahogany_Seed.png"),
+    MushroomTreeSeeds("Mushroom Tree Seeds", List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER),"Stardew_Valley_Images-main/Trees/Mushroom_Tree_Seed.png");
 
     private final String name;
     private final List<Season> seasons;
-    ForagingTreeSourceType(String name, List<Season> seasons) {
+    private final String texturePath;
+    ForagingTreeSourceType(String name, List<Season> seasons, String texturePath) {
         this.name = name;
         this.seasons = seasons;
+        this.texturePath = texturePath;
     }
     public String getName() {
         return name;
@@ -59,4 +63,8 @@ public enum ForagingTreeSourceType implements Material, Item {
         }
         return builder.toString();
     }
+    public TextureRegion getTexture() {
+        return new TextureRegion(new Texture(this.texturePath));
+    }
+
 }
