@@ -71,7 +71,7 @@ public class CheatCodeWindow implements InputProcessor {
 
         batch.begin();
 
-        BitmapFont titleFont = GameAssetManager.getSkin().getFont("subtitle");
+        BitmapFont titleFont = GameAssetManager.getInstance().getSkin().getFont("subtitle");
         titleFont.setColor(Color.WHITE);
         float titleY = y + windowHeight - padding;
         titleFont.draw(batch, "Cheat Code Window", x + padding, titleY);

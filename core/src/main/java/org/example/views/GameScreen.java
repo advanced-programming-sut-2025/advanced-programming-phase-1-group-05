@@ -308,8 +308,9 @@ public class GameScreen implements Screen {
         missionListTable.setVisible(true);
 
         Table innerPanel = new Table(skin);
-        //innerPanel.setBackground("default-round");
-        //TODO add background
+        Texture questLogTexture = new Texture(Gdx.files.internal("NPCs/questLog.png"));
+        Drawable questLogDrawable = new TextureRegionDrawable(new TextureRegion(questLogTexture));
+        innerPanel.setBackground(questLogDrawable);
         innerPanel.pad(30);
 
         for (Mission mission : npc.getMissions()) {
@@ -317,12 +318,27 @@ public class GameScreen implements Screen {
             Image icon = new Image(getStatusDrawable(mission));
 
             Table row = new Table();
-            row.add(label).padRight(10);
-            row.add(icon).size(32).pad(5);
+            label.setColor(86f/225f, 22f/225f, 12f/225f,1);
+            if (npc.getMissions().indexOf(mission) == 0) {
+                row.add(label).padTop(45).padBottom(5).padRight(10).padLeft(10);
+                row.add(icon).size(32).pad(5).padTop(45).padBottom(5).padRight(10);
+            }
+            else if (npc.getMissions().indexOf(mission) == 2) {
+                row.add(label).padBottom(70).padRight(10);
+                row.add(icon).size(32).pad(5).padBottom(70).padRight(10);
+            }
+            else {
+                row.add(label).padBottom(10).padRight(10);
+                row.add(icon).size(32).pad(5).padTop(10).padBottom(10).padRight(10);
+            }
+
             innerPanel.add(row).padBottom(10).row();
         }
 
-        TextButton closeButton = new TextButton("close", skin);
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+
+        ImageButton closeButton = new ImageButton(closeDrawable);
         closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -330,7 +346,8 @@ public class GameScreen implements Screen {
             }
         });
 
-        innerPanel.add(closeButton).padTop(20).colspan(2).center();
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
         missionListTable.add(innerPanel).center();
     }
 
