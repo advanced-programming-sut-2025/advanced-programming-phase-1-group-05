@@ -147,7 +147,7 @@ public enum ArtisanType {
                 return CraftType.Keg;
             }
             case Dehydrator : {
-                return CraftType.Dehydrator;
+                return null;
             }
             case CharcoalKlin : {
                 return CraftType.CharcoalKlin;

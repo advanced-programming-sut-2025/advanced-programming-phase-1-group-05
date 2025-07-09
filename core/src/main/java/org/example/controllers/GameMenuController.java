@@ -1082,7 +1082,7 @@ public class GameMenuController extends MenuController {
             //add craft recipes to learnt recipes
         } else if (item.getName().contains("Recipe")) {
             if (item.getName().equals("Dehydrator Recipe")) {
-                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
+                //MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
             } else if (item.getName().equals("Grass Starter Recipe")) {
                 MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
             } else if (item.getName().equals("Fish Smoker Recipe")) {

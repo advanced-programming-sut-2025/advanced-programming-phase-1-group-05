@@ -14,7 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import org.example.controllers.GameManager;
 import org.example.controllers.GameMenuController;
 import org.example.models.*;
@@ -28,6 +31,7 @@ public class GameScreen implements Screen {
     Table missionListTable;
     Skin skin;
 
+    Viewport viewport;
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private TileMapRenderer mapRenderer;
@@ -49,6 +53,8 @@ public class GameScreen implements Screen {
     private CheatCodeWindow cheatCodeWindow;
 
     private boolean isInvenotryOpen = false;
+    public static Array<Rectangle> farms = new Array<>();
+    Array<NpcActor> NPCs = new Array<>();
 
     public GameScreen(ArrayList<Player> playerList) {
         skin = GameAssetManager.getInstance().getSkin();
@@ -68,13 +74,14 @@ public class GameScreen implements Screen {
         String selectedMap = GameMenuController.getMapForPlayer(currentPlayer.getUsername());
         Vector2 spawnPosition = getInitialPositionForMap(selectedMap);
         allowedArea.add(getAllowedAreaForMap(selectedMap));
-
+        initializeFarmArea();
 
         player = new Player(spawnPosition.x, spawnPosition.y, TILE_SIZE, TILE_SIZE);
 
         camera.position.set(spawnPosition.x + player.getWidth() / 2f,
             spawnPosition.y + player.getHeight() / 2f, 0);
         camera.update();
+
 
         energyBarBg = new Texture(Gdx.files.internal("ui/energy_bar_bg.png"));
         energyBarFill = new Texture(Gdx.files.internal("ui/energy_bar_fill.png"));
@@ -84,6 +91,17 @@ public class GameScreen implements Screen {
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
+    }
+
+    private void initializeFarmArea() {
+        for (Player player : players) {
+            String map = GameMenuController.getMapForPlayer(player.getUsername());
+            farms.add(getAllowedAreaForMap(map));
+        }
+
+        for (NPC npc : MyGame.getAllNPCs()) {
+            NPCs.add(new NpcActor(npc));
+        }
     }
 
     private Vector2 getInitialPositionForMap(String mapName) {
@@ -122,7 +140,6 @@ public class GameScreen implements Screen {
             GameManager.getGameClock().advanceTime(60);
             timeAccumulator = 0f;
         }
-
         Season newSeason = GameManager.getSeason();
         if (!newSeason.equals(currentSeason)) {
             currentSeason = newSeason;
@@ -140,12 +157,18 @@ public class GameScreen implements Screen {
 
         applyLightingOverlay();
 
+//        stage.act(delta);
+//        stage.draw();
         batch.end();
         cheatCodeWindow.render();
         showInventory(batch);
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             isInvenotryOpen = !isInvenotryOpen;
         }
+        stage.act(delta);
+        stage.draw();
+
+
 
     }
 
@@ -155,6 +178,7 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.S)) player.moveDown(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.A)) player.moveLeft(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.D)) player.moveRight(delta);
+
 
         // can't go to round area
 //        if (!allowedArea.contains(player.getXX(), player.getYY())) {
@@ -258,11 +282,15 @@ public class GameScreen implements Screen {
     }
 
 
-    @Override public void resize(int width, int height) {}
+    @Override public void resize(int width, int height) {
+    }
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void show() {
-        stage = new Stage(new ScreenViewport());
+        viewport = new FitViewport(320, 180, camera);
+        viewport.apply();
+
+        stage = new Stage(viewport, batch);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(cheatCodeWindow);
         multiplexer.addProcessor(stage);
@@ -275,8 +303,16 @@ public class GameScreen implements Screen {
         missionListTable.setFillParent(true);
         stage.addActor(missionListTable);
 
-
+        for (NpcActor npc : NPCs) {
+            stage.addActor(npc);
+        }
+        forceViewportReset();
     }
+    private void forceViewportReset() {
+        toggleOverviewMode();
+        toggleOverviewMode();
+    }
+
 
     @Override public void hide() {}
 
@@ -293,8 +329,6 @@ public class GameScreen implements Screen {
     private boolean canWalk(float x, float y) {
         for (Player player : players) {
             if (player.getFarm() != null) {
-                System.out.println(player.getUsername());
-                System.out.println(player.getFarm().isInFarm(x, y));
                 if (player.getFarm().isInFarm(x, y) && !player.getFarm().isOwner(MyGame.getCurrentPlayer())) {
                     return false;
                 }

@@ -43,6 +43,7 @@ public class Main extends Game {
         checkAutoLogin();
         MenuNavigator.showGameMenu();
         //MenuNavigator.showTestScreen();
+
     }
 
     public static void checkAutoLogin() {

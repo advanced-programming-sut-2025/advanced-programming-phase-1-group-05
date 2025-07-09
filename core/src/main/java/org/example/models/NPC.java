@@ -1,20 +1,19 @@
 package org.example.models;
 
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import org.example.models.Building.Building;
 
 import java.util.*;
 
 public class NPC {
-    // npc coordinates not initialized!!!!
-    int x, y;
+    float x, y;
     private final String name;
     private Map<Player, Integer> friendshipPoints = new HashMap<>();
     private final List<String> favorites = new ArrayList<>();
     List<Mission> missions = new ArrayList<>();
-//    private Map<String, Integer> requests = new LinkedHashMap<>();
-//    private Map<String, Integer> rewards = new LinkedHashMap<>();
-//    private Map<Integer, Boolean> questsStatus = new LinkedHashMap<>();
-//    private Map<Player, Integer> unlockedQuests = new LinkedHashMap<>();
+
     private final int daysToUnlockThirdQuest;
     public NPC(String name, List<String> favorites, List<Mission> missionList) {
         this.name = name;
@@ -27,30 +26,34 @@ public class NPC {
 
     public void setXandY () {
         if (name.equalsIgnoreCase("Sebastian")){
-            x = 73; y= 46;
+            x = 6493.93f; y= 4108;
         }
         else if (name.equalsIgnoreCase("Abigail")) {
-            x = 43; y = 19;
+            x = 4470.5f; y = 4468.5f;
         }
         else  if (name.equalsIgnoreCase("Harvey")) {
-            x = 72; y = 44;
+            x = 6404.52f; y = 3929.28f;
         }
         else if (name.equalsIgnoreCase("Leah")) {
-            x = 13; y= 39;
+            x = 1129.33f; y= 3902.43f;
         }
         else if (name.equalsIgnoreCase("Robin")) {
-            x = 1; y = 54;
+            x = 56.41f; y = 4823;
         }
     }
 
-    public int getX() {
+    public float getX() {
         return x;
     }
 
-    public int getY() {
+    public float getY() {
         return y;
     }
 
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
     public String getName() {
         return name;
     }
@@ -60,6 +63,7 @@ public class NPC {
             friendshipPoints.put(player, 0);
         }
     }
+
     public int getDaysToUnlockThirdQuest() {
         return daysToUnlockThirdQuest;
     }
@@ -142,11 +146,14 @@ public class NPC {
 
     }
     public boolean isCompleted(int questIndex){
-//        return questsStatus.get(questIndex);
-        return false;
+        Mission mission = missions.get(questIndex - 1);
+        return !mission.getPlayerUsername().isEmpty();
     }
 
     public List<Mission> getMissions() {
         return missions;
     }
+
+
+
 }

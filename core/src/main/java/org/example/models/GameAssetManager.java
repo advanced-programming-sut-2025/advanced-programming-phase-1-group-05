@@ -80,7 +80,7 @@ public class GameAssetManager {
         String dir = direction.toString().toLowerCase(Locale.ROOT);
 
         for (int i = 1; i < 4; i++) {
-            String path = "NPCs/" + baseName + "walk" + dir + i + ".png";
+            String path = "NPCs/" + baseName + "/walk" + dir + i + ".png";
 
             Texture texture = getOrLoadTexture(path);
             TextureRegion region = new TextureRegion(texture);

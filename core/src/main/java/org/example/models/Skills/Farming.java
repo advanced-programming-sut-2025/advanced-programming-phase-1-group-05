@@ -140,7 +140,7 @@ public class Farming implements Skill{
             }
             case 2: {
                 MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.QualitySprinkler);
-                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.DeluxeScareCrow);
+                //MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.DeluxeScareCrow);
                 MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.CheesePress);
                 MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.PreservesJar);
                 break;
