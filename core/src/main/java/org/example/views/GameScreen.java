@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -24,6 +25,7 @@ import org.example.models.*;
 import org.example.models.Enums.Season;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class GameScreen implements Screen {
     private ShapeRenderer shapeRenderer;
@@ -56,6 +58,15 @@ public class GameScreen implements Screen {
     public static Array<Rectangle> farms = new Array<>();
     Array<NpcActor> NPCs = new Array<>();
 
+    //inventory stuff
+    private ArrayList<InventorySlot> slots = new ArrayList<>();
+    private float SLOT_SIZE = 64;
+    private float INVENTORY_X = 0;
+    private float INVENTORY_Y = 0;
+    Item draggedItem = null;
+    InventorySlot selectedSlot = null;
+
+
     public GameScreen(ArrayList<Player> playerList) {
         skin = GameAssetManager.getInstance().getSkin();
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
@@ -76,7 +87,7 @@ public class GameScreen implements Screen {
         allowedArea.add(getAllowedAreaForMap(selectedMap));
         initializeFarmArea();
 
-        player = new Player(spawnPosition.x, spawnPosition.y, TILE_SIZE, TILE_SIZE);
+        player = new Player(spawnPosition.x, spawnPosition.y, 49, 122);
 
         camera.position.set(spawnPosition.x + player.getWidth() / 2f,
             spawnPosition.y + player.getHeight() / 2f, 0);
@@ -162,11 +173,22 @@ public class GameScreen implements Screen {
         batch.end();
         cheatCodeWindow.render();
         showInventory(batch);
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             isInvenotryOpen = !isInvenotryOpen;
+            if (isInvenotryOpen) {
+                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack().getLevel().getInventoryTexture();
+                float scale = 0.5f;
+                float scaledWidth = inventory.getRegionWidth() * scale;
+                float scaledHeight = inventory.getRegionHeight() * scale;
+                INVENTORY_X = camera.position.x - scaledWidth / 2f;
+                INVENTORY_Y = camera.position.y - scaledHeight / 2f;
+
+                updateInventorySlots();
+            }
         }
         stage.act(delta);
         stage.draw();
+
 
 
 
@@ -261,7 +283,6 @@ public class GameScreen implements Screen {
     }
 
     public void showInventory(SpriteBatch batch) {
-        //TODO show items in inventory + trashcan
         if (!isInvenotryOpen) return;
 
         TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack().getLevel().getInventoryTexture();
@@ -273,11 +294,23 @@ public class GameScreen implements Screen {
         float scaledWidth = originalWidth * scale;
         float scaledHeight = originalHeight * scale;
 
-        float x = camera.position.x - scaledWidth / 2f;
-        float y = camera.position.y - scaledHeight / 2f;
+        INVENTORY_X = camera.position.x - scaledWidth / 2f;
+        INVENTORY_Y = camera.position.y - scaledHeight / 2f;
 
         batch.begin();
-        batch.draw(inventory, x, y, scaledWidth, scaledHeight);
+        batch.draw(inventory, INVENTORY_X, INVENTORY_Y, scaledWidth, scaledHeight);
+
+        for (InventorySlot slot : slots) {
+            if (slot.item != null) {
+                batch.draw(slot.item.getTexture(), slot.x, slot.y, SLOT_SIZE, SLOT_SIZE);
+            }
+        }
+
+        if (draggedItem != null) {
+            Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            batch.draw(draggedItem.getTexture(), mouse.x - SLOT_SIZE / 2f, mouse.y - SLOT_SIZE / 2f, SLOT_SIZE, SLOT_SIZE);
+        }
+
         batch.end();
     }
 
@@ -294,6 +327,7 @@ public class GameScreen implements Screen {
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(cheatCodeWindow);
         multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(new InventoryInputHandler());
 
         Gdx.input.setInputProcessor(multiplexer);
         System.out.println("InputMultiplexer set with cheatCodeWindow");
@@ -410,6 +444,93 @@ public class GameScreen implements Screen {
         }
     }
 
+    public void updateInventorySlots() {
+        slots.clear();
 
+        float slotPadding = 2f;
+        float topOffset = 485;
+        float leftOffset = 35f;
+
+        int slotsPerRow = 12;
+        int col = 0, row = 0;
+
+        float totalRows = (float) Math.ceil(MyGame.getCurrentPlayer().getBackPack().getInventory().size() / (float) slotsPerRow);
+
+        for (Map.Entry<Item, Integer> entry : MyGame.getCurrentPlayer().getBackPack().getInventory().entrySet()) {
+            InventorySlot slot = new InventorySlot();
+            slot.x = INVENTORY_X + leftOffset + col * (SLOT_SIZE + slotPadding);
+
+            slot.y = INVENTORY_Y + (totalRows - row - 1) * (SLOT_SIZE + slotPadding) + topOffset;
+
+            slot.item = entry.getKey();
+            slot.count = entry.getValue();
+            slots.add(slot);
+
+            col++;
+            if (col == slotsPerRow) {
+                col = 0;
+                row++;
+            }
+        }
+    }
+
+    private void syncBackPackFromSlots() {
+        MyGame.getCurrentPlayer().getBackPack().getInventory().clear();
+        for (InventorySlot slot : slots) {
+            if (slot.item != null) {
+                MyGame.getCurrentPlayer().getBackPack().addToInventory(slot.item, 1);
+            }
+        }
+    }
+
+    private class InventoryInputHandler extends InputAdapter {
+        @Override
+        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            if (!isInvenotryOpen) return false;
+
+            Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
+            for (InventorySlot slot : slots) {
+                if (slot.item != null &&
+                    world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
+                    world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
+
+                    draggedItem = slot.item;
+                    selectedSlot = slot;
+                    slot.item = null;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+            if (!isInvenotryOpen || draggedItem == null) return false;
+
+            Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
+            for (InventorySlot slot : slots) {
+                if (slot.item == null &&
+                    world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
+                    world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
+
+                    slot.item = draggedItem;
+                    MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                    draggedItem = null;
+                    selectedSlot = null;
+                    updateInventorySlots();
+                    return true;
+                }
+            }
+
+            if (selectedSlot != null) {
+                selectedSlot.item = draggedItem;
+            }
+
+            draggedItem = null;
+            selectedSlot = null;
+            syncBackPackFromSlots();
+            return true;
+        }
+    }
 
 }

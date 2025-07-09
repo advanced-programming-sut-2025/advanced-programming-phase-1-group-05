@@ -3,14 +3,14 @@ package org.example.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import org.example.controllers.GameManager;
 import org.example.models.Building.AnimalHouse;
-import org.example.models.Enums.BackPackType;
-import org.example.models.Enums.BuildingType;
-import org.example.models.Enums.EnclosureType;
+import org.example.models.Enums.*;
 import org.example.models.Skills.*;
 import org.example.models.Tool.*;
 
@@ -46,15 +46,26 @@ public class Player {
     private float width, height;
     private float speed = 200f;
     private float X, Y;
-    private Texture currentTexture;
+    private TextureRegion currentTexture;
     private final float energyCostPerStep = 0.05f;
     private float distanceTraveled = 0f;
 
 
-    private Texture textureUp = new Texture("frame/frame_1_0.png");
-    private Texture textureDown = new Texture("frame/frame_0_0.png");
-    private Texture textureLeft = new Texture("frame/frame_2_1.png");
-    private Texture textureRight = new Texture("frame/frame_3_0.png");
+
+    //walking animations
+    private Animation<TextureRegion> walkUpAnimation;
+    private Animation<TextureRegion> walkDownAnimation;
+    private Animation<TextureRegion> walkLeftAnimation;
+    private Animation<TextureRegion> walkRightAnimation;
+    private Animation<TextureRegion> currentAnimation = null;
+
+    private float stateTime = 0f;
+    private Direction lastDirection = Direction.DOWN;
+
+    private TextureRegion frontStill = new TextureRegion(new Texture("player-female/front still.png"));
+    private TextureRegion backStill = new TextureRegion(new Texture("player-female/back still.png"));
+    private TextureRegion leftStill = new TextureRegion(new Texture("player-female/left 0.png"));
+    private TextureRegion rightStill = new TextureRegion(new Texture("player-female/right 0.png"));
 
     public Player(User user) {
         this.user = user;
@@ -64,42 +75,112 @@ public class Player {
         backPack.getInventory().put(new Scythe(), 1);
         backPack.getInventory().put(new Axe(), 1);
         backPack.getInventory().put(new WateringCan(), 1);
+        //setCurrentItem(backPack.getFromInventory("Hoe"));
+        //TODO fix new row
+//        backPack.getInventory().put(new Food(CookingRecipeType.FruitSalad), 1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.Blueberry),1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.Carrot),1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.Strawberry),1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.Radish),1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.Sunflower),1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.FairyRose),1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.Artichoke),1);
+
+
     }
 
-    public Player( float startX, float startY,
+    public Player(float startX, float startY,
                   float width, float height) {
         this.energy = 200;
-        this.texture = textureDown;
-        this.currentTexture = textureDown;
+//        this.texture = textureDown;
+        this.currentTexture = frontStill;
+        initializeAnimations();
         this.X = startX;
         this.Y = startY;
         this.width = width;
         this.height = height;
     }
 
-    public void moveUp(float delta)    {
+    public void initializeAnimations() {
+        walkUpAnimation = loadAnimations('u');
+        walkDownAnimation = loadAnimations('d');
+        walkLeftAnimation = loadAnimations('l');
+        walkRightAnimation = loadAnimations('r');
+    }
+
+    public Animation<TextureRegion> loadAnimations(char direction) {
+        if(direction == 'u') {
+            //walk up
+            TextureRegion[] frames1 = new TextureRegion[2];
+            for (int i = 0; i < 2; i++) {
+                Texture tex = new Texture("player-female/back walk " + i + ".png");
+                tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+                frames1[i] = new TextureRegion(tex);
+            }
+            return new Animation(0.1f, frames1);
+        } else if(direction == 'd') {
+            //walk down
+            TextureRegion[] frames2 = new TextureRegion[2];
+            for (int i = 0; i < 2; i++) {
+                Texture tex = new Texture("player-female/front walk " + i + ".png");
+                tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+                frames2[i] = new TextureRegion(tex);
+            }
+            return new Animation(0.1f, frames2);
+        } else if(direction == 'l') {
+
+            //walk left
+            TextureRegion[] frames3 = new TextureRegion[2];
+            for (int i = 0; i < 2; i++) {
+                Texture tex = new Texture("player-female/left " + i + ".png");
+                tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+                frames3[i] = new TextureRegion(tex);
+            }
+            return new Animation(0.1f, frames3);
+        } else if(direction == 'r') {
+
+            //walk right
+            TextureRegion[] frames4 = new TextureRegion[2];
+            for (int i = 0; i < 2; i++) {
+                Texture tex = new Texture("player-female/right " + i + ".png");
+                tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+                frames4[i] = new TextureRegion(tex);
+            }
+            return new Animation(0.1f, frames4);
+        }
+        return null;
+    }
+
+    public void moveUp(float delta) {
         Y += speed * delta;
-        float dy = speed * delta;
-        currentTexture = textureUp;
-        reduceEnergyByStep(dy);
+        currentAnimation = walkUpAnimation;
+        lastDirection = Direction.UP;
+        stateTime += delta;
+        reduceEnergyByStep(speed * delta);
     }
-    public void moveDown(float delta)  {
+
+    public void moveDown(float delta) {
         Y -= speed * delta;
-        float dy = speed * delta;
-        currentTexture = textureDown;
-        reduceEnergyByStep(dy);
+        currentAnimation = walkDownAnimation;
+        lastDirection = Direction.DOWN;
+        stateTime += delta;
+        reduceEnergyByStep(speed * delta);
     }
-    public void moveLeft(float delta)  {
+
+    public void moveLeft(float delta) {
         X -= speed * delta;
-        float dy = speed * delta;
-        currentTexture = textureLeft;
-        reduceEnergyByStep(dy);
+        currentAnimation = walkLeftAnimation;
+        lastDirection = Direction.LEFT;
+        stateTime += delta;
+        reduceEnergyByStep(speed * delta);
     }
+
     public void moveRight(float delta) {
         X += speed * delta;
-        float dy = speed * delta;
-        currentTexture = textureRight;
-        reduceEnergyByStep(dy);
+        currentAnimation = walkRightAnimation;
+        lastDirection = Direction.RIGHT;
+        stateTime += delta;
+        reduceEnergyByStep(speed * delta);
     }
 
     private void reduceEnergyByStep(float distance) {
@@ -118,15 +199,51 @@ public class Player {
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(currentTexture, X, Y, width, height);
+        TextureRegion frameToDraw;
+
+        if (currentAnimation != null) {
+            frameToDraw = currentAnimation.getKeyFrame(stateTime, true);
+        } else {
+            if (lastDirection == Direction.UP) {
+                frameToDraw = backStill;
+            } else if (lastDirection == Direction.LEFT) {
+                frameToDraw = leftStill;
+            } else if (lastDirection == Direction.RIGHT) {
+                frameToDraw = rightStill;
+            } else {
+                frameToDraw = frontStill;
+            }
+        }
+
+        batch.draw(frameToDraw, X, Y, width, height);
+
+        if (currentItem != null && currentItem.getTexture() != null) {
+            TextureRegion itemTexture = currentItem.getTexture();
+            float itemSize = 48f;
+            float itemX = X;
+            float itemY = Y;
+
+            if (lastDirection == Direction.UP) {
+                itemX += width / 2f - itemSize / 2f;
+                itemY += height;
+            } else if (lastDirection == Direction.DOWN) {
+                itemX += width / 2f - itemSize / 2f;
+                itemY -= itemSize;
+            } else if (lastDirection == Direction.LEFT) {
+                itemX -= itemSize;
+                itemY += height / 2f - itemSize / 2f;
+            } else if (lastDirection == Direction.RIGHT) {
+                itemX += width;
+                itemY += height / 2f - itemSize / 2f;
+            }
+
+            batch.draw(itemTexture, itemX, itemY, itemSize, itemSize);
+        }
     }
+
 
     public void dispose() {
         texture.dispose();
-        textureUp.dispose();
-        textureDown.dispose();
-        textureLeft.dispose();
-        textureRight.dispose();
     }
 
     public float getXX() { return X; }
@@ -149,16 +266,16 @@ public class Player {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             newY++;
-            currentTexture = textureUp;
+            currentTexture = backStill;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             newY--;
-            currentTexture = textureDown;
+            currentTexture = frontStill;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
             newX--;
-            currentTexture = textureLeft;
+            currentTexture = leftStill;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
             newX++;
-            currentTexture = textureRight;
+            currentTexture = rightStill;
         }
 
         if (canMoveTo(newX, newY)) {

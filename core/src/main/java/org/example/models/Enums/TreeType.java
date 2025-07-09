@@ -133,7 +133,7 @@ public enum TreeType implements Material, Item {
     public int getPrice() {
         return fruitPrice;
     }
-    public TextureRegion getNormalTexture() {
+    public TextureRegion getTexture() {
         return new TextureRegion(new Texture(this.normalTexturePath));
     }
 

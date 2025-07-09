@@ -1,5 +1,6 @@
 package org.example.models.Enums;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.Item;
 
 import java.util.List;
@@ -31,5 +32,8 @@ public enum PossibleSeed implements Material, Item {
     @Override
     public int getPrice() {
         return 0;
+    }
+    public TextureRegion getTexture() {
+        return null;
     }
 }

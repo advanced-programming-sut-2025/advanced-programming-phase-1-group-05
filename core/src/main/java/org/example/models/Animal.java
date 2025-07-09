@@ -1,5 +1,7 @@
 package org.example.models;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.Enums.AnimalType;
 import org.example.models.Enums.EnclosureType;
 import org.example.models.Enums.ItemLevel;
@@ -171,6 +173,9 @@ public class Animal implements Item{
 
     public boolean isOut() {
         return isOut;
+    }
+    public TextureRegion getTexture() {
+        return null; //TODO implement
     }
 
 }

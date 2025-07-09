@@ -51,7 +51,7 @@ public class GameAssetManager {
         return instance;
     }
 
-    public Skin getSkin() {
+    public static Skin getSkin() {
         return skin;
     }
 

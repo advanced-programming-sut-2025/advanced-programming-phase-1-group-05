@@ -1,5 +1,6 @@
 package org.example.models;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.Enums.Material;
 
 public class ForagingItem implements Item{
@@ -20,5 +21,8 @@ public class ForagingItem implements Item{
     @Override
     public int getPrice() {
         return price;
+    }
+    public TextureRegion getTexture() {
+        return null; //TODO implement
     }
 }

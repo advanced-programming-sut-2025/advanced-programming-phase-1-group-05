@@ -1,6 +1,7 @@
 
 package org.example.models;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.GrowthStep;
 import org.example.models.Enums.*;
 
@@ -129,6 +130,8 @@ public class Tree implements Item{
         public void setCoordinates(Map.Entry<Integer,Integer> coordinates) {
             this.coordinates = coordinates;
         }
-
+        public TextureRegion getTexture() {
+        return treeType.getTexture();
+    }
 
     }

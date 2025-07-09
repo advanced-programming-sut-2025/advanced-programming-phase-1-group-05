@@ -1,5 +1,6 @@
 package org.example.models;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.Enums.CraftType;
 import org.example.models.Enums.MineralType;
 
@@ -147,6 +148,8 @@ public class Craft extends BasicItem implements Item {
     public int getPrice() {
         return type.getPrice();
     }
-
+    public TextureRegion getTexture() {
+        return type.getTexture();
+    }
 
 }
