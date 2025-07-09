@@ -1,5 +1,6 @@
 package org.example.models;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.GrowthStep;
 import org.example.models.Enums.CropType;
 import org.example.models.Enums.GrowthStage;
@@ -228,5 +229,8 @@ public class FruitAndVegetable implements Item {
     public String toString() {
         return "Name: " + type.getName() + "\n" + "Seed: " + type.getSource() + "\n" +"Growth stages: " + type.getStages() + "\n" +
                 "Current Growth Stage: " + currentGrowthStage + "\n" + "Has been watered today: " + hasBeenWatered +"\n" + "Has been fertilized: " + hasBeenFertilized;
+    }
+    public TextureRegion getTexture() {
+        return type.getTexture();
     }
 }

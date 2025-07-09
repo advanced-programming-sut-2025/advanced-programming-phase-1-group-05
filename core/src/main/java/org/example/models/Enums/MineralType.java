@@ -24,10 +24,10 @@ public enum MineralType implements Material, Item {
     Iron("Iron", "A fairly common ore that can be smelted into bars.", 10,"Stardew_Valley_Images-main/Resource/Iron_Ore.png"),
     Gold("Gold", "A precious ore that can be smelted into bars.", 25,"Stardew_Valley_Images-main/Resource/Gold_Ore.png"),
     Iridium("Iridium", "An exotic ore with many curious properties. Can be smelted into bars.", 100,"Stardew_Valley_Images-main/Resource/Iridium_Ore.png"),
-    Coal("Coal", "A combustible rock that is useful for crafting and smelting.", 15,"Stardew_Valley_Images-main/Resource/Coal.png");
-//    Wood("Wood", "", 0),
-//    Stone("Stone", "", 0),
-//    Fiber("Fiber","",0);
+    Coal("Coal", "A combustible rock that is useful for crafting and smelting.", 15,"Stardew_Valley_Images-main/Resource/Coal.png"),
+    Wood("Wood", "", 0,""),
+    Stone("Stone", "", 0,""),
+    Fiber("Fiber","",0,"");
 
     private final String name;
     private final String description;

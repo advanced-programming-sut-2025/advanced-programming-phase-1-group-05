@@ -1,5 +1,6 @@
 package org.example.models;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.Enums.MineralType;
 import org.example.models.Skills.Skill;
 
@@ -19,5 +20,8 @@ public class Mineral implements Item {
     @Override
     public int getPrice() {
         return mineralType.getPrice();
+    }
+    public TextureRegion getTexture() {
+        return mineralType.getTexture();
     }
 }

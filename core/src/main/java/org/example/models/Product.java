@@ -1,5 +1,6 @@
 package org.example.models;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.controllers.GameManager;
 import org.example.models.Enums.BuildingType;
 import org.example.models.Enums.GameMenuCommands;
@@ -97,5 +98,8 @@ public class Product implements Item {
 
     public Map<String, Integer> getCosts() {
         return costs;
+    }
+    public TextureRegion getTexture() {
+        return null; //TODO implement
     }
 }

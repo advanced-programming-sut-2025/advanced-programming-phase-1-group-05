@@ -1,5 +1,6 @@
 package org.example.models;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.Enums.CookingRecipeType;
 import org.example.models.Enums.Material;
 
@@ -9,7 +10,7 @@ import java.util.Map;
 
 public class Food implements Item{
     private CookingRecipeType recipeType;
-    
+
 
     public Food(CookingRecipeType cookingRecipeType) {
         this.recipeType = cookingRecipeType;
@@ -31,5 +32,8 @@ public class Food implements Item{
     @Override
     public int getPrice() {
         return 0;
+    }
+    public TextureRegion getTexture() {
+        return recipeType.getTexture();
     }
 }

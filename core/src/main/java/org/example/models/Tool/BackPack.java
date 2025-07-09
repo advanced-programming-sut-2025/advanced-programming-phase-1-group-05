@@ -5,6 +5,7 @@ import org.example.models.Craft;
 import org.example.models.Enums.BackPackType;
 import org.example.models.Enums.CookingRecipeType;
 import org.example.models.Enums.CraftType;
+import org.example.models.InventorySlot;
 import org.example.models.Item;
 import org.example.models.Result;
 
@@ -24,6 +25,7 @@ public class BackPack implements Tool <BackPackType>{
         //learntCookingRecipe.add(CookingRecipeType.Salad);
     }
     private boolean isStorageUnlimited = true;
+
 
     public void setBackPackType(BackPackType type) {
         this.level = type;

@@ -1,5 +1,6 @@
 package org.example.models;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.controllers.GameManager;
 
 public class ArtisanProduct implements Item {
@@ -38,5 +39,7 @@ public class ArtisanProduct implements Item {
         return processingHours;
     }
 
-
+    public TextureRegion getTexture() {
+        return null;//TODO implement
+    }
 }
