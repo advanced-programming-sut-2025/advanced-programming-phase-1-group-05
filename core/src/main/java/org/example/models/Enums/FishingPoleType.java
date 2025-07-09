@@ -1,20 +1,25 @@
 package org.example.models.Enums;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 public enum FishingPoleType {
-    Training("Training", 25, 8, 0.1),
-    Bamboo("Bamboo",500, 8, 0.5),
-    FiberGlass("FiberGlass",1800, 6, 0.9),
-    Iridium("Iridium",7500, 4, 1.2);
+    Training("Training", 25, 8, 0.1,"Stardew_Valley_Images-main/Fishing_Pole/Training_Rod.png"),
+    Bamboo("Bamboo",500, 8, 0.5,"Stardew_Valley_Images-main/Fishing_Pole/Bamboo_Pole.png"),
+    FiberGlass("FiberGlass",1800, 6, 0.9,"Stardew_Valley_Images-main/Fishing_Pole/Fiberglass_Rod.png"),
+    Iridium("Iridium",7500, 4, 1.2,"Stardew_Valley_Images-main/Fishing_Pole/Iridium_Rod.png");
 
     private final String name;
     private final int price;
     private final int energyUsage;
     private final double fishingCoefficient;
-    FishingPoleType(String name, int price, int energyUsage, double fishingCoefficient) {
+    private final String texturePath;
+    FishingPoleType(String name, int price, int energyUsage, double fishingCoefficient, String texturePath) {
         this.name = name;
         this.price = price;
         this.energyUsage = energyUsage;
         this.fishingCoefficient = fishingCoefficient;
+        this.texturePath = texturePath;
     }
 
     public static FishingPoleType fromString (String input) {
@@ -58,4 +63,8 @@ public enum FishingPoleType {
     public boolean isMaxLevel() {
         return this == FishingPoleType.values()[FishingPoleType.values().length - 1];
     }
+    public TextureRegion getTexture() {
+        return new TextureRegion(new Texture(this.texturePath));
+    }
+
 }

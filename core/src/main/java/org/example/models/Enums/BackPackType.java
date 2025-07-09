@@ -4,17 +4,19 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public enum BackPackType {
-    Normal("Training", 12, "Stardew_Valley_Images-main/extra/trainingInventory.png"),
-    Big("Big", 24, "Stardew_Valley_Images-main/extra/bigInventory.png"),
-    Deluxe("Deluxe", 1000000, "Stardew_Valley_Images-main/extra/deluxInventory.png");
+    Normal("Training", 12, "Stardew_Valley_Images-main/extra/trainingInventory.png", "Stardew_Valley_Images-main/Tools/Backpack.png"),
+    Big("Big", 24, "Stardew_Valley_Images-main/extra/bigInventory.png", "Stardew_Valley_Images-main/Tools/36_Backpack.png"),
+    Deluxe("Deluxe", 1000000, "Stardew_Valley_Images-main/extra/deluxInventory.png", "Stardew_Valley_Images-main/Tools/36_Backpack.png");
 
     private final String name;
     private final int capacity;
     private final String inventoryTexturePath;
-    BackPackType(String name, int capacity, String inventoryTexturePath) {
+    private final String backpackTexturePath;
+    BackPackType(String name, int capacity, String inventoryTexturePath, String backpackTexturePath) {
         this.name = name;
         this.capacity = capacity;
         this.inventoryTexturePath = inventoryTexturePath;
+        this.backpackTexturePath = backpackTexturePath;
     }
 
     public String getName() {
@@ -34,5 +36,8 @@ public enum BackPackType {
     }
     public TextureRegion getInventoryTexture() {
         return new TextureRegion(new Texture(this.inventoryTexturePath));
+    }
+    public TextureRegion getBackpackTexture() {
+        return new TextureRegion(new Texture(this.backpackTexturePath));
     }
 }
