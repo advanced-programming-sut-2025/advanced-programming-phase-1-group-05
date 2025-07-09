@@ -8,9 +8,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import org.example.controllers.GameManager;
 import org.example.models.Building.AnimalHouse;
-import org.example.models.Enums.BackPackType;
-import org.example.models.Enums.BuildingType;
-import org.example.models.Enums.EnclosureType;
+import org.example.models.Enums.*;
 import org.example.models.Skills.*;
 import org.example.models.Tool.*;
 
@@ -64,6 +62,17 @@ public class Player {
         backPack.getInventory().put(new Scythe(), 1);
         backPack.getInventory().put(new Axe(), 1);
         backPack.getInventory().put(new WateringCan(), 1);
+        //TODO fix new row
+//        backPack.getInventory().put(new Food(CookingRecipeType.FruitSalad), 1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.Blueberry),1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.Carrot),1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.Strawberry),1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.Radish),1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.Sunflower),1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.FairyRose),1);
+//        backPack.getInventory().put(new FruitAndVegetable(CropType.Artichoke),1);
+
+
     }
 
     public Player( float startX, float startY,

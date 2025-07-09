@@ -154,10 +154,20 @@ public class GameScreen implements Screen {
         batch.end();
         cheatCodeWindow.render();
         showInventory(batch);
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             isInvenotryOpen = !isInvenotryOpen;
-            if (isInvenotryOpen) updateInventorySlots();
+            if (isInvenotryOpen) {
+                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack().getLevel().getInventoryTexture();
+                float scale = 0.5f;
+                float scaledWidth = inventory.getRegionWidth() * scale;
+                float scaledHeight = inventory.getRegionHeight() * scale;
+                INVENTORY_X = camera.position.x - scaledWidth / 2f;
+                INVENTORY_Y = camera.position.y - scaledHeight / 2f;
+
+                updateInventorySlots();
+            }
         }
+
 
     }
 
@@ -250,7 +260,6 @@ public class GameScreen implements Screen {
 
     public void showInventory(SpriteBatch batch) {
         if (!isInvenotryOpen) return;
-        System.out.println(MyGame.getCurrentPlayer().getBackPack().getInventory().isEmpty());
 
         TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack().getLevel().getInventoryTexture();
 
@@ -261,11 +270,11 @@ public class GameScreen implements Screen {
         float scaledWidth = originalWidth * scale;
         float scaledHeight = originalHeight * scale;
 
-        float x = camera.position.x - scaledWidth / 2f;
-        float y = camera.position.y - scaledHeight / 2f;
+        INVENTORY_X = camera.position.x - scaledWidth / 2f;
+        INVENTORY_Y = camera.position.y - scaledHeight / 2f;
 
         batch.begin();
-        batch.draw(inventory, x, y, scaledWidth, scaledHeight);
+        batch.draw(inventory, INVENTORY_X, INVENTORY_Y, scaledWidth, scaledHeight);
 
         for (InventorySlot slot : slots) {
             if (slot.item != null) {
@@ -280,7 +289,6 @@ public class GameScreen implements Screen {
 
         batch.end();
     }
-
 
 
     @Override public void resize(int width, int height) {}
@@ -319,8 +327,6 @@ public class GameScreen implements Screen {
     private boolean canWalk(float x, float y) {
         for (Player player : players) {
             if (player.getFarm() != null) {
-                System.out.println(player.getUsername());
-                System.out.println(player.getFarm().isInFarm(x, y));
                 if (player.getFarm().isInFarm(x, y) && !player.getFarm().isOwner(MyGame.getCurrentPlayer())) {
                     return false;
                 }
@@ -387,21 +393,34 @@ public class GameScreen implements Screen {
 
     public void updateInventorySlots() {
         slots.clear();
+
+        float slotPadding = 2f;
+        float topOffset = 485;
+        float leftOffset = 35f;
+
+        int slotsPerRow = 12;
         int col = 0, row = 0;
+
+        float totalRows = (float) Math.ceil(MyGame.getCurrentPlayer().getBackPack().getInventory().size() / (float) slotsPerRow);
+
         for (Map.Entry<Item, Integer> entry : MyGame.getCurrentPlayer().getBackPack().getInventory().entrySet()) {
             InventorySlot slot = new InventorySlot();
-            slot.x = INVENTORY_X + col * (SLOT_SIZE + 5);
-            slot.y = INVENTORY_Y + row * (SLOT_SIZE + 5);
+            slot.x = INVENTORY_X + leftOffset + col * (SLOT_SIZE + slotPadding);
+
+            slot.y = INVENTORY_Y + (totalRows - row - 1) * (SLOT_SIZE + slotPadding) + topOffset;
+
             slot.item = entry.getKey();
             slot.count = entry.getValue();
             slots.add(slot);
+
             col++;
-            if (col == 12) {
+            if (col == slotsPerRow) {
                 col = 0;
                 row++;
             }
         }
     }
+
     private void syncBackPackFromSlots() {
         MyGame.getCurrentPlayer().getBackPack().getInventory().clear();
         for (InventorySlot slot : slots) {
@@ -459,7 +478,5 @@ public class GameScreen implements Screen {
             return true;
         }
     }
-
-
 
 }
