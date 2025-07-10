@@ -24,24 +24,19 @@ public class GameAssetManager {
     private final Map<String, Sound> sfxMap = new HashMap<>();
     private Music music;
     private static final Map<String, Texture> textureCache = new HashMap<>();
-
+    public static final TextureRegion trashcanOpen = new TextureRegion(new Texture("trashcan/open trashcan.png"));
+    public static final TextureRegion trashcanClosed = new TextureRegion(new Texture("trashcan/closed trashcan.png"));
 
     private GameAssetManager() {
         // Load skin from assets/skin/
-
-        // Optional: load cursor
         try {
-            Pixmap cursorPixmap = new Pixmap(Gdx.files.internal("Images/Texture2D/T_CursorSprite.png"));
+            Pixmap cursorPixmap = new Pixmap(Gdx.files.internal("Stardew_Valley_Images-main/extra/cursor.png"));
             Cursor cursor = Gdx.graphics.newCursor(cursorPixmap, 0, 0);
             Gdx.graphics.setCursor(cursor);
             cursorPixmap.dispose();
         } catch (Exception e) {
             Gdx.app.log("GameAssetManager", "Cursor not loaded: " + e.getMessage());
         }
-
-        // Optional: preload sounds (example)
-        // sfxMap.put("click", Gdx.audio.newSound(Gdx.files.internal("AudioClip/click.wav")));
-
         loadNPCAvatars();
     }
 
@@ -104,6 +99,7 @@ public class GameAssetManager {
         }
         return textureCache.get(path);
     }
+
 
 
 }

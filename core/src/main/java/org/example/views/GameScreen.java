@@ -63,8 +63,10 @@ public class GameScreen implements Screen {
     private float SLOT_SIZE = 64;
     private float INVENTORY_X = 0;
     private float INVENTORY_Y = 0;
-    Item draggedItem = null;
-    InventorySlot selectedSlot = null;
+    private Item draggedItem = null;
+    private InventorySlot selectedSlot = null;
+    private boolean trashcanOpen = false;
+    private Rectangle trashcan = new Rectangle();
 
 
     public GameScreen(ArrayList<Player> playerList) {
@@ -190,9 +192,6 @@ public class GameScreen implements Screen {
         stage.act(delta);
         stage.draw();
 
-
-
-
     }
 
     private void handleInput(float delta) {
@@ -283,6 +282,7 @@ public class GameScreen implements Screen {
         }
     }
 
+
     public void showInventory(SpriteBatch batch) {
         if (!isInvenotryOpen) return;
 
@@ -323,10 +323,23 @@ public class GameScreen implements Screen {
             Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             batch.draw(draggedItem.getTexture(), mouse.x - SLOT_SIZE / 2f, mouse.y - SLOT_SIZE / 2f, SLOT_SIZE, SLOT_SIZE);
         }
+
+        Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        float trashTargetSize = 128;
+        float aspectRatio = (float) GameAssetManager.trashcanClosed.getRegionWidth() /
+            GameAssetManager.trashcanClosed.getRegionHeight();
+        float trashWidth = trashTargetSize * aspectRatio;
+        float trashHeight = trashTargetSize;
+        float trashX = INVENTORY_X + scaledWidth - trashWidth + 100;
+        float trashY = INVENTORY_Y + 70;
+        trashcan.set(trashX, trashY, trashWidth, trashHeight);
+
+        trashcanOpen = trashcan.contains(mouse.x, mouse.y);
+        batch.draw(trashcanOpen ? GameAssetManager.trashcanOpen : GameAssetManager.trashcanClosed,
+            trashX, trashY, trashWidth, trashHeight);
         batch.end();
 
         //outline the slot mouse is on
-        Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         InventorySlot hoveredSlot = null;
 
         for (InventorySlot slot : slots) {
@@ -520,6 +533,16 @@ public class GameScreen implements Screen {
 
             Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 
+            //check trash can
+            if (draggedItem != null && trashcan.contains(world.x, world.y)) {
+                MyGame.getCurrentPlayer().getBackPack().removeFromInventory(draggedItem, 1);
+                draggedItem = null;
+                selectedSlot = null;
+                updateInventorySlots();
+                syncBackPackFromSlots();
+                return true;
+            }
+            //check the slots
             for (InventorySlot slot : slots) {
                 if (world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
                     world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
@@ -553,5 +576,4 @@ public class GameScreen implements Screen {
         }
     }
 
-
-}
+    }
