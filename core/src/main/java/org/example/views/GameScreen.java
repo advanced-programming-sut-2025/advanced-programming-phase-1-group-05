@@ -67,6 +67,13 @@ public class GameScreen implements Screen {
     private InventorySlot selectedSlot = null;
     private boolean trashcanOpen = false;
     private Rectangle trashcan = new Rectangle();
+    private Rectangle inventoryBounds = new Rectangle();
+
+    //skill set stuff
+    private boolean isSkillSetOpen = false;
+    private float SKILL_X = 0;
+    private float SKILL_Y = 0;
+    private Rectangle skillSetBounds = new Rectangle();
 
 
     public GameScreen(ArrayList<Player> playerList) {
@@ -144,7 +151,7 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.6f, 0.8f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         handleInput(delta);
         cheatCodeWindow.update(delta);
 
@@ -176,6 +183,7 @@ public class GameScreen implements Screen {
         batch.end();
         cheatCodeWindow.render();
         showInventory(batch);
+        showSkillSet(batch);
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             isInvenotryOpen = !isInvenotryOpen;
             if (isInvenotryOpen) {
@@ -186,9 +194,14 @@ public class GameScreen implements Screen {
                 INVENTORY_X = camera.position.x - scaledWidth / 2f;
                 INVENTORY_Y = camera.position.y - scaledHeight / 2f;
 
+                skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64,64);
+
                 updateInventorySlots();
             }
+        } else if (Gdx.input.justTouched() && skillSetBounds.contains(Gdx.input.getX(), Gdx.input.getY())) {
+            isSkillSetOpen = !isSkillSetOpen;
         }
+
         stage.act(delta);
         stage.draw();
 
@@ -280,6 +293,28 @@ public class GameScreen implements Screen {
             batch.setColor(1, 1, 1, 1);
             Gdx.gl.glDisable(GL20.GL_BLEND);
         }
+    }
+
+    public void showSkillSet(SpriteBatch batch) {
+        if(!isSkillSetOpen) return;
+
+        TextureRegion skillSet = GameAssetManager.skillSetPage;
+
+        float scale = 0.5f;
+        float textWidth = skillSet.getRegionWidth();
+        float textHeight = skillSet.getRegionHeight();
+
+        float scaledWidth = textWidth * scale;
+        float scaledHeight = textHeight * scale;
+
+        SKILL_X = camera.position.x - scaledWidth / 2f;
+        SKILL_Y = camera.position.y - scaledHeight / 2f;
+
+        batch.begin();
+
+        batch.draw(skillSet, SKILL_X, SKILL_Y, scaledWidth, scaledHeight);
+        batch.end();
+
     }
 
 

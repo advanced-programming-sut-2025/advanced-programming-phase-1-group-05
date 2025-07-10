@@ -26,6 +26,7 @@ public class GameAssetManager {
     private static final Map<String, Texture> textureCache = new HashMap<>();
     public static final TextureRegion trashcanOpen = new TextureRegion(new Texture("trashcan/open trashcan.png"));
     public static final TextureRegion trashcanClosed = new TextureRegion(new Texture("trashcan/closed trashcan.png"));
+    public static final TextureRegion skillSetPage = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/skills view.png"));
 
     private GameAssetManager() {
         // Load skin from assets/skin/
