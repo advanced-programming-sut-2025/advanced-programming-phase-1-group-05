@@ -23,8 +23,10 @@ import org.example.controllers.GameManager;
 import org.example.controllers.GameMenuController;
 import org.example.models.*;
 import org.example.models.Enums.Season;
+import org.example.models.Enums.SkillSetInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GameScreen implements Screen {
@@ -74,6 +76,7 @@ public class GameScreen implements Screen {
     private float SKILL_X = 0;
     private float SKILL_Y = 0;
     private Rectangle skillSetBounds = new Rectangle();
+    private final HashMap<SkillSetInfo, Rectangle> skillHitboxes = new HashMap<>();
 
 
     public GameScreen(ArrayList<Player> playerList) {
@@ -146,7 +149,6 @@ public class GameScreen implements Screen {
         }
     }
 
-
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.6f, 0.8f, 0.5f, 1);
@@ -178,16 +180,16 @@ public class GameScreen implements Screen {
 
         applyLightingOverlay();
 
-//        stage.act(delta);
-//        stage.draw();
         batch.end();
         cheatCodeWindow.render();
         showInventory(batch);
         showSkillSet(batch);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             isInvenotryOpen = !isInvenotryOpen;
+            isSkillSetOpen = false;
             if (isInvenotryOpen) {
-                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack().getLevel().getInventoryTexture();
+                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
+                    .getLevel().getInventoryTexture();
                 float scale = 0.5f;
                 float scaledWidth = inventory.getRegionWidth() * scale;
                 float scaledHeight = inventory.getRegionHeight() * scale;
@@ -198,8 +200,9 @@ public class GameScreen implements Screen {
 
                 updateInventorySlots();
             }
-        } else if (Gdx.input.justTouched() && skillSetBounds.contains(Gdx.input.getX(), Gdx.input.getY())) {
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             isSkillSetOpen = !isSkillSetOpen;
+            isInvenotryOpen = false;
         }
 
         stage.act(delta);
@@ -296,10 +299,9 @@ public class GameScreen implements Screen {
     }
 
     public void showSkillSet(SpriteBatch batch) {
-        if(!isSkillSetOpen) return;
+        if (!isSkillSetOpen) return;
 
         TextureRegion skillSet = GameAssetManager.skillSetPage;
-
         float scale = 0.5f;
         float textWidth = skillSet.getRegionWidth();
         float textHeight = skillSet.getRegionHeight();
@@ -310,10 +312,50 @@ public class GameScreen implements Screen {
         SKILL_X = camera.position.x - scaledWidth / 2f;
         SKILL_Y = camera.position.y - scaledHeight / 2f;
 
-        batch.begin();
+        initSkillHitboxes(SKILL_X, SKILL_Y);
 
+        Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+        batch.begin();
         batch.draw(skillSet, SKILL_X, SKILL_Y, scaledWidth, scaledHeight);
+
+        for (Map.Entry<SkillSetInfo, Rectangle> entry : skillHitboxes.entrySet()) {
+            if (entry.getValue().contains(mouse.x, mouse.y)) {
+                String name = entry.getKey().getSkillName();
+                String description = entry.getKey().getSkillDescription();
+                StringBuilder sb = new StringBuilder();
+                sb.append(entry.getKey().getSkillName()).append("\n\n").
+                    append(entry.getKey().getSkillDescription());
+
+                GlyphLayout layout = new GlyphLayout(font, sb.toString());
+                float padding = 100f;
+                TextureRegion infoPage = GameAssetManager.infoPage;
+                float bgWidth = layout.width + padding * 2;
+                float bgHeight = layout.height + padding * 2 + 50f;
+                float tooltipX = mouse.x + 15;
+                float tooltipY = mouse.y - 40;
+
+                batch.draw(infoPage, tooltipX, tooltipY, bgWidth, bgHeight);
+                BitmapFont boldFont = GameAssetManager.getSkin().getFont("subtitle");
+                boldFont.setColor(Color.WHITE);
+                boldFont.draw(batch, name, tooltipX + padding, tooltipY + bgHeight - padding);
+                font.draw(batch, description, tooltipX + padding, tooltipY + bgHeight - padding - 50f);
+            }
+        }
+
         batch.end();
+    }
+
+    private void initSkillHitboxes(float skillX, float skillY) {
+        skillHitboxes.clear();
+        float width = 120;
+        float height = 30;
+
+        skillHitboxes.put(SkillSetInfo.Farming, new Rectangle(skillX + 200, skillY + 500, width, height));
+        skillHitboxes.put(SkillSetInfo.Mining, new Rectangle(skillX + 200, skillY + 450, width, height));
+        skillHitboxes.put(SkillSetInfo.Foraging, new Rectangle(skillX + 200, skillY + 400, width, height));
+        skillHitboxes.put(SkillSetInfo.Fishing, new Rectangle(skillX + 200, skillY + 350, width, height));
+        skillHitboxes.put(SkillSetInfo.Combat, new Rectangle(skillX + 200, skillY + 300, width, height));
 
     }
 
