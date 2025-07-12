@@ -43,7 +43,7 @@ public class Player {
     private List<String> notifications = new ArrayList<>();
     private static int mapNum;
     private Texture texture;
-    private float width, height;
+    private float width = 49, height = 122;
     private float speed = 200f;
     private float X, Y;
     private TextureRegion currentTexture;
@@ -75,30 +75,16 @@ public class Player {
         backPack.getInventory().put(new Scythe(), 1);
         backPack.getInventory().put(new Axe(), 1);
         backPack.getInventory().put(new WateringCan(), 1);
-        //setCurrentItem(backPack.getFromInventory("Hoe"));
-        //TODO fix new row
-//        backPack.getInventory().put(new Food(CookingRecipeType.FruitSalad), 1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.Blueberry),1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.Carrot),1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.Strawberry),1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.Radish),1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.Sunflower),1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.FairyRose),1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.Artichoke),1);
-
-
-    }
-
-    public Player(float startX, float startY,
-                  float width, float height) {
-        this.energy = 200;
-//        this.texture = textureDown;
-        this.currentTexture = frontStill;
         initializeAnimations();
-        this.X = startX;
-        this.Y = startY;
-        this.width = width;
-        this.height = height;
+        //TODO fix new row
+        backPack.getInventory().put(new Food(CookingRecipeType.FruitSalad), 1);
+        backPack.getInventory().put(new FruitAndVegetable(CropType.Blueberry),1);
+        backPack.getInventory().put(new FruitAndVegetable(CropType.Carrot),1);
+        backPack.getInventory().put(new FruitAndVegetable(CropType.Strawberry),1);
+        backPack.getInventory().put(new FruitAndVegetable(CropType.Radish),1);
+        backPack.getInventory().put(new FruitAndVegetable(CropType.Sunflower),1);
+        backPack.getInventory().put(new FruitAndVegetable(CropType.FairyRose),1);
+        backPack.getInventory().put(new FruitAndVegetable(CropType.Artichoke),1);
     }
 
     public void initializeAnimations() {
@@ -218,27 +204,21 @@ public class Player {
         batch.draw(frameToDraw, X, Y, width, height);
 
         if (currentItem != null && currentItem.getTexture() != null) {
-            TextureRegion itemTexture = currentItem.getTexture();
+            TextureRegion textureRegion = currentItem.getTexture();
             float itemSize = 48f;
-            float itemX = X;
-            float itemY = Y;
+            float itemX = X + width - 10f;
+            float itemY = Y + height / 2f - itemSize / 2f;
 
-            if (lastDirection == Direction.UP) {
-                itemX += width / 2f - itemSize / 2f;
-                itemY += height;
-            } else if (lastDirection == Direction.DOWN) {
-                itemX += width / 2f - itemSize / 2f;
-                itemY -= itemSize;
-            } else if (lastDirection == Direction.LEFT) {
-                itemX -= itemSize;
-                itemY += height / 2f - itemSize / 2f;
-            } else if (lastDirection == Direction.RIGHT) {
-                itemX += width;
-                itemY += height / 2f - itemSize / 2f;
+            if (lastDirection == Direction.LEFT) {
+                if (!textureRegion.isFlipX()) textureRegion.flip(true, false);
+                itemX = X - itemSize + 10f;
+            } else {
+                if (textureRegion.isFlipX()) textureRegion.flip(true, false);
             }
 
-            batch.draw(itemTexture, itemX, itemY, itemSize, itemSize);
+            batch.draw(textureRegion, itemX, itemY, itemSize, itemSize);
         }
+
     }
 
 

@@ -83,7 +83,6 @@ public class Main extends Game {
     }
 
     private static String extractValue(String json, String key) {
-        // بسیار ساده و فقط برای فایل JSON کوچک با فرمت استاندارد!
         String pattern = "\"" + key + "\"\\s*:\\s*";
         int index = json.indexOf("\"" + key + "\"");
         if (index == -1) return null;
@@ -93,7 +92,6 @@ public class Main extends Game {
         int endQuote = json.indexOf("\"", startQuote + 1);
 
         if (startQuote == -1 || endQuote == -1) {
-            // اگر مقدار boolean باشه (بدون " ")
             String part = json.substring(colonIndex + 1).trim();
             if (part.startsWith("true")) return "true";
             if (part.startsWith("false")) return "false";

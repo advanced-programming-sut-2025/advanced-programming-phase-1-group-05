@@ -87,7 +87,7 @@ public class CheatCodeWindow implements InputProcessor {
         int start = Math.max(0, history.size - maxVisibleLines);
 
         float lineY = inputY + lineSpacing;
-        font.setColor(Color.GREEN);
+        //font.setColor(Color.GREEN);
         for (int i = start; i < history.size; i++) {
             font.draw(batch, history.get(i), x + padding, lineY);
             lineY += lineSpacing;

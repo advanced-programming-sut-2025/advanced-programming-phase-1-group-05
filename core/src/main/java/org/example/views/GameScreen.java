@@ -23,8 +23,11 @@ import org.example.controllers.GameManager;
 import org.example.controllers.GameMenuController;
 import org.example.models.*;
 import org.example.models.Enums.Season;
+import org.example.models.Enums.SkillSetInfo;
+import org.example.models.Tool.Tool;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GameScreen implements Screen {
@@ -63,9 +66,24 @@ public class GameScreen implements Screen {
     private float SLOT_SIZE = 64;
     private float INVENTORY_X = 0;
     private float INVENTORY_Y = 0;
-    Item draggedItem = null;
-    InventorySlot selectedSlot = null;
+    private Item draggedItem = null;
+    private InventorySlot selectedSlot = null;
+    private boolean trashcanOpen = false;
+    private Rectangle trashcan = new Rectangle();
+    private Rectangle inventoryBounds = new Rectangle();
 
+    //skill set stuff
+    private boolean isSkillSetOpen = false;
+    private float SKILL_X = 0;
+    private float SKILL_Y = 0;
+    private Rectangle skillSetBounds = new Rectangle();
+    private final HashMap<SkillSetInfo, Rectangle> skillHitboxes = new HashMap<>();
+
+    //tool selection stuff
+    private boolean isToolSelectionOpen = false;
+    private ArrayList<InventorySlot> toolSlots = new ArrayList<>();
+    private float TOOL_X = 0;
+    private float TOOL_Y = 0;
 
     public GameScreen(ArrayList<Player> playerList) {
         skin = GameAssetManager.getInstance().getSkin();
@@ -87,7 +105,8 @@ public class GameScreen implements Screen {
         allowedArea.add(getAllowedAreaForMap(selectedMap));
         initializeFarmArea();
 
-        player = new Player(spawnPosition.x, spawnPosition.y, 49, 122);
+        player = MyGame.getCurrentPlayer();
+        player.setPosition(spawnPosition.x, spawnPosition.y);
 
         camera.position.set(spawnPosition.x + player.getWidth() / 2f,
             spawnPosition.y + player.getHeight() / 2f, 0);
@@ -102,6 +121,7 @@ public class GameScreen implements Screen {
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
+
     }
 
     private void initializeFarmArea() {
@@ -136,12 +156,11 @@ public class GameScreen implements Screen {
         }
     }
 
-
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.6f, 0.8f, 0.5f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         handleInput(delta);
         cheatCodeWindow.update(delta);
 
@@ -168,29 +187,40 @@ public class GameScreen implements Screen {
 
         applyLightingOverlay();
 
-//        stage.act(delta);
-//        stage.draw();
         batch.end();
         cheatCodeWindow.render();
         showInventory(batch);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        showSkillSet(batch);
+        showToolSelection(batch);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             isInvenotryOpen = !isInvenotryOpen;
+            isSkillSetOpen = false;
+            isToolSelectionOpen = false;
             if (isInvenotryOpen) {
-                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack().getLevel().getInventoryTexture();
+                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
+                    .getLevel().getInventoryTexture();
                 float scale = 0.5f;
                 float scaledWidth = inventory.getRegionWidth() * scale;
                 float scaledHeight = inventory.getRegionHeight() * scale;
                 INVENTORY_X = camera.position.x - scaledWidth / 2f;
                 INVENTORY_Y = camera.position.y - scaledHeight / 2f;
 
+                skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64,64);
+
                 updateInventorySlots();
             }
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            isSkillSetOpen = !isSkillSetOpen;
+            isInvenotryOpen = false;
+            isToolSelectionOpen = false;
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+            isToolSelectionOpen = !isToolSelectionOpen;
+            isInvenotryOpen = false;
+            isSkillSetOpen = false;
+            updateToolSelectionSlots();
         }
         stage.act(delta);
         stage.draw();
-
-
-
 
     }
 
@@ -282,6 +312,106 @@ public class GameScreen implements Screen {
         }
     }
 
+    public void showToolSelection(SpriteBatch batch) {
+        if (!isToolSelectionOpen) return;
+
+        TextureRegion toolSelection = GameAssetManager.toolSelection;
+        float scale = 0.5f;
+        float scaledWidth = toolSelection.getRegionWidth() * scale;
+        float scaledHeight = toolSelection.getRegionHeight() * scale;
+
+        TOOL_X = camera.position.x - scaledWidth / 2f;
+        TOOL_Y = camera.position.y - scaledHeight / 2f;
+
+        float x = camera.position.x - camera.viewportWidth / 2f + (camera.viewportWidth - scaledWidth) / 2f;
+        float y = camera.position.y - camera.viewportHeight / 2f + 20f;
+        batch.begin();
+        batch.draw(toolSelection, x, y, scaledWidth, scaledHeight);
+        batch.end();
+
+        Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        InventorySlot hoveredSlot = null;
+
+        for (InventorySlot slot : toolSlots) {
+            if (mouse.x >= slot.x && mouse.x <= slot.x + SLOT_SIZE &&
+                mouse.y >= slot.y && mouse.y <= slot.y + SLOT_SIZE) {
+                hoveredSlot = slot;
+                break;
+            }
+        }
+
+        if (hoveredSlot != null) {
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            Gdx.gl.glLineWidth(5f);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(Color.RED);
+            shapeRenderer.rect(hoveredSlot.x, hoveredSlot.y, SLOT_SIZE, SLOT_SIZE);
+            shapeRenderer.end();
+        }
+
+    }
+
+    public void showSkillSet(SpriteBatch batch) {
+        if (!isSkillSetOpen) return;
+
+        TextureRegion skillSet = GameAssetManager.skillSetPage;
+        float scale = 0.5f;
+        float textWidth = skillSet.getRegionWidth();
+        float textHeight = skillSet.getRegionHeight();
+
+        float scaledWidth = textWidth * scale;
+        float scaledHeight = textHeight * scale;
+
+        SKILL_X = camera.position.x - scaledWidth / 2f;
+        SKILL_Y = camera.position.y - scaledHeight / 2f;
+
+        initSkillHitboxes(SKILL_X, SKILL_Y);
+
+        Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+        batch.begin();
+        batch.draw(skillSet, SKILL_X, SKILL_Y, scaledWidth, scaledHeight);
+
+        for (Map.Entry<SkillSetInfo, Rectangle> entry : skillHitboxes.entrySet()) {
+            if (entry.getValue().contains(mouse.x, mouse.y)) {
+                String name = entry.getKey().getSkillName();
+                String description = entry.getKey().getSkillDescription();
+                StringBuilder sb = new StringBuilder();
+                sb.append(entry.getKey().getSkillName()).append("\n\n").
+                    append(entry.getKey().getSkillDescription());
+
+                GlyphLayout layout = new GlyphLayout(font, sb.toString());
+                float padding = 100f;
+                TextureRegion infoPage = GameAssetManager.infoPage;
+                float bgWidth = layout.width + padding * 2;
+                float bgHeight = layout.height + padding * 2 + 50f;
+                float tooltipX = mouse.x + 15;
+                float tooltipY = mouse.y - 40;
+
+                batch.draw(infoPage, tooltipX, tooltipY, bgWidth, bgHeight);
+                BitmapFont boldFont = GameAssetManager.getSkin().getFont("subtitle");
+                boldFont.setColor(Color.WHITE);
+                boldFont.draw(batch, name, tooltipX + padding, tooltipY + bgHeight - padding);
+                font.draw(batch, description, tooltipX + padding, tooltipY + bgHeight - padding - 50f);
+            }
+        }
+
+        batch.end();
+    }
+
+    private void initSkillHitboxes(float skillX, float skillY) {
+        skillHitboxes.clear();
+        float width = 120;
+        float height = 30;
+
+        skillHitboxes.put(SkillSetInfo.Farming, new Rectangle(skillX + 200, skillY + 500, width, height));
+        skillHitboxes.put(SkillSetInfo.Mining, new Rectangle(skillX + 200, skillY + 450, width, height));
+        skillHitboxes.put(SkillSetInfo.Foraging, new Rectangle(skillX + 200, skillY + 400, width, height));
+        skillHitboxes.put(SkillSetInfo.Fishing, new Rectangle(skillX + 200, skillY + 350, width, height));
+        skillHitboxes.put(SkillSetInfo.Combat, new Rectangle(skillX + 200, skillY + 300, width, height));
+
+    }
+
     public void showInventory(SpriteBatch batch) {
         if (!isInvenotryOpen) return;
 
@@ -302,7 +432,19 @@ public class GameScreen implements Screen {
 
         for (InventorySlot slot : slots) {
             if (slot.item != null) {
-                batch.draw(slot.item.getTexture(), slot.x, slot.y, SLOT_SIZE, SLOT_SIZE);
+                //making sure images aren't blurred
+                TextureRegion texture = slot.item.getTexture();
+                float texWidth = texture.getRegionWidth();
+                float texHeight = texture.getRegionHeight();
+
+                float scale1 = Math.min(SLOT_SIZE / texWidth, SLOT_SIZE / texHeight);
+                float drawWidth = texWidth * scale1;
+                float drawHeight = texHeight * scale1;
+
+                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f;
+                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f;
+
+                batch.draw(texture, drawX, drawY, drawWidth, drawHeight);
             }
         }
 
@@ -311,9 +453,41 @@ public class GameScreen implements Screen {
             batch.draw(draggedItem.getTexture(), mouse.x - SLOT_SIZE / 2f, mouse.y - SLOT_SIZE / 2f, SLOT_SIZE, SLOT_SIZE);
         }
 
-        batch.end();
-    }
+        Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        float trashTargetSize = 128;
+        float aspectRatio = (float) GameAssetManager.trashcanClosed.getRegionWidth() /
+            GameAssetManager.trashcanClosed.getRegionHeight();
+        float trashWidth = trashTargetSize * aspectRatio;
+        float trashHeight = trashTargetSize;
+        float trashX = INVENTORY_X + scaledWidth - trashWidth + 100;
+        float trashY = INVENTORY_Y + 70;
+        trashcan.set(trashX, trashY, trashWidth, trashHeight);
 
+        trashcanOpen = trashcan.contains(mouse.x, mouse.y);
+        batch.draw(trashcanOpen ? GameAssetManager.trashcanOpen : GameAssetManager.trashcanClosed,
+            trashX, trashY, trashWidth, trashHeight);
+        batch.end();
+
+        //outline the slot mouse is on
+        InventorySlot hoveredSlot = null;
+
+        for (InventorySlot slot : slots) {
+            if (mouse.x >= slot.x && mouse.x <= slot.x + SLOT_SIZE &&
+                mouse.y >= slot.y && mouse.y <= slot.y + SLOT_SIZE) {
+                hoveredSlot = slot;
+                break;
+            }
+        }
+
+        if (hoveredSlot != null) {
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            Gdx.gl.glLineWidth(5f);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(Color.RED);
+            shapeRenderer.rect(hoveredSlot.x, hoveredSlot.y, SLOT_SIZE, SLOT_SIZE);
+            shapeRenderer.end();
+        }
+    }
 
     @Override public void resize(int width, int height) {
     }
@@ -346,8 +520,6 @@ public class GameScreen implements Screen {
         toggleOverviewMode();
         toggleOverviewMode();
     }
-
-
     @Override public void hide() {}
 
     @Override
@@ -444,35 +616,69 @@ public class GameScreen implements Screen {
         }
     }
 
+    public void updateToolSelectionSlots(){
+        toolSlots.clear();
+
+        float slotPadding = 1f;
+        float leftOffset = 35f;
+        float topOffset = 485;
+        int cols = 12;
+        int rows = 1;
+
+        ArrayList<Item> items = new ArrayList<>();
+        for(Item item : MyGame.getCurrentPlayer().getBackPack().getInventory().keySet()){
+            if(item instanceof Tool) {
+                items.add(item);
+                System.out.println(item);
+            }
+        }
+        int index = 0;
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                InventorySlot slot = new InventorySlot();
+                slot.x = TOOL_X + leftOffset + col * (SLOT_SIZE + slotPadding) + 5f;
+                slot.y = TOOL_Y + (1 - row - 1) * (SLOT_SIZE + 10f) + topOffset - 150f;
+
+                if (index < items.size()) {
+                    Item item = items.get(index++);
+                    slot.item = item;
+                    slot.count = MyGame.getCurrentPlayer().getBackPack().getInventory().get(item);
+                }
+
+                toolSlots.add(slot);
+            }
+        }
+
+    }
     public void updateInventorySlots() {
         slots.clear();
 
-        float slotPadding = 2f;
-        float topOffset = 485;
+        float slotPadding = 1f;
         float leftOffset = 35f;
+        float topOffset = 485;
+        int cols = 12;
+        int rows = 3;
 
-        int slotsPerRow = 12;
-        int col = 0, row = 0;
+        ArrayList<Item> items = new ArrayList<>(MyGame.getCurrentPlayer().getBackPack().getInventory().keySet());
+        int index = 0;
 
-        float totalRows = (float) Math.ceil(MyGame.getCurrentPlayer().getBackPack().getInventory().size() / (float) slotsPerRow);
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                InventorySlot slot = new InventorySlot();
+                slot.x = INVENTORY_X + leftOffset + col * (SLOT_SIZE + slotPadding) + 5f;
+                slot.y = INVENTORY_Y + (3 - row - 1) * (SLOT_SIZE + 10f) + topOffset - 150f;
 
-        for (Map.Entry<Item, Integer> entry : MyGame.getCurrentPlayer().getBackPack().getInventory().entrySet()) {
-            InventorySlot slot = new InventorySlot();
-            slot.x = INVENTORY_X + leftOffset + col * (SLOT_SIZE + slotPadding);
+                if (index < items.size()) {
+                    Item item = items.get(index++);
+                    slot.item = item;
+                    slot.count = MyGame.getCurrentPlayer().getBackPack().getInventory().get(item);
+                }
 
-            slot.y = INVENTORY_Y + (totalRows - row - 1) * (SLOT_SIZE + slotPadding) + topOffset;
-
-            slot.item = entry.getKey();
-            slot.count = entry.getValue();
-            slots.add(slot);
-
-            col++;
-            if (col == slotsPerRow) {
-                col = 0;
-                row++;
+                slots.add(slot);
             }
         }
     }
+
 
     private void syncBackPackFromSlots() {
         MyGame.getCurrentPlayer().getBackPack().getInventory().clear();
@@ -489,48 +695,48 @@ public class GameScreen implements Screen {
             if (!isInvenotryOpen) return false;
 
             Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
+
+            //check trash can
+            if (draggedItem != null && trashcan.contains(world.x, world.y)) {
+                MyGame.getCurrentPlayer().getBackPack().removeFromInventory(draggedItem, 1);
+                draggedItem = null;
+                selectedSlot = null;
+                updateInventorySlots();
+                syncBackPackFromSlots();
+                return true;
+            }
+            //check the slots
             for (InventorySlot slot : slots) {
-                if (slot.item != null &&
-                    world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
+                if (world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
                     world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
 
-                    draggedItem = slot.item;
-                    selectedSlot = slot;
-                    slot.item = null;
-                    return true;
+                    if (draggedItem == null && slot.item != null) {
+                        draggedItem = slot.item;
+                        selectedSlot = slot;
+                        slot.item = null;
+                        MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                        return true;
+                    } else if (draggedItem != null && slot.item == null) {
+                        slot.item = draggedItem;
+                        draggedItem = null;
+                        selectedSlot = null;
+                        MyGame.getCurrentPlayer().setCurrentItem(null);
+                        syncBackPackFromSlots();
+                        return true;
+                    } else if (draggedItem != null && slot.item != null) {
+                        Item temp = slot.item;
+                        slot.item = draggedItem;
+                        draggedItem = temp;
+                        selectedSlot = slot;
+                        MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                        syncBackPackFromSlots();
+                        return true;
+                    }
                 }
             }
+
             return false;
-        }
-
-        @Override
-        public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-            if (!isInvenotryOpen || draggedItem == null) return false;
-
-            Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
-            for (InventorySlot slot : slots) {
-                if (slot.item == null &&
-                    world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
-                    world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
-
-                    slot.item = draggedItem;
-                    MyGame.getCurrentPlayer().setCurrentItem(slot.item);
-                    draggedItem = null;
-                    selectedSlot = null;
-                    updateInventorySlots();
-                    return true;
-                }
-            }
-
-            if (selectedSlot != null) {
-                selectedSlot.item = draggedItem;
-            }
-
-            draggedItem = null;
-            selectedSlot = null;
-            syncBackPackFromSlots();
-            return true;
         }
     }
 
-}
+    }
