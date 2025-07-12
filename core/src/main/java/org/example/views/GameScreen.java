@@ -24,6 +24,7 @@ import org.example.controllers.GameMenuController;
 import org.example.models.*;
 import org.example.models.Enums.Season;
 import org.example.models.Enums.SkillSetInfo;
+import org.example.models.Tool.Tool;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,6 +79,11 @@ public class GameScreen implements Screen {
     private Rectangle skillSetBounds = new Rectangle();
     private final HashMap<SkillSetInfo, Rectangle> skillHitboxes = new HashMap<>();
 
+    //tool selection stuff
+    private boolean isToolSelectionOpen = false;
+    private ArrayList<InventorySlot> toolSlots = new ArrayList<>();
+    private float TOOL_X = 0;
+    private float TOOL_Y = 0;
 
     public GameScreen(ArrayList<Player> playerList) {
         skin = GameAssetManager.getInstance().getSkin();
@@ -115,6 +121,7 @@ public class GameScreen implements Screen {
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
+
     }
 
     private void initializeFarmArea() {
@@ -184,9 +191,11 @@ public class GameScreen implements Screen {
         cheatCodeWindow.render();
         showInventory(batch);
         showSkillSet(batch);
+        showToolSelection(batch);
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             isInvenotryOpen = !isInvenotryOpen;
             isSkillSetOpen = false;
+            isToolSelectionOpen = false;
             if (isInvenotryOpen) {
                 TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
                     .getLevel().getInventoryTexture();
@@ -203,8 +212,13 @@ public class GameScreen implements Screen {
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             isSkillSetOpen = !isSkillSetOpen;
             isInvenotryOpen = false;
+            isToolSelectionOpen = false;
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+            isToolSelectionOpen = !isToolSelectionOpen;
+            isInvenotryOpen = false;
+            isSkillSetOpen = false;
+            updateToolSelectionSlots();
         }
-
         stage.act(delta);
         stage.draw();
 
@@ -298,6 +312,45 @@ public class GameScreen implements Screen {
         }
     }
 
+    public void showToolSelection(SpriteBatch batch) {
+        if (!isToolSelectionOpen) return;
+
+        TextureRegion toolSelection = GameAssetManager.toolSelection;
+        float scale = 0.5f;
+        float scaledWidth = toolSelection.getRegionWidth() * scale;
+        float scaledHeight = toolSelection.getRegionHeight() * scale;
+
+        TOOL_X = camera.position.x - scaledWidth / 2f;
+        TOOL_Y = camera.position.y - scaledHeight / 2f;
+
+        float x = camera.position.x - camera.viewportWidth / 2f + (camera.viewportWidth - scaledWidth) / 2f;
+        float y = camera.position.y - camera.viewportHeight / 2f + 20f;
+        batch.begin();
+        batch.draw(toolSelection, x, y, scaledWidth, scaledHeight);
+        batch.end();
+
+        Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+        InventorySlot hoveredSlot = null;
+
+        for (InventorySlot slot : toolSlots) {
+            if (mouse.x >= slot.x && mouse.x <= slot.x + SLOT_SIZE &&
+                mouse.y >= slot.y && mouse.y <= slot.y + SLOT_SIZE) {
+                hoveredSlot = slot;
+                break;
+            }
+        }
+
+        if (hoveredSlot != null) {
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            Gdx.gl.glLineWidth(5f);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(Color.RED);
+            shapeRenderer.rect(hoveredSlot.x, hoveredSlot.y, SLOT_SIZE, SLOT_SIZE);
+            shapeRenderer.end();
+        }
+
+    }
+
     public void showSkillSet(SpriteBatch batch) {
         if (!isSkillSetOpen) return;
 
@@ -358,7 +411,6 @@ public class GameScreen implements Screen {
         skillHitboxes.put(SkillSetInfo.Combat, new Rectangle(skillX + 200, skillY + 300, width, height));
 
     }
-
 
     public void showInventory(SpriteBatch batch) {
         if (!isInvenotryOpen) return;
@@ -564,6 +616,40 @@ public class GameScreen implements Screen {
         }
     }
 
+    public void updateToolSelectionSlots(){
+        toolSlots.clear();
+
+        float slotPadding = 1f;
+        float leftOffset = 35f;
+        float topOffset = 485;
+        int cols = 12;
+        int rows = 1;
+
+        ArrayList<Item> items = new ArrayList<>();
+        for(Item item : MyGame.getCurrentPlayer().getBackPack().getInventory().keySet()){
+            if(item instanceof Tool) {
+                items.add(item);
+                System.out.println(item);
+            }
+        }
+        int index = 0;
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                InventorySlot slot = new InventorySlot();
+                slot.x = TOOL_X + leftOffset + col * (SLOT_SIZE + slotPadding) + 5f;
+                slot.y = TOOL_Y + (1 - row - 1) * (SLOT_SIZE + 10f) + topOffset - 150f;
+
+                if (index < items.size()) {
+                    Item item = items.get(index++);
+                    slot.item = item;
+                    slot.count = MyGame.getCurrentPlayer().getBackPack().getInventory().get(item);
+                }
+
+                toolSlots.add(slot);
+            }
+        }
+
+    }
     public void updateInventorySlots() {
         slots.clear();
 
