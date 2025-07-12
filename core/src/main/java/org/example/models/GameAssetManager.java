@@ -87,7 +87,7 @@ public class GameAssetManager {
             frames.add(region);
         }
 
-        return new Animation<>(0.1f, frames, Animation.PlayMode.LOOP);
+        return new Animation<>(0.2f, frames, Animation.PlayMode.LOOP);
     }
 
     private void loadNPCAvatars() {
