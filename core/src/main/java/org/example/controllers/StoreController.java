@@ -103,7 +103,7 @@ public class StoreController {
             //add craft recipes to learnt recipes
         } else if(productName.contains("Recipe")) {
             if (productName.equals("Dehydrator Recipe")) {
-               // MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
+               MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
             } else if (productName.equals("Grass Starter Recipe")) {
                 MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
             } else if (productName.equals("Fish Smoker Recipe")) {

@@ -86,7 +86,7 @@ public class GameScreen implements Screen {
     private float TOOL_Y = 0;
 
     public GameScreen(ArrayList<Player> playerList) {
-        skin = GameAssetManager.getInstance().getSkin();
+        skin = GameAssetManager.getSkin();
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
         batch = new SpriteBatch();
@@ -226,10 +226,10 @@ public class GameScreen implements Screen {
 
     private void handleInput(float delta) {
         Vector2 oldPos = new Vector2(player.getXX(), player.getYY());
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) player.moveUp(delta);
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) player.moveDown(delta);
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) player.moveLeft(delta);
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) player.moveRight(delta);
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) player.moveUp(delta);
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) player.moveDown(delta);
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.moveLeft(delta);
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.moveRight(delta);
 
 
         // can't go to round area

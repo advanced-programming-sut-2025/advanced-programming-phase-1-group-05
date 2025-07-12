@@ -49,6 +49,7 @@ public class Player {
     private TextureRegion currentTexture;
     private final float energyCostPerStep = 0.05f;
     private float distanceTraveled = 0f;
+    private List<ArtisanMachine> machines = new ArrayList<>();
 
 
 

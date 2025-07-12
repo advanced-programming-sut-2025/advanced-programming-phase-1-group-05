@@ -565,7 +565,7 @@ public class GameMenuController extends MenuController {
         Player player = MyGame.getCurrentPlayer();
 //        if (!player.getBackPack().hasThisCraft(artisan.getCraftType()))
 //            return Result.error("Nope, artisan machines don’t have Wi-Fi. Go stand next to it!");
-        if (artisan != null) artisan.useArtisan(args);
+        //if (artisan != null) artisan.useArtisan(args);
         return Result.success("");
     }
 

@@ -24,7 +24,7 @@ public class NpcActor extends Actor {
         this.npc = npc;
         Texture npcTexture = new Texture("NPCs/" + npc.getName().toLowerCase() + "/walkdown1.png");
         //playerSprite.setSize(playerTexture.getWidth()*4f, playerTexture.getHeight()*4f);
-        setSize(npcTexture.getWidth() * 2f, npcTexture.getHeight() * 2f);
+        setSize(npcTexture.getWidth() * 4f, npcTexture.getHeight() * 4f);
         currentFrame = new TextureRegion(npcTexture);
         setPosition(npc.getX(), npc.getY());
     }
@@ -64,9 +64,6 @@ public class NpcActor extends Actor {
         currentFrame = anim.getKeyFrame(stateTime, true);
 
 
-        if (currentFrame == null) {
-            System.out.println("Animation frame is null for NPC: " + npc.getName());
-        }
     }
 
     private boolean overlapsAnyFarm(Rectangle bounds) {
