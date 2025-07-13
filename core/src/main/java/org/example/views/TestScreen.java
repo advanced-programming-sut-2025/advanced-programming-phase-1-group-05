@@ -54,7 +54,7 @@ public class TestScreen implements Screen {
     private CheatCodeWindow cheatCodeWindow;
 
     public TestScreen() {
-        skin = GameAssetManager.getInstance().getSkin();
+        skin = GameAssetManager.getSkin();
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
         batch = new SpriteBatch();

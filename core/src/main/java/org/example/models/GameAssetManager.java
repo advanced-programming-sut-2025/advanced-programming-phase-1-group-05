@@ -95,6 +95,11 @@ public class GameAssetManager {
         }
     }
 
+    public Texture getItemTexture(String itemName) {
+        String path = "Items/" + itemName.replaceAll("\\s+", "_") + ".png";
+        return getOrLoadTexture(path);
+    }
+
     public Texture getOrLoadTexture(String path) {
         if (!textureCache.containsKey(path)) {
             textureCache.put(path, new Texture(Gdx.files.internal(path)));

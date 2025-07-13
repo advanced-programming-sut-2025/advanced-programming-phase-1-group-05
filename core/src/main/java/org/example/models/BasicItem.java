@@ -33,7 +33,7 @@ public class BasicItem implements Item {
         return price;
     }
     public TextureRegion getTexture() {
-        return null;//TODO implement
+        return new TextureRegion(GameAssetManager.getInstance().getItemTexture(name));
     }
 
 }

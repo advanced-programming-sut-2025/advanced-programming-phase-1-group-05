@@ -162,4 +162,11 @@ public class Database {
     }
 
 
+    public Store getStoreByName(String name) {
+        for (Store store : stores) {
+            if (store.storeName.equalsIgnoreCase(name))
+                return store;
+        }
+        return  null;
+    }
 }

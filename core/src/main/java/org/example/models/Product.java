@@ -100,6 +100,6 @@ public class Product implements Item {
         return costs;
     }
     public TextureRegion getTexture() {
-        return null; //TODO implement
+        return new TextureRegion(GameAssetManager.getInstance().getItemTexture(name));
     }
 }

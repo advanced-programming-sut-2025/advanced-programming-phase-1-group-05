@@ -10,7 +10,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 public class StoreController {
+    private static StoreController instance;
 
+
+    public static StoreController getInstance() {
+        if (instance == null) instance = new StoreController();
+        return instance;
+    }
     private Store getCurrentStore() {
         Player player = MyGame.getCurrentPlayer();
         for (Store store : MyGame.getDatabase().getStores()){
@@ -50,75 +56,69 @@ public class StoreController {
         }
         return Result.success(output.toString());
     }
-    public Result purchase(Matcher m) {
-        String productName = m.group("productName");
-        int count = 1;
-        if (m.group("count") != null)
-            count = Integer.parseInt(m.group("count"));
-        Store store = getCurrentStore();
-        if (store == null) {
-            return Result.error("Nice try, but the valley's still one solar panel away from online shopping.");
-        }
-        if (!store.isOpen(GameManager.getCurrentHour()))
-            return Result.error("store not open right now.");
-        Player player = MyGame.getCurrentPlayer();
-        Product product = store.getProduct(productName);
-        if (MyGame.getDatabase().getItem(productName) == null)
-            return Result.error("That item doesn't exist. But hey, points for creativity!");
-        if (product == null) {
-            return Result.error("This store doesn't have that product. Maybe try shopping elsewhere.");
-        }
+    public void purchase(Map<Product, Integer> products, Store store) {
 
-        if (player.getGold() < product.getPrice()*count){
-            return Result.error("You reach for your wallet... and it echoes. Try again when it stops crying.");
-        }
-        if (!product. isInSeason(store)) {
-            return Result.error("This product isn't available in " + GameManager.getSeason() + " in this store.");
-        }
-        if(product.getRemainingForToday() < count && product.getLimit() != -1) {
-            return Result.error("Can't purchase any more of that. come back tomorrow!");
-        }
+        Player player = getPlayer(products);
 
-
-        player.addGold(-product.getPrice()*count);
 
         //change backpack capacity
-        if(productName.contains("Pack")) {
-            if(productName.equals("Large Pack")) {
-                MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Big);
-            } else if(productName.equals("Deluxe Pack")) {
-                MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Deluxe);
-            }
-            //change trash can
-        } else if(productName.contains("Trash Can")) {
-            if(productName.equals("Copper Trash Can")) {
-                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Brass);
-            } else if(productName.equals("Steel Trash Can")) {
-                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iron);
-            } else if(productName.equals("Gold Trash Can")) {
-                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Gold);
-            } else if(productName.equals("Iridium Trash Can")) {
-                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iridium);
-            }
-            //add craft recipes to learnt recipes
-        } else if(productName.contains("Recipe")) {
-            if (productName.equals("Dehydrator Recipe")) {
-               MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
-            } else if (productName.equals("Grass Starter Recipe")) {
-                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
-            } else if (productName.equals("Fish Smoker Recipe")) {
-                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
-            } else {
-                String name = productName.replace("Recipe", "");
-                CookingRecipeType type = CookingRecipeType.fromString(name);
-                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
-            }
+        for (Map.Entry<Product, Integer> entry : products.entrySet()){
+            String productName = entry.getKey().getName();
+            if (productName.contains("Pack")) {
+                if (productName.equals("Large Pack")) {
+                    MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Big);
+                } else if (productName.equals("Deluxe Pack")) {
+                    MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Deluxe);
+                }
+                //change trash can
+            } else if (productName.contains("Trash Can")) {
+                if (productName.equals("Copper Trash Can")) {
+                    MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Brass);
+                } else if (productName.equals("Steel Trash Can")) {
+                    MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iron);
+                } else if (productName.equals("Gold Trash Can")) {
+                    MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Gold);
+                } else if (productName.equals("Iridium Trash Can")) {
+                    MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iridium);
+                }
+                //add craft recipes to learnt recipes
+            } else if (productName.contains("Recipe")) {
+                if (productName.equals("Dehydrator Recipe")) {
+                    MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
+                } else if (productName.equals("Grass Starter Recipe")) {
+                    MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
+                } else if (productName.equals("Fish Smoker Recipe")) {
+                    MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
+                } else {
+                    String name = productName.replace("Recipe", "");
+                    CookingRecipeType type = CookingRecipeType.fromString(name);
+                    MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
+                }
 
-        } else {
-            player.getBackPack().addToInventory(product, count);
+            } else {
+                player.getBackPack().addToInventory(entry.getKey(), entry.getValue());
+            }
+            entry.getKey().addSold(entry.getValue());
         }
-        product.addSold(count);
-        return Result.success("Purchased " + productName + " successfully!");
+    }
+
+    private static Player getPlayer(Map<Product, Integer> products) {
+        Player player = MyGame.getCurrentPlayer();
+//        if (!product. isInSeason(store)) {
+//            return Result.error("This product isn't available in " + GameManager.getSeason() + " in this store.");
+//        }
+//        if(product.getRemainingForToday() < count && product.getLimit() != -1) {
+//            return Result.error("Can't purchase any more of that. come back tomorrow!");
+//        }
+
+        int price = 0;
+        for (Map.Entry<Product, Integer> entry : products.entrySet()) {
+            price += entry.getValue() * entry.getKey().getPrice();
+        }
+
+
+        player.addGold(-price);
+        return player;
     }
 
     public Result sell(Matcher m) {
