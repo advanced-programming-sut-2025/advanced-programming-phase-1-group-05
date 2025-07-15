@@ -201,6 +201,7 @@ public class GameScreen implements Screen {
         showInventory(batch);
         showSkillSet(batch);
         showToolSelection(batch);
+        updateToolSelectionSlots();
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             isInvenotryOpen = !isInvenotryOpen;
             isSkillSetOpen = false;
@@ -324,13 +325,28 @@ public class GameScreen implements Screen {
         float scaledWidth = toolSelection.getRegionWidth() * scale;
         float scaledHeight = toolSelection.getRegionHeight() * scale;
 
-        TOOL_X = camera.position.x - scaledWidth / 2f;
-        TOOL_Y = camera.position.y - scaledHeight / 2f;
-
         float x = camera.position.x - camera.viewportWidth / 2f + (camera.viewportWidth - scaledWidth) / 2f;
         float y = camera.position.y - camera.viewportHeight / 2f + 20f;
         batch.begin();
         batch.draw(toolSelection, x, y, scaledWidth, scaledHeight);
+
+        for (InventorySlot slot : toolSlots) {
+            if (slot.item != null) {
+                TextureRegion texture = slot.item.getTexture();
+                float texWidth = texture.getRegionWidth();
+                float texHeight = texture.getRegionHeight();
+
+                float scale1 = Math.min(SLOT_SIZE / texWidth, SLOT_SIZE / texHeight);
+                float drawWidth = texWidth * scale1;
+                float drawHeight = texHeight * scale1;
+
+                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f;
+                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f;
+
+                batch.draw(texture, drawX, drawY, drawWidth, drawHeight);
+            }
+        }
+
         batch.end();
 
         Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -517,7 +533,6 @@ public class GameScreen implements Screen {
         multiplexer.addProcessor(new InventoryInputHandler());
 
         Gdx.input.setInputProcessor(multiplexer);
-        System.out.println("InputMultiplexer set with cheatCodeWindow");
 
         missionListTable = new Table();
         missionListTable.setVisible(false);
@@ -537,7 +552,7 @@ public class GameScreen implements Screen {
 
         float padding = 20;
         float x = rightEdgeX - notificationButton.getWidth() - padding;
-        float y = topEdgeY - 90; // or -110 if you want it lower
+        float y = topEdgeY - 90;
 
         notificationButton.setPosition(x, y);
         stage.addActor(notificationButton);
@@ -697,25 +712,33 @@ public class GameScreen implements Screen {
     public void updateToolSelectionSlots() {
         toolSlots.clear();
 
-        float slotPadding = 1f;
+        float slotPadding = 0.5f;
         float leftOffset = 35f;
         float topOffset = 485;
         int cols = 12;
         int rows = 1;
 
+        TextureRegion toolSelection = GameAssetManager.toolSelection;
+        float scale = 0.5f;
+        float scaledWidth = toolSelection.getRegionWidth() * scale;
+        float scaledHeight = toolSelection.getRegionHeight() * scale;
+
+        TOOL_X = camera.position.x - scaledWidth / 2f;
+        TOOL_Y = camera.position.y - scaledHeight / 2f;
+
         ArrayList<Item> items = new ArrayList<>();
         for (Item item : MyGame.getCurrentPlayer().getBackPack().getInventory().keySet()) {
             if (item instanceof Tool) {
                 items.add(item);
-                System.out.println(item);
             }
         }
+
         int index = 0;
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 InventorySlot slot = new InventorySlot();
-                slot.x = TOOL_X + leftOffset + col * (SLOT_SIZE + slotPadding) + 5f;
-                slot.y = TOOL_Y + (1 - row - 1) * (SLOT_SIZE + 10f) + topOffset - 150f;
+                slot.x = TOOL_X + leftOffset + col * (SLOT_SIZE + slotPadding) - 20f;
+                slot.y = TOOL_Y + (-row) * (SLOT_SIZE + 10f) -395f;
 
                 if (index < items.size()) {
                     Item item = items.get(index++);
@@ -726,7 +749,6 @@ public class GameScreen implements Screen {
                 toolSlots.add(slot);
             }
         }
-
     }
 
     public void updateInventorySlots() {
@@ -771,45 +793,57 @@ public class GameScreen implements Screen {
     private class InventoryInputHandler extends InputAdapter {
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            if (!isInvenotryOpen) return false;
+            if (!isInvenotryOpen && !isToolSelectionOpen) return false;
 
             Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 
-            //check trash can
-            if (draggedItem != null && trashcan.contains(world.x, world.y)) {
-                MyGame.getCurrentPlayer().getBackPack().removeFromInventory(draggedItem, 1);
-                draggedItem = null;
-                selectedSlot = null;
-                updateInventorySlots();
-                syncBackPackFromSlots();
-                return true;
-            }
-            //check the slots
-            for (InventorySlot slot : slots) {
-                if (world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
-                    world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
+            if(isInvenotryOpen) {
+                //check trash can
+                if (draggedItem != null && trashcan.contains(world.x, world.y)) {
+                    MyGame.getCurrentPlayer().getBackPack().removeFromInventory(draggedItem, 1);
+                    draggedItem = null;
+                    selectedSlot = null;
+                    updateInventorySlots();
+                    syncBackPackFromSlots();
+                    return true;
+                }
+                //check the slots
+                for (InventorySlot slot : slots) {
+                    if (world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
+                        world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
 
-                    if (draggedItem == null && slot.item != null) {
-                        draggedItem = slot.item;
-                        selectedSlot = slot;
-                        slot.item = null;
-                        MyGame.getCurrentPlayer().setCurrentItem(slot.item);
-                        return true;
-                    } else if (draggedItem != null && slot.item == null) {
-                        slot.item = draggedItem;
-                        draggedItem = null;
-                        selectedSlot = null;
-                        MyGame.getCurrentPlayer().setCurrentItem(null);
-                        syncBackPackFromSlots();
-                        return true;
-                    } else if (draggedItem != null && slot.item != null) {
-                        Item temp = slot.item;
-                        slot.item = draggedItem;
-                        draggedItem = temp;
-                        selectedSlot = slot;
-                        MyGame.getCurrentPlayer().setCurrentItem(slot.item);
-                        syncBackPackFromSlots();
-                        return true;
+                        if (draggedItem == null && slot.item != null) {
+                            draggedItem = slot.item;
+                            selectedSlot = slot;
+                            slot.item = null;
+                            MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                            return true;
+                        } else if (draggedItem != null && slot.item == null) {
+                            slot.item = draggedItem;
+                            draggedItem = null;
+                            selectedSlot = null;
+                            MyGame.getCurrentPlayer().setCurrentItem(null);
+                            syncBackPackFromSlots();
+                            return true;
+                        } else if (draggedItem != null && slot.item != null) {
+                            Item temp = slot.item;
+                            slot.item = draggedItem;
+                            draggedItem = temp;
+                            selectedSlot = slot;
+                            MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                            syncBackPackFromSlots();
+                            return true;
+                        }
+                    }
+                }
+            } else if (isToolSelectionOpen) {
+                for(InventorySlot slot : toolSlots) {
+                    if(world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
+                        world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
+                        if(slot.item != null) {
+                            MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                            return true;
+                        }
                     }
                 }
             }
