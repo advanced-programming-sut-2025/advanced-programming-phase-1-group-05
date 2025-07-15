@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import org.example.controllers.GameManager;
+import org.example.models.Enums.CropType;
 import org.example.models.Enums.TileType;
 import org.example.models.Enums.Season;
 
@@ -48,7 +49,9 @@ public class TileMapRenderer {
 
             for (int y = offsetY + 10; y < offsetY + 60; y++) {
                 for (int x = offsetX + 10; x < offsetX + 60; x++) {
-                    map[y][x] = TileType.Soil;
+                    map[y][x] = TileType.FarmFlat;
+                    GameTile tile = MyGame.getGameMap().getTile(x, y);
+                    tile.setItemOnTile(new FruitAndVegetable(CropType.FairyRose));
                 }
             }
 
@@ -58,27 +61,29 @@ public class TileMapRenderer {
             fillArea(offsetX + 20, offsetY + 20, 5, 6, TileType.Water);
             fillArea(offsetX + 45, offsetY + 30, 3, 7, TileType.Water);
 
-            for (int i = 0; i < 15; i++) {
-                int tx = offsetX + 10 + random.nextInt(50);
-                int ty = offsetY + 10 + random.nextInt(50);
-                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
-                    placeStructure(tx, ty, TileType.Tree);
-                }
-            }
-            for (int i = 0; i < 15; i++) {
-                int tx = offsetX + 10 + random.nextInt(50);
-                int ty = offsetY + 10 + random.nextInt(50);
-                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
-                    placeStructure(tx, ty, TileType.Stone);
-                }
-            }
-            for (int i = 0; i < 15; i++) {
-                int tx = offsetX + 10 + random.nextInt(50);
-                int ty = offsetY + 10 + random.nextInt(50);
-                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
-                    placeStructure(tx, ty, TileType.Wood);
-                }
-            }
+            //jesus T-T
+//            for (int i = 0; i < 15; i++) {
+//                int tx = offsetX + 10 + random.nextInt(50);
+//                int ty = offsetY + 10 + random.nextInt(50);
+//                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
+//                    placeStructure(tx, ty, TileType.Tree);
+//                }
+//            }
+//            for (int i = 0; i < 15; i++) {
+//                int tx = offsetX + 10 + random.nextInt(50);
+//                int ty = offsetY + 10 + random.nextInt(50);
+//                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
+//                    placeStructure(tx, ty, TileType.Stone);
+//                }
+//            }
+//            for (int i = 0; i < 15; i++) {
+//                int tx = offsetX + 10 + random.nextInt(50);
+//                int ty = offsetY + 10 + random.nextInt(50);
+//                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
+//                    placeStructure(tx, ty, TileType.Wood);
+//                }
+//            }
+
         }
     }
 
@@ -151,6 +156,23 @@ public class TileMapRenderer {
                     Texture bgTex = textureMap.get(background);
                     batch.draw(bgTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 }
+                if(type == TileType.Soil) {
+                    Texture soilTex = textureMap.get(TileType.Soil);
+                    batch.draw(soilTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+                if(type == TileType.WateredSoil) {
+                    Texture wateredSoilTex = textureMap.get(TileType.WateredSoil);
+                    batch.draw(wateredSoilTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+
+                //draw item on tile
+                GameTile tile = GameMap.getTile(x, y);
+                if(tile == null) continue;
+                Item itemOnTile = tile.getItemOnTile();
+                if(itemOnTile == null) continue;
+                Texture tileTexture = textureMap.get(tile.getTileType());
+                float scale = (float) TILE_SIZE / tileTexture.getHeight();
+                batch.draw(tileTexture, x * TILE_SIZE, y * TILE_SIZE, tileTexture.getWidth() * scale , TILE_SIZE);
 
                 Texture tex = textureMap.get(type);
                 int drawWidth = (type.isLargeStructure()
