@@ -4,6 +4,7 @@ import org.example.models.*;
 import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.*;
 import org.example.models.Tool.Tool;
+import org.example.views.GameScreen;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -146,10 +147,10 @@ public class StoreController {
         return Result.success("You will receive the gold tomorrow morning!");
     }
 
-    public Result buyAnimal(Matcher m) {
+    public Result buyAnimal(Matcher m, GameScreen game) {
         Store store = getCurrentStore();
         if (store == null || !store.getStoreName().equalsIgnoreCase("marnie's ranch")) {
-            return Result.error("You can only do this in the carpenter's shop");
+            return Result.error("You can only do this in Marnie's ranch");
         }
 
         Product product = store.getProduct(m.group("animalType"));
@@ -170,8 +171,10 @@ public class StoreController {
             return Result.error("You don't have an empty " + enclosureType.toString().toLowerCase());
         }
         AnimalType type = AnimalType.fromString(m.group("animalType"));
-        animalHouse.addAnimal(new Animal(m.group("animalName"), type, player));
+        Animal animal = new Animal(m.group("animalName"), type, player);
+        animalHouse.addAnimal(animal);
         player.addGold(-product.getPrice());
+        game.addAnimalActor(new AnimalActor(animal));
         return Result.success("animal bought successfully!");
     }
 

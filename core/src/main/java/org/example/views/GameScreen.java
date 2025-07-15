@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -33,9 +34,9 @@ import java.util.Map;
 public class GameScreen implements Screen {
     private ShapeRenderer shapeRenderer;
     Stage stage;
-    Table missionListTable;
+    Table missionListTable, animalMenuTable;
     Skin skin;
-
+    ImageButton notificationButton;
     Viewport viewport;
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -52,8 +53,7 @@ public class GameScreen implements Screen {
     private float timeAccumulator = 0f;
     private boolean overviewMode = false;
     private Season currentSeason;
-    private ArrayList<Rectangle> allowedArea = new ArrayList<>();
-    private ArrayList<Player> players;
+    private final ArrayList<Player> players;
 
     private CheatCodeWindow cheatCodeWindow;
 
@@ -102,7 +102,6 @@ public class GameScreen implements Screen {
         Player currentPlayer = MyGame.getCurrentPlayer();
         String selectedMap = GameMenuController.getMapForPlayer(currentPlayer.getUsername());
         Vector2 spawnPosition = getInitialPositionForMap(selectedMap);
-        allowedArea.add(getAllowedAreaForMap(selectedMap));
         initializeFarmArea();
 
         player = MyGame.getCurrentPlayer();
@@ -138,21 +137,31 @@ public class GameScreen implements Screen {
     private Vector2 getInitialPositionForMap(String mapName) {
 
         switch (mapName.toLowerCase()) {
-            case "map1": return new Vector2(10 * TILE_SIZE, 10 * TILE_SIZE);
-            case "map2": return new Vector2(80 * TILE_SIZE, 10 * TILE_SIZE);
-            case "map3": return new Vector2(10 * TILE_SIZE, 80 * TILE_SIZE);
-            case "map4": return new Vector2(80 * TILE_SIZE, 80 * TILE_SIZE);
-            default: return new Vector2(0, 0);
+            case "map1":
+                return new Vector2(10 * TILE_SIZE, 10 * TILE_SIZE);
+            case "map2":
+                return new Vector2(80 * TILE_SIZE, 10 * TILE_SIZE);
+            case "map3":
+                return new Vector2(10 * TILE_SIZE, 80 * TILE_SIZE);
+            case "map4":
+                return new Vector2(80 * TILE_SIZE, 80 * TILE_SIZE);
+            default:
+                return new Vector2(0, 0);
         }
     }
 
     private Rectangle getAllowedAreaForMap(String mapName) {
         switch (mapName.toLowerCase()) {
-            case "map1": return new Rectangle(10f * TILE_SIZE, 10f * TILE_SIZE, 50f * TILE_SIZE, 50f * TILE_SIZE);
-            case "map2": return new Rectangle(80 * TILE_SIZE, 10 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
-            case "map3": return new Rectangle(10 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
-            case "map4": return new Rectangle(80 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
-            default: return new Rectangle(0, 0, 0, 0);
+            case "map1":
+                return new Rectangle(10f * TILE_SIZE, 10f * TILE_SIZE, 50f * TILE_SIZE, 50f * TILE_SIZE);
+            case "map2":
+                return new Rectangle(80 * TILE_SIZE, 10 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
+            case "map3":
+                return new Rectangle(10 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
+            case "map4":
+                return new Rectangle(80 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE);
+            default:
+                return new Rectangle(0, 0, 0, 0);
         }
     }
 
@@ -205,7 +214,7 @@ public class GameScreen implements Screen {
                 INVENTORY_X = camera.position.x - scaledWidth / 2f;
                 INVENTORY_Y = camera.position.y - scaledHeight / 2f;
 
-                skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64,64);
+                skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
 
                 updateInventorySlots();
             }
@@ -213,7 +222,7 @@ public class GameScreen implements Screen {
             isSkillSetOpen = !isSkillSetOpen;
             isInvenotryOpen = false;
             isToolSelectionOpen = false;
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
             isToolSelectionOpen = !isToolSelectionOpen;
             isInvenotryOpen = false;
             isSkillSetOpen = false;
@@ -231,11 +240,6 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.moveLeft(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.moveRight(delta);
 
-
-        // can't go to round area
-//        if (!allowedArea.contains(player.getXX(), player.getYY())) {
-//            player.setPosition(oldPos.x, oldPos.y);
-//        }
         float px = player.getXX() + player.getWidth() / 2f;
         float py = player.getYY() + player.getHeight() / 2f;
         if (!canWalk(px, py)) {
@@ -489,11 +493,20 @@ public class GameScreen implements Screen {
         }
     }
 
-    @Override public void resize(int width, int height) {
+    @Override
+    public void resize(int width, int height) {
     }
-    @Override public void pause() {}
-    @Override public void resume() {}
-    @Override public void show() {
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void show() {
         viewport = new FitViewport(320, 180, camera);
         viewport.apply();
 
@@ -511,16 +524,34 @@ public class GameScreen implements Screen {
         missionListTable.setFillParent(true);
         stage.addActor(missionListTable);
 
+        animalMenuTable = new Table();
+        animalMenuTable.setVisible(false);
+        animalMenuTable.setFillParent(true);
+        stage.addActor(animalMenuTable);
         for (NpcActor npc : NPCs) {
             stage.addActor(npc);
         }
+        notificationButton = new ImageButton(skin);
+        float rightEdgeX = camera.position.x + camera.viewportWidth / 2;
+        float topEdgeY = camera.position.y + camera.viewportHeight / 2;
+
+        float padding = 20;
+        float x = rightEdgeX - notificationButton.getWidth() - padding;
+        float y = topEdgeY - 90; // or -110 if you want it lower
+
+        notificationButton.setPosition(x, y);
+        stage.addActor(notificationButton);
         forceViewportReset();
     }
+
     private void forceViewportReset() {
         toggleOverviewMode();
         toggleOverviewMode();
     }
-    @Override public void hide() {}
+
+    @Override
+    public void hide() {
+    }
 
     @Override
     public void dispose() {
@@ -543,12 +574,61 @@ public class GameScreen implements Screen {
 
         return true;
     }
+
+    private void showAnimalMenu(Animal animal) {
+        animalMenuTable.clear();
+        animalMenuTable.setVisible(true);
+        Table innerPanel = new Table(skin);
+        Texture menuTexture = GameAssetManager.getInstance().getOrLoadTexture("Animals/MenuBackground2.png");
+
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        innerPanel.setBackground(menuDrawable);
+        innerPanel.pad(30);
+
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+
+        String name = animal.getName();
+        TextButton feedButton = new TextButton("feed " + name, skin);
+        innerPanel.add(feedButton).fillX();
+        innerPanel.row();
+        feedButton.setColor(1, 210f/255, 132f/255, 1);
+        TextButton petButton = new TextButton("pet " + name, skin);
+        innerPanel.add(petButton).fillX();
+        innerPanel.row();
+        petButton.setColor(1, 210f/255, 132f/255, 1);
+        TextButton shepherdAnimal = new TextButton("shepherd " + name, skin);
+        innerPanel.add(shepherdAnimal).fillX();
+        innerPanel.row();
+        shepherdAnimal.setColor(1, 210f/255, 132f/255, 1);
+        TextButton collectProduceButton = new TextButton("collect produce", skin);
+        innerPanel.add(collectProduceButton).fillX();
+        innerPanel.row();
+        collectProduceButton.setColor(1, 210f/255, 132f/255, 1);
+        TextButton sellAnimal = new TextButton("sell " + name, skin);
+        innerPanel.add(sellAnimal).fillX();
+        innerPanel.row();
+        sellAnimal.setColor(1, 210f/255, 132f/255, 1);
+
+        ImageButton closeButton = new ImageButton(closeDrawable);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                animalMenuTable.setVisible(false);
+            }
+        });
+
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
+        animalMenuTable.add(innerPanel).center();
+    }
+
     private void showMissionList(NPC npc) {
         missionListTable.clear();
         missionListTable.setVisible(true);
 
         Table innerPanel = new Table(skin);
-        Texture questLogTexture = new Texture(Gdx.files.internal("NPCs/questLog.png"));
+        Texture questLogTexture = GameAssetManager.getInstance().getOrLoadTexture("NPCs/questLog.png");
         Drawable questLogDrawable = new TextureRegionDrawable(new TextureRegion(questLogTexture));
         innerPanel.setBackground(questLogDrawable);
         innerPanel.pad(30);
@@ -558,16 +638,14 @@ public class GameScreen implements Screen {
             Image icon = new Image(getStatusDrawable(mission));
 
             Table row = new Table();
-            label.setColor(86f/225f, 22f/225f, 12f/225f,1);
+            label.setColor(86f / 225f, 22f / 225f, 12f / 225f, 1);
             if (npc.getMissions().indexOf(mission) == 0) {
                 row.add(label).padTop(45).padBottom(5).padRight(10).padLeft(10);
                 row.add(icon).size(32).pad(5).padTop(45).padBottom(5).padRight(10);
-            }
-            else if (npc.getMissions().indexOf(mission) == 2) {
+            } else if (npc.getMissions().indexOf(mission) == 2) {
                 row.add(label).padBottom(70).padRight(10);
                 row.add(icon).size(32).pad(5).padBottom(70).padRight(10);
-            }
-            else {
+            } else {
                 row.add(label).padBottom(10).padRight(10);
                 row.add(icon).size(32).pad(5).padTop(10).padBottom(10).padRight(10);
             }
@@ -616,7 +694,7 @@ public class GameScreen implements Screen {
         }
     }
 
-    public void updateToolSelectionSlots(){
+    public void updateToolSelectionSlots() {
         toolSlots.clear();
 
         float slotPadding = 1f;
@@ -626,8 +704,8 @@ public class GameScreen implements Screen {
         int rows = 1;
 
         ArrayList<Item> items = new ArrayList<>();
-        for(Item item : MyGame.getCurrentPlayer().getBackPack().getInventory().keySet()){
-            if(item instanceof Tool) {
+        for (Item item : MyGame.getCurrentPlayer().getBackPack().getInventory().keySet()) {
+            if (item instanceof Tool) {
                 items.add(item);
                 System.out.println(item);
             }
@@ -650,6 +728,7 @@ public class GameScreen implements Screen {
         }
 
     }
+
     public void updateInventorySlots() {
         slots.clear();
 
@@ -739,4 +818,19 @@ public class GameScreen implements Screen {
         }
     }
 
+    public void addAnimalActor(AnimalActor animalActor) {
+        stage.addActor(animalActor);
+        animalActor.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (button == Input.Buttons.RIGHT) {
+                    showAnimalMenu(animalActor.getAnimal());
+                    return true;
+                }
+                return false;
+            }
+        });
     }
+
+
+}

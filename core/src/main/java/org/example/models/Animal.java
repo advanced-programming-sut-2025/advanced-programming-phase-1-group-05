@@ -26,7 +26,11 @@ public class Animal implements Item{
         this.name = name;
         this.type = type;
         initializeAnimal();
-        setCoordinates(player);
+        try {
+            setCoordinates(player);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public int getX() {
@@ -51,6 +55,7 @@ public class Animal implements Item{
             int y = (int) (random.nextInt((int) (endY - startY + 1)) + startY);
             GameTile tile = GameMap.getTile(x, y);
 
+            assert tile != null;
             if (!tile.isOccupied()) {
                 this.x = x;
                 this.y = y;
@@ -73,13 +78,13 @@ public class Animal implements Item{
                 if (random.nextInt(100) > chance) index = 1;
             }
             Item item = products.get(index);
-            Product product = new Product(item.getName(), item.getPrice(), 0, null, List.of(), Map.of());
+            Product product = new Product(item.getName(), item.getPrice(), 0, null, List.of(), Map.of(), "blallalal");
             unCollectedProducts.add(product);
-            int levelValue = (int) ((friendshipPoints/1000) * (0.5 + random.nextDouble()));
+            double levelValue = ((friendshipPoints/1000f) * (0.5 + random.nextDouble()));
             ItemLevel level;
             if (levelValue < 0.5) level = ItemLevel.Normal;
-            else if (levelValue >= 05 && levelValue < 0.7) level = ItemLevel.Iron;
-            else if (levelValue >= 0.7 && levelValue < 0.9) level = ItemLevel.Gold;
+            else if (levelValue < 0.7) level = ItemLevel.Iron;
+            else if (levelValue < 0.9) level = ItemLevel.Gold;
             else level = ItemLevel.Iridium;
             product.setItemLevel(level);
         }

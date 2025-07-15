@@ -13,7 +13,7 @@ public class ArtisanProduct extends Product implements Item {
     private final int sellPrice;
     private int startHour;
     public ArtisanProduct(String name, int energy, int processingTime, int sellPrice) {
-        super(name, sellPrice, -1, null, List.of(), Map.of());
+        super(name, sellPrice, -1, null, List.of(), Map.of(), "");
         this.name = name;
         this.energy = energy;
         processingHours = processingTime;

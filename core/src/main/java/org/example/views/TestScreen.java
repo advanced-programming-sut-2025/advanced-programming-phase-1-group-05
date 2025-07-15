@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.controllers.GameManager;
 import org.example.controllers.GameMenuController;
 import org.example.models.*;
+import org.example.models.Enums.AnimalType;
 import org.example.models.Enums.Season;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 public class TestScreen implements Screen {
     private ShapeRenderer shapeRenderer;
     Stage stage;
-    Table missionListTable;
+    Table missionListTable, animalMenuTable;
     Skin skin;
 
     private OrthographicCamera camera;
@@ -78,8 +79,13 @@ public class TestScreen implements Screen {
         missionListTable.setVisible(false);
         missionListTable.setFillParent(true);
         stage.addActor(missionListTable);
-        showMissionList(MyGame.getNPCByName("Leah"));
+        animalMenuTable = new Table();
+        animalMenuTable.setVisible(false);
+        animalMenuTable.setFillParent(true);
+        stage.addActor(animalMenuTable);
+        //showMissionList(MyGame.getNPCByName("Leah"));
 
+        showAnimalMenu(new Animal("morgh", AnimalType.CHICKEN, MyGame.getCurrentPlayer()));
     }
 
     @Override
@@ -118,6 +124,54 @@ public class TestScreen implements Screen {
     public void dispose() {
 
     }
+    private void showAnimalMenu(Animal animal) {
+        animalMenuTable.clear();
+        animalMenuTable.setVisible(true);
+        Table innerPanel = new Table(skin);
+        Texture menuTexture = GameAssetManager.getInstance().getOrLoadTexture("Animals/MenuBackground2.png");
+
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        innerPanel.setBackground(menuDrawable);
+        innerPanel.pad(30);
+
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+
+        String name = animal.getName();
+        TextButton feedButton = new TextButton("feed " + name, skin);
+        innerPanel.add(feedButton).fillX();
+        innerPanel.row();
+        feedButton.setColor(1, 210f/255, 132f/255, 1);
+        TextButton petButton = new TextButton("pet " + name, skin);
+        innerPanel.add(petButton).fillX();
+        innerPanel.row();
+        petButton.setColor(1, 210f/255, 132f/255, 1);
+        TextButton shepherdAnimal = new TextButton("shepherd " + name, skin);
+        innerPanel.add(shepherdAnimal).fillX();
+        innerPanel.row();
+        shepherdAnimal.setColor(1, 210f/255, 132f/255, 1);
+        TextButton collectProduceButton = new TextButton("collect produce", skin);
+        innerPanel.add(collectProduceButton).fillX();
+        innerPanel.row();
+        collectProduceButton.setColor(1, 210f/255, 132f/255, 1);
+        TextButton sellAnimal = new TextButton("sell " + name, skin);
+        innerPanel.add(sellAnimal).fillX();
+        innerPanel.row();
+        sellAnimal.setColor(1, 210f/255, 132f/255, 1);
+
+        ImageButton closeButton = new ImageButton(closeDrawable);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                animalMenuTable.setVisible(false);
+            }
+        });
+
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
+        animalMenuTable.add(innerPanel).center();
+    }
+
     private void showMissionList(NPC npc) {
         missionListTable.clear();
         missionListTable.setVisible(true);
@@ -150,7 +204,7 @@ public class TestScreen implements Screen {
             innerPanel.add(row).padBottom(10).row();
         }
 
-        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Texture closeTexture = GameAssetManager.getInstance().getOrLoadTexture("closeButton.png");
         Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
 
         ImageButton closeButton = new ImageButton(closeDrawable);

@@ -7,12 +7,16 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Main;
 import org.example.controllers.StoreController;
@@ -66,15 +70,17 @@ public class StoreView implements Screen {
         root.add(scrollPane).height(800).expandX().fillX().pad(20).row();
 
 
-
-        TextButton finishButton = new TextButton("Finish Shopping", skin);
+        Texture shoppingIcon = GameAssetManager.getInstance().getOrLoadTexture("stores/shoppingIcon.png");
+        ImageButton finishButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(shoppingIcon)));
+        //TextButton finishButton = new TextButton("Finish Shopping", skin);
         finishButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                System.out.println("clicked shopping button");
                 StoreController.getInstance().purchase(quantities, store);
             }
         });
-
-        root.add(finishButton).padTop(20);
+        finishButton.getImageCell().size(70, 70);
+        root.add(finishButton).padTop(20).size(70, 70);
     }
 
     private Table createItemRow(Product item) {
@@ -89,9 +95,13 @@ public class StoreView implements Screen {
 
         nameLabel.setFontScale(1.5f);
         nameLabel.setColor(86f/225f, 22f/225f, 12f/225f,1);
-        TextButton plus = new TextButton("+", skin);
-        TextButton minus = new TextButton("-", skin);
-
+        priceLabel.setColor(86f/225f, 22f/225f, 12f/225f,1);
+        Texture plusTexture = GameAssetManager.getInstance().getOrLoadTexture("stores/plus.png");
+        Texture minusTexture = GameAssetManager.getInstance().getOrLoadTexture("stores/minus.png");
+        ImageButton plus = new ImageButton(new TextureRegionDrawable(new TextureRegion(plusTexture)));
+        ImageButton minus = new ImageButton(new TextureRegionDrawable(new TextureRegion(minusTexture)));
+        plus.getImageCell().size(30, 30);
+        minus.getImageCell().size(30, 30);;
         plus.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 int qty = Integer.parseInt(quantityLabel.getText().toString());
@@ -112,6 +122,33 @@ public class StoreView implements Screen {
             }
         });
 
+        Image hoverRect = new Image(new Texture("white_pixel.png"));
+        hoverRect.setColor(Color.BLACK);
+        hoverRect.setSize(60, 100);
+        hoverRect.setVisible(false);
+
+        Label tooltipLabel = new Label(item.getDescription(), skin);
+        tooltipLabel.setWrap(true);
+        tooltipLabel.setWidth(50);
+        tooltipLabel.setAlignment(Align.left);
+        tooltipLabel.setVisible(false);
+        itemIcon.addListener(new InputListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                hoverRect.setVisible(true);
+                Vector2 iconPos = itemIcon.localToStageCoordinates(new Vector2(0, 0));
+                hoverRect.setPosition(iconPos.x - itemIcon.getWidth(), iconPos.y);
+                tooltipLabel.setVisible(true);
+                tooltipLabel.setPosition(iconPos.x- itemIcon.getWidth() + 5, iconPos.y + 5);
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                hoverRect.setVisible(false);
+            }
+        });
+
+        stage.addActor(hoverRect);
         row.add(itemIcon).size(itemIcon.getWidth()*1.5f, itemIcon.getHeight()*1.5f).padRight(10);
         row.add(nameLabel).padRight(10);
         row.add(priceLabel).padRight(10);

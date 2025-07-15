@@ -39,11 +39,9 @@ public class Main extends Game {
         batch = new SpriteBatch();
         skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
         MenuNavigator.init(this, skin);
-//        checkAutoLogin();
-//        MenuNavigator.showGameMenu();
+        checkAutoLogin();
+        MenuNavigator.showGameMenu();
         //MenuNavigator.showTestScreen();
-
-        setScreen(new StoreView(MyGame.getDatabase().getStoreByName("blacksmith")));
     }
 
     public static void checkAutoLogin() {

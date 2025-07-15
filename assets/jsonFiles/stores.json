@@ -12,62 +12,74 @@
         {
           "name": "Copper Ore",
           "price": 75,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Iron Ore",
           "price": 150,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Gold Ore",
           "price": 450,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Coal",
           "price": 150,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Copper Tool",
           "price": 2000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Steel Tool",
           "price": 5000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Gold Tool",
           "price": 10000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Iridium Tool",
           "price": 25000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Copper Trash Can",
           "price": 1000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Steel Trash Can",
           "price": 2500,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Gold Trash Can",
           "price": 5000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Iridium Trash Can",
           "price": 12500,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         }
       ]
     },
@@ -83,65 +95,76 @@
         {
           "name": "Hay",
           "price": 50,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Milk Pail",
           "price": 1000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Shears",
           "price": 1000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Chicken",
           "price": 800,
           "limit": 2,
-          "buildingRequired": "Coop"
+          "buildingRequired": "Coop",
+          "description": ""
         },
         {
           "name": "Cow",
           "price": 1500,
           "limit": 2,
-          "buildingRequired": "Barn"
+          "buildingRequired": "Barn",
+          "description": ""
         },
         {
           "name": "Goat",
           "price": 4000,
           "limit": 2,
-          "buildingRequired": "Barn"
+          "buildingRequired": "Barn",
+          "description": ""
         },
         {
           "name": "Duck",
           "price": 1200,
           "limit": 2,
-          "buildingRequired": "Coop"
+          "buildingRequired": "Coop",
+          "description": ""
         },
         {
           "name": "Sheep",
           "price": 8000,
           "limit": 2,
-          "buildingRequired": "Barn"
+          "buildingRequired": "Barn",
+          "description": ""
         },
         {
           "name": "Rabbit",
           "price": 8000,
           "limit": 2,
-          "buildingRequired": "Coop"
+          "buildingRequired": "Coop",
+          "description": ""
         },
         {
           "name": "Dinosaur",
           "price": 14000,
           "limit": 2,
-          "buildingRequired": "Coop"
+          "buildingRequired": "Coop",
+          "description": ""
         },
         {
           "name": "Pig",
           "price": 16000,
           "limit": 2,
-          "buildingRequired": "Barn"
+          "buildingRequired": "Barn",
+          "description": ""
         }
       ]
     },
@@ -163,7 +186,8 @@
             "Summer",
             "Fall",
             "Winter"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Ancient seeds",
@@ -174,7 +198,8 @@
             "Summer",
             "Fall",
             "Winter"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Grass Starter",
@@ -185,7 +210,8 @@
             "Summer",
             "Fall",
             "Winter"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Sugar",
@@ -196,7 +222,8 @@
             "Summer",
             "Fall",
             "Winter"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Wheat Flour",
@@ -207,7 +234,8 @@
             "Summer",
             "Fall",
             "Winter"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Rice",
@@ -218,7 +246,8 @@
             "Summer",
             "Fall",
             "Winter"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Parsnip seeds",
@@ -226,12 +255,14 @@
           "limit": 5,
           "season": [
             "Spring"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Bean Starter",
           "price": 75,
           "limit": 5,
+          "description": "",
           "season": [
             "Spring"
           ]
@@ -240,6 +271,7 @@
           "name": "Cauliflower seeds",
           "price": 100,
           "limit": 5,
+          "description": "",
           "season": [
             "Spring"
           ]
@@ -248,6 +280,7 @@
           "name": "Potato seeds",
           "price": 62,
           "limit": 5,
+          "description": "",
           "season": [
             "Spring"
           ]
@@ -256,6 +289,7 @@
           "name": "Strawberry seeds",
           "price": 100,
           "limit": 5,
+          "description": "",
           "season": [
             "Spring"
           ]
@@ -264,6 +298,7 @@
           "name": "Tulip Bulb",
           "price": 25,
           "limit": 5,
+          "description": "",
           "season": [
             "Spring"
           ]
@@ -272,6 +307,7 @@
           "name": "Kale seeds",
           "price": 87,
           "limit": 5,
+          "description": "",
           "season": [
             "Spring"
           ]
@@ -280,6 +316,7 @@
           "name": "Coffee Bean",
           "price": 200,
           "limit": 1,
+          "description": "",
           "season": [
             "Spring",
             "Summer"
@@ -289,6 +326,7 @@
           "name": "Carrot seeds",
           "price": 5,
           "limit": 10,
+          "description": "",
           "season": [
             "Spring"
           ]
@@ -297,6 +335,7 @@
           "name": "Rhubarb seeds",
           "price": 100,
           "limit": 5,
+          "description": "",
           "season": [
             "Spring"
           ]
@@ -305,6 +344,7 @@
           "name": "Jazz seeds",
           "price": 37,
           "limit": 5,
+          "description": "",
           "season": [
             "Spring"
           ]
@@ -313,6 +353,7 @@
           "name": "Tomato seeds",
           "price": 62,
           "limit": 5,
+          "description": "",
           "season": [
             "Summer"
           ]
@@ -321,6 +362,7 @@
           "name": "Pepper seeds",
           "price": 50,
           "limit": 5,
+          "description": "",
           "season": [
             "Summer"
           ]
@@ -329,6 +371,7 @@
           "name": "Wheat seeds",
           "price": 12,
           "limit": 10,
+          "description": "",
           "season": [
             "Summer",
             "Fall"
@@ -338,6 +381,7 @@
           "name": "Summer Squash seeds",
           "price": 10,
           "limit": 10,
+          "description": "",
           "season": [
             "Summer"
           ]
@@ -346,6 +390,7 @@
           "name": "Radish seeds",
           "price": 50,
           "limit": 5,
+          "description": "",
           "season": [
             "Summer"
           ]
@@ -354,6 +399,7 @@
           "name": "Melon seeds",
           "price": 100,
           "limit": 5,
+          "description": "",
           "season": [
             "Summer"
           ]
@@ -362,6 +408,7 @@
           "name": "Hops Starter",
           "price": 75,
           "limit": 5,
+          "description": "",
           "season": [
             "Summer"
           ]
@@ -370,6 +417,7 @@
           "name": "Poppy seeds",
           "price": 125,
           "limit": 5,
+          "description": "",
           "season": [
             "Summer"
           ]
@@ -378,6 +426,7 @@
           "name": "Spangle seeds",
           "price": 62,
           "limit": 5,
+          "description": "",
           "season": [
             "Summer"
           ]
@@ -386,6 +435,7 @@
           "name": "Starfruit seeds",
           "price": 400,
           "limit": 5,
+          "description": "",
           "season": [
             "Summer"
           ]
@@ -394,6 +444,7 @@
           "name": "Sunflower seeds",
           "price": 125,
           "limit": 5,
+          "description": "",
           "season": [
             "Summer",
             "Fall"
@@ -403,6 +454,7 @@
           "name": "Corn seeds",
           "price": 187,
           "limit": 5,
+          "description": "",
           "season": [
             "Summer",
             "Fall"
@@ -412,6 +464,7 @@
           "name": "Eggplant seeds",
           "price": 25,
           "limit": 5,
+          "description": "",
           "season": [
             "Fall"
           ]
@@ -420,6 +473,7 @@
           "name": "Pumpkin seeds",
           "price": 125,
           "limit": 5,
+          "description": "",
           "season": [
             "Fall"
           ]
@@ -428,6 +482,7 @@
           "name": "Broccoli seeds",
           "price": 15,
           "limit": 5,
+          "description": "",
           "season": [
             "Fall"
           ]
@@ -436,6 +491,7 @@
           "name": "Amaranth seeds",
           "price": 87,
           "limit": 5,
+          "description": "",
           "season": [
             "Fall"
           ]
@@ -444,6 +500,7 @@
           "name": "Grape Starter",
           "price": 75,
           "limit": 5,
+          "description": "",
           "season": [
             "Fall"
           ]
@@ -452,6 +509,7 @@
           "name": "Beet seeds",
           "price": 20,
           "limit": 5,
+          "description": "",
           "season": [
             "Fall"
           ]
@@ -460,6 +518,7 @@
           "name": "Yam seeds",
           "price": 75,
           "limit": 5,
+          "description": "",
           "season": [
             "Fall"
           ]
@@ -468,6 +527,7 @@
           "name": "Bok Choy seeds",
           "price": 62,
           "limit": 5,
+          "description": "",
           "season": [
             "Fall"
           ]
@@ -476,6 +536,7 @@
           "name": "Fairy seeds",
           "price": 250,
           "limit": 5,
+          "description": "",
           "season": [
             "Fall"
           ]
@@ -484,6 +545,7 @@
           "name": "Rare seeds",
           "price": 1000,
           "limit": 1,
+          "description": "",
           "season": [
             "Fall"
           ]
@@ -492,6 +554,7 @@
           "name": "Powdermelon seeds",
           "price": 20,
           "limit": 10,
+          "description": "",
           "season": [
             "Winter"
           ]
@@ -510,77 +573,92 @@
         {
           "name": "Beer",
           "price": 400,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Salad",
           "price": 220,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Bread",
           "price": 120,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Spaghetti",
           "price": 240,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Pizza",
           "price": 600,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Coffee",
           "price": 300,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Hashbrowns Recipe",
           "price": 50,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Omelet Recipe",
           "price": 100,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Pancakes Recipe",
           "price": 100,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Bread Recipe",
           "price": 100,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Tortilla Recipe",
           "price": 100,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Pizza Recipe",
           "price": 150,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Maki Roll Recipe",
           "price": 300,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Triple Shot Espresso Recipe",
           "price": 5000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Cookie Recipe",
           "price": 100,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         }
       ]
     },
@@ -596,12 +674,14 @@
         {
           "name": "Wood",
           "price": 10,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Stone",
           "price": 20,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Barn",
@@ -610,7 +690,8 @@
             "Wood": 350,
             "Stone": 150
           },
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Big Barn",
@@ -619,7 +700,8 @@
             "Wood": 450,
             "Stone": 200
           },
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Deluxe Barn",
@@ -628,7 +710,8 @@
             "Wood": 550,
             "Stone": 300
           },
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Coop",
@@ -637,7 +720,8 @@
             "Wood": 300,
             "Stone": 100
           },
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Big Coop",
@@ -646,7 +730,8 @@
             "Wood": 400,
             "Stone": 150
           },
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Deluxe Coop",
@@ -655,7 +740,8 @@
             "Wood": 550,
             "Stone": 200
           },
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Well",
@@ -663,7 +749,8 @@
           "cost": {
             "Stone": 75
           },
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Shipping bin",
@@ -671,7 +758,8 @@
           "cost": {
             "Wood": 150
           },
-          "limit": 1
+          "limit": 1,
+          "description": ""
         }
       ]
     },
@@ -687,112 +775,134 @@
         {
           "name": "Rice",
           "price": 75,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Wheat Flour",
           "price": 100,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Bouquet",
           "price": 1000,
-          "limit": 2
+          "limit": 2,
+          "description": ""
         },
         {
           "name": "Wedding Ring",
           "price": 10000,
-          "limit": 2
+          "limit": 2,
+          "description": ""
         },
         {
           "name": "Dehydrator Recipe",
           "price": 10000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Grass Starter Recipe",
           "price": 1000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Sugar",
           "price": 100,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Oil",
           "price": 200,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Vinegar",
           "price": 200,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Deluxe Retaining Soil",
           "price": 150,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Grass Starter",
           "price": 100,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Speed-Gro",
           "price": 100,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Apple Sapling",
           "price": 4000,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Apricot Sapling",
           "price": 2000,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Cherry Sapling",
           "price": 3400,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Orange Sapling",
           "price": 4000,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Peach Sapling",
           "price": 6000,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Pomegranate Sapling",
           "price": 6000,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Basic Retaining Soil",
           "price": 100,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Quality Retaining Soil",
           "price": 150,
-          "limit": -1
+          "limit": -1,
+          "description": ""
         },
         {
           "name": "Large Pack",
           "price": 2000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Deluxe Pack",
           "price": 10000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Parsnip seeds",
@@ -800,7 +910,8 @@
           "limit": 5,
           "season": [
             "Spring"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Bean Starter",
@@ -808,7 +919,8 @@
           "limit": 5,
           "season": [
             "Spring"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Cauliflower seeds",
@@ -816,7 +928,8 @@
           "limit": 5,
           "season": [
             "Spring"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Potato seeds",
@@ -824,7 +937,8 @@
           "limit": 5,
           "season": [
             "Spring"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Tulip Bulb",
@@ -832,7 +946,8 @@
           "limit": 5,
           "season": [
             "Spring"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Kale seeds",
@@ -840,7 +955,8 @@
           "limit": 5,
           "season": [
             "Spring"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Jazz seeds",
@@ -848,7 +964,8 @@
           "limit": 5,
           "season": [
             "Spring"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Garlic seeds",
@@ -856,7 +973,8 @@
           "limit": 5,
           "season": [
             "Spring"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Rice Shoot",
@@ -864,7 +982,8 @@
           "limit": 5,
           "season": [
             "Spring"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Melon seeds",
@@ -872,7 +991,8 @@
           "limit": 5,
           "season": [
             "Summer"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Tomato seeds",
@@ -880,7 +1000,8 @@
           "limit": 5,
           "season": [
             "Summer"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Blueberry seeds",
@@ -888,7 +1009,8 @@
           "limit": 5,
           "season": [
             "Summer"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Pepper seeds",
@@ -896,7 +1018,8 @@
           "limit": 5,
           "season": [
             "Summer"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Wheat seeds",
@@ -905,7 +1028,8 @@
           "season": [
             "Summer",
             "Fall"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Radish seeds",
@@ -913,7 +1037,8 @@
           "limit": 5,
           "season": [
             "Summer"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Poppy seeds",
@@ -921,7 +1046,8 @@
           "limit": 5,
           "season": [
             "Summer"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Spangle seeds",
@@ -929,7 +1055,8 @@
           "limit": 5,
           "season": [
             "Summer"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Hops Starter",
@@ -937,7 +1064,8 @@
           "limit": 5,
           "season": [
             "Summer"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Corn seeds",
@@ -946,7 +1074,8 @@
           "season": [
             "Summer",
             "Fall"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Sunflower seeds",
@@ -955,7 +1084,8 @@
           "season": [
             "Summer",
             "Fall"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Red Cabbage seeds",
@@ -963,7 +1093,8 @@
           "limit": 5,
           "season": [
             "Summer"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Eggplant seeds",
@@ -971,7 +1102,8 @@
           "limit": 5,
           "season": [
             "Fall"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Pumpkin seeds",
@@ -979,7 +1111,8 @@
           "limit": 5,
           "season": [
             "Fall"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Bok Choy seeds",
@@ -987,7 +1120,8 @@
           "limit": 5,
           "season": [
             "Fall"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Yam seeds",
@@ -995,7 +1129,8 @@
           "limit": 5,
           "season": [
             "Fall"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Cranberry seeds",
@@ -1003,7 +1138,8 @@
           "limit": 5,
           "season": [
             "Fall"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Fairy seeds",
@@ -1011,7 +1147,8 @@
           "limit": 5,
           "season": [
             "Fall"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Amaranth seeds",
@@ -1019,7 +1156,8 @@
           "limit": 5,
           "season": [
             "Fall"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Grape Starter",
@@ -1027,7 +1165,8 @@
           "limit": 5,
           "season": [
             "Fall"
-          ]
+          ],
+          "description": ""
         },
         {
           "name": "Artichoke seeds",
@@ -1035,7 +1174,8 @@
           "limit": 5,
           "season": [
             "Fall"
-          ]
+          ],
+          "description": ""
         }
       ]
     },
@@ -1051,32 +1191,38 @@
         {
           "name": "Fish Smoker Recipe",
           "price": 10000,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Trout Soup",
           "price": 250,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Bamboo Pole",
           "price": 500,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Training Rod",
           "price": 25,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Fiberglass Rod",
           "price": 1800,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         },
         {
           "name": "Iridium Rod",
           "price": 7500,
-          "limit": 1
+          "limit": 1,
+          "description": ""
         }
       ]
     }

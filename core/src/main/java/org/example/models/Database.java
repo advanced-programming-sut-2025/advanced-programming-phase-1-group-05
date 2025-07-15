@@ -57,6 +57,7 @@ public class Database {
                 String productName = storeProductObject.get("name").getAsString();
                 int price = storeProductObject.get("price").getAsInt();
                 int limit = storeProductObject.get("limit").getAsInt();
+                String description = storeProductObject.get("description").getAsString();
                 String buildingType = safeGetAsString(storeProductObject, "buildingRequired");
                 JsonArray seasons = storeProductObject.has("season") && !storeProductObject.get("season").isJsonNull()
                     ? storeProductObject.get("season").getAsJsonArray()
@@ -77,7 +78,7 @@ public class Database {
                         costs.put(itemName, quantity);
                     }
                 }
-                Product product = new Product(productName, price, limit, BuildingType.fromString(buildingType), seasonsInStock, costs);
+                Product product = new Product(productName, price, limit, BuildingType.fromString(buildingType), seasonsInStock, costs, description);
                 products.add(product);
                 itemDatabase.add(new BasicItem(productName, product.getPrice()));
             }

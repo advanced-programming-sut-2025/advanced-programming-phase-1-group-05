@@ -21,10 +21,11 @@ public class Product implements Item {
     private final List<Season> seasons = new ArrayList<>();
     private final Map<String, Integer> costs = new HashMap<>();
     private ItemLevel itemLevel = ItemLevel.Normal;
+    String description;
 
 
     public Product(String name, int price, int limit
-    , BuildingType buildingType, List<Season> seasons, Map<String, Integer> costs) {
+    , BuildingType buildingType, List<Season> seasons, Map<String, Integer> costs,String description) {
         this.name = name;
         this.price = price;
         this.limit = limit;
@@ -32,6 +33,7 @@ public class Product implements Item {
         this.seasons.addAll(seasons);
         this.setItemLevel();
         this.costs.putAll(costs);
+        this.description = description;
     }
 
     public void setItemLevel() {
@@ -101,5 +103,9 @@ public class Product implements Item {
     }
     public TextureRegion getTexture() {
         return new TextureRegion(GameAssetManager.getInstance().getItemTexture(name));
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

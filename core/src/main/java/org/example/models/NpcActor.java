@@ -19,11 +19,11 @@ public class NpcActor extends Actor {
     float moveTimer = 0f;
     float speed = 30f;
     Vector2 directionVector = new Vector2();
-    private NPC npc;
+    private final NPC npc;
     public NpcActor (NPC npc) {
         this.npc = npc;
         Texture npcTexture = new Texture("NPCs/" + npc.getName().toLowerCase() + "/walkdown1.png");
-        //playerSprite.setSize(playerTexture.getWidth()*4f, playerTexture.getHeight()*4f);
+
         setSize(npcTexture.getWidth() * 4f, npcTexture.getHeight() * 4f);
         currentFrame = new TextureRegion(npcTexture);
         setPosition(npc.getX(), npc.getY());

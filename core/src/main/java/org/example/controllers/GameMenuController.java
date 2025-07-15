@@ -546,7 +546,7 @@ public class GameMenuController extends MenuController {
         else if (qualityScore <= 0.7) level = ItemLevel.Brass;
         else if (qualityScore <= 0.9) level = ItemLevel.Gold;
         else level = ItemLevel.Iridium;
-        Product product = new Product(caughtFish.getName(), caughtFish.getPrice(), -1, null, List.of(), Map.of());
+        Product product = new Product(caughtFish.getName(), caughtFish.getPrice(), -1, null, List.of(), Map.of(), "blablabla");
         product.setItemLevel(level);
         Result result = player.getBackPack().addToInventory(product, numOfFish);
         player.getFishingSkill().increaseCapacity();
