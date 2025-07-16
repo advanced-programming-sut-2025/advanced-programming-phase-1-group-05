@@ -189,6 +189,7 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
+        //MyGame.getGameMap().render(batch,camera);
         mapRenderer.render(batch, camera);
         player.draw(batch);
         drawEnergyBar();

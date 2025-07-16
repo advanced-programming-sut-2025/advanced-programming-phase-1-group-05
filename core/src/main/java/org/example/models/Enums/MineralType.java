@@ -33,11 +33,13 @@ public enum MineralType implements Material, Item {
     private final String description;
     private final int price;
     private final String texturePath;
+    private final TextureRegion textureRegion;
     MineralType(String name, String description, int price, String texturePath) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.texturePath = texturePath;
+        this.textureRegion = new TextureRegion(new Texture(texturePath));
     }
     public String getName() {
         return name;
@@ -76,7 +78,7 @@ public enum MineralType implements Material, Item {
         return "Name : " + getName() + "\nDescription : " + getDescription() + "\nPrice : " + getPrice();
     }
     public TextureRegion getTexture() {
-        return new TextureRegion(new Texture(this.texturePath));
+        return textureRegion;
     }
 
 

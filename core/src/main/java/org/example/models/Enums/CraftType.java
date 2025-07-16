@@ -40,6 +40,7 @@ public enum CraftType implements Material, Item {
     private final String source;
     private final int price;
     private final String texturePath;
+    private final TextureRegion textureRegion;
 
     CraftType(String name, Supplier<Map<Item, Integer>> ingredientSupplier, String source, int price, String texturePath) {
         this.name = name;
@@ -47,6 +48,7 @@ public enum CraftType implements Material, Item {
         this.source = source;
         this.price = price;
         this.texturePath = texturePath;
+        this.textureRegion = new TextureRegion(new Texture(texturePath));
     }
 
     @Override
@@ -75,7 +77,7 @@ public enum CraftType implements Material, Item {
         return null;
     }
     public TextureRegion getTexture() {
-        return new TextureRegion(new Texture(this.texturePath));
+        return textureRegion;
     }
 }
 

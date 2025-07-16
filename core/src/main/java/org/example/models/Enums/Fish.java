@@ -39,12 +39,14 @@ public enum Fish implements Material, Item {
     private final Season season;
     private final boolean legendary;
     private final String texturePath;
+    private final TextureRegion textureRegion;
     Fish(String name, int price, Season season, boolean legendary, String texturePath) {
         this.name = name;
         this.price = price;
         this.season = season;
         this.legendary = legendary;
         this.texturePath = texturePath;
+        this.textureRegion = new TextureRegion(new Texture(this.texturePath));
     }
     private boolean canBeCaught(Season currentSeason, int fishingSkill) {
         if (legendary) return fishingSkill == 4;
@@ -84,6 +86,6 @@ public enum Fish implements Material, Item {
         return price;
     }
     public TextureRegion getTexture(){
-        return new TextureRegion(new Texture(this.texturePath));
+        return textureRegion;
     }
 }

@@ -1,11 +1,13 @@
 package org.example.models.Enums;
 
+import com.badlogic.gdx.graphics.Texture;
+
 public enum TileType {
     Water("water2.png", false),
     Soil("Soil.png", false),
     WateredSoil("Soil.png", false),
     Flat("Flat.png", false),
-    FarmFlat("falt2.png", false),
+    FarmFlat("flat2.png", false),
     House("Building.png", true),
     GreenHouse("GreenHouse.png", true),
     Tree("tree.png", true),
@@ -49,10 +51,12 @@ public enum TileType {
 
     private final String imagePath;
     private final boolean largeStructure;
+    private final Texture texture;
 
     TileType(String imagePath, boolean largeStructure) {
         this.imagePath = imagePath;
         this.largeStructure = largeStructure;
+        texture = new Texture(imagePath);
     }
 
     public String getImagePath() {
@@ -61,5 +65,8 @@ public enum TileType {
 
     public boolean isLargeStructure() {
         return largeStructure;
+    }
+    public Texture getTexture() {
+        return texture;
     }
 }
