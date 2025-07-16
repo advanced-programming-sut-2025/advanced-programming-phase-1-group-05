@@ -13,25 +13,25 @@
           "name": "Copper Ore",
           "price": 75,
           "limit": -1,
-          "description": ""
+          "description": "A common ore that can be smelted into bars."
         },
         {
           "name": "Iron Ore",
           "price": 150,
           "limit": -1,
-          "description": ""
+          "description": "A fairly common ore that can be smelted into bars."
         },
         {
           "name": "Gold Ore",
           "price": 450,
           "limit": -1,
-          "description": ""
+          "description": "A precious ore that can be smelted into bars."
         },
         {
           "name": "Coal",
           "price": 150,
           "limit": -1,
-          "description": ""
+          "description": "A combustible rock that is useful for crafting and smelting."
         },
         {
           "name": "Copper Tool",
@@ -96,61 +96,61 @@
           "name": "Hay",
           "price": 50,
           "limit": -1,
-          "description": ""
+          "description": "Dried grass used as animal food."
         },
         {
           "name": "Milk Pail",
           "price": 1000,
           "limit": 1,
-          "description": ""
+          "description": "Gather milk from your animals."
         },
         {
           "name": "Shears",
           "price": 1000,
           "limit": 1,
-          "description": ""
+          "description": "Use this to collect wool from sheep."
         },
         {
           "name": "Chicken",
           "price": 800,
           "limit": 2,
           "buildingRequired": "Coop",
-          "description": ""
+          "description": "Well cared-for adult chickens lay eggs every day. Lives in the coop."
         },
         {
           "name": "Cow",
           "price": 1500,
           "limit": 2,
           "buildingRequired": "Barn",
-          "description": ""
+          "description": "Adults can be milked daily. Lives in the barn."
         },
         {
           "name": "Goat",
           "price": 4000,
           "limit": 2,
           "buildingRequired": "Barn",
-          "description": ""
+          "description": "Happy adults provide goat milk every other day. Lives in the barn."
         },
         {
           "name": "Duck",
           "price": 1200,
           "limit": 2,
           "buildingRequired": "Coop",
-          "description": ""
+          "description": "Happy adults lay duck eggs every other day. Lives in the coop."
         },
         {
           "name": "Sheep",
           "price": 8000,
           "limit": 2,
           "buildingRequired": "Barn",
-          "description": ""
+          "description": "Adults can be shorn for wool. Lives in the barn."
         },
         {
           "name": "Rabbit",
           "price": 8000,
           "limit": 2,
           "buildingRequired": "Coop",
-          "description": ""
+          "description": "These are wooly rabbits! Lives in the coop"
         },
         {
           "name": "Dinosaur",
@@ -164,7 +164,7 @@
           "price": 16000,
           "limit": 2,
           "buildingRequired": "Barn",
-          "description": ""
+          "description": "These pigs are trained to find truffles! Lives in the barn."
         }
       ]
     },
@@ -187,7 +187,7 @@
             "Fall",
             "Winter"
           ],
-          "description": ""
+          "description": "The flagship product of Joja corporation."
         },
         {
           "name": "Ancient seeds",
@@ -199,7 +199,7 @@
             "Fall",
             "Winter"
           ],
-          "description": ""
+          "description": "Could these still grow?"
         },
         {
           "name": "Grass Starter",
@@ -211,7 +211,7 @@
             "Fall",
             "Winter"
           ],
-          "description": ""
+          "description": "Place this on your farm to start a new patch of grass."
         },
         {
           "name": "Sugar",
@@ -223,7 +223,7 @@
             "Fall",
             "Winter"
           ],
-          "description": ""
+          "description": "Adds sweetness to pastries and candies. Too much can be unhealthy."
         },
         {
           "name": "Wheat Flour",
@@ -235,7 +235,7 @@
             "Fall",
             "Winter"
           ],
-          "description": ""
+          "description": "A common cooking ingredient made from crushed wheat seeds."
         },
         {
           "name": "Rice",
@@ -247,7 +247,7 @@
             "Fall",
             "Winter"
           ],
-          "description": ""
+          "description": "A basic grain often served under vegetables."
         },
         {
           "name": "Parsnip seeds",
@@ -256,13 +256,13 @@
           "season": [
             "Spring"
           ],
-          "description": ""
+          "description": "Plant these in the spring. Takes 4 days to mature."
         },
         {
           "name": "Bean Starter",
           "price": 75,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the spring. Takes 10 days to mature, but keeps producing after that. Grows on a trellis.",
           "season": [
             "Spring"
           ]
@@ -271,7 +271,7 @@
           "name": "Cauliflower seeds",
           "price": 100,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the spring. Takes 12 days to produce a large cauliflower.",
           "season": [
             "Spring"
           ]
@@ -280,7 +280,7 @@
           "name": "Potato seeds",
           "price": 62,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the spring. Takes 6 days to mature, and has a chance of yielding multiple potatoes at harvest.",
           "season": [
             "Spring"
           ]
@@ -289,7 +289,7 @@
           "name": "Strawberry seeds",
           "price": 100,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in spring. Takes 8 days to mature, and keeps producing strawberries after that.",
           "season": [
             "Spring"
           ]
@@ -298,7 +298,7 @@
           "name": "Tulip Bulb",
           "price": 25,
           "limit": 5,
-          "description": "",
+          "description": "\tPlant in spring. Takes 6 days to produce a colorful flower. Assorted colors",
           "season": [
             "Spring"
           ]
@@ -307,7 +307,7 @@
           "name": "Kale seeds",
           "price": 87,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the spring. Takes 6 days to mature. Harvest with the scythe.",
           "season": [
             "Spring"
           ]
@@ -316,7 +316,7 @@
           "name": "Coffee Bean",
           "price": 200,
           "limit": 1,
-          "description": "",
+          "description": "Plant in spring or summer to grow a coffee plant. Place five beans in a keg to make coffee.",
           "season": [
             "Spring",
             "Summer"
@@ -326,7 +326,7 @@
           "name": "Carrot seeds",
           "price": 5,
           "limit": 10,
-          "description": "",
+          "description": "Plant in the spring. Takes 3 days to grow.",
           "season": [
             "Spring"
           ]
@@ -335,7 +335,7 @@
           "name": "Rhubarb seeds",
           "price": 100,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the spring. Takes 13 days to mature.",
           "season": [
             "Spring"
           ]
@@ -344,7 +344,7 @@
           "name": "Jazz seeds",
           "price": 37,
           "limit": 5,
-          "description": "",
+          "description": "Plant in spring. Takes 7 days to produce a blue puffball flower.",
           "season": [
             "Spring"
           ]
@@ -353,7 +353,7 @@
           "name": "Tomato seeds",
           "price": 62,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the summer. Takes 11 days to mature, and continues to produce after first harvest.",
           "season": [
             "Summer"
           ]
@@ -362,7 +362,7 @@
           "name": "Pepper seeds",
           "price": 50,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the summer. Takes 5 days to mature, and continues to produce after first harvest.",
           "season": [
             "Summer"
           ]
@@ -371,7 +371,7 @@
           "name": "Wheat seeds",
           "price": 12,
           "limit": 10,
-          "description": "",
+          "description": "Plant these in the summer or fall. Takes 4 days to mature. Harvest with the scythe",
           "season": [
             "Summer",
             "Fall"
@@ -381,7 +381,7 @@
           "name": "Summer Squash seeds",
           "price": 10,
           "limit": 10,
-          "description": "",
+          "description": "Plant in the summer. Takes 6 days to grow, and continues to produce after first harvest.",
           "season": [
             "Summer"
           ]
@@ -390,7 +390,7 @@
           "name": "Radish seeds",
           "price": 50,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the summer. Takes 6 days to mature.",
           "season": [
             "Summer"
           ]
@@ -399,7 +399,7 @@
           "name": "Melon seeds",
           "price": 100,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the summer. Takes 12 days to mature.",
           "season": [
             "Summer"
           ]
@@ -408,7 +408,7 @@
           "name": "Hops Starter",
           "price": 75,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the summer. Takes 11 days to grow, but keeps producing after that. Grows on a trellis.",
           "season": [
             "Summer"
           ]
@@ -417,7 +417,7 @@
           "name": "Poppy seeds",
           "price": 125,
           "limit": 5,
-          "description": "",
+          "description": "Plant in summer. Produces a bright red flower in 7 days.",
           "season": [
             "Summer"
           ]
@@ -426,7 +426,7 @@
           "name": "Spangle seeds",
           "price": 62,
           "limit": 5,
-          "description": "",
+          "description": "Plant in summer. Takes 8 days to produce a vibrant tropical flower. Assorted colors.",
           "season": [
             "Summer"
           ]
@@ -435,7 +435,7 @@
           "name": "Starfruit seeds",
           "price": 400,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the summer. Takes 13 days to mature.",
           "season": [
             "Summer"
           ]
@@ -444,7 +444,7 @@
           "name": "Sunflower seeds",
           "price": 125,
           "limit": 5,
-          "description": "",
+          "description": "Plant in summer or fall. Takes 8 days to produce a large sunflower. Yields more seeds at harvest.",
           "season": [
             "Summer",
             "Fall"
@@ -454,7 +454,7 @@
           "name": "Corn seeds",
           "price": 187,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the summer or fall. Takes 14 days to mature, and continues to produce after first harvest.",
           "season": [
             "Summer",
             "Fall"
@@ -464,7 +464,7 @@
           "name": "Eggplant seeds",
           "price": 25,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the fall. Takes 5 days to mature, and continues to produce after first harvest.",
           "season": [
             "Fall"
           ]
@@ -473,7 +473,7 @@
           "name": "Pumpkin seeds",
           "price": 125,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the fall. Takes 13 days to mature.",
           "season": [
             "Fall"
           ]
@@ -482,7 +482,7 @@
           "name": "Broccoli seeds",
           "price": 15,
           "limit": 5,
-          "description": "",
+          "description": "Plant in the fall. Takes 8 days to mature, and continues to produce after first harvest.",
           "season": [
             "Fall"
           ]
@@ -491,7 +491,7 @@
           "name": "Amaranth seeds",
           "price": 87,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the fall. Takes 7 days to grow. Harvest with the scythe.",
           "season": [
             "Fall"
           ]
@@ -500,7 +500,7 @@
           "name": "Grape Starter",
           "price": 75,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the fall. Takes 10 days to grow, but keeps producing after that. Grows on a trellis.",
           "season": [
             "Fall"
           ]
@@ -509,7 +509,7 @@
           "name": "Beet seeds",
           "price": 20,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the fall. Takes 6 days to mature.",
           "season": [
             "Fall"
           ]
@@ -518,7 +518,7 @@
           "name": "Yam seeds",
           "price": 75,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the fall. Takes 10 days to mature.",
           "season": [
             "Fall"
           ]
@@ -527,7 +527,7 @@
           "name": "Bok Choy seeds",
           "price": 62,
           "limit": 5,
-          "description": "",
+          "description": "Plant these in the fall. Takes 4 days to mature.",
           "season": [
             "Fall"
           ]
@@ -536,7 +536,7 @@
           "name": "Fairy seeds",
           "price": 250,
           "limit": 5,
-          "description": "",
+          "description": "Plant in fall. Takes 12 days to produce a mysterious flower. Assorted Colors.",
           "season": [
             "Fall"
           ]
@@ -545,7 +545,7 @@
           "name": "Rare seeds",
           "price": 1000,
           "limit": 1,
-          "description": "",
+          "description": "Sow in fall. Takes all season to grow.",
           "season": [
             "Fall"
           ]
@@ -554,7 +554,7 @@
           "name": "Powdermelon seeds",
           "price": 20,
           "limit": 10,
-          "description": "",
+          "description": "This special melon grows in the winter. Takes 7 days to grow.",
           "season": [
             "Winter"
           ]
@@ -574,91 +574,91 @@
           "name": "Beer",
           "price": 400,
           "limit": -1,
-          "description": ""
+          "description": "Drink in moderation."
         },
         {
           "name": "Salad",
           "price": 220,
           "limit": -1,
-          "description": ""
+          "description": "A healthy garden salad."
         },
         {
           "name": "Bread",
           "price": 120,
           "limit": -1,
-          "description": ""
+          "description": "A crusty baguette."
         },
         {
           "name": "Spaghetti",
           "price": 240,
           "limit": -1,
-          "description": ""
+          "description": "An old favorite."
         },
         {
           "name": "Pizza",
           "price": 600,
           "limit": -1,
-          "description": ""
+          "description": "It's popular for all the right reasons."
         },
         {
           "name": "Coffee",
           "price": 300,
           "limit": -1,
-          "description": ""
+          "description": "It smells delicious. This is sure to give you a boost."
         },
         {
           "name": "Hashbrowns Recipe",
           "price": 50,
           "limit": 1,
-          "description": ""
+          "description": "A recipe to make Hashbrowns"
         },
         {
           "name": "Omelet Recipe",
           "price": 100,
           "limit": 1,
-          "description": ""
+          "description": "A recipe to make Omelet"
         },
         {
           "name": "Pancakes Recipe",
           "price": 100,
           "limit": 1,
-          "description": ""
+          "description": "A recipe to make Pancakes"
         },
         {
           "name": "Bread Recipe",
           "price": 100,
           "limit": 1,
-          "description": ""
+          "description": "A recipe to make Bread"
         },
         {
           "name": "Tortilla Recipe",
           "price": 100,
           "limit": 1,
-          "description": ""
+          "description": "A recipe to make Tortilla"
         },
         {
           "name": "Pizza Recipe",
           "price": 150,
           "limit": 1,
-          "description": ""
+          "description": "A recipe to make Pizza"
         },
         {
           "name": "Maki Roll Recipe",
           "price": 300,
           "limit": 1,
-          "description": ""
+          "description": "A recipe to make Maki Roll"
         },
         {
           "name": "Triple Shot Espresso Recipe",
           "price": 5000,
           "limit": 1,
-          "description": ""
+          "description": "A recipe to make Triple Shot Espresso"
         },
         {
           "name": "Cookie Recipe",
           "price": 100,
           "limit": 1,
-          "description": ""
+          "description": "A recipe to make Cookie"
         }
       ]
     },
@@ -675,13 +675,13 @@
           "name": "Wood",
           "price": 10,
           "limit": -1,
-          "description": ""
+          "description": "A sturdy, yet flexible plant material with a wide variety of uses."
         },
         {
           "name": "Stone",
           "price": 20,
           "limit": -1,
-          "description": ""
+          "description": "A common material with many uses in crafting and building."
         },
         {
           "name": "Barn",
@@ -691,7 +691,7 @@
             "Stone": 150
           },
           "limit": 1,
-          "description": ""
+          "description": "Houses 4 barn-dwelling animals."
         },
         {
           "name": "Big Barn",
@@ -701,7 +701,7 @@
             "Stone": 200
           },
           "limit": 1,
-          "description": ""
+          "description": "Houses 8 barn-dwelling animals. Allows animals to give birth. Unlocks goats."
         },
         {
           "name": "Deluxe Barn",
@@ -711,7 +711,7 @@
             "Stone": 300
           },
           "limit": 1,
-          "description": ""
+          "description": "Houses 12 barn-dwelling animals. Comes with an auto-feed system. Unlocks sheep and pigs."
         },
         {
           "name": "Coop",
@@ -721,7 +721,7 @@
             "Stone": 100
           },
           "limit": 1,
-          "description": ""
+          "description": "Houses 4 coop-dwelling animals."
         },
         {
           "name": "Big Coop",
@@ -731,7 +731,7 @@
             "Stone": 150
           },
           "limit": 1,
-          "description": ""
+          "description": "Houses 8 coop-dwelling animals. Comes with an incubator. Unlocks ducks."
         },
         {
           "name": "Deluxe Coop",
@@ -741,7 +741,7 @@
             "Stone": 200
           },
           "limit": 1,
-          "description": ""
+          "description": "Houses 12 coop-dwelling animals. Comes with an auto-feed system. Unlocks rabbits."
         },
         {
           "name": "Well",
@@ -750,7 +750,7 @@
             "Stone": 75
           },
           "limit": 1,
-          "description": ""
+          "description": "Provides a place for you to refill your watering can."
         },
         {
           "name": "Shipping bin",
@@ -759,7 +759,7 @@
             "Wood": 150
           },
           "limit": 1,
-          "description": ""
+          "description": "Items placed in it will be included in the nightly shipment."
         }
       ]
     },
@@ -776,91 +776,85 @@
           "name": "Rice",
           "price": 75,
           "limit": -1,
-          "description": ""
+          "description": "A basic grain often served under vegetables."
         },
         {
           "name": "Wheat Flour",
           "price": 100,
           "limit": -1,
-          "description": ""
+          "description": "A common cooking ingredient made from crushed wheat seeds."
         },
         {
           "name": "Bouquet",
           "price": 1000,
           "limit": 2,
-          "description": ""
+          "description": "A gift that shows your romantic interest."
         },
         {
           "name": "Wedding Ring",
           "price": 10000,
           "limit": 2,
-          "description": ""
+          "description": "An old Zuzu City tradition... It's used to ask for another farmer's hand in marriage."
         },
         {
           "name": "Dehydrator Recipe",
           "price": 10000,
           "limit": 1,
-          "description": ""
+          "description": "A recipe to make Dehydrator"
         },
         {
           "name": "Grass Starter Recipe",
           "price": 1000,
           "limit": 1,
-          "description": ""
+          "description": "A recipe to make Grass Starter"
         },
         {
           "name": "Sugar",
           "price": 100,
           "limit": -1,
-          "description": ""
+          "description": "Adds sweetness to pastries and candies. Too much can be unhealthy."
         },
         {
           "name": "Oil",
           "price": 200,
           "limit": -1,
-          "description": ""
+          "description": "All purpose cooking oil."
         },
         {
           "name": "Vinegar",
           "price": 200,
           "limit": -1,
-          "description": ""
-        },
-        {
-          "name": "Deluxe Retaining Soil",
-          "price": 150,
-          "limit": -1,
-          "description": ""
+          "description": "An aged fermented liquid used in many cooking recipes."
         },
         {
           "name": "Grass Starter",
           "price": 100,
           "limit": -1,
-          "description": ""
+          "description": "Place this on your farm to start a new patch of grass."
         },
         {
           "name": "Speed-Gro",
           "price": 100,
           "limit": -1,
-          "description": ""
+          "description": "Stimulates leaf production. Guaranteed to increase growth rate by at least 10%. Mix into tilled soil."
         },
         {
           "name": "Apple Sapling",
           "price": 4000,
           "limit": -1,
-          "description": ""
+          "description": "Takes 28 days to produce a mature Apple tree. Bears fruit in the fall. Only grows if the 8 surrounding \"tiles\" are empty."
         },
         {
           "name": "Apricot Sapling",
           "price": 2000,
           "limit": -1,
-          "description": ""
+          "description": "Takes 28 days to produce a mature Apricot tree. Bears fruit in the spring. Only grows if the 8 surrounding \"tiles\" are empty."
         },
         {
           "name": "Cherry Sapling",
           "price": 3400,
           "limit": -1,
-          "description": ""
+          "description": "\tTakes 28 days to produce a mature Cherry tree. Bears fruit in the spring. Only grows if the 8 surrounding \"tiles\" are empty."
         },
         {
           "name": "Orange Sapling",
@@ -872,37 +866,37 @@
           "name": "Peach Sapling",
           "price": 6000,
           "limit": -1,
-          "description": ""
+          "description": "Takes 28 days to produce a mature Orange tree. Bears fruit in the summer. Only grows if the 8 surrounding \"tiles\" are empty."
         },
         {
           "name": "Pomegranate Sapling",
           "price": 6000,
           "limit": -1,
-          "description": ""
+          "description": "Takes 28 days to produce a mature Pomegranate tree. Bears fruit in the fall. Only grows if the 8 surrounding \"tiles\" are empty."
         },
         {
           "name": "Basic Retaining Soil",
           "price": 100,
           "limit": -1,
-          "description": ""
+          "description": "This soil has a chance of staying watered overnight. Mix into tilled soil."
         },
         {
           "name": "Quality Retaining Soil",
           "price": 150,
           "limit": -1,
-          "description": ""
+          "description": "This soil has a good chance of staying watered overnight. Mix into tilled soil."
         },
         {
           "name": "Large Pack",
           "price": 2000,
           "limit": 1,
-          "description": ""
+          "description": "Unlocks the 2nd row of inventory "
         },
         {
           "name": "Deluxe Pack",
           "price": 10000,
           "limit": 1,
-          "description": ""
+          "description": "Unlocks the 3rd row of inventory"
         },
         {
           "name": "Parsnip seeds",
@@ -911,7 +905,7 @@
           "season": [
             "Spring"
           ],
-          "description": ""
+          "description": "Plant these in the spring. Takes 4 days to mature."
         },
         {
           "name": "Bean Starter",
@@ -920,7 +914,7 @@
           "season": [
             "Spring"
           ],
-          "description": ""
+          "description": "Plant these in the spring. Takes 10 days to mature, but keeps producing after that. Grows on a trellis."
         },
         {
           "name": "Cauliflower seeds",
@@ -929,7 +923,7 @@
           "season": [
             "Spring"
           ],
-          "description": ""
+          "description": "Plant these in the spring. Takes 12 days to produce a large cauliflower."
         },
         {
           "name": "Potato seeds",
@@ -938,7 +932,7 @@
           "season": [
             "Spring"
           ],
-          "description": ""
+          "description": "Plant these in the spring. Takes 6 days to mature, and has a chance of yielding multiple potatoes at harvest."
         },
         {
           "name": "Tulip Bulb",
@@ -947,7 +941,7 @@
           "season": [
             "Spring"
           ],
-          "description": ""
+          "description": "Plant in spring. Takes 6 days to produce a colorful flower. Assorted colors."
         },
         {
           "name": "Kale seeds",
@@ -956,7 +950,7 @@
           "season": [
             "Spring"
           ],
-          "description": ""
+          "description": "Plant these in the spring. Takes 6 days to mature. Harvest with the scythe."
         },
         {
           "name": "Jazz seeds",
@@ -965,7 +959,7 @@
           "season": [
             "Spring"
           ],
-          "description": ""
+          "description": "Plant in spring. Takes 7 days to produce a blue puffball flower."
         },
         {
           "name": "Garlic seeds",
@@ -974,7 +968,7 @@
           "season": [
             "Spring"
           ],
-          "description": ""
+          "description": "Plant these in the spring. Takes 4 days to mature."
         },
         {
           "name": "Rice Shoot",
@@ -983,7 +977,7 @@
           "season": [
             "Spring"
           ],
-          "description": ""
+          "description": "Plant these in the spring. Takes 8 days to mature"
         },
         {
           "name": "Melon seeds",
@@ -992,7 +986,7 @@
           "season": [
             "Summer"
           ],
-          "description": ""
+          "description": "Plant these in the summer. Takes 12 days to mature."
         },
         {
           "name": "Tomato seeds",
@@ -1001,7 +995,7 @@
           "season": [
             "Summer"
           ],
-          "description": ""
+          "description": "Plant these in the summer. Takes 11 days to mature, and continues to produce after first harvest."
         },
         {
           "name": "Blueberry seeds",
@@ -1010,7 +1004,7 @@
           "season": [
             "Summer"
           ],
-          "description": ""
+          "description": "Plant these in the summer. Takes 13 days to mature, and continues to produce after first harvest."
         },
         {
           "name": "Pepper seeds",
@@ -1019,7 +1013,7 @@
           "season": [
             "Summer"
           ],
-          "description": ""
+          "description": "Plant these in the summer. Takes 5 days to mature, and continues to produce after first harvest."
         },
         {
           "name": "Wheat seeds",
@@ -1029,7 +1023,7 @@
             "Summer",
             "Fall"
           ],
-          "description": ""
+          "description": "Plant these in the summer or fall. Takes 4 days to mature. Harvest with the scythe."
         },
         {
           "name": "Radish seeds",
@@ -1038,7 +1032,7 @@
           "season": [
             "Summer"
           ],
-          "description": ""
+          "description": "Plant these in the summer. Takes 6 days to mature."
         },
         {
           "name": "Poppy seeds",
@@ -1047,7 +1041,7 @@
           "season": [
             "Summer"
           ],
-          "description": ""
+          "description": "Plant in summer. Produces a bright red flower in 7 days."
         },
         {
           "name": "Spangle seeds",
@@ -1056,7 +1050,7 @@
           "season": [
             "Summer"
           ],
-          "description": ""
+          "description": "Plant in summer. Takes 8 days to produce a vibrant tropical flower. Assorted colors."
         },
         {
           "name": "Hops Starter",
@@ -1065,7 +1059,7 @@
           "season": [
             "Summer"
           ],
-          "description": ""
+          "description": "Plant these in the summer. Takes 11 days to grow, but keeps producing after that. Grows on a trellis."
         },
         {
           "name": "Corn seeds",
@@ -1075,7 +1069,7 @@
             "Summer",
             "Fall"
           ],
-          "description": ""
+          "description": "Plant these in the summer or fall. Takes 14 days to mature, and continues to produce after first harvest."
         },
         {
           "name": "Sunflower seeds",
@@ -1085,7 +1079,7 @@
             "Summer",
             "Fall"
           ],
-          "description": ""
+          "description": "Plant in summer or fall. Takes 8 days to produce a large sunflower. Yields more seeds at harvest."
         },
         {
           "name": "Red Cabbage seeds",
@@ -1094,7 +1088,7 @@
           "season": [
             "Summer"
           ],
-          "description": ""
+          "description": "Plant these in the summer. Takes 9 days to mature."
         },
         {
           "name": "Eggplant seeds",
@@ -1103,7 +1097,7 @@
           "season": [
             "Fall"
           ],
-          "description": ""
+          "description": "Plant these in the fall. Takes 5 days to mature, and continues to produce after first harvest."
         },
         {
           "name": "Pumpkin seeds",
@@ -1112,7 +1106,7 @@
           "season": [
             "Fall"
           ],
-          "description": ""
+          "description": "Plant these in the fall. Takes 13 days to mature."
         },
         {
           "name": "Bok Choy seeds",
@@ -1121,7 +1115,7 @@
           "season": [
             "Fall"
           ],
-          "description": ""
+          "description": "Plant these in the fall. Takes 4 days to mature."
         },
         {
           "name": "Yam seeds",
@@ -1130,7 +1124,7 @@
           "season": [
             "Fall"
           ],
-          "description": ""
+          "description": "Plant these in the fall. Takes 10 days to mature."
         },
         {
           "name": "Cranberry seeds",
@@ -1139,7 +1133,7 @@
           "season": [
             "Fall"
           ],
-          "description": ""
+          "description": "Plant these in the fall. Takes 7 days to mature, and continues to produce after first harvest."
         },
         {
           "name": "Fairy seeds",
@@ -1148,7 +1142,7 @@
           "season": [
             "Fall"
           ],
-          "description": ""
+          "description": "Plant in fall. Takes 12 days to produce a mysterious flower. Assorted Colors."
         },
         {
           "name": "Amaranth seeds",
@@ -1157,7 +1151,7 @@
           "season": [
             "Fall"
           ],
-          "description": ""
+          "description": "Plant these in the fall. Takes 7 days to grow. Harvest with the scythe."
         },
         {
           "name": "Grape Starter",
@@ -1166,7 +1160,7 @@
           "season": [
             "Fall"
           ],
-          "description": ""
+          "description": "Plant these in the fall. Takes 10 days to grow, but keeps producing after that. Grows on a trellis."
         },
         {
           "name": "Artichoke seeds",
@@ -1175,7 +1169,7 @@
           "season": [
             "Fall"
           ],
-          "description": ""
+          "description": "Plant these in the fall. Takes 8 days to mature."
         }
       ]
     },
@@ -1192,37 +1186,43 @@
           "name": "Fish Smoker Recipe",
           "price": 10000,
           "limit": 1,
-          "description": ""
+          "description": "A recipe to make Fish Smoker"
         },
         {
           "name": "Trout Soup",
           "price": 250,
           "limit": 1,
-          "description": ""
+          "description": "Pretty salty."
+        },
+        {
+          "name": "Sonar Bobber",
+          "price": 500,
+          "limit": 1,
+          "description": "Shows what fish is on the line before it's caught."
         },
         {
           "name": "Bamboo Pole",
           "price": 500,
           "limit": 1,
-          "description": ""
+          "description": "Use in the water to catch fish."
         },
         {
           "name": "Training Rod",
           "price": 25,
           "limit": 1,
-          "description": ""
+          "description": "Use in the water to catch fish."
         },
         {
           "name": "Fiberglass Rod",
           "price": 1800,
           "limit": 1,
-          "description": ""
+          "description": "Use in the water to catch fish."
         },
         {
           "name": "Iridium Rod",
           "price": 7500,
           "limit": 1,
-          "description": ""
+          "description": "Use in the water to catch fish."
         }
       ]
     }

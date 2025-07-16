@@ -160,7 +160,7 @@ public class StoreView implements Screen {
     }
     @Override
     public void show() {
-        Image background = new Image(new Texture("stores/"+ store.getStoreName().toLowerCase() + ".jpg"));
+        Image background = new Image(new Texture("stores/"+ store.getStoreName().toLowerCase() + "Interior.jpg"));
         background.setFillParent(true);
         stage.addActor(background);
         Gdx.input.setInputProcessor(stage);

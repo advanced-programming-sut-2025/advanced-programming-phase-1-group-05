@@ -620,7 +620,7 @@ public class GameMenuController extends MenuController {
         if (currentPlayer.isMarriedTo(targetPlayer)) {
             currentPlayer.increaseEnergy(50);
         }
-        targetPlayer.addNotification(targetPlayer.getName() + "! A little birdie dropped off a message-check your inbox!");
+        targetPlayer.addNotification(currentPlayer.getName() + " says: \"" + message + "\" to you!");
         return new Result(true, "");
     }
 

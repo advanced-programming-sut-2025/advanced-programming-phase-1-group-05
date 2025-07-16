@@ -2,6 +2,7 @@ package org.example.models.Enums;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import org.example.models.GameAssetManager;
 import org.example.models.Item;
 
 import java.awt.*;
@@ -28,10 +29,10 @@ public enum Fish implements Material, Item {
     Dorado("Dorado",100, Season.SUMMER, false,"Stardew_Valley_Images-main/Fish/Dorado.png"),
     Sunfish("Sun Fish",30, Season.SUMMER, false,"Stardew_Valley_Images-main/Fish/Sunfish.png"),
     RainbowTrout("Rainbow Trout",65, Season.SUMMER, false,"Stardew_Valley_Images-main/Fish/Rainbow_Trout.png"),
-    Legend("Legend",5000, Season.SPRING, true,"Stardew_Valley_Images-main/Fish/Legend.png"),
-    GlacierFish("Glacier Fish",100, Season.WINTER, true,"Stardew_Valley_Images-main/Fish/Glacierfish.png"),
-    Angler("Angler",900, Season.FALL, true,"Stardew_Valley_Images-main/Fish/Angler.png"),
-    CrimsonFish("Crimson Fish",1500, Season.SUMMER, true,"Stardew_Valley_Images-main/Fish/Crimsonfish.png")
+    Legend("Legend",5000, Season.SPRING, true,"Animals/Fish/Legend.png"),
+    GlacierFish("Glacier Fish",100, Season.WINTER, true,"Animals/Fish/GlacierFish.png"),
+    Angler("Angler",900, Season.FALL, true,"Animals/Fish/Angler.png"),
+    CrimsonFish("Crimson Fish",1500, Season.SUMMER, true,"Animals/Fish/CrimsonFish.png")
    ;
 
     private final String name;
@@ -84,6 +85,6 @@ public enum Fish implements Material, Item {
         return price;
     }
     public TextureRegion getTexture(){
-        return new TextureRegion(new Texture(this.texturePath));
+        return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture(this.texturePath));
     }
 }

@@ -86,6 +86,7 @@ public class Player {
         backPack.getInventory().put(new FruitAndVegetable(CropType.Sunflower),1);
         backPack.getInventory().put(new FruitAndVegetable(CropType.FairyRose),1);
         backPack.getInventory().put(new FruitAndVegetable(CropType.Artichoke),1);
+        notifications.add("Have fun playing this game i'm just trying to see how the notification panel looks hahahaha long text ");
     }
 
     public void initializeAnimations() {
@@ -311,6 +312,7 @@ public class Player {
         notifications.clear();
         return builder.toString();
     }
+
 
     public void setEnergy(int energy) {
         this.energy = energy;

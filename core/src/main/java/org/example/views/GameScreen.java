@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -34,7 +35,7 @@ import java.util.Map;
 public class GameScreen implements Screen {
     private ShapeRenderer shapeRenderer;
     Stage stage;
-    Table missionListTable, animalMenuTable;
+    Table missionListTable, animalMenuTable, notificationTable;
     Skin skin;
     ImageButton notificationButton;
     Viewport viewport;
@@ -42,7 +43,7 @@ public class GameScreen implements Screen {
     private SpriteBatch batch;
     private TileMapRenderer mapRenderer;
     private Player player;
-
+    Stage uiStage;
     private Texture energyBarBg, energyBarFill, overlay, blackOverlay;
     private BitmapFont font;
 
@@ -230,6 +231,8 @@ public class GameScreen implements Screen {
         }
         stage.act(delta);
         stage.draw();
+        uiStage.act(delta);
+        uiStage.draw();
 
     }
 
@@ -510,11 +513,13 @@ public class GameScreen implements Screen {
         viewport = new FitViewport(320, 180, camera);
         viewport.apply();
 
+        uiStage = new Stage(new ScreenViewport(), batch);
         stage = new Stage(viewport, batch);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(cheatCodeWindow);
         multiplexer.addProcessor(stage);
         multiplexer.addProcessor(new InventoryInputHandler());
+        multiplexer.addProcessor(uiStage);
 
         Gdx.input.setInputProcessor(multiplexer);
         System.out.println("InputMultiplexer set with cheatCodeWindow");
@@ -522,25 +527,40 @@ public class GameScreen implements Screen {
         missionListTable = new Table();
         missionListTable.setVisible(false);
         missionListTable.setFillParent(true);
-        stage.addActor(missionListTable);
+        uiStage.addActor(missionListTable);
 
         animalMenuTable = new Table();
         animalMenuTable.setVisible(false);
         animalMenuTable.setFillParent(true);
-        stage.addActor(animalMenuTable);
+        uiStage.addActor(animalMenuTable);
+
+        notificationTable = new Table();
+        notificationTable.setVisible(false);
+        notificationTable.setFillParent(true);
+        uiStage.addActor(notificationTable);
         for (NpcActor npc : NPCs) {
             stage.addActor(npc);
         }
-        notificationButton = new ImageButton(skin);
-        float rightEdgeX = camera.position.x + camera.viewportWidth / 2;
-        float topEdgeY = camera.position.y + camera.viewportHeight / 2;
+        Texture mail = GameAssetManager.getInstance().getOrLoadTexture("ui/mailSign.png");
+        Drawable mailDrawable = new TextureRegionDrawable(new TextureRegion(mail));
+        notificationButton = new ImageButton(mailDrawable);
+        float padding = 70;
+        float screenWidth = uiStage.getViewport().getScreenWidth();
+        float screenHeight = uiStage.getViewport().getScreenHeight();
 
-        float padding = 20;
-        float x = rightEdgeX - notificationButton.getWidth() - padding;
-        float y = topEdgeY - 90; // or -110 if you want it lower
+        float x = screenWidth - notificationButton.getWidth() - padding;
+        float y = screenHeight - notificationButton.getHeight() - padding;
 
         notificationButton.setPosition(x, y);
-        stage.addActor(notificationButton);
+        notificationButton.getImageCell().size(72, 56);
+        notificationButton.setSize(72, 56);
+        notificationButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showNotifications();
+            }
+        });
+        uiStage.addActor(notificationButton);
         forceViewportReset();
     }
 
@@ -573,6 +593,35 @@ public class GameScreen implements Screen {
         }
 
         return true;
+    }
+
+    private void showNotifications() {
+        notificationTable.clear();
+        notificationTable.setVisible(true);
+        Table innerPanel = new Table(skin);
+        Texture menuTexture = GameAssetManager.getInstance().getOrLoadTexture("Animals/MenuBackground1.png");
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        innerPanel.setBackground(menuDrawable);
+        innerPanel.pad(30);
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+        String notifications = MyGame.getCurrentPlayer().getNotifications();
+        Label notificationsLabel = new Label(notifications, skin);
+        notificationsLabel.setWrap(true);
+        notificationsLabel.setAlignment(Align.topLeft);
+        innerPanel.add(notificationsLabel).width(300).pad(10).left().top();
+        notificationsLabel.setColor(86f / 225f, 22f / 225f, 12f / 225f, 1);
+        innerPanel.row();
+        ImageButton closeButton = new ImageButton(closeDrawable);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                notificationTable.setVisible(false);
+            }
+        });
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
+        notificationTable.add(innerPanel).center();
     }
 
     private void showAnimalMenu(Animal animal) {
