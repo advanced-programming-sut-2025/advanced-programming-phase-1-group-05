@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.example.models.GameMap.MAP_HEIGHT;
+import static org.example.models.GameMap.MAP_WIDTH;
+
 public class GameScreen implements Screen {
     private ShapeRenderer shapeRenderer;
     Stage stage;
@@ -124,6 +127,28 @@ public class GameScreen implements Screen {
 
     }
 
+    private void tileOutline(Vector3 mouseWorld) {
+        int tileX = (int)(mouseWorld.x / TILE_SIZE);
+        int tileY = (int)(mouseWorld.y / TILE_SIZE);
+
+        if (tileX >= 0 && tileX < MAP_WIDTH &&
+            tileY >= 0 && tileY < MAP_HEIGHT &&
+        MyGame.getCurrentPlayer().getCurrentItem() != null &&
+        MyGame.getCurrentPlayer().getCurrentItem() instanceof Tool) {
+
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(Color.RED);
+            shapeRenderer.rect(
+                tileX * TILE_SIZE,
+                tileY * TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE
+            );
+            shapeRenderer.end();
+        }
+
+    }
     private void initializeFarmArea() {
         for (Player player : players) {
             String map = GameMenuController.getMapForPlayer(player.getUsername());
@@ -198,6 +223,7 @@ public class GameScreen implements Screen {
         applyLightingOverlay();
 
         batch.end();
+        tileOutline(mouse);
         cheatCodeWindow.render();
         showInventory(batch);
         showSkillSet(batch);
@@ -896,6 +922,25 @@ public class GameScreen implements Screen {
                             return true;
                         }
                     }
+                }
+            } else if(MyGame.getCurrentPlayer().getCurrentItem() != null &&
+            MyGame.getCurrentPlayer().getCurrentItem() instanceof Tool) {
+                int tileX = (int) (world.x / TILE_SIZE);
+                int tileY = (int) (world.y / TILE_SIZE);
+
+                if (tileX >= 0 && tileX < MAP_WIDTH &&
+                    tileY >= 0 && tileY < MAP_HEIGHT) {
+
+                    GameTile tile = GameMap.getTile(tileX, tileY);
+                    if (tile != null) {
+                        Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
+                        if (currentItem instanceof Tool) {
+                            Result result = ((Tool) currentItem).use(tile);
+                            System.out.println(result.getMessage());
+
+                        }
+                    }
+
                 }
             }
 
