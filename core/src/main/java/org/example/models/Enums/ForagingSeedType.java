@@ -56,10 +56,12 @@ public enum ForagingSeedType implements Material, Item {
     private final String name;
     private final List<Season> seasons;
     private final String texturePath;
+    private final TextureRegion textureRegion;
     ForagingSeedType(String name, List<Season> seasons, String texturePath) {
         this.name = name;
         this.seasons = seasons;
         this.texturePath = texturePath;
+        this.textureRegion = new TextureRegion(new Texture(texturePath));
     }
 
     public String getName() {
@@ -104,7 +106,7 @@ public enum ForagingSeedType implements Material, Item {
         return stringBuilder.toString();
     }
     public TextureRegion getTexture() {
-        return new TextureRegion(new Texture(this.texturePath));
+        return textureRegion;
     }
 
 }

@@ -14,12 +14,14 @@ public enum FishingPoleType {
     private final int energyUsage;
     private final double fishingCoefficient;
     private final String texturePath;
+    private final TextureRegion textureRegion;
     FishingPoleType(String name, int price, int energyUsage, double fishingCoefficient, String texturePath) {
         this.name = name;
         this.price = price;
         this.energyUsage = energyUsage;
         this.fishingCoefficient = fishingCoefficient;
         this.texturePath = texturePath;
+        this.textureRegion = new TextureRegion(new Texture(texturePath));
     }
 
     public static FishingPoleType fromString (String input) {
@@ -64,7 +66,7 @@ public enum FishingPoleType {
         return this == FishingPoleType.values()[FishingPoleType.values().length - 1];
     }
     public TextureRegion getTexture() {
-        return new TextureRegion(new Texture(this.texturePath));
+        return textureRegion;
     }
 
 }

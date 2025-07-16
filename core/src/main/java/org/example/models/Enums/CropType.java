@@ -61,6 +61,7 @@ public enum CropType implements Material, Item {
     private final List<Season> seasons;
     private final boolean canBecomeGiant;
     private final String texturePath;
+    private final TextureRegion textureRegion;
     CropType(String name, String source, String stages, int totalHarvestTime, boolean oneTime,
              int regrowthTime, int price, boolean isEdible, int energy, List<Season> seasons, boolean canBeGiant, String texturePath) {
         this.name = name;
@@ -75,6 +76,7 @@ public enum CropType implements Material, Item {
         this.seasons = seasons;
         this.canBecomeGiant = canBeGiant;
         this.texturePath = texturePath;
+        this.textureRegion = new TextureRegion(new Texture(texturePath));
 
     }
     @Override
@@ -148,6 +150,6 @@ public enum CropType implements Material, Item {
         return builder.toString();
     }
     public TextureRegion getTexture() {
-        return new TextureRegion(new Texture(this.texturePath));
+        return textureRegion;
     }
 }

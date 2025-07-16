@@ -35,6 +35,7 @@ public enum TreeType implements Material, Item {
     private final int fruitEnergy;
     private final List<Season> seasons;
     private final String normalTexturePath;
+    private final TextureRegion textureRegion;
     TreeType(String name, String seed, String stages, int totalHarvestTime, String fruit,
              int fruitHarvestCycle, int fruitPrice,boolean isFruitEdible, int fruitEnergy, List<Season> seasons, String normalTexturePath) {
         this.name = name;
@@ -48,6 +49,7 @@ public enum TreeType implements Material, Item {
         this.fruitEnergy = fruitEnergy;
         this.seasons = seasons;
         this.normalTexturePath = normalTexturePath;
+        this.textureRegion = new TextureRegion(new Texture(normalTexturePath));
     }
     public String getName() {
         return name;
@@ -134,7 +136,7 @@ public enum TreeType implements Material, Item {
         return fruitPrice;
     }
     public TextureRegion getTexture() {
-        return new TextureRegion(new Texture(this.normalTexturePath));
+        return textureRegion;
     }
 
 

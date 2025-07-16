@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import org.example.controllers.GameManager;
+import org.example.models.Enums.CropType;
 import org.example.models.Enums.TileType;
 import org.example.models.Enums.Season;
 
@@ -28,6 +29,14 @@ public class TileMapRenderer {
 
     public TileMapRenderer() {
         map = new TileType[MAP_HEIGHT][MAP_WIDTH];
+        //initialize map
+        for(int i = 0; i < MAP_WIDTH; i++) {
+            for(int j = 0; j < MAP_HEIGHT; j++) {
+                GameTile tile = GameMap.getTile(i, j);
+                if(tile == null) continue;
+                map[i][j] = tile.getTileType();
+            }
+        }
         isTopLeft = new boolean[MAP_HEIGHT][MAP_WIDTH];
         textureMap = new HashMap<>();
 
@@ -37,10 +46,11 @@ public class TileMapRenderer {
 
         for (int y = 0; y < MAP_HEIGHT; y++) {
             for (int x = 0; x < MAP_WIDTH; x++) {
-                map[y][x] = TileType.Flat;
+                GameMap.getTile(x,y).setTileType(TileType.Flat);
                 isTopLeft[y][x] = false;
             }
         }
+
 
         for (int playerId = 0; playerId < 4; playerId++) {
             int offsetX = (playerId % 2) * PLAYER_FARM_WIDTH;
@@ -48,37 +58,42 @@ public class TileMapRenderer {
 
             for (int y = offsetY + 10; y < offsetY + 60; y++) {
                 for (int x = offsetX + 10; x < offsetX + 60; x++) {
-                    map[y][x] = TileType.Soil;
+                    map[y][x] = TileType.FarmFlat;
+                    GameTile tile = MyGame.getGameMap().getTile(x, y);
+                    tile.setTileType(TileType.FarmFlat);
                 }
             }
-
+//
             placeHouse(offsetX + 10, offsetY + PLAYER_FARM_HEIGHT - 4 - 10);
             placeGreenHouse(offsetX + 18, offsetY + 48);
-
+//
             fillArea(offsetX + 20, offsetY + 20, 5, 6, TileType.Water);
             fillArea(offsetX + 45, offsetY + 30, 3, 7, TileType.Water);
-
-            for (int i = 0; i < 15; i++) {
-                int tx = offsetX + 10 + random.nextInt(50);
-                int ty = offsetY + 10 + random.nextInt(50);
-                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
-                    placeStructure(tx, ty, TileType.Tree);
-                }
-            }
-            for (int i = 0; i < 15; i++) {
-                int tx = offsetX + 10 + random.nextInt(50);
-                int ty = offsetY + 10 + random.nextInt(50);
-                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
-                    placeStructure(tx, ty, TileType.Stone);
-                }
-            }
-            for (int i = 0; i < 15; i++) {
-                int tx = offsetX + 10 + random.nextInt(50);
-                int ty = offsetY + 10 + random.nextInt(50);
-                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
-                    placeStructure(tx, ty, TileType.Wood);
-                }
-            }
+//
+//            //jesus T-T
+////            for (int i = 0; i < 15; i++) {
+////                int tx = offsetX + 10 + random.nextInt(50);
+////                int ty = offsetY + 10 + random.nextInt(50);
+////                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
+////                    placeStructure(tx, ty, TileType.Tree);
+////                }
+////            }
+////            for (int i = 0; i < 15; i++) {
+////                int tx = offsetX + 10 + random.nextInt(50);
+////                int ty = offsetY + 10 + random.nextInt(50);
+////                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
+////                    placeStructure(tx, ty, TileType.Stone);
+////                }
+////            }
+////            for (int i = 0; i < 15; i++) {
+////                int tx = offsetX + 10 + random.nextInt(50);
+////                int ty = offsetY + 10 + random.nextInt(50);
+////                if (map[ty][tx] == TileType.Soil || map[ty][tx] == TileType.Flat) {
+////                    placeStructure(tx, ty, TileType.Wood);
+////                }
+////            }
+//
+//
         }
     }
 
@@ -133,7 +148,7 @@ public class TileMapRenderer {
 
         for (int y = startY; y <= endY; y++) {
             for (int x = startX; x <= endX; x++) {
-                TileType type = map[y][x];
+                TileType type = GameMap.getTile(x,y).getTileType();
                 if (type == null) continue;
 
                 if (type.isLargeStructure()
@@ -141,29 +156,44 @@ public class TileMapRenderer {
                     && !type.name().startsWith("GREENHOUSE_")
                     && !isTopLeft[y][x]) continue;
 
-                TileType background = TileType.Flat;
-                if (type == TileType.Tree || type == TileType.House
-                    || type == TileType.GreenHouse ||
-                    type == TileType.Stone || type == TileType.Wood
-                    || type.name().startsWith("HOUSE_")
+                if (type == TileType.House
+                    || type == TileType.GreenHouse || type.name().startsWith("HOUSE_")
                     || type.name().startsWith("GREENHOUSE_")) {
-                    background = inferBackground(x, y);
+                    TileType background = inferBackground(x, y);
                     Texture bgTex = textureMap.get(background);
-                    batch.draw(bgTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                    if (bgTex != null)
+                        batch.draw(bgTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 }
 
                 Texture tex = textureMap.get(type);
-                int drawWidth = (type.isLargeStructure()
-                    && !type.name().startsWith("HOUSE_")
-                    && !type.name().startsWith("GREENHOUSE_")) ? tex.getWidth() : TILE_SIZE;
-                int drawHeight = (type.isLargeStructure()
-                    && !type.name().startsWith("HOUSE_")
-                    && !type.name().startsWith("GREENHOUSE_")) ? tex.getHeight() : TILE_SIZE;
+                if (tex != null) {
+                    int drawWidth = (type.isLargeStructure()
+                        && !type.name().startsWith("HOUSE_")
+                        && !type.name().startsWith("GREENHOUSE_")) ? tex.getWidth() : TILE_SIZE;
+                    int drawHeight = (type.isLargeStructure()
+                        && !type.name().startsWith("HOUSE_")
+                        && !type.name().startsWith("GREENHOUSE_")) ? tex.getHeight() : TILE_SIZE;
 
-                batch.draw(tex, x * TILE_SIZE, y * TILE_SIZE, drawWidth, drawHeight);
+                    batch.draw(tex, x * TILE_SIZE, y * TILE_SIZE, drawWidth, drawHeight);
+                }
+
+                GameTile tile = GameMap.getTile(x, y);
+                if (tile == null) continue;
+
+                Item itemOnTile = tile.getItemOnTile();
+                if (itemOnTile != null) {
+                    Texture itemTex = itemOnTile.getTexture().getTexture();
+                    if (itemTex == null) itemTex = textureMap.get(tile.getTileType());
+
+                    if (itemTex != null) {
+                        float scale = (float) TILE_SIZE / itemTex.getHeight();
+                        batch.draw(itemTex, x * TILE_SIZE, y * TILE_SIZE, itemTex.getWidth() * scale, TILE_SIZE);
+                    }
+                }
             }
         }
     }
+
 
     private TileType inferBackground(int x, int y) {
         for (int playerId = 0; playerId < 4; playerId++) {
@@ -183,6 +213,7 @@ public class TileMapRenderer {
                 int ny = startY + y;
                 if (nx < MAP_WIDTH && ny < MAP_HEIGHT) {
                     map[ny][nx] = type;
+                    GameMap.getTile(nx, ny).setTileType(type);
                 }
             }
         }
@@ -200,6 +231,7 @@ public class TileMapRenderer {
                 if (nx < MAP_WIDTH && ny < MAP_HEIGHT) {
                     if (dx == 0 && dy == 0) {
                         map[ny][nx] = type;
+                        GameMap.getTile(nx, ny).setTileType(type);
                         isTopLeft[ny][nx] = true;
                     } else {
                         isTopLeft[ny][nx] = false;
@@ -209,6 +241,7 @@ public class TileMapRenderer {
         }
     }
 
+    //TODO fix the house position & texture
     private void placeHouse(int startX, int startY) {
         int index = 1;
         for (int dy = 0; dy < 4; dy++) {
@@ -217,6 +250,7 @@ public class TileMapRenderer {
                 int tileY = startY + (3 - dy);
                 TileType tile = TileType.valueOf("HOUSE_" + index);
                 map[tileY][tileX] = tile;
+                GameMap.getTile(tileX, tileY).setTileType(tile);
                 isTopLeft[tileY][tileX] = false;
                 index++;
             }
@@ -231,6 +265,7 @@ public class TileMapRenderer {
                 int tileY = startY + (3 - dy);
                 TileType tile = TileType.valueOf("GREENHOUSE_" + index);
                 map[tileY][tileX] = tile;
+                GameMap.getTile(tileX, tileY).setTileType(tile);
                 isTopLeft[tileY][tileX] = false;
                 index++;
             }

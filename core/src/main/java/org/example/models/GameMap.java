@@ -1,5 +1,10 @@
 package org.example.models;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import org.example.controllers.GameManager;
 import org.example.models.Building.GreenHouse;
 import org.example.models.Enums.*;
@@ -11,10 +16,12 @@ import java.util.Random;
 
 
 public class GameMap {
-    public static final int MAP_WIDTH = 100;
-    public static final int MAP_HEIGHT = 100;
+    public static final int MAP_WIDTH = 140;
+    public static final int MAP_HEIGHT = 140;
     private static GameTile[][] map = new GameTile[MAP_HEIGHT][MAP_WIDTH];
-
+    private static final int TILE_SIZE = 64;
+    private static final int PLAYER_FARM_WIDTH = 70;
+    private static final int PLAYER_FARM_HEIGHT = 70;
 
     ArrayList<FruitAndVegetable> plants = new ArrayList<>();
     ArrayList<Tree> trees = new ArrayList<>();
@@ -152,14 +159,11 @@ public class GameMap {
         }
     }
     public GameMap() {
-//        Player currentPlayer = Game.getCurrentPlayer();
-//        int farmNum = currentPlayer.getMapNum();
-        initEmptyMap(TileType.Flat);
-//        generatePlaceOfPlayer(farmNum);
-        generateFarm(0, 0, 30, 30, 1);          // Farm A
-        generateFarm(0, 70, 30, 30, 2);         // Farm B
-        generateFarm(70, 0, 30, 30, 3);         // Farm C
-        generateFarm(70, 70, 30, 30, 4);        // Farm D
+//        initEmptyMap(TileType.Flat);
+//        generateFarm(0, 0, 30, 30, 1);          // Farm A
+//        generateFarm(0, 70, 30, 30, 2);         // Farm B
+//        generateFarm(70, 0, 30, 30, 3);         // Farm C
+//        generateFarm(70, 70, 30, 30, 4);        // Farm D
 
     }
 
@@ -185,17 +189,13 @@ public class GameMap {
                 startY = 95;
                 break;
             default:
-                // Default position if farm number is invalid
                 startX = 50;
                 startY = 50;
                 break;
         }
 
-        // Set player coordinates
         MyGame.getCurrentPlayer().setCoordinate(startX, startY);
 
-        // Mark the tile as occupied
-        // TODO ; HELLo
         GameTile playerTile = getTile(startX, startY);
         if (playerTile != null) {
             playerTile.occupy();
@@ -295,13 +295,9 @@ public class GameMap {
         return true;
     }
 
-
-
-
     private boolean insideRect(int i, int j, int x, int y, int w, int h) {
         return i >= x && i < x + h && j >= y && j < y + w;
     }
-
 
     public void initEmptyMap(TileType defaultType) {
         for (int i = 0; i < map.length; i++) {
@@ -310,7 +306,7 @@ public class GameMap {
             }
         }
     }
-//TODO HElloooo
+
     public static GameTile getTile(int x, int y) {
         if (isInBounds(x, y)) {
             return map[x][y];
@@ -335,6 +331,7 @@ public class GameMap {
             System.out.println();
         }
     }
+
     public void printMapSection1(int centerX, int centerY, int size) {
         int half = size / 2;
         for (int i = 0; i < centerX - half; i++) {
@@ -348,6 +345,7 @@ public class GameMap {
             System.out.println();
         }
     }
+
     public void printMapSection2(int centerX, int centerY, int size) {
         int half = size / 2;
         for (int i = centerX - half; i <= centerX + half; i++) {
@@ -393,7 +391,9 @@ public class GameMap {
         for (int i = startX; i < startX + height; i++) {
             for (int j = startY; j < startY + width; j++) {
                 if (isInBounds(i, j)) {
-                    setTile(i, j, new GameTile(i, j, TileType.Soil));
+                    setTile(i, j, new GameTile(i, j, TileType.FarmFlat));
+                    //GameTile tile = getTile(i, j);
+                    //tile.setItemOnTile(new FruitAndVegetable(CropType.BlueJazz));
                 }
             }
         }
@@ -461,6 +461,47 @@ public class GameMap {
         return location;
     }
 
+    public void render(SpriteBatch batch, OrthographicCamera camera) {
+        float camX = camera.position.x;
+        float camY = camera.position.y;
+        float halfW = camera.viewportWidth / 2;
+        float halfH = camera.viewportHeight / 2;
+
+        int startX = MathUtils.floor((camX - halfW) / TILE_SIZE);
+        int startY = MathUtils.floor((camY - halfH) / TILE_SIZE);
+        int endX = MathUtils.ceil((camX + halfW) / TILE_SIZE);
+        int endY = MathUtils.ceil((camY + halfH) / TILE_SIZE);
+
+        startX = MathUtils.clamp(startX, 0, MAP_WIDTH - 1);
+        startY = MathUtils.clamp(startY, 0, MAP_HEIGHT - 1);
+        endX = MathUtils.clamp(endX, 0, MAP_WIDTH - 1);
+        endY = MathUtils.clamp(endY, 0, MAP_HEIGHT - 1);
+
+        for (int y = startY; y <= endY; y++) {
+            for (int x = startX; x <= endX; x++) {
+                GameTile tile = getTile(x, y);
+                if (tile == null) continue;
+
+                TileType type = tile.getTileType();
+                if (type == null) continue;
+
+                Texture tileTexture = type.getTexture();
+                if (tileTexture == null) continue;
+
+                // draw the tile
+                batch.draw(tileTexture, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+
+                // draw item on tile
+                Item item = tile.getItemOnTile();
+                if (item != null && item.getTexture() != null) {
+                    TextureRegion itemTex = item.getTexture();
+                    float scale = (float) TILE_SIZE / itemTex.getRegionHeight();
+                    batch.draw(itemTex, x * TILE_SIZE, y * TILE_SIZE,
+                        itemTex.getRegionWidth() * scale, TILE_SIZE);
+                }
+            }
+        }
+    }
 
 
 }

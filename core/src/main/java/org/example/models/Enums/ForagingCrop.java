@@ -3,6 +3,7 @@ package org.example.models.Enums;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.Item;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,12 +50,14 @@ public enum ForagingCrop implements Material, Item {
     private final int price;
     private final int energy;
     private final String texturePath;
+    private final TextureRegion textureRegion;
     ForagingCrop(String name, List<Season> seasons, int price, int energy, String texturePath) {
         this.name = name;
         this.seasons = seasons;
         this.price = price;
         this.energy = energy;
         this.texturePath = texturePath;
+        this.textureRegion = new TextureRegion(new Texture(texturePath));
     }
 
     public String getName() {
@@ -107,7 +110,7 @@ public enum ForagingCrop implements Material, Item {
         return builder.toString();
     }
     public TextureRegion getTexture() {
-        return new TextureRegion(new Texture(this.texturePath));
+        return textureRegion;
     }
 
 }

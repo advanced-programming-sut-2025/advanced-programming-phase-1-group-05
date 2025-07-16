@@ -12,11 +12,15 @@ public enum BackPackType {
     private final int capacity;
     private final String inventoryTexturePath;
     private final String backpackTexturePath;
+    private final TextureRegion inventoryTexture;
+    private final TextureRegion backPackTexture;
     BackPackType(String name, int capacity, String inventoryTexturePath, String backpackTexturePath) {
         this.name = name;
         this.capacity = capacity;
         this.inventoryTexturePath = inventoryTexturePath;
         this.backpackTexturePath = backpackTexturePath;
+        this.inventoryTexture = new TextureRegion(new Texture(inventoryTexturePath));
+        this.backPackTexture = new TextureRegion(new Texture(backpackTexturePath));
     }
 
     public String getName() {
@@ -34,10 +38,11 @@ public enum BackPackType {
     public boolean isMaxLevel() {
         return this == BackPackType.values()[BackPackType.values().length - 1];
     }
+
     public TextureRegion getInventoryTexture() {
-        return new TextureRegion(new Texture(this.inventoryTexturePath));
+        return this.inventoryTexture;
     }
-    public TextureRegion getBackpackTexture() {
-        return new TextureRegion(new Texture(this.backpackTexturePath));
+    public TextureRegion getBackPackTexture() {
+        return this.backPackTexture;
     }
 }
