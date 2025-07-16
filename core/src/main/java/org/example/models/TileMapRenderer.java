@@ -30,13 +30,6 @@ public class TileMapRenderer {
     public TileMapRenderer() {
         map = new TileType[MAP_HEIGHT][MAP_WIDTH];
         //initialize map
-        for(int i = 0; i < MAP_WIDTH; i++) {
-            for(int j = 0; j < MAP_HEIGHT; j++) {
-                GameTile tile = GameMap.getTile(i, j);
-                if(tile == null) continue;
-                map[i][j] = tile.getTileType();
-            }
-        }
         isTopLeft = new boolean[MAP_HEIGHT][MAP_WIDTH];
         textureMap = new HashMap<>();
 
@@ -46,11 +39,12 @@ public class TileMapRenderer {
 
         for (int y = 0; y < MAP_HEIGHT; y++) {
             for (int x = 0; x < MAP_WIDTH; x++) {
-                GameMap.getTile(x,y).setTileType(TileType.Flat);
+                GameTile tile = GameMap.getTile(x, y);
+                if(tile == null) continue;
+                tile.setTileType(TileType.Flat);
                 isTopLeft[y][x] = false;
             }
         }
-
 
         for (int playerId = 0; playerId < 4; playerId++) {
             int offsetX = (playerId % 2) * PLAYER_FARM_WIDTH;
@@ -58,18 +52,18 @@ public class TileMapRenderer {
 
             for (int y = offsetY + 10; y < offsetY + 60; y++) {
                 for (int x = offsetX + 10; x < offsetX + 60; x++) {
-                    map[y][x] = TileType.FarmFlat;
-                    GameTile tile = MyGame.getGameMap().getTile(x, y);
+                    //map[y][x] = TileType.FarmFlat;
+                    GameTile tile = GameMap.getTile(x, y);
+                    if(tile == null) continue;
                     tile.setTileType(TileType.FarmFlat);
                 }
             }
 //
-            placeHouse(offsetX + 10, offsetY + PLAYER_FARM_HEIGHT - 4 - 10);
+            placeHouse(offsetX + 10, offsetY + PLAYER_FARM_HEIGHT - 14);
             placeGreenHouse(offsetX + 18, offsetY + 48);
-//
+
             fillArea(offsetX + 20, offsetY + 20, 5, 6, TileType.Water);
             fillArea(offsetX + 45, offsetY + 30, 3, 7, TileType.Water);
-//
 //            //jesus T-T
 ////            for (int i = 0; i < 15; i++) {
 ////                int tx = offsetX + 10 + random.nextInt(50);
@@ -148,7 +142,9 @@ public class TileMapRenderer {
 
         for (int y = startY; y <= endY; y++) {
             for (int x = startX; x <= endX; x++) {
-                TileType type = GameMap.getTile(x,y).getTileType();
+                GameTile tile = GameMap.getTile(x, y);
+                if(tile == null) continue;
+                TileType type = tile.getTileType();
                 if (type == null) continue;
 
                 if (type.isLargeStructure()
@@ -160,7 +156,7 @@ public class TileMapRenderer {
                     || type == TileType.GreenHouse || type.name().startsWith("HOUSE_")
                     || type.name().startsWith("GREENHOUSE_")) {
                     TileType background = inferBackground(x, y);
-                    Texture bgTex = textureMap.get(background);
+                    Texture bgTex = TileType.FarmFlat.getTexture();
                     if (bgTex != null)
                         batch.draw(bgTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 }
@@ -177,13 +173,10 @@ public class TileMapRenderer {
                     batch.draw(tex, x * TILE_SIZE, y * TILE_SIZE, drawWidth, drawHeight);
                 }
 
-                GameTile tile = GameMap.getTile(x, y);
-                if (tile == null) continue;
-
                 Item itemOnTile = tile.getItemOnTile();
                 if (itemOnTile != null) {
                     Texture itemTex = itemOnTile.getTexture().getTexture();
-                    if (itemTex == null) itemTex = textureMap.get(tile.getTileType());
+                    //if (itemTex == null) itemTex = textureMap.get(tile.getTileType());
 
                     if (itemTex != null) {
                         float scale = (float) TILE_SIZE / itemTex.getHeight();
@@ -213,29 +206,12 @@ public class TileMapRenderer {
                 int ny = startY + y;
                 if (nx < MAP_WIDTH && ny < MAP_HEIGHT) {
                     map[ny][nx] = type;
-                    GameMap.getTile(nx, ny).setTileType(type);
-                }
-            }
-        }
-    }
-
-    private void placeStructure(int x, int y, TileType type) {
-        Texture tex = textureMap.get(type);
-        int width = tex.getWidth() / TILE_SIZE;
-        int height = tex.getHeight() / TILE_SIZE;
-
-        for (int dy = 0; dy < height; dy++) {
-            for (int dx = 0; dx < width; dx++) {
-                int nx = x + dx;
-                int ny = y + dy;
-                if (nx < MAP_WIDTH && ny < MAP_HEIGHT) {
-                    if (dx == 0 && dy == 0) {
-                        map[ny][nx] = type;
-                        GameMap.getTile(nx, ny).setTileType(type);
-                        isTopLeft[ny][nx] = true;
-                    } else {
-                        isTopLeft[ny][nx] = false;
+                    GameTile tile = GameMap.getTile(nx, ny);
+                    if (tile == null) {
+                        System.out.println("shit's null");
+                        continue;
                     }
+                    tile.setTileType(type);
                 }
             }
         }
@@ -250,7 +226,12 @@ public class TileMapRenderer {
                 int tileY = startY + (3 - dy);
                 TileType tile = TileType.valueOf("HOUSE_" + index);
                 map[tileY][tileX] = tile;
-                GameMap.getTile(tileX, tileY).setTileType(tile);
+                GameTile gameTile = GameMap.getTile(tileX, tileY);
+                if(gameTile == null) {
+                    System.out.println("shit's null");
+                    continue;
+                }
+                gameTile.setTileType(tile);
                 isTopLeft[tileY][tileX] = false;
                 index++;
             }
@@ -265,7 +246,12 @@ public class TileMapRenderer {
                 int tileY = startY + (3 - dy);
                 TileType tile = TileType.valueOf("GREENHOUSE_" + index);
                 map[tileY][tileX] = tile;
-                GameMap.getTile(tileX, tileY).setTileType(tile);
+                GameTile gameTile = GameMap.getTile(tileX, tileY);
+                if(gameTile == null) {
+                    System.out.println("shit's null");
+                    continue;
+                }
+                gameTile.setTileType(tile);
                 isTopLeft[tileY][tileX] = false;
                 index++;
             }

@@ -1,13 +1,10 @@
 package org.example.models.Tool;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import org.example.models.Craft;
+import org.example.models.*;
 import org.example.models.Enums.BackPackType;
 import org.example.models.Enums.CookingRecipeType;
 import org.example.models.Enums.CraftType;
-import org.example.models.InventorySlot;
-import org.example.models.Item;
-import org.example.models.Result;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -135,7 +132,7 @@ public class BackPack implements Tool <BackPackType>{
         return 0;
     }
     @Override
-    public Result use(Map.Entry<Integer, Integer> coordinates){
+    public Result use(GameTile tile) {
         return new Result(true, "");
     }
     @Override

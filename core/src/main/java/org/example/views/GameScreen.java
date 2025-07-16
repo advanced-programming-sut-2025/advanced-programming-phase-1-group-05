@@ -640,7 +640,6 @@ public class GameScreen implements Screen {
         notificationTable.add(innerPanel).center();
     }
 
-
     private void showAnimalMenu(Animal animal) {
         animalMenuTable.clear();
         animalMenuTable.setVisible(true);

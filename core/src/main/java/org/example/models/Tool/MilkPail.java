@@ -20,11 +20,10 @@ public class MilkPail implements Tool<ItemLevel> {
 
 
     @Override
-    public Result use(HashMap.Entry<Integer, Integer> coordinates){
+    public Result use(GameTile tile){
         if(!reduceEnergy(4))
             return new Result(false, "You don't have enough energy");
         GameMap map = MyGame.getGameMap();
-        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
 
         Item item = tile.getItemOnTile();
         //TODO animal on tile

@@ -22,11 +22,10 @@ public class Hoe implements Tool <ItemLevel> {
         return 0;
     }
     @Override
-    public Result use(HashMap.Entry<Integer, Integer> coordinates){
+    public Result use(GameTile tile){
         if(!reduceEnergy(level.getEnergyUsage()))
             return new Result(false, "You don't have enough energy.");
         GameMap map = MyGame.getGameMap();
-        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         if(tile.getTileType() == TileType.Flat) {
             tile.setTileType(TileType.Soil);
         } else {

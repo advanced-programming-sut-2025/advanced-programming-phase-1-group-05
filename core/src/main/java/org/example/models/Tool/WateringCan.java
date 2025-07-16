@@ -13,9 +13,8 @@ public class WateringCan implements Tool<ItemLevel> {
     int waterlevel = level.getWateringcanCapacity();
 
     @Override
-    public Result use(Map.Entry<Integer, Integer> coordinates){
+    public Result use(GameTile tile){
         GameMap map = MyGame.getGameMap();
-        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         Farming farming = MyGame.getCurrentPlayer().getFarmingSkill();
         int energyUsage = level.getEnergyUsage();
 

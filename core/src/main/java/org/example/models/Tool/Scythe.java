@@ -18,11 +18,10 @@ public class Scythe implements Tool<ItemLevel> {
         return 0;
     }
     @Override
-    public Result use(HashMap.Entry<Integer, Integer> coordinates) {
+    public Result use(GameTile tile) {
         if(!reduceEnergy(2))
             return new Result(false, "You don't have enough energy");
         GameMap map = MyGame.getGameMap();
-        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
 
         Item item = tile.getItemOnTile();
 

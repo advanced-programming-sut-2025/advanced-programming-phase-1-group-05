@@ -21,9 +21,8 @@ public class Pickaxe implements Tool <ItemLevel> {
         return 0;
     }
     @Override
-    public Result use(HashMap.Entry<Integer, Integer> coordinates){
+    public Result use(GameTile tile){
         GameMap map = MyGame.getGameMap();
-        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         Skill mining = MyGame.getCurrentPlayer().getMiningSkill();
         int energyUsage = level.getEnergyUsage();
 

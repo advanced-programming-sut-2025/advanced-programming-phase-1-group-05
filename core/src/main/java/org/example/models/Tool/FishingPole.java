@@ -23,9 +23,8 @@ public class FishingPole implements Tool<FishingPoleType> {
         return level.getPrice();
     }
     @Override
-    public Result use(HashMap.Entry<Integer, Integer> coordinates){
+    public Result use(GameTile tile) {
         GameMap map = MyGame.getGameMap();
-        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
         Fishing fishing = MyGame.getCurrentPlayer().getFishingSkill();
         int energyUsage = level.getEnergyUsage();
 

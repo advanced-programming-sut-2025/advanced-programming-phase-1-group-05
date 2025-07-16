@@ -86,7 +86,6 @@ public class GameMap {
         return new Result(false, "");
     }
 
-
     //set a random foraging item on some tiles after the end of each day
     public void setForagingItems() {
         int totalTiles = map.length * map[0].length;
@@ -159,11 +158,11 @@ public class GameMap {
         }
     }
     public GameMap() {
-//        initEmptyMap(TileType.Flat);
-//        generateFarm(0, 0, 30, 30, 1);          // Farm A
-//        generateFarm(0, 70, 30, 30, 2);         // Farm B
-//        generateFarm(70, 0, 30, 30, 3);         // Farm C
-//        generateFarm(70, 70, 30, 30, 4);        // Farm D
+        initEmptyMap(TileType.Flat);
+        generateFarm(0, 0, 30, 30, 1);          // Farm A
+        generateFarm(0, 70, 30, 30, 2);         // Farm B
+        generateFarm(70, 0, 30, 30, 3);         // Farm C
+        generateFarm(70, 70, 30, 30, 4);        // Farm D
 
     }
 

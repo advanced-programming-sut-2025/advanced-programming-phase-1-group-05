@@ -31,7 +31,7 @@ public class TrashCan implements Tool <ItemLevel> {
         return 1000;
     }
     @Override
-    public Result use(HashMap.Entry<Integer, Integer> coordinates) {
+    public Result use(GameTile tile) {
         //nada
         return new Result(false, "");
     }
