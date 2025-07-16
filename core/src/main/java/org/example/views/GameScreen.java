@@ -34,6 +34,7 @@ import java.util.Map;
 
 public class GameScreen implements Screen {
     private ShapeRenderer shapeRenderer;
+    GameMenuController controller;
     Stage stage;
     Table missionListTable, animalMenuTable, notificationTable;
     Skin skin;
@@ -67,7 +68,7 @@ public class GameScreen implements Screen {
     private float SLOT_SIZE = 64;
     private float INVENTORY_X = 0;
     private float INVENTORY_Y = 0;
-    private Item draggedItem = null;
+    private Item draggedItem = null, selectedItem = null;
     private InventorySlot selectedSlot = null;
     private boolean trashcanOpen = false;
     private Rectangle trashcan = new Rectangle();
@@ -86,6 +87,10 @@ public class GameScreen implements Screen {
     private float TOOL_X = 0;
     private float TOOL_Y = 0;
 
+    //NPC/friendship stuff
+    private boolean giftMode =false;
+    private NPC lastNPC = null;
+
     public GameScreen(ArrayList<Player> playerList) {
         skin = GameAssetManager.getSkin();
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
@@ -93,6 +98,7 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
         cheatCodeWindow = new CheatCodeWindow(batch);
         players = playerList;
+        controller = new GameMenuController(this);
 
         shapeRenderer = new ShapeRenderer();
 
@@ -203,6 +209,7 @@ public class GameScreen implements Screen {
         showSkillSet(batch);
         showToolSelection(batch);
         updateToolSelectionSlots();
+        checkGifting();
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             isInvenotryOpen = !isInvenotryOpen;
             isSkillSetOpen = false;
@@ -236,6 +243,29 @@ public class GameScreen implements Screen {
         uiStage.draw();
     }
 
+    private void checkGifting() {
+        if (isInvenotryOpen && giftMode && Gdx.input.justTouched()) {
+            Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+            for (InventorySlot slot : slots) {
+                if (mouse.x >= slot.x && mouse.x <= slot.x + SLOT_SIZE &&
+                    mouse.y >= slot.y && mouse.y <= slot.y + SLOT_SIZE) {
+
+                    if (slot.item != null) {
+                        Item giftedItem = slot.item;
+                        slot.item = null;
+                        controller.giftNPC(lastNPC, giftedItem);
+
+                        giftMode = false;
+                        isInvenotryOpen = false;
+
+                        break;
+                    }
+                }
+            }
+        }
+
+    }
     private void handleInput(float delta) {
         Vector2 oldPos = new Vector2(player.getXX(), player.getYY());
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) player.moveUp(delta);
@@ -472,7 +502,7 @@ public class GameScreen implements Screen {
             }
         }
 
-        if (draggedItem != null) {
+        if (!giftMode && draggedItem != null) {
             Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             batch.draw(draggedItem.getTexture(), mouse.x - SLOT_SIZE / 2f, mouse.y - SLOT_SIZE / 2f, SLOT_SIZE, SLOT_SIZE);
         }
@@ -640,7 +670,20 @@ public class GameScreen implements Screen {
         notificationTable.add(innerPanel).center();
     }
 
-    private void showAnimalMenu(Animal animal) {
+    private void showNPCMenu(NPC npc) {
+        TextButton giftButton = new TextButton("gift " + npc.getName(), skin);
+        giftButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                isInvenotryOpen = true;
+                giftMode = true;
+                lastNPC = npc;
+            }
+        });
+    }
+
+    private void showAnimalMenu(AnimalActor animalActor) {
+        Animal animal = animalActor.getAnimal();
         animalMenuTable.clear();
         animalMenuTable.setVisible(true);
         Table innerPanel = new Table(skin);
@@ -674,6 +717,13 @@ public class GameScreen implements Screen {
         innerPanel.add(sellAnimal).fillX();
         innerPanel.row();
         sellAnimal.setColor(1, 210f/255, 132f/255, 1);
+        sellAnimal.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                controller.sellAnimal(animalActor);
+                animalMenuTable.setVisible(false);
+            }
+        });
 
         ImageButton closeButton = new ImageButton(closeDrawable);
         closeButton.addListener(new ClickListener() {
@@ -867,7 +917,7 @@ public class GameScreen implements Screen {
                             draggedItem = slot.item;
                             selectedSlot = slot;
                             slot.item = null;
-                            MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                            MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
                             return true;
                         } else if (draggedItem != null && slot.item == null) {
                             slot.item = draggedItem;
@@ -909,7 +959,7 @@ public class GameScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (button == Input.Buttons.RIGHT) {
-                    showAnimalMenu(animalActor.getAnimal());
+                    showAnimalMenu(animalActor);
                     return true;
                 }
                 return false;
@@ -917,5 +967,7 @@ public class GameScreen implements Screen {
         });
     }
 
-
+    public void removeAnimalActor(AnimalActor animalActor) {
+        animalActor.remove();
+    }
 }

@@ -11,9 +11,7 @@ public class TimeAndDate {
     public void nextDay() {}
 
     public TimeAndDate() {
-        this.day = 1;
         this.season = Season.SPRING;
-        this.hour = 9;
         this.minute = 0;
     }
 

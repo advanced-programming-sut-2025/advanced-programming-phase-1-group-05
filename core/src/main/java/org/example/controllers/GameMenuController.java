@@ -4,6 +4,7 @@ import org.example.models.*;
 import org.example.models.Enums.*;
 import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Tool;
+import org.example.views.GameScreen;
 
 import java.awt.*;
 import java.util.*;
@@ -24,12 +25,15 @@ public class GameMenuController extends MenuController {
     private GameMap map = MyGame.getGameMap();
     private List<User> players = new ArrayList<>();
     private static final Map<String, String> playerMapSelections = new HashMap<>();
+    private GameScreen view;
 
 
     public GameMenuController(User currentUser) {
         GameMenuController.currentUser = currentUser;
     }
-
+    public GameMenuController(GameScreen screen) {
+        view = screen;
+    }
     private NPC lastNPC = null;
 
     public Result newGame(String input) {
@@ -512,18 +516,18 @@ public class GameMenuController extends MenuController {
 
     }
 
-    public Result sellAnimal(Matcher m) {
-        String animalName = m.group("animalName");
-        Animal animal = MyGame.getCurrentPlayer().getAnimal(animalName);
-        if (animal == null)
-            return Result.error("Selected animal doesn't exist or isn't yours");
+    public Result sellAnimal(AnimalActor animalActor) {
+        Animal animal = animalActor.getAnimal();
+        String animalName = animal.getName();
+
 
         int basePrice = MyGame.getDatabase().getItem(animal.getType().name()).getPrice();
-        int price = (int) (basePrice * ((animal.getFriendshipPoints() / 1000) + 0.3));
+        int price = (int) (basePrice * (((double) animal.getFriendshipPoints() / 1000) + 0.3));
         Player player = MyGame.getCurrentPlayer();
         player.addGold(price);
         player.removeAnimal(animal);
-        return Result.success( animal.getName() +" looked back one last time before leaving… but you were already gone.");
+        view.removeAnimalActor(animalActor);
+        return Result.success( animalName +" looked back one last time before leaving… but you were already gone.");
     }
 
     public Result startFishing(Matcher m) {
@@ -834,21 +838,9 @@ public class GameMenuController extends MenuController {
         return new Result(true, DialogueManager.getNpcDialogue(npcName, MyGame.getCurrentWeather().name()));
     }
 
-    public Result giftNPC(String input) {
-        int CIndex = input.indexOf('C');
-        int iIndex = input.indexOf('-');
-        String npcName = input.substring(CIndex + 1, iIndex).trim();
-        String itemName = input.substring(iIndex + 2).trim();
-        NPC npc = MyGame.getNPCByName(npcName);
-        if (npc == null) return new Result(false, "NPC not found");
+    public Result giftNPC(NPC npc, Item item) {
         Player player = MyGame.getCurrentPlayer();
-        Item item = player.getBackPack().getFromInventory(itemName);
-        if (MyGame.getDatabase().getItem(itemName) == null && item == null) return new Result(false, "Item not found");
-        if (item == null)
-            return Result.error("You don't have that item in your inventory");
-        if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1)
-            return new Result(false,
-                    "Nice thought! But you can’t give a gift to thin air. Find " + npcName + " first!");
+        String itemName = item.getName();
         if (item instanceof Tool<?>)
             return new Result(false,
                     "Gifting your old tools? What’s next—handing out used socks?");
