@@ -655,15 +655,10 @@ public class GameMenuController extends MenuController {
         return Result.success("added " + amount + " friendship points to " + targetPlayer.getName());
     }
 
-    public Result giftPlayer(Matcher matcher) {
-        String username = matcher.group("username"), itemName = matcher.group("itemName");
-        int amount = Integer.parseInt(matcher.group("amount"));
-        Item item = MyGame.getDatabase().getItem(itemName);
+    public Result giftPlayer(Player targetPlayer, Item item, int amount) {
         Player currentPlayer = MyGame.getCurrentPlayer();
-        Player targetPlayer = MyGame.getPlayerByUsername(username);
-        if (targetPlayer == null) return Result.error("Invisible friends don't accept gifts, you know!");
-        if (Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1 ||
-                Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1)
+        if (Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 1 ||
+                Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 1)
             return Result.error("You can't just throw gifts across the valley... get closer first!");
         if (currentPlayer.getItemQuantity(item) < amount)
             return Result.error("You hold out your gift... and reality holds out a calculator.");
@@ -691,17 +686,17 @@ public class GameMenuController extends MenuController {
         return Result.success(output.toString());
     }
 
-    public Result rateTheGift(int giftNumber, int rating) {
+    public Result rateTheGift(Gift gift, int rating) {
 
         if (rating < 1 || rating > 5)
             return new Result(false, "Your rating confused the chickens. Please try again.");
-        Gift gift = MyGame.getGiftById(giftNumber);
         Player currentPlayer = MyGame.getCurrentPlayer();
         if (gift == null || !gift.getReceiver().equals(currentPlayer))
             return new Result(false,
                     "You stare into your empty hands and give it a " + rating + ". Interesting.");
         Player targetPlayer = gift.getSender();
         currentPlayer.changeFriendshipXP(((rating - 3) * 30 + 15), targetPlayer);
+        gift.setRating(rating);
         return new Result(true, "They say don’t look a gift horse in the mouth-but you just did.");
     }
 
@@ -717,6 +712,16 @@ public class GameMenuController extends MenuController {
         return new Result(true, output.toString());
     }
 
+    public List<Gift> getReceivedGifts(Player otherPlayer) {
+        Player player = MyGame.getCurrentPlayer();
+        List<Gift> receivedGifts = new ArrayList<>();
+        for (Gift gift : MyGame.getAllGifts()) {
+            if (gift.getSender().equals(otherPlayer) && gift.getReceiver().equals(player)) {
+                receivedGifts.add(gift);
+            }
+        }
+        return receivedGifts;
+    }
     public Result hugPlayer(String username) {
         Player targetPlayer = MyGame.getPlayerByUsername(username);
         Player currentPlayer = MyGame.getCurrentPlayer();

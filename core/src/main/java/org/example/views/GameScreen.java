@@ -39,7 +39,7 @@ public class GameScreen implements Screen {
     private ShapeRenderer shapeRenderer;
     GameMenuController controller;
     Stage stage;
-    Table missionListTable, animalMenuTable, notificationTable;
+    Table missionListTable, animalMenuTable, notificationTable, giftMenuTable, giftHistoryTable, rateTable;
     Skin skin;
     ImageButton notificationButton;
     Viewport viewport;
@@ -93,6 +93,7 @@ public class GameScreen implements Screen {
     //NPC/friendship stuff
     private boolean giftMode =false;
     private NPC lastNPC = null;
+    private Player lastPlayer = null;
 
     public GameScreen(ArrayList<Player> playerList) {
         skin = GameAssetManager.getSkin();
@@ -280,8 +281,10 @@ public class GameScreen implements Screen {
                     if (slot.item != null) {
                         Item giftedItem = slot.item;
                         slot.item = null;
-                        controller.giftNPC(lastNPC, giftedItem);
-
+                        if (lastNPC!= null)
+                            controller.giftNPC(lastNPC, giftedItem);
+                        else if (lastPlayer != null)
+                            controller.giftPlayer(lastPlayer, giftedItem, 1);
                         giftMode = false;
                         isInvenotryOpen = false;
 
@@ -601,7 +604,6 @@ public class GameScreen implements Screen {
         missionListTable.setVisible(false);
         missionListTable.setFillParent(true);
         uiStage.addActor(missionListTable);
-
         animalMenuTable = new Table();
         animalMenuTable.setVisible(false);
         animalMenuTable.setFillParent(true);
@@ -610,6 +612,20 @@ public class GameScreen implements Screen {
         notificationTable.setVisible(false);
         notificationTable.setFillParent(true);
         uiStage.addActor(notificationTable);
+        giftMenuTable = new Table();
+        giftMenuTable.setVisible(false);
+        giftMenuTable.setFillParent(true);
+        uiStage.addActor(giftMenuTable);
+        giftHistoryTable = new Table();
+        giftHistoryTable.setVisible(true);
+        giftHistoryTable.setFillParent(true);
+        uiStage.addActor(giftHistoryTable);
+        rateTable = new Table();
+        rateTable.setVisible(false);
+        rateTable.setFillParent(true);
+        uiStage.addActor(rateTable);
+
+
         for (NpcActor npc : NPCs) {
             stage.addActor(npc);
         }
@@ -696,6 +712,128 @@ public class GameScreen implements Screen {
         notificationTable.add(innerPanel).center();
     }
 
+    private  void showGiftHistory(Player player) {
+        giftHistoryTable.clear();
+        giftHistoryTable.setVisible(true);
+        Table innerPanel = new Table(skin);
+        Texture menuTexture = GameAssetManager.getInstance().getOrLoadTexture("Animals/MenuBackground1.png");
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        innerPanel.setBackground(menuDrawable);
+        innerPanel.pad(30);
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+
+        for (Gift  gift : controller.getReceivedGifts(player)) {
+            innerPanel.add(buildRow(gift)).padBottom(50).row();
+        }
+        ImageButton closeButton = new ImageButton(closeDrawable);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                giftHistoryTable.setVisible(false);
+            }
+        });
+
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
+        giftHistoryTable.add(innerPanel).center();
+    }
+
+    private Table buildRow(Gift gift) {
+        Item item = gift.getItem();
+        Table row = new Table();
+        Image itemIcon = new Image(item.getTexture());
+        Label nameLabel = new Label(item.getName(), skin);
+        itemIcon.setSize(itemIcon.getWidth(), itemIcon.getHeight());
+        nameLabel.setFontScale(1.5f);
+        nameLabel.setColor(86f/255, 22f/255, 12f/255, 1);
+        row.add(itemIcon).size(itemIcon.getWidth()*1.5f, itemIcon.getHeight()*1.5f).padRight(10);
+        row.add(nameLabel).padRight(10);
+        Texture starTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/rateSign.png");
+        if (!gift.hasBeenRated()){
+            ImageButton starButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(starTexture)));
+            starButton.getImageCell().size(30, 30);
+            starButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    showRateTable(gift);
+                }
+            });
+            row.add(starButton).size(30);
+        }
+        else {
+            starTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/purpleStar.png");
+            Image star = new Image(starTexture);
+            star.setSize(30, 30);
+            for (int i = 0 ; i < gift.getRating(); i++) {
+                row.add(star).size(30).pad(10);
+            }
+        }
+        return row;
+    }
+
+    private void showRateTable(Gift gift) {
+        rateTable.clear();
+        rateTable.setVisible(true);
+        Table innerPanel = new Table(skin);
+        Texture menuTexture =  GameAssetManager.getInstance().getOrLoadTexture("Animals/MenuBackground2.png");
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        innerPanel.setBackground(menuDrawable);
+        innerPanel.pad(30);
+
+        TextField enterRating = new TextField("", skin);
+        enterRating.setMessageText("enter your rating (1-5)");
+        TextField.TextFieldStyle style = enterRating.getStyle();
+        style.fontColor = Color.WHITE;
+        style.disabledFontColor = Color.GRAY;
+        enterRating.setStyle(style);
+        style.background = skin.newDrawable("white", new Color(0.1f, 0.1f, 0.2f, 1f));
+        innerPanel.add(enterRating).row();
+
+        Label errorLabel = new Label("", skin);
+        errorLabel.setColor(Color.PINK);
+        Texture checkTexture = new Texture(Gdx.files.internal("ui/checkMark.png"));
+        Drawable checkDrawable = new TextureRegionDrawable(new TextureRegion(checkTexture));
+        ImageButton done = new ImageButton(checkDrawable);
+        innerPanel.add(done).size(48, 48).padTop(20).colspan(2).center();
+        done.getImageCell().size(48, 48);
+        innerPanel.add(errorLabel).pad(20);
+        done.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                int rating;
+                try {
+                   rating =  Integer.parseInt(enterRating.getText());
+                   Result result = controller.rateTheGift(gift, rating);
+                   if (! result.isSuccess()) {
+                       errorLabel.setText(result.getMessage());
+                   }
+                   else  {
+                       rateTable.setVisible(false);
+                   }
+                }
+                catch (Exception e) {
+                    errorLabel.setText("invalid rating!");
+                }
+
+            }
+        });
+        rateTable.add(innerPanel).center();
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+        ImageButton closeButton = new ImageButton(closeDrawable);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                rateTable.setVisible(false);
+            }
+        });
+
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
+        giftMenuTable.add(innerPanel).center();
+
+    }
     private void showNPCMenu(NPC npc) {
         TextButton giftButton = new TextButton("gift " + npc.getName(), skin);
         giftButton.addListener(new ClickListener() {
@@ -704,8 +842,60 @@ public class GameScreen implements Screen {
                 isInvenotryOpen = true;
                 giftMode = true;
                 lastNPC = npc;
+                lastPlayer = null;
             }
         });
+    }
+
+    private void showGiftMenu(Player player) {
+        giftMenuTable.clear();
+        giftMenuTable.setVisible(true);
+        Table innerPanel = new Table(skin);
+        Texture menuTexture =  GameAssetManager.getInstance().getOrLoadTexture("Animals/MenuBackground2.png");
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        innerPanel.setBackground(menuDrawable);
+        innerPanel.pad(30);
+
+        TextButton giftButton = new TextButton("gift " + player.getName(), skin);
+        innerPanel.add(giftButton).fillX();
+        innerPanel.row();
+        giftButton.setColor(1, 210f/255, 132f/255, 1);
+        giftButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                giftMode = true;
+                isInvenotryOpen = true;
+                lastNPC = null;
+                lastPlayer = player;
+            }
+        });
+
+        TextButton giftHistory = new TextButton("see gift history", skin);
+        innerPanel.add(giftHistory).fillX();
+        innerPanel.row();
+        giftHistory.setColor(1, 210f/255, 132f/255, 1);
+        giftHistory.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                giftMenuTable.setVisible(false);
+                showGiftHistory(player);
+            }
+        });
+
+
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+        ImageButton closeButton = new ImageButton(closeDrawable);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                animalMenuTable.setVisible(false);
+            }
+        });
+
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
+        giftMenuTable.add(innerPanel).center();
     }
 
     private void showAnimalMenu(AnimalActor animalActor) {
