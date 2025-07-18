@@ -23,7 +23,9 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.example.controllers.GameManager;
 import org.example.controllers.GameMenuController;
+import org.example.controllers.HomeMenuController;
 import org.example.models.*;
+import org.example.models.Enums.CraftType;
 import org.example.models.Enums.Season;
 import org.example.models.Enums.SkillSetInfo;
 import org.example.models.Tool.Tool;
@@ -38,6 +40,7 @@ import static org.example.models.GameMap.MAP_WIDTH;
 public class GameScreen implements Screen {
     private ShapeRenderer shapeRenderer;
     GameMenuController controller;
+    HomeMenuController homeMenuController;
     Stage stage;
     Table missionListTable, animalMenuTable, notificationTable, giftMenuTable, giftHistoryTable, rateTable;
     Skin skin;
@@ -90,10 +93,18 @@ public class GameScreen implements Screen {
     private float TOOL_X = 0;
     private float TOOL_Y = 0;
 
+    //craft stuff
+    private boolean isCraftOpen = false;
+    private float CRAFT_X = 0;
+    private float CRAFT_Y = 0;
+    private int craftPageIndex;
+
+
     //NPC/friendship stuff
     private boolean giftMode =false;
     private NPC lastNPC = null;
     private Player lastPlayer = null;
+
 
     public GameScreen(ArrayList<Player> playerList) {
         skin = GameAssetManager.getSkin();
@@ -204,7 +215,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         handleInput(delta);
-        cheatCodeWindow.update(delta);
+        //cheatCodeWindow.update(delta);
 
 
         timeAccumulator += delta;
@@ -234,11 +245,13 @@ public class GameScreen implements Screen {
         cheatCodeWindow.render();
         showInventory(batch);
         showSkillSet(batch);
+        showCraftPage(batch);
         showToolSelection(batch);
         updateToolSelectionSlots();
         checkGifting();
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             isInvenotryOpen = !isInvenotryOpen;
+            isCraftOpen = false;
             isSkillSetOpen = false;
             isToolSelectionOpen = false;
             if (isInvenotryOpen) {
@@ -256,13 +269,21 @@ public class GameScreen implements Screen {
             }
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             isSkillSetOpen = !isSkillSetOpen;
+            isCraftOpen = false;
             isInvenotryOpen = false;
             isToolSelectionOpen = false;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
             isToolSelectionOpen = !isToolSelectionOpen;
-            isInvenotryOpen = false;
+            isCraftOpen = false;
             isSkillSetOpen = false;
+            isInvenotryOpen = false;
             updateToolSelectionSlots();
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.V)) { //TODO fix
+            isCraftOpen = !isCraftOpen;
+            isToolSelectionOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
+            updateInventorySlots();
         }
         stage.act(delta);
         stage.draw();
@@ -270,6 +291,12 @@ public class GameScreen implements Screen {
         uiStage.draw();
     }
 
+    private void closeAllPages(){
+        isInvenotryOpen = false;
+        isSkillSetOpen = false;
+        isCraftOpen = false;
+        isToolSelectionOpen = false;
+    }
     private void checkGifting() {
         if (isInvenotryOpen && giftMode && Gdx.input.justTouched()) {
             Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -480,6 +507,80 @@ public class GameScreen implements Screen {
         }
 
         batch.end();
+    }
+
+    public void showCraftPage(SpriteBatch batch) {
+        if(!isCraftOpen) return;
+
+        TextureRegion craftPage = GameAssetManager.getCraftTexture();
+        float scale = 0.5f;
+        float textWidth =  craftPage.getRegionWidth();
+        float textHeight = craftPage.getRegionHeight();
+
+        float scaledWidth = textWidth * scale;
+        float scaledHeight = textHeight * scale;
+
+        CRAFT_X = camera.position.x - scaledWidth / 2f;
+        CRAFT_Y = camera.position.y - scaledHeight / 2f;
+
+        batch.begin();
+        batch.draw(craftPage, CRAFT_X, CRAFT_Y, scaledWidth, scaledHeight);
+
+        //show craft recipes
+        ArrayList<CraftType> learnedRecipes = MyGame.getCurrentPlayer().getBackPack().getLearntRecipes();
+
+        int recipesPerRow = 12;
+        int maxRows = 4;
+        int recipesPerPage = recipesPerRow * maxRows;
+
+        //pagination
+        int currentPage = craftPageIndex;
+        int startIndex = currentPage * recipesPerPage;
+        int endIndex = Math.min(startIndex + recipesPerPage, learnedRecipes.size());
+
+        float padding = 8f;
+        float iconSize = 96f;
+        float startX = CRAFT_X + 50f;
+        float startY = CRAFT_Y + scaledHeight - iconSize - 40f;
+
+        for (int i = startIndex; i < endIndex; i++) {
+            CraftType craftType = learnedRecipes.get(i);
+            boolean canCraft = homeMenuController.craftIngredientCheck(craftType);
+
+            int pageIndex = i - startIndex;
+            int row = pageIndex / recipesPerRow;
+            int col = pageIndex % recipesPerRow;
+
+            float x = startX + col * (iconSize + padding);
+            float y = startY - row * (iconSize + padding);
+
+            TextureRegion text = craftType.getTexture();
+            float alpha = canCraft ? 1f : 0.4f;
+
+            batch.setColor(1, 1, 1, alpha);
+            batch.draw(text, x, y, iconSize, iconSize);
+            batch.setColor(1, 1, 1, 1);
+        }
+
+        //show inventory items
+        for (InventorySlot slot : slots) {
+            if (slot.item != null) {
+                TextureRegion texture = slot.item.getTexture();
+                float texWidth = texture.getRegionWidth();
+                float texHeight = texture.getRegionHeight();
+
+                float scale1 = Math.min(SLOT_SIZE / texWidth, SLOT_SIZE / texHeight);
+                float drawWidth = texWidth * scale1;
+                float drawHeight = texHeight * scale1;
+
+                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f;
+                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f - 300f; //fix
+
+                batch.draw(texture, drawX, drawY, drawWidth, drawHeight);
+            }
+        }
+        batch.end();
+
     }
 
     private void initSkillHitboxes(float skillX, float skillY) {

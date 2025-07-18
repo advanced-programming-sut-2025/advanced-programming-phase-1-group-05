@@ -29,6 +29,7 @@ public class GameAssetManager {
     public static final TextureRegion skillSetPage = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/skills view.png"));
     public static final TextureRegion infoPage = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/info opener.png"));
     public static final TextureRegion toolSelection = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/tool selection.png"));
+
     private GameAssetManager() {
         // Load skin from assets/skin/
         try {
@@ -106,6 +107,15 @@ public class GameAssetManager {
         }
         return textureCache.get(path);
     }
+
+    public static TextureRegion getCraftTexture() {
+        return MyGame.getCurrentPlayer().getBackPack().getLevel().getCraftTexture();
+    }
+
+    public static TextureRegion getInventoryTexture() {
+        return MyGame.getCurrentPlayer().getBackPack().getLevel().getInventoryTexture();
+    }
+
 
 
 

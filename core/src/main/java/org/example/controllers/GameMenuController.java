@@ -391,18 +391,6 @@ public class GameMenuController extends MenuController {
         return new Result(true, output.toString());
     }
 
-
-    //use tool
-//    public Result useTool(String direction) {
-//        int[] dir = getDirections(direction);
-//        Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
-//        if (currentItem instanceof Tool) {
-//            String message = ((Tool) currentItem).use(new AbstractMap.SimpleEntry<>(MyGame.getCurrentPlayer().getCoordinate().getKey() + dir[1],
-//                    MyGame.getCurrentPlayer().getCoordinate().getValue() + dir[0])).getMessage();
-//            return new Result(true, message);
-//        } else return new Result(true, "You aren't equipped with any tool");
-//    }
-
     //show craft info
     public Result showCraftInfo(String name) {
         CropType cropType = CropType.fromString(name);
