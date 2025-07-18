@@ -31,6 +31,7 @@ import org.example.models.Enums.CraftType;
 import org.example.models.Enums.FishType;
 import org.example.models.Enums.Season;
 import org.example.models.Enums.SkillSetInfo;
+import org.example.models.Tool.BackPack;
 import org.example.models.Tool.FishingPole;
 import org.example.models.Tool.Tool;
 
@@ -600,6 +601,53 @@ public class GameScreen implements Screen {
                 if(slot.count > 1) font.draw(batch,String.valueOf(slot.count), drawX + drawWidth - 15f,drawY + 10f);
             }
         }
+
+        if(hoveredCraftType != null) {
+            //info background
+            TextureRegion infoBg = GameAssetManager.infoPage;
+            GlyphLayout glyphLayout = new GlyphLayout();
+
+            float boxWidth = infoBg.getRegionWidth();
+            float boxHeight = infoBg.getRegionHeight();
+
+            float boxX = CRAFT_X + scaledWidth + 20f;
+            float boxY = CRAFT_Y + scaledHeight - boxHeight - 20f;
+
+            batch.draw(infoBg, boxX, boxY, boxWidth, boxHeight);
+
+            //craft info
+            float textX = boxX + 15f;
+            float textY = boxY + boxHeight - 15f;
+            font.draw(batch, hoveredCraftType.getName(), textX, textY);
+
+            Map<Item, Integer> ingredients = hoveredCraftType.getIngredients();
+
+            float ingredientIconSize = 32f;
+            float ingredientPadding = 10f;
+
+            float iconX = boxX + 15f;
+            float iconY = boxY + boxHeight - 50f;
+
+            for(Map.Entry<Item, Integer> entry : ingredients.entrySet()) {
+                Item item = entry.getKey();
+                int count = entry.getValue();
+
+                TextureRegion textureRegion = item.getTexture();
+                float texWidth = textureRegion.getRegionWidth();
+                float texHeight = textureRegion.getRegionHeight();
+
+                float ingredientScale = Math.min(ingredientIconSize / texWidth, ingredientIconSize / texHeight);
+                float drawWidth = texWidth * ingredientScale;
+                float drawHeight = texHeight * ingredientScale;
+
+                batch.draw(textureRegion, iconX, iconY - drawHeight, drawWidth, drawHeight);
+
+                font.draw(batch, "x" + count + " " + item.getName(), iconX + drawWidth + 5f, iconY - 5f);
+
+                iconY -= drawHeight + ingredientPadding;
+            }
+
+        }
         if(hoveredCraftType != null) {
             //info background
             TextureRegion infoBg = GameAssetManager.infoPage;
@@ -1034,9 +1082,13 @@ public class GameScreen implements Screen {
         }
         else giveBouquet.setTouchable(Touchable.enabled);
         ImageButton closeButton = new ImageButton(closeDrawable);
-        closeButton.addListener(new ClickListener() {
+        giveBouquet.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+//                isInvenotryOpen = true;
+//                giftMode = true;
+//                lastNPC = npc;
+//                lastPlayer = null;
                 playerMenuTable.setVisible(false);
             }
         });
@@ -1045,6 +1097,7 @@ public class GameScreen implements Screen {
         closeButton.getImageCell().size(48, 48);
         playerMenuTable.add(innerPanel).center();
     }
+
     private void showGiftMenu(Player player) {
         giftMenuTable.clear();
         giftMenuTable.setVisible(true);
@@ -1369,10 +1422,10 @@ public class GameScreen implements Screen {
                     }
                 }
             } else if (isToolSelectionOpen) {
-                for(InventorySlot slot : toolSlots) {
-                    if(world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
+                for (InventorySlot slot : toolSlots) {
+                    if (world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
                         world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
-                        if(slot.item != null) {
+                        if (slot.item != null) {
                             MyGame.getCurrentPlayer().setCurrentItem(slot.item);
                             return true;
                         }
@@ -1405,18 +1458,19 @@ public class GameScreen implements Screen {
                 }
             }
 
+
             return false;
         }
 
         @Override
         public boolean mouseMoved(int screenX, int screenY) {
             if (!isCraftOpen) {
-                hoveredCraftType = null;                hoveredCraftType = null;
+                hoveredCraftType = null;
                 return false;
             }
 
             Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
-            hoveredCraftType = null;            hoveredCraftType = null;
+            hoveredCraftType = null;
 
             ArrayList<CraftType> learnedRecipes = MyGame.getCurrentPlayer().getBackPack().getLearntRecipes();
 
@@ -1444,13 +1498,15 @@ public class GameScreen implements Screen {
                 if (world.x >= x && world.x <= x + iconSize &&
                     world.y >= y && world.y <= y + iconSize) {
 
-                    hoveredCraftType = learnedRecipes.get(i);                    hoveredCraftType = learnedRecipes.get(i);
+                    hoveredCraftType = learnedRecipes.get(i);
                     break;
                 }
             }
 
             return false;
         }
+
+
     }
 
     public void addAnimalActor(AnimalActor animalActor) {
