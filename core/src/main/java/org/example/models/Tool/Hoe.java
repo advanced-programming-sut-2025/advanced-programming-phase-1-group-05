@@ -26,7 +26,7 @@ public class Hoe implements Tool <ItemLevel> {
         if(!reduceEnergy(level.getEnergyUsage()))
             return new Result(false, "You don't have enough energy.");
         GameMap map = MyGame.getGameMap();
-        if(tile.getTileType() == TileType.Flat) {
+        if(tile.getTileType() == TileType.FarmFlat) {
             tile.setTileType(TileType.Soil);
         } else {
             return new Result(false, "You can't use the hoe on this tile");

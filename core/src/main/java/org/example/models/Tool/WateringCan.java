@@ -35,6 +35,7 @@ public class WateringCan implements Tool<ItemLevel> {
                 MyGame.getCurrentPlayer().getFarmingSkill().waterCrop((FruitAndVegetable)item);
                 if(waterlevel - 1 < 9) waterlevel = 0;
                 else waterlevel--;
+                tile.setTileType(TileType.WateredSoil);
                 return new Result(true, "Crop was successfully watered!");
             }
         }

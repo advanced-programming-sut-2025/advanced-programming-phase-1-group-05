@@ -1110,7 +1110,7 @@ public class GameScreen implements Screen {
     private class InventoryInputHandler extends InputAdapter {
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            if (!isInvenotryOpen && !isToolSelectionOpen) return false;
+            //if (!isInvenotryOpen && !isToolSelectionOpen) return false;
 
             Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 
@@ -1163,7 +1163,9 @@ public class GameScreen implements Screen {
                         }
                     }
                 }
-            } else if(MyGame.getCurrentPlayer().getCurrentItem() != null &&
+            }
+
+            if(MyGame.getCurrentPlayer().getCurrentItem() != null &&
             MyGame.getCurrentPlayer().getCurrentItem() instanceof Tool) {
                 int tileX = (int) (world.x / TILE_SIZE);
                 int tileY = (int) (world.y / TILE_SIZE);
@@ -1176,7 +1178,6 @@ public class GameScreen implements Screen {
                         Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
                         if (currentItem instanceof Tool) {
                             Result result = ((Tool) currentItem).use(tile);
-                            System.out.println(result.getMessage());
 
                         }
                     }
