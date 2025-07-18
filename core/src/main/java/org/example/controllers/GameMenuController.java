@@ -2,6 +2,7 @@ package org.example.controllers;
 
 import org.example.models.*;
 import org.example.models.Enums.*;
+import org.example.models.Tool.FishingPole;
 import org.example.models.Tool.Hoe;
 import org.example.models.Tool.Tool;
 import org.example.views.GameScreen;
@@ -518,21 +519,19 @@ public class GameMenuController extends MenuController {
         return Result.success( animalName +" looked back one last time before leaving… but you were already gone.");
     }
 
-    public Result startFishing(Matcher m) {
-        String poleName = m.group("fishingPole");
-        FishingPoleType pole = FishingPoleType.fromString(poleName);
-        if (pole == null) return Result.error("invalid pole type.");
+    public FishType getRandomFish(FishingPole pole) {
         Player player = MyGame.getCurrentPlayer();
-        if (player.getItemQuantity(MyGame.getDatabase().getItem(poleName)) <= 0)
-            return Result.error("You don't have that pole in your inventory");
         int fishingLevel = player.getFishingSkill().getLevel();
-        Fish caughtFish = Fish.getRandomFish(GameManager.getSeason(), fishingLevel);
-        if (caughtFish == null)
-            return Result.error("Your bobber danced, your hopes rose… and then? Nothing. The fish must be laughing underwater.");
+        FishType caughtFish = FishType.getRandomFish(GameManager.getSeason(), fishingLevel);
+        return caughtFish;
+    }
+    public Result otherFishingStuff(FishingPole pole, FishType caughtFish) {
+        Player player = MyGame.getCurrentPlayer();
+        int fishingLevel = player.getFishingSkill().getLevel();
         Random rand = new Random();
         double weatherCoefficient = MyGame.getCurrentWeather().getFishingCoefficient();
         int numOfFish = Math.min((int) (rand.nextDouble() * weatherCoefficient * (fishingLevel + 2)), 6);
-        int qualityScore = (int) ((rand.nextDouble() * (fishingLevel + 2) * pole.getFishingCoefficient()) / (7 - weatherCoefficient));
+        int qualityScore = (int) ((rand.nextDouble() * (fishingLevel + 2) * pole.getLevel().getFishingCoefficient()) / (7 - weatherCoefficient));
         ItemLevel level;
         if (qualityScore <= 0.5) level = ItemLevel.Normal;
         else if (qualityScore <= 0.7) level = ItemLevel.Brass;
@@ -1040,7 +1039,7 @@ public class GameMenuController extends MenuController {
         else if (ForagingSeedType.fromString(name) != null) item = ForagingSeedType.fromString(name);
             //else if(CraftType.fromString(name) != null) item = CraftType.fromString(name);
             // else if(CookingRecipeType.fromString(name) != null) item = CookingRecipeType.fromString(name);
-        else if (Fish.fromString(name) != null) item = Fish.fromString(name);
+        else if (FishType.fromString(name) != null) item = FishType.fromString(name);
         else if (MineralType.fromString(name) != null) item = MineralType.fromString(name);
 
         if (item == null) return new Result(false, "** No item with that name exists **");

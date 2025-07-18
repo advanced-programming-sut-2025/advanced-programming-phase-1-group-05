@@ -1,17 +1,14 @@
 package org.example.models.Enums;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.models.GameAssetManager;
 import org.example.models.Item;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
-public enum Fish implements Material, Item {
+public enum FishType implements Material, Item {
 
     Salmon("Salmon",75, Season.FALL, false,"Stardew_Valley_Images-main/Fish/Salmon.png"),
     Sardine("Sardine",40, Season.FALL, false,"Stardew_Valley_Images-main/Fish/Sardine.png"),
@@ -40,7 +37,7 @@ public enum Fish implements Material, Item {
     private final Season season;
     private final boolean legendary;
     private final String texturePath;
-    Fish(String name, int price, Season season, boolean legendary, String texturePath) {
+    FishType(String name, int price, Season season, boolean legendary, String texturePath) {
         this.name = name;
         this.price = price;
         this.season = season;
@@ -51,8 +48,8 @@ public enum Fish implements Material, Item {
         if (legendary) return fishingSkill == 4;
         return season.equals(currentSeason);
     }
-    public static Fish fromString(String name){
-        for (Fish fish : Fish.values()) {
+    public static FishType fromString(String name){
+        for (FishType fish : FishType.values()) {
             if (fish.name().replaceAll("\\s", "").equalsIgnoreCase(name)) {
                 return fish;
             }
@@ -60,16 +57,16 @@ public enum Fish implements Material, Item {
         return null;
     }
 
-    public static Fish getRandomFish(Season currentSeason, int fishingSkill) {
+    public static FishType getRandomFish(Season currentSeason, int fishingSkill) {
         Random random = new Random();
-        List<Fish> fishInSeason = new ArrayList<>();
-        for (Fish fish : Fish.values()) {
+        List<FishType> fishInSeason = new ArrayList<>();
+        for (FishType fish : FishType.values()) {
             if (fish.season == currentSeason) fishInSeason.add(fish);
         }
         int tries = 10;
         while (tries > 0){
             int rand = random.nextInt(fishInSeason.size());
-            Fish fish = fishInSeason.get(rand);
+            FishType fish = fishInSeason.get(rand);
             if (fish.canBeCaught(currentSeason, fishingSkill)) return fish;
             tries --;
         }
@@ -86,5 +83,9 @@ public enum Fish implements Material, Item {
     }
     public TextureRegion getTexture(){
         return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture(this.texturePath));
+    }
+
+    public boolean isLegendary() {
+        return legendary;
     }
 }

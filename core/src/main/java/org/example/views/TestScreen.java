@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 public class TestScreen implements Screen {
     private ShapeRenderer shapeRenderer;
     Stage stage;
-    Table missionListTable, animalMenuTable;
+    Table missionListTable, animalMenuTable, playerMenuTable;
     Skin skin;
 
     private OrthographicCamera camera;
@@ -83,10 +84,12 @@ public class TestScreen implements Screen {
         animalMenuTable.setVisible(false);
         animalMenuTable.setFillParent(true);
         stage.addActor(animalMenuTable);
-        //showMissionList(MyGame.getNPCByName("Leah"));
-
-        showAnimalMenu(new Animal("morgh", AnimalType.CHICKEN, MyGame.getCurrentPlayer()));
-    }
+        playerMenuTable = new Table();
+        playerMenuTable.setVisible(false);
+        playerMenuTable.setFillParent(true);
+        stage.addActor(playerMenuTable);
+        showPlayerMenu(new Player(new User()));
+       }
 
     @Override
     public void render(float v) {
@@ -172,6 +175,47 @@ public class TestScreen implements Screen {
         animalMenuTable.add(innerPanel).center();
     }
 
+    private void showPlayerMenu(Player player) {
+        playerMenuTable.clear();
+        playerMenuTable.setVisible(true);
+        Table innerPanel = new Table(skin);
+        Texture menuTexture = GameAssetManager.getInstance().getOrLoadTexture("Animals/MenuBackground2.png");
+
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        innerPanel.setBackground(menuDrawable);
+        innerPanel.pad(30);
+
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+
+        TextButton giveBouquet = new TextButton("give a bouquet", skin);
+        innerPanel.add(giveBouquet).fillX();
+        innerPanel.row();
+        giveBouquet.setDisabled(!MyGame.getCurrentPlayer().canGiveBouquet(player));
+
+        ImageButton closeButton = new ImageButton(closeDrawable);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                playerMenuTable.setVisible(false);
+            }
+        });
+        if (!MyGame.getCurrentPlayer().canGiveBouquet(player)) {
+            giveBouquet.setTouchable(Touchable.disabled);
+            giveBouquet.setColor(Color.DARK_GRAY);
+        }
+        else giveBouquet.setTouchable(Touchable.enabled);
+        System.out.println();
+        giveBouquet.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("ello");
+            }
+        });
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
+        playerMenuTable.add(innerPanel).center();
+    }
     private void showMissionList(NPC npc) {
         missionListTable.clear();
         missionListTable.setVisible(true);

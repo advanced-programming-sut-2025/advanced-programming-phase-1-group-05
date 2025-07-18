@@ -9,10 +9,16 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import org.example.controllers.GameManager;
 import org.example.models.Enums.Direction;
 import org.example.views.GameScreen;
 
+import java.util.Random;
+
 public class NpcActor extends Actor {
+    private final Image exclamationImage;
     private Direction direction = Direction.DOWN;
     private float stateTime = 0f;
     private TextureRegion currentFrame;
@@ -20,6 +26,8 @@ public class NpcActor extends Actor {
     float speed = 30f;
     Vector2 directionVector = new Vector2();
     private final NPC npc;
+    private boolean dialogueReady = false;
+    private final int dialogueTime;
     public NpcActor (NPC npc) {
         this.npc = npc;
         Texture npcTexture = new Texture("NPCs/" + npc.getName().toLowerCase() + "/walkdown1.png");
@@ -27,13 +35,33 @@ public class NpcActor extends Actor {
         setSize(npcTexture.getWidth() * 4f, npcTexture.getHeight() * 4f);
         currentFrame = new TextureRegion(npcTexture);
         setPosition(npc.getX(), npc.getY());
+        Random random = new Random();
+        dialogueTime = random.nextInt(10, 18);
+
+        Texture tex= GameAssetManager.getInstance().getOrLoadTexture("ui/exclamation.png");
+        exclamationImage = new Image(new TextureRegion(tex));
+        exclamationImage.setVisible(false);
+        exclamationImage.setSize(tex.getWidth() * 3.5f, tex.getHeight() *3.5f);
+        exclamationImage.addAction(Actions.forever(
+            Actions.sequence(
+                Actions.moveBy(0, 5, 0.5f),
+                Actions.moveBy(0, -5, 0.5f)
+            )
+        ));
     }
 
     @Override
     public void act(float delta) {
+        if (GameManager.getGameClock().hour >= dialogueTime) {
+            dialogueReady = true;
+            exclamationImage.setVisible(true);
+            System.out.println("NPC dialogue ready! Showing exclamation");
+
+        }
+
         super.act(delta);
         moveTimer -= delta;
-
+        exclamationImage.act(delta);
         if (moveTimer <= 0) {
             directionVector.set(MathUtils.random(-1, 1), MathUtils.random(-1, 1)).nor();
 
@@ -77,6 +105,17 @@ public class NpcActor extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
         batch.draw(currentFrame, getX(), getY(), getWidth(), getHeight());
+        if (dialogueReady) {
+            exclamationImage.setPosition(
+                getX() + (getWidth() - exclamationImage.getWidth()) / 2f,
+                getY() + getHeight() + 5
+            );
+            exclamationImage.draw(batch, parentAlpha);
+            System.out.println("Drawing exclamation at: " + exclamationImage.getX() + ", " + exclamationImage.getY());
+
+        }
+
     }
 }

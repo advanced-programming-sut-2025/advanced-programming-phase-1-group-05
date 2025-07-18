@@ -1,6 +1,7 @@
 package org.example.models.Tool;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import org.example.Main;
 import org.example.models.Enums.FishingPoleType;
 import org.example.models.Enums.TileType;
 import org.example.models.MyGame;
@@ -8,6 +9,7 @@ import org.example.models.GameMap;
 import org.example.models.GameTile;
 import org.example.models.Result;
 import org.example.models.Skills.Fishing;
+import org.example.views.GameScreen;
 
 import java.util.HashMap;
 
@@ -24,23 +26,7 @@ public class FishingPole implements Tool<FishingPoleType> {
     }
     @Override
     public Result use(GameTile tile) {
-        GameMap map = MyGame.getGameMap();
-        Fishing fishing = MyGame.getCurrentPlayer().getFishingSkill();
-        int energyUsage = level.getEnergyUsage();
-
-        if(tile.getTileType() == TileType.Water){
-            if(fishing.isMaxLevel()) energyUsage --;
-            if(!reduceEnergy(energyUsage))
-                return new Result(false, "You don't have enough energy");
-            MyGame.getCurrentPlayer().getFishingSkill().fishing(tile, this);
-            //TODO implement fishing
-        } else {
-            if(fishing.isMaxLevel()) energyUsage --;
-            if(!reduceEnergy(energyUsage))
-                return new Result(false, "You don't have enough energy");
-            return new Result(false, "Wrong tile! what are you trying to fish?");
-        }
-        return new Result(true, "");
+        return new Result(true, "fishing successful (or not)");
     }
 
     public void setFishingPoleType(FishingPoleType fishingPoleType) {

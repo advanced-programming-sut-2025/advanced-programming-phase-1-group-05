@@ -3,6 +3,7 @@ package org.example.controllers;
 import org.example.models.*;
 import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.*;
+import org.example.models.Tool.FishingPole;
 import org.example.models.Tool.Tool;
 import org.example.views.GameScreen;
 
@@ -65,7 +66,13 @@ public class StoreController {
         //change backpack capacity
         for (Map.Entry<Product, Integer> entry : products.entrySet()){
             String productName = entry.getKey().getName();
-            if (productName.contains("Pack")) {
+            FishingPoleType poleType = FishingPoleType.fromString(productName);
+            if (poleType != null) {
+                FishingPole pole = new FishingPole();
+                pole.setFishingPoleType(poleType);
+                player.getBackPack().addToInventory(pole, entry.getValue());
+            }
+            else if (productName.contains("Pack")) {
                 if (productName.equals("Large Pack")) {
                     MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Big);
                 } else if (productName.equals("Deluxe Pack")) {

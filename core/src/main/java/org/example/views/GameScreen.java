@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -21,14 +22,17 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import org.example.Main;
 import org.example.controllers.GameManager;
 import org.example.controllers.GameMenuController;
 import org.example.controllers.HomeMenuController;
 import org.example.models.*;
 import org.example.models.Enums.CraftType;
+import org.example.models.Enums.FishType;
 import org.example.models.Enums.Season;
 import org.example.models.Enums.SkillSetInfo;
 import org.example.models.Tool.BackPack;
+import org.example.models.Tool.FishingPole;
 import org.example.models.Tool.Tool;
 
 import java.util.ArrayList;
@@ -43,7 +47,8 @@ public class GameScreen implements Screen {
     GameMenuController controller;
     HomeMenuController homeMenuController;
     Stage stage;
-    Table missionListTable, animalMenuTable, notificationTable, giftMenuTable, giftHistoryTable, rateTable;
+    Table missionListTable, animalMenuTable, notificationTable, giftMenuTable, giftHistoryTable, rateTable,
+        playerMenuTable;
     Skin skin;
     ImageButton notificationButton;
     Viewport viewport;
@@ -222,7 +227,7 @@ public class GameScreen implements Screen {
 
 
         timeAccumulator += delta;
-        if (timeAccumulator >= 5f) {
+        if (timeAccumulator >= 42f) {
             GameManager.getGameClock().advanceTime(60);
             timeAccumulator = 0f;
         }
@@ -643,6 +648,53 @@ public class GameScreen implements Screen {
             }
 
         }
+        if(hoveredCraftType != null) {
+            //info background
+            TextureRegion infoBg = GameAssetManager.infoPage;
+            GlyphLayout glyphLayout = new GlyphLayout();
+
+            float boxWidth = infoBg.getRegionWidth();
+            float boxHeight = infoBg.getRegionHeight();
+
+            float boxX = CRAFT_X + scaledWidth + 20f;
+            float boxY = CRAFT_Y + scaledHeight - boxHeight - 20f;
+
+            batch.draw(infoBg, boxX, boxY, boxWidth, boxHeight);
+
+            //craft info
+            float textX = boxX + 15f;
+            float textY = boxY + boxHeight - 15f;
+            font.draw(batch, hoveredCraftType.getName(), textX, textY);
+
+            Map<Item, Integer> ingredients = hoveredCraftType.getIngredients();
+
+            float ingredientIconSize = 32f;
+            float ingredientPadding = 10f;
+
+            float iconX = boxX + 15f;
+            float iconY = boxY + boxHeight - 50f;
+
+            for(Map.Entry<Item, Integer> entry : ingredients.entrySet()) {
+                Item item = entry.getKey();
+                int count = entry.getValue();
+
+                TextureRegion textureRegion = item.getTexture();
+                float texWidth = textureRegion.getRegionWidth();
+                float texHeight = textureRegion.getRegionHeight();
+
+                float ingredientScale = Math.min(ingredientIconSize / texWidth, ingredientIconSize / texHeight);
+                float drawWidth = texWidth * ingredientScale;
+                float drawHeight = texHeight * ingredientScale;
+
+                batch.draw(textureRegion, iconX, iconY - drawHeight, drawWidth, drawHeight);
+
+                font.draw(batch, "x" + count + " " + item.getName(), iconX + drawWidth + 5f, iconY - 5f);
+
+                iconY -= drawHeight + ingredientPadding;
+            }
+
+        }
+
         batch.end();
 
     }
@@ -760,7 +812,7 @@ public class GameScreen implements Screen {
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(cheatCodeWindow);
         multiplexer.addProcessor(stage);
-        multiplexer.addProcessor(new InventoryInputHandler());
+        multiplexer.addProcessor(new InventoryInputHandler(this));
         multiplexer.addProcessor(uiStage);
 
         Gdx.input.setInputProcessor(multiplexer);
@@ -790,10 +842,14 @@ public class GameScreen implements Screen {
         rateTable.setVisible(false);
         rateTable.setFillParent(true);
         uiStage.addActor(rateTable);
-
+        playerMenuTable = new Table();
+        playerMenuTable.setVisible(false);
+        playerMenuTable.setFillParent(true);
+        uiStage.addActor(playerMenuTable);
 
         for (NpcActor npc : NPCs) {
             stage.addActor(npc);
+            // TODO add listeners
         }
         Texture mail = GameAssetManager.getInstance().getOrLoadTexture("ui/mailSign.png");
         Drawable mailDrawable = new TextureRegionDrawable(new TextureRegion(mail));
@@ -849,6 +905,7 @@ public class GameScreen implements Screen {
 
         return true;
     }
+
     private void showNotifications() {
         notificationTable.clear();
         notificationTable.setVisible(true);
@@ -1000,17 +1057,45 @@ public class GameScreen implements Screen {
         giftMenuTable.add(innerPanel).center();
 
     }
-    private void showNPCMenu(NPC npc) {
-        TextButton giftButton = new TextButton("gift " + npc.getName(), skin);
-        giftButton.addListener(new ClickListener() {
+
+    private void showPlayerMenu(Player player) {
+        playerMenuTable.clear();
+        playerMenuTable.setVisible(true);
+        Table innerPanel = new Table(skin);
+        Texture menuTexture = GameAssetManager.getInstance().getOrLoadTexture("Animals/MenuBackground2.png");
+
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        innerPanel.setBackground(menuDrawable);
+        innerPanel.pad(30);
+
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+
+        TextButton giveBouquet = new TextButton("give a bouquet", skin);
+        innerPanel.add(giveBouquet).fillX();
+        innerPanel.row();
+        giveBouquet.setDisabled(!MyGame.getCurrentPlayer().canGiveBouquet(player));
+
+        if (!MyGame.getCurrentPlayer().canGiveBouquet(player)) {
+            giveBouquet.setTouchable(Touchable.disabled);
+            giveBouquet.setColor(Color.DARK_GRAY);
+        }
+        else giveBouquet.setTouchable(Touchable.enabled);
+        ImageButton closeButton = new ImageButton(closeDrawable);
+        giveBouquet.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                isInvenotryOpen = true;
-                giftMode = true;
-                lastNPC = npc;
-                lastPlayer = null;
+//                isInvenotryOpen = true;
+//                giftMode = true;
+//                lastNPC = npc;
+//                lastPlayer = null;
+                playerMenuTable.setVisible(false);
             }
         });
+
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
+        playerMenuTable.add(innerPanel).center();
     }
 
     private void showGiftMenu(Player player) {
@@ -1118,6 +1203,19 @@ public class GameScreen implements Screen {
         innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
         closeButton.getImageCell().size(48, 48);
         animalMenuTable.add(innerPanel).center();
+    }
+
+    private void showNPCMenu(NPC npc) {
+        TextButton giftButton = new TextButton("gift " + npc.getName(), skin);
+        giftButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                isInvenotryOpen = true;
+                giftMode = true;
+                lastNPC = npc;
+                lastPlayer = null;
+            }
+        });
     }
 
     private void showMissionList(NPC npc) {
@@ -1263,7 +1361,6 @@ public class GameScreen implements Screen {
         }
     }
 
-
     private void syncBackPackFromSlots() {
         MyGame.getCurrentPlayer().getBackPack().getInventory().clear();
         for (InventorySlot slot : slots) {
@@ -1274,6 +1371,11 @@ public class GameScreen implements Screen {
     }
 
     private class InventoryInputHandler extends InputAdapter {
+        GameScreen screen;
+
+        public InventoryInputHandler(GameScreen screen) {
+            this.screen = screen;
+        }
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             //if (!isInvenotryOpen && !isToolSelectionOpen) return false;
@@ -1343,7 +1445,12 @@ public class GameScreen implements Screen {
                     if (tile != null) {
                         Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
                         if (currentItem instanceof Tool) {
-                            MyGame.getCurrentPlayer().useTool();
+                            if (currentItem instanceof FishingPole) {
+                                FishingPole pole = (FishingPole) currentItem;
+                                FishType fish =  controller.getRandomFish((FishingPole) currentItem);
+                                Main.getMain().setScreen(new FishingMiniGame(screen, pole, fish));
+                            }
+                            else MyGame.getCurrentPlayer().useTool();
                             Result result = ((Tool) currentItem).use(tile);
                         }
                     }
@@ -1398,6 +1505,7 @@ public class GameScreen implements Screen {
 
             return false;
         }
+
 
     }
 
