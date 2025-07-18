@@ -5,8 +5,10 @@ import org.example.models.Craft;
 import org.example.models.Enums.CookingRecipeType;
 import org.example.models.Enums.CraftType;
 import org.example.models.Enums.Material;
+import org.example.models.Tool.BackPack;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class HomeMenuController {
 
@@ -80,6 +82,20 @@ public class HomeMenuController {
         } else {
             return new Result(false, "You don't have enough ingredients");
         }
+    }
+
+    //check if a recipe can be crafted
+    public boolean craftIngredientCheck(CraftType craft) {
+        BackPack playerBackpack = MyGame.getCurrentPlayer().getBackPack();
+        for(Map.Entry<Item, Integer> ingredientEntry : craft.getIngredients().entrySet()) {
+            if(!playerBackpack.getInventory().containsKey(ingredientEntry.getKey())) {
+                return false;
+            }
+            if(playerBackpack.getInventory().get((ingredientEntry.getKey())) < ingredientEntry.getValue()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     //put or pick from refrigerator

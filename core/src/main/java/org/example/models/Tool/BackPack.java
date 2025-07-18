@@ -23,7 +23,6 @@ public class BackPack implements Tool <BackPackType>{
     }
     private boolean isStorageUnlimited = true;
 
-
     public void setBackPackType(BackPackType type) {
         this.level = type;
         if(type == BackPackType.Deluxe) isStorageUnlimited = true;
