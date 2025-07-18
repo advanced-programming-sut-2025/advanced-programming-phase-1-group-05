@@ -26,7 +26,7 @@ public enum CraftType implements Material, Item {
     MayonnaiseMachine("Mayonnaise Machine", () -> Map.of(MyGame.getDatabase().getItem("Wood"), 15, MyGame.getDatabase().getItem("Stone"), 15, MineralType.Copper, 1), "", 0,"Stardew_Valley_Images-main/Crafting/Mayonnaise_Machine.png"),
     OilMaker("Oil Maker", () -> Map.of(MyGame.getDatabase().getItem("Wood"), 100, MineralType.Gold, 1, MineralType.Iron, 1), "Farming Level 3", 0,"Stardew_Valley_Images-main/Crafting/Oil_Maker.png"),
     PreservesJar("Preserves Jar", () -> Map.of(MyGame.getDatabase().getItem("Wood"), 50, MyGame.getDatabase().getItem("Stone"), 40, MineralType.Coal, 8), "Farming Level 2", 0,"Stardew_Valley_Images-main/Crafting/Preserves_Jar.png"),
-    Dehydrator("Dehydrator", () -> Map.of(MyGame.getDatabase().getItem("Wood"), 30, MyGame.getDatabase().getItem("Stone"), 20, MineralType.Fiber, 30), "Pierre's General Store", 0,"Stardew_Valley_Images-main/Crafting/Dehydrator.png"),
+    Dehydrator("Dehydrator", () -> Map.of(MineralType.Wood, 30, MineralType.Stone, 20, MineralType.Fiber, 30), "Pierre's General Store", 0,"Stardew_Valley_Images-main/Crafting/Dehydrator.png"),
     GrassStarter("Grass Starter", () -> Map.of(MyGame.getDatabase().getItem("Wood"), 1, MyGame.getDatabase().getItem("Fiber"), 1), "Pierre's General Store", 0,"Stardew_Valley_Images-main/Crafting/Grass_Starter.png"),
     FishSmoker("Fish Smoker", () -> Map.of(MyGame.getDatabase().getItem("Wood"), 50, MineralType.Iron, 3, MineralType.Coal, 10), "Fish Shop", 0,"Stardew_Valley_Images-main/Crafting/Fish_Smoker.png"),
     MysticTreeSeed("Mystic Tree Seed", () -> Map.of(

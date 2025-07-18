@@ -114,6 +114,7 @@ public class GameScreen implements Screen {
         cheatCodeWindow = new CheatCodeWindow(batch);
         players = playerList;
         controller = new GameMenuController(this);
+        homeMenuController = new HomeMenuController();
 
         shapeRenderer = new ShapeRenderer();
 
@@ -538,8 +539,8 @@ public class GameScreen implements Screen {
         int startIndex = currentPage * recipesPerPage;
         int endIndex = Math.min(startIndex + recipesPerPage, learnedRecipes.size());
 
-        float padding = 8f;
-        float iconSize = 96f;
+        float padding = 3f;
+        float iconSize = 74f;
         float startX = CRAFT_X + 50f;
         float startY = CRAFT_Y + scaledHeight - iconSize - 40f;
 
@@ -555,11 +556,24 @@ public class GameScreen implements Screen {
             float y = startY - row * (iconSize + padding);
 
             TextureRegion text = craftType.getTexture();
+            float texWidth = text.getRegionWidth();
+            float texHeight = text.getRegionHeight();
+
+            float maxIconSize = 74f;
+            float craftScale = Math.min(maxIconSize / texWidth, maxIconSize / texHeight);
+
+            float drawWidth = texWidth * craftScale;
+            float drawHeight = texHeight * craftScale;
+
+            float drawX = x + (iconSize - drawWidth) / 2f - 20f;
+            float drawY = y + (iconSize - drawHeight) / 2f - 50f;
+
             float alpha = canCraft ? 1f : 0.4f;
 
             batch.setColor(1, 1, 1, alpha);
-            batch.draw(text, x, y, iconSize, iconSize);
+            batch.draw(text, drawX, drawY, drawWidth, drawHeight);
             batch.setColor(1, 1, 1, 1);
+
         }
 
         //show inventory items
@@ -573,10 +587,11 @@ public class GameScreen implements Screen {
                 float drawWidth = texWidth * scale1;
                 float drawHeight = texHeight * scale1;
 
-                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f;
-                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f - 300f; //fix
+                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f + 235f;
+                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f + 65f; //fix
 
                 batch.draw(texture, drawX, drawY, drawWidth, drawHeight);
+                if(slot.count > 1) font.draw(batch,String.valueOf(slot.count), drawX + drawWidth - 15f,drawY + 10f);
             }
         }
         batch.end();
@@ -629,6 +644,7 @@ public class GameScreen implements Screen {
                 float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f;
 
                 batch.draw(texture, drawX, drawY, drawWidth, drawHeight);
+                if(slot.count > 1) font.draw(batch,String.valueOf(slot.count), drawX + drawWidth - 15f,drawY + 10f);
             }
         }
 

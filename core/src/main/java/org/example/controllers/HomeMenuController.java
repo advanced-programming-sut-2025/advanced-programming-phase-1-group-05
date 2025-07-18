@@ -91,7 +91,7 @@ public class HomeMenuController {
             if(!playerBackpack.getInventory().containsKey(ingredientEntry.getKey())) {
                 return false;
             }
-            if(!(playerBackpack.getInventory().get((ingredientEntry.getKey())) < ingredientEntry.getValue())) {
+            if(playerBackpack.getInventory().get((ingredientEntry.getKey())) < ingredientEntry.getValue()) {
                 return false;
             }
         }
