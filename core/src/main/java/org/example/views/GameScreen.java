@@ -599,20 +599,20 @@ public class GameScreen implements Screen {
 
         if(hoveredCraftType != null) {
             //info background
+            Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             TextureRegion infoBg = GameAssetManager.infoPage;
-            GlyphLayout glyphLayout = new GlyphLayout();
 
-            float boxWidth = infoBg.getRegionWidth();
-            float boxHeight = infoBg.getRegionHeight();
+            float boxWidth = infoBg.getRegionWidth() * 12f;
+            float boxHeight = infoBg.getRegionHeight() * 12f + hoveredCraftType.getIngredients().size() * 12f;
 
-            float boxX = CRAFT_X + scaledWidth + 20f;
-            float boxY = CRAFT_Y + scaledHeight - boxHeight - 20f;
+            float boxX = mouse.x + 30f ;
+            float boxY = mouse.y - 30f;
 
             batch.draw(infoBg, boxX, boxY, boxWidth, boxHeight);
 
             //craft info
-            float textX = boxX + 15f;
-            float textY = boxY + boxHeight - 15f;
+            float textX = boxX + 45f;
+            float textY = boxY + boxHeight - 50f;
             font.draw(batch, hoveredCraftType.getName(), textX, textY);
 
             Map<Item, Integer> ingredients = hoveredCraftType.getIngredients();
@@ -635,9 +635,9 @@ public class GameScreen implements Screen {
                 float drawWidth = texWidth * ingredientScale;
                 float drawHeight = texHeight * ingredientScale;
 
-                batch.draw(textureRegion, iconX, iconY - drawHeight, drawWidth, drawHeight);
+                batch.draw(textureRegion, iconX + 10f, iconY - drawHeight - 50f, drawWidth, drawHeight);
 
-                font.draw(batch, "x" + count + " " + item.getName(), iconX + drawWidth + 5f, iconY - 5f);
+                font.draw(batch, "x" + count + " " + item.getName(), iconX + drawWidth + 15f, iconY - 55f);
 
                 iconY -= drawHeight + ingredientPadding;
             }
@@ -1386,7 +1386,7 @@ public class GameScreen implements Screen {
                 int col = index % recipesPerRow;
 
                 float x = startX + col * (iconSize + padding);
-                float y = startY - row * (iconSize + padding);
+                float y = startY - row * (iconSize + padding) - 20f;
 
                 if (world.x >= x && world.x <= x + iconSize &&
                     world.y >= y && world.y <= y + iconSize) {
