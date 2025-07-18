@@ -51,8 +51,6 @@ public class Player {
     private float distanceTraveled = 0f;
     private List<ArtisanMachine> machines = new ArrayList<>();
 
-
-
     //walking animations
     private Animation<TextureRegion> walkUpAnimation;
     private Animation<TextureRegion> walkDownAnimation;
@@ -67,6 +65,11 @@ public class Player {
     private TextureRegion backStill = new TextureRegion(new Texture("player-female/back still.png"));
     private TextureRegion leftStill = new TextureRegion(new Texture("player-female/left 0.png"));
     private TextureRegion rightStill = new TextureRegion(new Texture("player-female/right 0.png"));
+
+    //tool usage
+    private float toolUseTime = 0f;
+    private boolean isUsingTool = false;
+
 
     public Player(User user) {
         this.user = user;
@@ -218,11 +221,34 @@ public class Player {
                 if (textureRegion.isFlipX()) textureRegion.flip(true, false);
             }
 
-            batch.draw(textureRegion, itemX, itemY, itemSize, itemSize);
+            if(isUsingTool) {
+                toolUseTime += Gdx.graphics.getDeltaTime();
+                float rotation = -MathUtils.sin(toolUseTime * 10f) * 15f; //rotating the tool when used
+                if(lastDirection == Direction.LEFT) rotation = -rotation;
+                batch.draw(
+                    textureRegion,
+                    itemX, itemY,
+                    itemSize/2f, 0,
+                    itemSize, itemSize,
+                    1f, 1f,
+                    rotation
+                );
+
+                if (toolUseTime > 0.5f) {
+                    isUsingTool = false;
+                    toolUseTime = 0f;
+                }
+            } else {
+                batch.draw(textureRegion, itemX, itemY, itemSize, itemSize);
+            }
         }
 
     }
 
+    public void useTool() {
+        isUsingTool = true;
+        toolUseTime = 0f;
+    }
 
     public void dispose() {
         texture.dispose();

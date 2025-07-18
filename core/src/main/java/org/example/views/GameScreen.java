@@ -1177,8 +1177,8 @@ public class GameScreen implements Screen {
                     if (tile != null) {
                         Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
                         if (currentItem instanceof Tool) {
+                            MyGame.getCurrentPlayer().useTool();
                             Result result = ((Tool) currentItem).use(tile);
-
                         }
                     }
 
