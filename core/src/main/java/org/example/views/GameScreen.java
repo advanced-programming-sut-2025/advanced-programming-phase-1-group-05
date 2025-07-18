@@ -103,6 +103,7 @@ public class GameScreen implements Screen {
     private float CRAFT_X = 0;
     private float CRAFT_Y = 0;
     private int craftPageIndex;
+    private CraftType hoveredCraftType;
 
 
     //NPC/friendship stuff
@@ -599,6 +600,53 @@ public class GameScreen implements Screen {
                 if(slot.count > 1) font.draw(batch,String.valueOf(slot.count), drawX + drawWidth - 15f,drawY + 10f);
             }
         }
+        if(hoveredCraftType != null) {
+            //info background
+            TextureRegion infoBg = GameAssetManager.infoPage;
+            GlyphLayout glyphLayout = new GlyphLayout();
+
+            float boxWidth = infoBg.getRegionWidth();
+            float boxHeight = infoBg.getRegionHeight();
+
+            float boxX = CRAFT_X + scaledWidth + 20f;
+            float boxY = CRAFT_Y + scaledHeight - boxHeight - 20f;
+
+            batch.draw(infoBg, boxX, boxY, boxWidth, boxHeight);
+
+            //craft info
+            float textX = boxX + 15f;
+            float textY = boxY + boxHeight - 15f;
+            font.draw(batch, hoveredCraftType.getName(), textX, textY);
+
+            Map<Item, Integer> ingredients = hoveredCraftType.getIngredients();
+
+            float ingredientIconSize = 32f;
+            float ingredientPadding = 10f;
+
+            float iconX = boxX + 15f;
+            float iconY = boxY + boxHeight - 50f;
+
+            for(Map.Entry<Item, Integer> entry : ingredients.entrySet()) {
+                Item item = entry.getKey();
+                int count = entry.getValue();
+
+                TextureRegion textureRegion = item.getTexture();
+                float texWidth = textureRegion.getRegionWidth();
+                float texHeight = textureRegion.getRegionHeight();
+
+                float ingredientScale = Math.min(ingredientIconSize / texWidth, ingredientIconSize / texHeight);
+                float drawWidth = texWidth * ingredientScale;
+                float drawHeight = texHeight * ingredientScale;
+
+                batch.draw(textureRegion, iconX, iconY - drawHeight, drawWidth, drawHeight);
+
+                font.draw(batch, "x" + count + " " + item.getName(), iconX + drawWidth + 5f, iconY - 5f);
+
+                iconY -= drawHeight + ingredientPadding;
+            }
+
+        }
+
         batch.end();
 
     }
@@ -1354,6 +1402,50 @@ public class GameScreen implements Screen {
                         }
                     }
 
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean mouseMoved(int screenX, int screenY) {
+            if (!isCraftOpen) {
+                hoveredCraftType = null;                hoveredCraftType = null;
+                return false;
+            }
+
+            Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
+            hoveredCraftType = null;            hoveredCraftType = null;
+
+            ArrayList<CraftType> learnedRecipes = MyGame.getCurrentPlayer().getBackPack().getLearntRecipes();
+
+            int recipesPerRow = 12;
+            int maxRows = 4;
+            int recipesPerPage = recipesPerRow * maxRows;
+
+            int currentPage = craftPageIndex;
+            int startIndex = currentPage * recipesPerPage;
+            int endIndex = Math.min(startIndex + recipesPerPage, learnedRecipes.size());
+
+            float padding = 3f;
+            float iconSize = 74f;
+            float startX = CRAFT_X + 50f;
+            float startY = CRAFT_Y + (GameAssetManager.getCraftTexture().getRegionHeight() * 0.5f) - iconSize - 40f;
+
+            for (int i = startIndex; i < endIndex; i++) {
+                int index = i - startIndex;
+                int row = index / recipesPerRow;
+                int col = index % recipesPerRow;
+
+                float x = startX + col * (iconSize + padding);
+                float y = startY - row * (iconSize + padding);
+
+                if (world.x >= x && world.x <= x + iconSize &&
+                    world.y >= y && world.y <= y + iconSize) {
+
+                    hoveredCraftType = learnedRecipes.get(i);                    hoveredCraftType = learnedRecipes.get(i);
+                    break;
                 }
             }
 
