@@ -17,7 +17,7 @@ public enum CropType implements Material, Item {
         }
 
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -31,7 +31,7 @@ public enum CropType implements Material, Item {
         }
 
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -45,7 +45,7 @@ public enum CropType implements Material, Item {
         }
 
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -57,7 +57,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -70,7 +70,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -83,7 +83,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -96,7 +96,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -109,7 +109,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -122,7 +122,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -135,7 +135,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -148,7 +148,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -161,7 +161,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -174,7 +174,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -187,7 +187,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -200,7 +200,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -213,7 +213,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -226,7 +226,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -239,7 +239,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -252,7 +252,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -265,7 +265,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -278,7 +278,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -291,7 +291,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -304,7 +304,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -317,7 +317,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -330,7 +330,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -343,7 +343,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -356,7 +356,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -369,7 +369,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -382,7 +382,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -395,7 +395,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -408,7 +408,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -421,7 +421,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -434,7 +434,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -447,7 +447,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -460,7 +460,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -473,7 +473,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -486,7 +486,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -499,7 +499,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -512,7 +512,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -525,7 +525,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -538,7 +538,7 @@ public enum CropType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     };
@@ -556,7 +556,7 @@ public enum CropType implements Material, Item {
     private final boolean canBecomeGiant;
     private final String texturePath;
     private final TextureRegion textureRegion;
-    abstract TextureRegion getStageTexture(int stage);
+    public abstract TextureRegion getStageTexture(int stage);
 
     CropType(String name, String source, String stages, int totalHarvestTime, boolean oneTime,
              int regrowthTime, int price, boolean isEdible, int energy, List<Season> seasons, boolean canBeGiant, String texturePath) {

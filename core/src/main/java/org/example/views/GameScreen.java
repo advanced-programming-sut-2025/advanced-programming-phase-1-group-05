@@ -267,6 +267,9 @@ public class GameScreen implements Screen {
         updateToolSelectionSlots();
         checkGifting();
         if(showResult) showResult(batch,latestResult,delta);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            GameManager.getGameClock().advanceDay();
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             isInvenotryOpen = !isInvenotryOpen;
             isCraftOpen = false;

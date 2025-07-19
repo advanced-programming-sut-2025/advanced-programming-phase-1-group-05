@@ -17,7 +17,7 @@ public enum TreeType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -30,7 +30,7 @@ public enum TreeType implements Material, Item {
             stageTextures[4] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Cherry_Stage_5_Fruit.png"));
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -43,7 +43,7 @@ public enum TreeType implements Material, Item {
             stageTextures[4] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Banana_Stage_5_Fruit.png"));
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -56,7 +56,7 @@ public enum TreeType implements Material, Item {
             stageTextures[4] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Mango_Stage_5_Fruit.png"));
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -69,7 +69,7 @@ public enum TreeType implements Material, Item {
             stageTextures[4] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Orange_Stage_5_Fruit.png"));
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -82,7 +82,7 @@ public enum TreeType implements Material, Item {
             stageTextures[4] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Peach_Stage_5_Fruit.png"));
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -95,7 +95,7 @@ public enum TreeType implements Material, Item {
             stageTextures[4] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Apple_Stage_5_Fruit.png"));
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -108,59 +108,55 @@ public enum TreeType implements Material, Item {
             stageTextures[4] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Pomegranate_Stage_5_Fruit.png"));
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
     OakTree("Oak Tree", "Acorns", "7-7-7-7", 28, "Oak Resin", 7, 150, false, 0, List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER),"Stardew_Valley_Images-main/Trees/Oak_Stage_4.png") {
         private final TextureRegion[] stageTextures = new TextureRegion[5];
         {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 5; i++) {
                 stageTextures[i] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Oak_Stage_" + (i + 1) + ".png"));
             }
-            stageTextures[4] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Oak_Stage_5_Fruit.png"));
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
     MapleTree("Maple Tree", "Maple Seeds", "7-7-7-7", 28, "Maple Syrup", 9, 200, false, 0, List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER),"Stardew_Valley_Images-main/Trees/Maple_Stage_5.png") {
         private final TextureRegion[] stageTextures = new TextureRegion[5];
         {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 5; i++) {
                 stageTextures[i] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Maple_Stage_" + (i + 1) + ".png"));
             }
-            stageTextures[4] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Maple_Stage_5_Fruit.png"));
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
     PineTree("Pine Tree", "Pine Cones", "7-7-7-7", 28, "Pine Tar", 5, 100, false, 0, List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER),"Stardew_Valley_Images-main/Trees/Pine_Stage_5.png") {
         private final TextureRegion[] stageTextures = new TextureRegion[5];
         {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 5; i++) {
                 stageTextures[i] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Pine_Stage_" + (i + 1) + ".png"));
             }
-            stageTextures[4] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Pine_Stage_5_Fruit.png"));
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
     MahoganyTree("Mahogany Tree", "Mahogany Seeds", "7-7-7-7", 28, "Sap", 1, 2, true, -2, List.of(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER),"Stardew_Valley_Images-main/Trees/Mahogany_Stage_5.png") {
         private final TextureRegion[] stageTextures = new TextureRegion[5];
         {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 5; i++) {
                 stageTextures[i] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Mahogany_Stage_" + (i + 1) + ".png"));
             }
-            stageTextures[4] = new TextureRegion(new Texture("Stardew_Valley_Images-main/Trees/Mahogany_Stage_5_Fruit.png"));
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -172,7 +168,7 @@ public enum TreeType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     },
@@ -184,7 +180,7 @@ public enum TreeType implements Material, Item {
             }
         }
         @Override
-        TextureRegion getStageTexture(int stage) {
+        public TextureRegion getStageTexture(int stage) {
             return stageTextures[Math.min(stage, stageTextures.length - 1)];
         }
     };
@@ -201,7 +197,7 @@ public enum TreeType implements Material, Item {
     private final List<Season> seasons;
     private final String normalTexturePath;
     private final TextureRegion textureRegion;
-    abstract TextureRegion getStageTexture(int stage);
+    public abstract TextureRegion getStageTexture(int stage);
     TreeType(String name, String seed, String stages, int totalHarvestTime, String fruit,
              int fruitHarvestCycle, int fruitPrice,boolean isFruitEdible, int fruitEnergy, List<Season> seasons, String normalTexturePath) {
         this.name = name;
