@@ -659,24 +659,10 @@ public class GameMenuController extends MenuController {
                 "! You've been gifted! Hope it's not rocks again.");
         return new Result(true, "You handed over the gift with a smile. Let's hope they like it!");
     }
-
-    public Result showGiftList() {
-        StringBuilder output = new StringBuilder();
-        Player currentPlayer = MyGame.getCurrentPlayer();
-        for (Gift gift : MyGame.getAllGifts()) {
-            if (gift.getReceiver().equals(currentPlayer))
-                output.append(gift.getId()).append(".  ").append(gift.getAmount()).append(" ")
-                        .append(gift.getName()).append(" (s)\n");
-        }
-        if (output.toString().isEmpty())
-            return Result.success("Still waiting for that surprise delivery. It'll happen... probably");
-        return Result.success(output.toString());
-    }
-
     public Result rateTheGift(Gift gift, int rating) {
 
         if (rating < 1 || rating > 5)
-            return new Result(false, "Your rating confused the chickens. Please try again.");
+            return new Result(false, "enter a number between 1 to 5.");
         Player currentPlayer = MyGame.getCurrentPlayer();
         if (gift == null || !gift.getReceiver().equals(currentPlayer))
             return new Result(false,
@@ -684,7 +670,7 @@ public class GameMenuController extends MenuController {
         Player targetPlayer = gift.getSender();
         currentPlayer.changeFriendshipXP(((rating - 3) * 30 + 15), targetPlayer);
         gift.setRating(rating);
-        return new Result(true, "They say don’t look a gift horse in the mouth-but you just did.");
+        return new Result(true, "rated successfully!");
     }
 
     public Result showGiftHistory(String username) {
@@ -703,11 +689,27 @@ public class GameMenuController extends MenuController {
         Player player = MyGame.getCurrentPlayer();
         List<Gift> receivedGifts = new ArrayList<>();
         for (Gift gift : MyGame.getAllGifts()) {
+            System.out.println("checking " + gift.getItem());
             if (gift.getSender().equals(otherPlayer) && gift.getReceiver().equals(player)) {
                 receivedGifts.add(gift);
+                System.out.println("recieved");
             }
         }
         return receivedGifts;
+    }
+
+    public List<Gift> getSentGifts(Player otherPlayer) {
+        Player player = MyGame.getCurrentPlayer();
+        List<Gift> sentGifts = new ArrayList<>();
+        for (Gift gift : MyGame.getAllGifts()) {
+            System.out.println("checking " + gift.getItem());
+            System.out.println("actual sender : " + gift.getSender().getUsername() + " expecting sender : " + player.getUsername());
+            if (gift.getSender().equals(player) && gift.getReceiver().equals(otherPlayer)) {
+                sentGifts.add(gift);
+                System.out.println("sent");
+            }
+        }
+        return sentGifts;
     }
     public Result hugPlayer(String username) {
         Player targetPlayer = MyGame.getPlayerByUsername(username);

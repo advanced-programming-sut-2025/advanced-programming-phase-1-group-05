@@ -55,8 +55,6 @@ public class NpcActor extends Actor {
         if (GameManager.getGameClock().hour >= dialogueTime) {
             dialogueReady = true;
             exclamationImage.setVisible(true);
-            System.out.println("NPC dialogue ready! Showing exclamation");
-
         }
 
         super.act(delta);
@@ -113,7 +111,6 @@ public class NpcActor extends Actor {
                 getY() + getHeight() + 5
             );
             exclamationImage.draw(batch, parentAlpha);
-            System.out.println("Drawing exclamation at: " + exclamationImage.getX() + ", " + exclamationImage.getY());
 
         }
 

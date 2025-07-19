@@ -12,10 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.controllers.DBController;
 import org.example.controllers.GameMenuController;
-import org.example.models.Player;
-import org.example.models.Result;
-import org.example.models.User;
-import org.example.models.UserDatabase;
+import org.example.models.*;
 
 import java.awt.*;
 import java.util.*;
@@ -103,6 +100,7 @@ public class MapSelectionScreen implements Screen {
                     DBController.saveGameState();
                     resultLabel.setText("Game started!");
                     //MenuNavigator.showGameScreen();
+                    MyGame.setCurrentPlayer(players.get(0));
                     MenuNavigator.showGameScreen(players);
                 }
             }

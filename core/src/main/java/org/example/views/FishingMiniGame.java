@@ -2,10 +2,12 @@ package org.example.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.models.*;
@@ -20,7 +22,7 @@ import java.util.Random;
 
 public class FishingMiniGame implements Screen {
     private ProgressMeter progressMeter;
-    //private Texture backgroundTexture;
+    private Texture backgroundTexture;
     private boolean fishCaught = false;
     private Stage stage;
     Skin skin = GameAssetManager.getSkin();
@@ -35,11 +37,14 @@ public class FishingMiniGame implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        //   backgroundTexture = new Texture("fishing_bg.png");
+        backgroundTexture = new Texture("ui/FishingBG.png");
+        progressMeter = new ProgressMeter();
     }
 
     @Override
     public void render(float delta) {
+
+        ScreenUtils.clear(0, 0, 0, 1);
 
         if (progressMeter.isComplete()&& !fishCaught) {
             fishCaught  = true;
@@ -68,6 +73,15 @@ public class FishingMiniGame implements Screen {
                 }
             }, 3);
         }
+
+
+
+        stage.getBatch().begin();
+        stage.getBatch().draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage.getBatch().end();
+
+        stage.act(delta);
+        stage.draw();
 
     }
 

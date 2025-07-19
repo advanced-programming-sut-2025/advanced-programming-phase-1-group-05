@@ -27,10 +27,7 @@ import org.example.controllers.GameManager;
 import org.example.controllers.GameMenuController;
 import org.example.controllers.HomeMenuController;
 import org.example.models.*;
-import org.example.models.Enums.CraftType;
-import org.example.models.Enums.FishType;
-import org.example.models.Enums.Season;
-import org.example.models.Enums.SkillSetInfo;
+import org.example.models.Enums.*;
 import org.example.models.Tool.BackPack;
 import org.example.models.Tool.FishingPole;
 import org.example.models.Tool.Tool;
@@ -48,7 +45,7 @@ public class GameScreen implements Screen {
     HomeMenuController homeMenuController;
     Stage stage;
     Table missionListTable, animalMenuTable, notificationTable, giftMenuTable, giftHistoryTable, rateTable,
-        playerMenuTable;
+        playerMenuTable, artisanMenuTable;
     Skin skin;
     ImageButton notificationButton;
     Viewport viewport;
@@ -305,6 +302,7 @@ public class GameScreen implements Screen {
         isCraftOpen = false;
         isToolSelectionOpen = false;
     }
+
     private void checkGifting() {
         if (isInvenotryOpen && giftMode && Gdx.input.justTouched()) {
             Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -336,7 +334,8 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) player.moveDown(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.moveLeft(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.moveRight(delta);
-
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F))
+            Main.getMain().setScreen(new FishingMiniGame(this, new FishingPole(), FishType.CrimsonFish));
         float px = player.getXX() + player.getWidth() / 2f;
         float py = player.getYY() + player.getHeight() / 2f;
         if (!canWalk(px, py)) {
@@ -846,6 +845,10 @@ public class GameScreen implements Screen {
         playerMenuTable.setVisible(false);
         playerMenuTable.setFillParent(true);
         uiStage.addActor(playerMenuTable);
+        artisanMenuTable = new Table();
+        artisanMenuTable.setVisible(false);
+        artisanMenuTable.setFillParent(true);
+        uiStage.addActor(artisanMenuTable);
 
         for (NpcActor npc : NPCs) {
             stage.addActor(npc);
@@ -873,6 +876,7 @@ public class GameScreen implements Screen {
         });
         uiStage.addActor(notificationButton);
         forceViewportReset();
+
     }
 
     private void forceViewportReset() {
@@ -947,7 +951,12 @@ public class GameScreen implements Screen {
         Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
 
         for (Gift  gift : controller.getReceivedGifts(player)) {
-            innerPanel.add(buildRow(gift)).padBottom(50).row();
+            innerPanel.add(buildRow(gift,true)).padBottom(50).row();
+            System.out.println("added " + gift.getItem());
+        }
+        for (Gift gift : controller.getSentGifts(player)) {
+            innerPanel.add(buildRow(gift, false)).padBottom(50).row();
+            System.out.println("added " + gift.getItem());
         }
         ImageButton closeButton = new ImageButton(closeDrawable);
         closeButton.addListener(new ClickListener() {
@@ -962,7 +971,7 @@ public class GameScreen implements Screen {
         giftHistoryTable.add(innerPanel).center();
     }
 
-    private Table buildRow(Gift gift) {
+    private Table buildRow(Gift gift, boolean ratable) {
         Item item = gift.getItem();
         Table row = new Table();
         Image itemIcon = new Image(item.getTexture());
@@ -973,12 +982,13 @@ public class GameScreen implements Screen {
         row.add(itemIcon).size(itemIcon.getWidth()*1.5f, itemIcon.getHeight()*1.5f).padRight(10);
         row.add(nameLabel).padRight(10);
         Texture starTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/rateSign.png");
-        if (!gift.hasBeenRated()){
+        if (!gift.hasBeenRated() && ratable){
             ImageButton starButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(starTexture)));
             starButton.getImageCell().size(30, 30);
             starButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
+                    giftHistoryTable.setVisible(false);
                     showRateTable(gift);
                 }
             });
@@ -986,9 +996,9 @@ public class GameScreen implements Screen {
         }
         else {
             starTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/purpleStar.png");
-            Image star = new Image(starTexture);
-            star.setSize(30, 30);
-            for (int i = 0 ; i < gift.getRating(); i++) {
+            for (int i = 0; i < gift.getRating(); i++) {
+                Image star = new Image(starTexture);
+                star.setSize(30, 30);
                 row.add(star).size(30).pad(10);
             }
         }
@@ -1005,20 +1015,21 @@ public class GameScreen implements Screen {
         innerPanel.pad(30);
 
         TextField enterRating = new TextField("", skin);
+        enterRating.setWidth(500);
         enterRating.setMessageText("enter your rating (1-5)");
         TextField.TextFieldStyle style = enterRating.getStyle();
         style.fontColor = Color.WHITE;
         style.disabledFontColor = Color.GRAY;
         enterRating.setStyle(style);
         style.background = skin.newDrawable("white", new Color(0.1f, 0.1f, 0.2f, 1f));
-        innerPanel.add(enterRating).row();
+        innerPanel.add(enterRating).width(500).center().row();
 
         Label errorLabel = new Label("", skin);
         errorLabel.setColor(Color.PINK);
         Texture checkTexture = new Texture(Gdx.files.internal("ui/checkMark.png"));
         Drawable checkDrawable = new TextureRegionDrawable(new TextureRegion(checkTexture));
         ImageButton done = new ImageButton(checkDrawable);
-        innerPanel.add(done).size(48, 48).padTop(20).colspan(2).center();
+        innerPanel.add(done).size(48, 48).padTop(20).colspan(2).pad(20);
         done.getImageCell().size(48, 48);
         innerPanel.add(errorLabel).pad(20);
         done.addListener(new ClickListener() {
@@ -1032,7 +1043,8 @@ public class GameScreen implements Screen {
                        errorLabel.setText(result.getMessage());
                    }
                    else  {
-                       rateTable.setVisible(false);
+                       errorLabel.setColor(Color.GREEN);
+                       errorLabel.setText(result.getMessage());
                    }
                 }
                 catch (Exception e) {
@@ -1049,12 +1061,13 @@ public class GameScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 rateTable.setVisible(false);
+                showGiftHistory(gift.getSender());
             }
         });
 
-        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).pad(20);
         closeButton.getImageCell().size(48, 48);
-        giftMenuTable.add(innerPanel).center();
+        rateTable.add(innerPanel).left();
 
     }
 
@@ -1149,6 +1162,43 @@ public class GameScreen implements Screen {
         giftMenuTable.add(innerPanel).center();
     }
 
+    private void showArtisanMenu(ArtisanMachine machine) {
+        artisanMenuTable.clear();
+        artisanMenuTable.setVisible(true);
+        Table innerPanel = new Table(skin);
+        Texture menuTexture = GameAssetManager.getInstance().getOrLoadTexture("Animals/MenuBackground2.png");
+
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        innerPanel.setBackground(menuDrawable);
+        innerPanel.pad(30);
+
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+
+        TextButton finishNowButton = new TextButton("Finish Now", skin);
+        innerPanel.add(finishNowButton).fillX();
+        innerPanel.row();
+        finishNowButton.setColor(1, 210f/255, 132f/255, 1);
+        finishNowButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                machine.finish();
+                artisanMenuTable.setVisible(false);
+            }
+        });
+
+        ImageButton closeButton = new ImageButton(closeDrawable);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                artisanMenuTable.setVisible(false);
+            }
+        });
+
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
+        artisanMenuTable.add(innerPanel).center();
+    }
     private void showAnimalMenu(AnimalActor animalActor) {
         Animal animal = animalActor.getAnimal();
         animalMenuTable.clear();
@@ -1525,5 +1575,19 @@ public class GameScreen implements Screen {
 
     public void removeAnimalActor(AnimalActor animalActor) {
         animalActor.remove();
+    }
+
+    public void addArtisanMachine(ArtisanMachine machine) {
+        stage.addActor(machine);
+        machine.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (button == Input.Buttons.RIGHT) {
+                    showArtisanMenu(machine);
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 }

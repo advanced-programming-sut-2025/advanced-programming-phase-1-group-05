@@ -75,7 +75,6 @@ public class StoreView implements Screen {
         //TextButton finishButton = new TextButton("Finish Shopping", skin);
         finishButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("clicked shopping button");
                 StoreController.getInstance().purchase(quantities, store);
             }
         });
@@ -124,12 +123,13 @@ public class StoreView implements Screen {
 
         Image hoverRect = new Image(new Texture("white_pixel.png"));
         hoverRect.setColor(Color.BLACK);
-        hoverRect.setSize(60, 100);
+        hoverRect.setSize(200, 200);
         hoverRect.setVisible(false);
 
         Label tooltipLabel = new Label(item.getDescription(), skin);
+        tooltipLabel.setColor(Color.WHITE);
         tooltipLabel.setWrap(true);
-        tooltipLabel.setWidth(50);
+        tooltipLabel.setWidth(200);
         tooltipLabel.setAlignment(Align.left);
         tooltipLabel.setVisible(false);
         itemIcon.addListener(new InputListener() {
@@ -137,17 +137,20 @@ public class StoreView implements Screen {
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 hoverRect.setVisible(true);
                 Vector2 iconPos = itemIcon.localToStageCoordinates(new Vector2(0, 0));
-                hoverRect.setPosition(iconPos.x - itemIcon.getWidth(), iconPos.y);
+                hoverRect.setPosition(iconPos.x - itemIcon.getWidth() - 250, iconPos.y);
+                tooltipLabel.toFront();
                 tooltipLabel.setVisible(true);
-                tooltipLabel.setPosition(iconPos.x- itemIcon.getWidth() + 5, iconPos.y + 5);
+                tooltipLabel.setPosition(iconPos.x- itemIcon.getWidth() -245 , iconPos.y + 75);
             }
 
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                 hoverRect.setVisible(false);
+                tooltipLabel.setVisible(false);
             }
         });
 
+        stage.addActor(tooltipLabel);
         stage.addActor(hoverRect);
         row.add(itemIcon).size(itemIcon.getWidth()*1.5f, itemIcon.getHeight()*1.5f).padRight(10);
         row.add(nameLabel).padRight(10);
@@ -160,7 +163,8 @@ public class StoreView implements Screen {
     }
     @Override
     public void show() {
-        Image background = new Image(new Texture("stores/"+ store.getStoreName().toLowerCase() + "Interior.jpg"));
+        Image background = new Image(new Texture("stores/"+ store.getStoreName().toLowerCase().replaceAll("\\s+", "") + "Interior.png"));
+        //Image background = new Image(new Texture("stores/blacksmithInterior.png"));
         background.setFillParent(true);
         stage.addActor(background);
         Gdx.input.setInputProcessor(stage);

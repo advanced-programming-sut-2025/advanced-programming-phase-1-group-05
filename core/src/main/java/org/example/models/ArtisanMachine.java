@@ -1,17 +1,18 @@
 package org.example.models;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import org.example.models.Enums.ArtisanType;
 
 import java.util.List;
 
-public class ArtisanMachine {
+public class ArtisanMachine extends Actor {
     private TextureRegion textureNormal;
     private TextureRegion textureReady;
-    private final Vector2 position = new Vector2();
     ArtisanType type;
     private boolean ready = false;
     private float processingTime;
@@ -23,6 +24,7 @@ public class ArtisanMachine {
         this.textureNormal = new TextureRegion(new Texture("ArtisanMachines/" + type.name().toLowerCase() + ".png"));
         this.textureReady = new TextureRegion(new Texture("ArtisanMachines/" + type.name().toLowerCase() + "_ready.png"));
         // TODO set the position
+        setSize(textureNormal.getRegionWidth(), textureNormal.getRegionHeight());
     }
 
     public boolean insertItem(List<String> items) {
@@ -32,15 +34,17 @@ public class ArtisanMachine {
             this.processingTime = product.getProcessingTime();
             this.elapsedTime = 0;
             this.ready = false;
-        };  // success message
+        } // success message
 
 
         return true;
     }
 
-    public void update(float v) {
+    @Override
+    public void act(float delta) {
+        super.act(delta);
         if (product == null || ready) return;
-        elapsedTime += v;
+        elapsedTime += delta;
         if (elapsedTime >= processingTime) {
             ready = true;
         }
@@ -67,11 +71,19 @@ public class ArtisanMachine {
         return ready;
     }
 
-    public void render(SpriteBatch batch) {
-        TextureRegion texture;
-        if (ready) texture = textureReady;
-        else  texture = textureNormal;
+    public void finish() {
+        ready = true;
+        elapsedTime = processingTime;
+    }
 
-        batch.draw(texture, position.x, position.y);
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        TextureRegion texture = ready ? textureReady : textureNormal;
+
+        batch.draw(
+            texture,
+            getX(), getY(),
+            getWidth(), getHeight()
+        );
     }
 }
