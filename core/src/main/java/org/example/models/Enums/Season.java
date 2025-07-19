@@ -1,10 +1,10 @@
 package org.example.models.Enums;
 
 public enum Season {
-    SPRING("Spring", "tree_spring.png", "tile_summer.png"),
+    SPRING("Spring", "tree_spring.png", "Soil.png"),
     SUMMER("Summer", "tree.png", "Soil.png"),
-    FALL("Fall", "tree_autumn.png", "tile_autumn.png"),
-    WINTER("Winter", "tree_snow.png", "tile_winter.png");
+    FALL("Fall", "tree_autumn.png", "Soil.png"),
+    WINTER("Winter", "tree_snow.png", "Soil.png");
 
     private final String name;
     private final String treeTexture;

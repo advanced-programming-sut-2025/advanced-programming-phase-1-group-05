@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 public enum TileType {
     Water("water2.png", false),
     Soil("Soil.png", false),
-    WateredSoil("Soil.png", false),
+    WateredSoil("wateredSoil.png", false),
     Flat("Flat.png", false),
     FarmFlat("flat2.png", false),
     House("Building.png", true),

@@ -26,7 +26,10 @@ public class WateringCan implements Tool<ItemLevel> {
                     return new Result(false, "You don't have enough energy");
                 waterlevel = level.getWateringcanCapacity();
                 return new Result(true, "Watering can successfully filled up!");
-            } else return new Result(false, "Nothing to water!");
+            } else {
+                if (tile.getTileType() == TileType.Soil) tile.setTileType(TileType.WateredSoil);
+                return new Result(false, "Nothing to water!");
+            }
         } else {
             if(item instanceof FruitAndVegetable) {
                 if(farming.isMaxLevel()) energyUsage --;

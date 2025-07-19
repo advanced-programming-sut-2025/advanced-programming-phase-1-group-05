@@ -143,7 +143,7 @@ public class TileMapRenderer {
         for (int y = startY; y <= endY; y++) {
             for (int x = startX; x <= endX; x++) {
                 GameTile tile = GameMap.getTile(x, y);
-                if(tile == null) continue;
+                if (tile == null) continue;
                 TileType type = tile.getTileType();
                 if (type == null) continue;
 
@@ -155,7 +155,6 @@ public class TileMapRenderer {
                 if (type == TileType.House
                     || type == TileType.GreenHouse || type.name().startsWith("HOUSE_")
                     || type.name().startsWith("GREENHOUSE_")) {
-                    TileType background = inferBackground(x, y);
                     Texture bgTex = TileType.FarmFlat.getTexture();
                     if (bgTex != null)
                         batch.draw(bgTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -176,19 +175,25 @@ public class TileMapRenderer {
                 Item itemOnTile = tile.getItemOnTile();
                 if (itemOnTile != null) {
                     Texture itemTex = itemOnTile.getTexture().getTexture();
-                    //if (itemTex == null) itemTex = textureMap.get(tile.getTileType());
 
-                    if (itemTex != null) {
-                        float scale = (float) TILE_SIZE / itemTex.getHeight();
-                        batch.draw(itemTex, x * TILE_SIZE, y * TILE_SIZE, itemTex.getWidth() * scale, TILE_SIZE);
-                    }
+                    float texWidth = itemTex.getWidth();
+                    float texHeight = itemTex.getHeight();
+
+                    float scale = TILE_SIZE / Math.max(texWidth, texHeight);
+
+                    float drawWidth = texWidth * scale;
+                    float drawHeight = texHeight * scale;
+
+                    float drawX = x * TILE_SIZE + (TILE_SIZE - drawWidth) / 2f;
+                    float drawY = y * TILE_SIZE + (TILE_SIZE - drawHeight) / 2f;
+
+                    batch.draw(itemTex, drawX, drawY, drawWidth, drawHeight);
                 }
             }
         }
     }
 
-
-    private TileType inferBackground(int x, int y) {
+        private TileType inferBackground(int x, int y) {
         for (int playerId = 0; playerId < 4; playerId++) {
             int offsetX = (playerId % 2) * PLAYER_FARM_WIDTH;
             int offsetY = (playerId / 2) * PLAYER_FARM_HEIGHT;

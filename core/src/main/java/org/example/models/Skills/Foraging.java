@@ -14,6 +14,7 @@ public class Foraging implements Skill{
     public void forageItem(GameTile tile) {
         Item item = tile.getItemOnTile();
         MyGame.getCurrentPlayer().getBackPack().addToInventory(item, 1);
+        tile.setItemOnTile(null);
         increaseCapacity();
     }
 

@@ -168,8 +168,7 @@ public class GameScreen implements Screen {
 
         if (tileX >= 0 && tileX < MAP_WIDTH &&
             tileY >= 0 && tileY < MAP_HEIGHT &&
-        MyGame.getCurrentPlayer().getCurrentItem() != null &&
-        MyGame.getCurrentPlayer().getCurrentItem() instanceof Tool) {
+        MyGame.getCurrentPlayer().getCurrentItem() != null) {
 
             shapeRenderer.setProjectionMatrix(camera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -184,6 +183,7 @@ public class GameScreen implements Screen {
         }
 
     }
+
     private void initializeFarmArea() {
         for (Player player : players) {
             String map = GameMenuController.getMapForPlayer(player.getUsername());
@@ -1531,28 +1531,30 @@ public class GameScreen implements Screen {
                     if (world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
                         world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
 
-                        if (draggedItem == null && slot.item != null) {
-                            draggedItem = slot.item;
-                            selectedSlot = slot;
-                            slot.item = null;
-                            MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
-                            return true;
-                        } else if (draggedItem != null && slot.item == null) {
-                            slot.item = draggedItem;
-                            draggedItem = null;
-                            selectedSlot = null;
-                            MyGame.getCurrentPlayer().setCurrentItem(null);
-                            syncBackPackFromSlots();
-                            return true;
-                        } else if (draggedItem != null && slot.item != null) {
-                            Item temp = slot.item;
-                            slot.item = draggedItem;
-                            draggedItem = temp;
-                            selectedSlot = slot;
-                            MyGame.getCurrentPlayer().setCurrentItem(slot.item);
-                            syncBackPackFromSlots();
-                            return true;
-                        }
+                        MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+
+//                        if (draggedItem == null && slot.item != null) {
+//                            draggedItem = slot.item;
+//                            selectedSlot = slot;
+//                            slot.item = null;
+//                            MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
+//                            return true;
+//                        } else if (draggedItem != null && slot.item == null) {
+//                            slot.item = draggedItem;
+//                            draggedItem = null;
+//                            selectedSlot = null;
+//                            MyGame.getCurrentPlayer().setCurrentItem(null);
+//                            syncBackPackFromSlots();
+//                            return true;
+//                        } else if (draggedItem != null && slot.item != null) {
+//                            Item temp = slot.item;
+//                            slot.item = draggedItem;
+//                            draggedItem = temp;
+//                            selectedSlot = slot;
+//                            MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+//                            syncBackPackFromSlots();
+//                            return true;
+//                        }
                     }
                 }
             } else if (isToolSelectionOpen) {
@@ -1606,7 +1608,7 @@ public class GameScreen implements Screen {
             }
 
             if(MyGame.getCurrentPlayer().getCurrentItem() != null &&
-            MyGame.getCurrentPlayer().getCurrentItem() instanceof Tool) {
+            !isToolSelectionOpen && !isCraftOpen && !isInvenotryOpen && !isCookingOpen) {
                 int tileX = (int) (world.x / TILE_SIZE);
                 int tileY = (int) (world.y / TILE_SIZE);
 
@@ -1615,23 +1617,29 @@ public class GameScreen implements Screen {
 
                     GameTile tile = GameMap.getTile(tileX, tileY);
                     if (tile != null) {
-                        Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
-                        if (currentItem instanceof Tool) {
+                        if (MyGame.getCurrentPlayer().getCurrentItem() instanceof Tool) {
+                            Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
                             if (currentItem instanceof FishingPole) {
                                 FishingPole pole = (FishingPole) currentItem;
-                                FishType fish =  controller.getRandomFish((FishingPole) currentItem);
+                                FishType fish = controller.getRandomFish((FishingPole) currentItem);
                                 Main.getMain().setScreen(new FishingMiniGame(screen, pole, fish));
-                            }
-                            else MyGame.getCurrentPlayer().useTool();
+                            } else MyGame.getCurrentPlayer().useTool();
                             Result result = ((Tool) currentItem).use(tile);
                             latestResult = result;
                             showResult = true;
+                        } else {
+                            Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
+                            latestResult = controller.placeItem(currentItem, tile);
+                            Player player = MyGame.getCurrentPlayer();
+                            if(player.getBackPack().howManyOfItem(currentItem) == 0)
+                                MyGame.getCurrentPlayer().setCurrentItem(null);
+                            updateInventorySlots();
+                            showResult = true;
                         }
                     }
-
                 }
-            }
 
+            }
 
             return false;
         }
