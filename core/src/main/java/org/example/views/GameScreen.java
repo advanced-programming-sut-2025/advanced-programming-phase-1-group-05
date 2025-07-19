@@ -225,7 +225,6 @@ public class GameScreen implements Screen {
         handleInput(delta);
         //cheatCodeWindow.update(delta);
 
-
         timeAccumulator += delta;
         if (timeAccumulator >= 42f) {
             GameManager.getGameClock().advanceTime(60);
@@ -299,12 +298,6 @@ public class GameScreen implements Screen {
         uiStage.draw();
     }
 
-    private void closeAllPages(){
-        isInvenotryOpen = false;
-        isSkillSetOpen = false;
-        isCraftOpen = false;
-        isToolSelectionOpen = false;
-    }
     private void checkGifting() {
         if (isInvenotryOpen && giftMode && Gdx.input.justTouched()) {
             Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -643,52 +636,6 @@ public class GameScreen implements Screen {
                 batch.draw(textureRegion, iconX + 10f, iconY - drawHeight - 50f, drawWidth, drawHeight);
 
                 font.draw(batch, "x" + count + " " + item.getName(), iconX + drawWidth + 15f, iconY - 55f);
-
-                iconY -= drawHeight + ingredientPadding;
-            }
-
-        }
-        if(hoveredCraftType != null) {
-            //info background
-            TextureRegion infoBg = GameAssetManager.infoPage;
-            GlyphLayout glyphLayout = new GlyphLayout();
-
-            float boxWidth = infoBg.getRegionWidth();
-            float boxHeight = infoBg.getRegionHeight();
-
-            float boxX = CRAFT_X + scaledWidth + 20f;
-            float boxY = CRAFT_Y + scaledHeight - boxHeight - 20f;
-
-            batch.draw(infoBg, boxX, boxY, boxWidth, boxHeight);
-
-            //craft info
-            float textX = boxX + 15f;
-            float textY = boxY + boxHeight - 15f;
-            font.draw(batch, hoveredCraftType.getName(), textX, textY);
-
-            Map<Item, Integer> ingredients = hoveredCraftType.getIngredients();
-
-            float ingredientIconSize = 32f;
-            float ingredientPadding = 10f;
-
-            float iconX = boxX + 15f;
-            float iconY = boxY + boxHeight - 50f;
-
-            for(Map.Entry<Item, Integer> entry : ingredients.entrySet()) {
-                Item item = entry.getKey();
-                int count = entry.getValue();
-
-                TextureRegion textureRegion = item.getTexture();
-                float texWidth = textureRegion.getRegionWidth();
-                float texHeight = textureRegion.getRegionHeight();
-
-                float ingredientScale = Math.min(ingredientIconSize / texWidth, ingredientIconSize / texHeight);
-                float drawWidth = texWidth * ingredientScale;
-                float drawHeight = texHeight * ingredientScale;
-
-                batch.draw(textureRegion, iconX, iconY - drawHeight, drawWidth, drawHeight);
-
-                font.draw(batch, "x" + count + " " + item.getName(), iconX + drawWidth + 5f, iconY - 5f);
 
                 iconY -= drawHeight + ingredientPadding;
             }
