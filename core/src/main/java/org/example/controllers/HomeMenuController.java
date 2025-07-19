@@ -98,6 +98,20 @@ public class HomeMenuController {
         return true;
     }
 
+    //check if a recipe can be cooked
+    public boolean cookingIngredientCheck(CookingRecipeType recipe) {
+        BackPack playerBackpack = MyGame.getCurrentPlayer().getBackPack();
+        for(Map.Entry<Item, Integer> ingredientEntry : recipe.getIngredients().entrySet()) {
+            if(!playerBackpack.getInventory().containsKey(ingredientEntry.getKey())) {
+                return false;
+            }
+            if(playerBackpack.getInventory().get((ingredientEntry.getKey())) < ingredientEntry.getValue()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     //put or pick from refrigerator
     public Result putOrPickRefrigerator(String action, String itemName) {
         switch (action) {

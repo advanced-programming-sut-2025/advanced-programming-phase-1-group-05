@@ -117,6 +117,10 @@ public class GameAssetManager {
         return MyGame.getCurrentPlayer().getBackPack().getLevel().getInventoryTexture();
     }
 
+    public static TextureRegion getCookingTexture() {
+        return MyGame.getCurrentPlayer().getBackPack().getLevel().getCookingTexture();
+    }
+
 
 
 
