@@ -108,11 +108,11 @@ public class GameMap {
                     item = new ForagingItem(type, type.getName(), type.getPrice());
                     tile.setItemOnTile(item);
                 } else if(chosen % 4 == 2) {
-                    item = MyGame.getDatabase().getItem("Wood");
+                    item = MineralType.Wood;
 
                     tile.setItemOnTile(item);
                 } else {
-                    item = MyGame.getDatabase().getItem("Fiber");
+                    item = MineralType.Fiber;
                     tile.setItemOnTile(item);
                 }
             }
