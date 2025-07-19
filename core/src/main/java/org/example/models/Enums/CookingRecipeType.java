@@ -27,7 +27,7 @@ public enum CookingRecipeType implements Material, Item {
     Cookie("Cookie", () -> Map.of(MyGame.getDatabase().getItem("Wheat Flour"), 1, MyGame.getDatabase().getItem("Sugar"), 1, MyGame.getDatabase().getItem("Egg"), 1), 90, false, "Stardrop Saloon", 140, "Stardew_Valley_Images-main/Recipe/Cookie.png"),
     HashBrowns("Hash Browns", () -> Map.of(CropType.Potato, 1, MyGame.getDatabase().getItem("Oil"), 1), 90, true, "Stardrop Saloon", 120, "Stardew_Valley_Images-main/Recipe/Hashbrowns.png"),
     Pancakes("Pancakes", () -> Map.of(MyGame.getDatabase().getItem("Wheat Flour"), 1, MyGame.getDatabase().getItem("Egg"), 1), 90, true, "Stardrop Saloon", 80, "Stardew_Valley_Images-main/Recipe/Pancakes.png"),
-    FruitSalad("Fruit Salad", () -> Map.of(CropType.Blueberry, 1, CropType.Melon, 1, MyGame.getDatabase().getItem("Apricot"), 1), 263, false, "Stardrop Saloon", 450,"Stardew_Valley_Images-main/Recipe/Fruit_Salad.png"),
+    FruitSalad("Fruit Salad", () -> Map.of(CropType.Blueberry, 1, CropType.Melon, 1, ForagingCrop.Apricot, 1), 263, false, "Stardrop Saloon", 450,"Stardew_Valley_Images-main/Recipe/Fruit_Salad.png"),
     RedPlate("Red Plate", () -> Map.of(CropType.RedCabbage, 1, CropType.Radish, 1), 240, true, "Stardrop Saloon", 400,"Stardew_Valley_Images-main/Recipe/Red_Plate.png"),
     Bread("Bread", () -> Map.of(MyGame.getDatabase().getItem("Wheat Flour"), 1), 50, false, "Stardrop Saloon", 60, "Stardew_Valley_Images-main/Recipe/Bread.png"),
     SalmonDinner("Salmon Dinner", () -> Map.of(FishType.Salmon, 1, CropType.Amaranth, 1, CropType.Kale, 1), 125, false, "Leah Reward", 300, "Stardew_Valley_Images-main/Recipe/Salmon_Dinner.png"),

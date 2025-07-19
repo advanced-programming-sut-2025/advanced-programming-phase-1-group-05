@@ -22,7 +22,6 @@ public class Pickaxe implements Tool <ItemLevel> {
     }
     @Override
     public Result use(GameTile tile){
-        GameMap map = MyGame.getGameMap();
         Skill mining = MyGame.getCurrentPlayer().getMiningSkill();
         int energyUsage = level.getEnergyUsage();
 
@@ -45,7 +44,9 @@ public class Pickaxe implements Tool <ItemLevel> {
                 MyGame.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
                 tile.setItemOnTile(null);
             }
-            else MyGame.getCurrentPlayer().getForagingSkill().forageItem(tile);
+            else {
+                MyGame.getCurrentPlayer().getForagingSkill().forageItem(tile);
+            }
         }
 
         return new Result(true, "");

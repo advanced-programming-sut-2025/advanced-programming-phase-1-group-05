@@ -108,11 +108,11 @@ public class GameMap {
                     item = new ForagingItem(type, type.getName(), type.getPrice());
                     tile.setItemOnTile(item);
                 } else if(chosen % 4 == 2) {
-                    item = MyGame.getDatabase().getItem("Wood");
+                    item = MineralType.Wood;
 
                     tile.setItemOnTile(item);
                 } else {
-                    item = MyGame.getDatabase().getItem("Fiber");
+                    item = MineralType.Fiber;
                     tile.setItemOnTile(item);
                 }
             }
@@ -143,6 +143,14 @@ public class GameMap {
         }
     }
 
+    public void dryTiles(){
+        for (int row = 0; row < map.length; row++) {
+            for (int col = 0; col < map[0].length; col++) {
+                GameTile tile = map[row][col];
+                if(tile.getTileType() == TileType.WateredSoil) tile.setTileType(TileType.Soil);
+            }
+        }
+    }
     public void growPlants(){
         for(FruitAndVegetable f: plants){
             if(f.isAlive()) f.grow();
@@ -156,6 +164,7 @@ public class GameMap {
         for(Tree t: trees){
             t.growTree();
         }
+        dryTiles();
     }
     public GameMap() {
         initEmptyMap(TileType.Flat);

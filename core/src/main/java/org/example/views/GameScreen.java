@@ -103,12 +103,24 @@ public class GameScreen implements Screen {
     private int craftPageIndex;
     private CraftType hoveredCraftType;
 
+    //cooking stuff
+    private boolean isCookingOpen = false;
+    private float COOKING_X = 0;
+    private float COOKING_Y = 0;
+    private CookingRecipeType hoveredCookingRecipeType;
 
     //NPC/friendship stuff
     private boolean giftMode =false;
     private NPC lastNPC = null;
     private Player lastPlayer = null;
 
+    //result stuff
+    private TextureRegion resultBg = GameAssetManager.resultTexture;
+    private float resultTime = 0;
+    private float resultDuration = 2f;
+    private boolean showResult = false;
+    private Result latestResult;
+    private GlyphLayout layout = new GlyphLayout();
 
     public GameScreen(ArrayList<Player> playerList) {
         skin = GameAssetManager.getSkin();
@@ -156,8 +168,7 @@ public class GameScreen implements Screen {
 
         if (tileX >= 0 && tileX < MAP_WIDTH &&
             tileY >= 0 && tileY < MAP_HEIGHT &&
-        MyGame.getCurrentPlayer().getCurrentItem() != null &&
-        MyGame.getCurrentPlayer().getCurrentItem() instanceof Tool) {
+        MyGame.getCurrentPlayer().getCurrentItem() != null) {
 
             shapeRenderer.setProjectionMatrix(camera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -172,6 +183,7 @@ public class GameScreen implements Screen {
         }
 
     }
+
     private void initializeFarmArea() {
         for (Player player : players) {
             String map = GameMenuController.getMapForPlayer(player.getUsername());
@@ -222,7 +234,6 @@ public class GameScreen implements Screen {
         handleInput(delta);
         //cheatCodeWindow.update(delta);
 
-
         timeAccumulator += delta;
         if (timeAccumulator >= 42f) {
             GameManager.getGameClock().advanceTime(60);
@@ -252,13 +263,19 @@ public class GameScreen implements Screen {
         showSkillSet(batch);
         showCraftPage(batch);
         showToolSelection(batch);
+        showCookingPage(batch);
         updateToolSelectionSlots();
         checkGifting();
+        if(showResult) showResult(batch,latestResult,delta);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            GameManager.getGameClock().advanceDay();
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             isInvenotryOpen = !isInvenotryOpen;
             isCraftOpen = false;
             isSkillSetOpen = false;
             isToolSelectionOpen = false;
+            isCookingOpen = false;
             if (isInvenotryOpen) {
                 TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
                     .getLevel().getInventoryTexture();
@@ -277,18 +294,27 @@ public class GameScreen implements Screen {
             isCraftOpen = false;
             isInvenotryOpen = false;
             isToolSelectionOpen = false;
+            isCookingOpen = false;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
             isToolSelectionOpen = !isToolSelectionOpen;
             isCraftOpen = false;
             isSkillSetOpen = false;
             isInvenotryOpen = false;
+            isCookingOpen = false;
             updateToolSelectionSlots();
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.V)) { //TODO fix
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.B)) { //TODO fix
             isCraftOpen = !isCraftOpen;
             isToolSelectionOpen = false;
             isSkillSetOpen = false;
             isInvenotryOpen = false;
+            isCookingOpen = false;
             updateInventorySlots();
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.G)) {
+            isCookingOpen = !isCookingOpen;
+            isToolSelectionOpen = false;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
         }
         stage.act(delta);
         stage.draw();
@@ -516,6 +542,141 @@ public class GameScreen implements Screen {
         batch.end();
     }
 
+    public void showCookingPage(SpriteBatch batch) {
+        if(!isCookingOpen) return;
+
+        TextureRegion cookingPage = GameAssetManager.getCookingTexture();
+        float scale = 0.5f;
+        float textWidth =  cookingPage.getRegionWidth();
+        float textHeight = cookingPage.getRegionHeight();
+
+        float scaledWidth = textWidth * scale;
+        float scaledHeight = textHeight * scale;
+
+        COOKING_X = camera.position.x - scaledWidth / 2f;
+        COOKING_Y = camera.position.y - scaledHeight / 2f;
+
+        batch.begin();
+        batch.draw(cookingPage, COOKING_X, COOKING_Y, scaledWidth, scaledHeight);
+
+        //show craft recipes
+        ArrayList<CookingRecipeType> learnedRecipes = MyGame.getCurrentPlayer().getBackPack().getLearntCookingRecipe();
+
+        int recipesPerRow = 12;
+        int maxRows = 4;
+        int recipesPerPage = recipesPerRow * maxRows;
+
+        //pagination
+        int currentPage = craftPageIndex; //do we want pagination?
+        int startIndex = currentPage * recipesPerPage;
+        int endIndex = Math.min(startIndex + recipesPerPage, learnedRecipes.size());
+
+        float padding = 3f;
+        float iconSize = 74f;
+        float startX = CRAFT_X + 50f;
+        float startY = CRAFT_Y + scaledHeight - iconSize - 40f;
+
+        for (int i = startIndex; i < endIndex; i++) {
+            CookingRecipeType recipe = learnedRecipes.get(i);
+            boolean canCook = homeMenuController.cookingIngredientCheck(recipe);
+
+            int pageIndex = i - startIndex;
+            int row = pageIndex / recipesPerRow;
+            int col = pageIndex % recipesPerRow;
+
+            float x = startX + col * (iconSize + padding);
+            float y = startY - row * (iconSize + padding);
+
+            TextureRegion text = recipe.getTexture();
+            float texWidth = text.getRegionWidth();
+            float texHeight = text.getRegionHeight();
+
+            float maxIconSize = 74f;
+            float craftScale = Math.min(maxIconSize / texWidth, maxIconSize / texHeight);
+
+            float drawWidth = texWidth * craftScale;
+            float drawHeight = texHeight * craftScale;
+
+            float drawX = x + (iconSize - drawWidth) / 2f - 20f;
+            float drawY = y + (iconSize - drawHeight) / 2f - 50f;
+
+            float alpha = canCook ? 1f : 0.4f;
+
+            batch.setColor(1, 1, 1, alpha);
+            batch.draw(text, drawX, drawY, drawWidth, drawHeight);
+            batch.setColor(1, 1, 1, 1);
+
+        }
+
+        //show inventory items
+        for (InventorySlot slot : slots) {
+            if (slot.item != null) {
+                TextureRegion texture = slot.item.getTexture();
+                float texWidth = texture.getRegionWidth();
+                float texHeight = texture.getRegionHeight();
+
+                float scale1 = Math.min(SLOT_SIZE / texWidth, SLOT_SIZE / texHeight);
+                float drawWidth = texWidth * scale1;
+                float drawHeight = texHeight * scale1;
+
+                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f + 235f;
+                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f + 65f; //fix
+
+                batch.draw(texture, drawX, drawY, drawWidth, drawHeight);
+                if(slot.count > 1) font.draw(batch,String.valueOf(slot.count), drawX + drawWidth - 15f,drawY + 10f);
+            }
+        }
+
+        if(hoveredCookingRecipeType != null) {
+            //info background
+            Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            TextureRegion infoBg = GameAssetManager.infoPage;
+
+            float boxWidth = infoBg.getRegionWidth() * 13f;
+            float boxHeight = infoBg.getRegionHeight() * 13f + hoveredCookingRecipeType.getIngredients().size() * 12f;
+
+            float boxX = mouse.x + 30f ;
+            float boxY = mouse.y - 30f;
+
+            batch.draw(infoBg, boxX, boxY, boxWidth, boxHeight);
+
+            //cooking recipe info
+            float textX = boxX + 45f;
+            float textY = boxY + boxHeight - 50f;
+            font.draw(batch, hoveredCookingRecipeType.getName(), textX, textY);
+
+            Map<Item, Integer> ingredients = hoveredCookingRecipeType.getIngredients();
+
+            float ingredientIconSize = 32f;
+            float ingredientPadding = 10f;
+
+            float iconX = boxX + 15f;
+            float iconY = boxY + boxHeight - 50f;
+
+            for(Map.Entry<Item, Integer> entry : ingredients.entrySet()) {
+                Item item = entry.getKey();
+                int count = entry.getValue();
+
+                TextureRegion textureRegion = item.getTexture();
+                float texWidth = textureRegion.getRegionWidth();
+                float texHeight = textureRegion.getRegionHeight();
+
+                float ingredientScale = Math.min(ingredientIconSize / texWidth, ingredientIconSize / texHeight);
+                float drawWidth = texWidth * ingredientScale;
+                float drawHeight = texHeight * ingredientScale;
+
+                batch.draw(textureRegion, iconX + 10f, iconY - drawHeight - 50f, drawWidth, drawHeight);
+
+                font.draw(batch, "x" + count + " " + item.getName(), iconX + drawWidth + 15f, iconY - 55f);
+
+                iconY -= drawHeight + ingredientPadding;
+            }
+
+        }
+
+        batch.end();
+
+    }
     public void showCraftPage(SpriteBatch batch) {
         if(!isCraftOpen) return;
 
@@ -603,20 +764,20 @@ public class GameScreen implements Screen {
 
         if(hoveredCraftType != null) {
             //info background
+            Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             TextureRegion infoBg = GameAssetManager.infoPage;
-            GlyphLayout glyphLayout = new GlyphLayout();
 
-            float boxWidth = infoBg.getRegionWidth();
-            float boxHeight = infoBg.getRegionHeight();
+            float boxWidth = infoBg.getRegionWidth() * 13f;
+            float boxHeight = infoBg.getRegionHeight() * 13f + hoveredCraftType.getIngredients().size() * 12f;
 
-            float boxX = CRAFT_X + scaledWidth + 20f;
-            float boxY = CRAFT_Y + scaledHeight - boxHeight - 20f;
+            float boxX = mouse.x + 30f ;
+            float boxY = mouse.y - 30f;
 
             batch.draw(infoBg, boxX, boxY, boxWidth, boxHeight);
 
             //craft info
-            float textX = boxX + 15f;
-            float textY = boxY + boxHeight - 15f;
+            float textX = boxX + 45f;
+            float textY = boxY + boxHeight - 50f;
             font.draw(batch, hoveredCraftType.getName(), textX, textY);
 
             Map<Item, Integer> ingredients = hoveredCraftType.getIngredients();
@@ -639,55 +800,9 @@ public class GameScreen implements Screen {
                 float drawWidth = texWidth * ingredientScale;
                 float drawHeight = texHeight * ingredientScale;
 
-                batch.draw(textureRegion, iconX, iconY - drawHeight, drawWidth, drawHeight);
+                batch.draw(textureRegion, iconX + 10f, iconY - drawHeight - 50f, drawWidth, drawHeight);
 
-                font.draw(batch, "x" + count + " " + item.getName(), iconX + drawWidth + 5f, iconY - 5f);
-
-                iconY -= drawHeight + ingredientPadding;
-            }
-
-        }
-        if(hoveredCraftType != null) {
-            //info background
-            TextureRegion infoBg = GameAssetManager.infoPage;
-            GlyphLayout glyphLayout = new GlyphLayout();
-
-            float boxWidth = infoBg.getRegionWidth();
-            float boxHeight = infoBg.getRegionHeight();
-
-            float boxX = CRAFT_X + scaledWidth + 20f;
-            float boxY = CRAFT_Y + scaledHeight - boxHeight - 20f;
-
-            batch.draw(infoBg, boxX, boxY, boxWidth, boxHeight);
-
-            //craft info
-            float textX = boxX + 15f;
-            float textY = boxY + boxHeight - 15f;
-            font.draw(batch, hoveredCraftType.getName(), textX, textY);
-
-            Map<Item, Integer> ingredients = hoveredCraftType.getIngredients();
-
-            float ingredientIconSize = 32f;
-            float ingredientPadding = 10f;
-
-            float iconX = boxX + 15f;
-            float iconY = boxY + boxHeight - 50f;
-
-            for(Map.Entry<Item, Integer> entry : ingredients.entrySet()) {
-                Item item = entry.getKey();
-                int count = entry.getValue();
-
-                TextureRegion textureRegion = item.getTexture();
-                float texWidth = textureRegion.getRegionWidth();
-                float texHeight = textureRegion.getRegionHeight();
-
-                float ingredientScale = Math.min(ingredientIconSize / texWidth, ingredientIconSize / texHeight);
-                float drawWidth = texWidth * ingredientScale;
-                float drawHeight = texHeight * ingredientScale;
-
-                batch.draw(textureRegion, iconX, iconY - drawHeight, drawWidth, drawHeight);
-
-                font.draw(batch, "x" + count + " " + item.getName(), iconX + drawWidth + 5f, iconY - 5f);
+                font.draw(batch, "x" + count + " " + item.getName(), iconX + drawWidth + 15f, iconY - 55f);
 
                 iconY -= drawHeight + ingredientPadding;
             }
@@ -1420,6 +1535,37 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void showResult(SpriteBatch batch, Result result, float delta) {
+        resultTime += delta;
+        if (resultTime > resultDuration) {
+            resultTime = 0;
+            showResult = false;
+            return;
+        }
+
+        String message = result.toString();
+        if(message.isEmpty()) return;
+        layout.setText(font, message);
+
+        float padding = 60f;
+        float bgWidth = layout.width + padding;
+        float bgHeight = resultBg.getRegionHeight() * 5f;
+
+        float x = camera.position.x - bgWidth / 2f;
+        float y = camera.position.y + camera.viewportHeight / 2f - bgHeight - 10f;
+
+        float textX = x + (bgWidth - layout.width) / 2f;
+        float textY = y + (bgHeight + layout.height) / 2f;
+
+        batch.begin();
+        batch.draw(resultBg, x, y, bgWidth, bgHeight);
+
+        font.setColor(result.isSuccess() ? Color.GREEN : Color.RED);
+        font.draw(batch, message, textX, textY);
+        font.setColor(Color.BLACK);
+        batch.end();
+    }
+
     private class InventoryInputHandler extends InputAdapter {
         GameScreen screen;
 
@@ -1447,28 +1593,30 @@ public class GameScreen implements Screen {
                     if (world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
                         world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
 
-                        if (draggedItem == null && slot.item != null) {
-                            draggedItem = slot.item;
-                            selectedSlot = slot;
-                            slot.item = null;
-                            MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
-                            return true;
-                        } else if (draggedItem != null && slot.item == null) {
-                            slot.item = draggedItem;
-                            draggedItem = null;
-                            selectedSlot = null;
-                            MyGame.getCurrentPlayer().setCurrentItem(null);
-                            syncBackPackFromSlots();
-                            return true;
-                        } else if (draggedItem != null && slot.item != null) {
-                            Item temp = slot.item;
-                            slot.item = draggedItem;
-                            draggedItem = temp;
-                            selectedSlot = slot;
-                            MyGame.getCurrentPlayer().setCurrentItem(slot.item);
-                            syncBackPackFromSlots();
-                            return true;
-                        }
+                        MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+
+//                        if (draggedItem == null && slot.item != null) {
+//                            draggedItem = slot.item;
+//                            selectedSlot = slot;
+//                            slot.item = null;
+//                            MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
+//                            return true;
+//                        } else if (draggedItem != null && slot.item == null) {
+//                            slot.item = draggedItem;
+//                            draggedItem = null;
+//                            selectedSlot = null;
+//                            MyGame.getCurrentPlayer().setCurrentItem(null);
+//                            syncBackPackFromSlots();
+//                            return true;
+//                        } else if (draggedItem != null && slot.item != null) {
+//                            Item temp = slot.item;
+//                            slot.item = draggedItem;
+//                            draggedItem = temp;
+//                            selectedSlot = slot;
+//                            MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+//                            syncBackPackFromSlots();
+//                            return true;
+//                        }
                     }
                 }
             } else if (isToolSelectionOpen) {
@@ -1481,10 +1629,48 @@ public class GameScreen implements Screen {
                         }
                     }
                 }
+            } else if(isCraftOpen) { //craft click mechanism
+                CraftType selectedCraft = null;
+                BackPack backPack = MyGame.getCurrentPlayer().getBackPack();
+                int recipesPerRow = 12;
+                int maxRows = 4;
+                int recipesPerPage = recipesPerRow * maxRows;
+
+                int currentPage = craftPageIndex;
+                int startIndex = currentPage * recipesPerPage;
+                int endIndex = Math.min(startIndex + recipesPerPage, backPack.getLearntRecipes().size());
+
+                float padding = 3f;
+                float iconSize = 74f;
+                float startX = CRAFT_X + 50f;
+                float startY = CRAFT_Y + (GameAssetManager.getCraftTexture().getRegionHeight() * 0.5f) - iconSize - 40f;
+
+                for (int i = startIndex; i < endIndex; i++) {
+                    int index = i - startIndex;
+                    int row = index / recipesPerRow;
+                    int col = index % recipesPerRow;
+
+                    float x = startX + col * (iconSize + padding);
+                    float y = startY - row * (iconSize + padding) - 20f;
+
+                    if (world.x >= x && world.x <= x + iconSize &&
+                        world.y >= y && world.y <= y + iconSize) {
+
+                        selectedCraft = backPack.getLearntRecipes().get(i);
+                        Result result = homeMenuController.craftItem(selectedCraft.getName());
+                        System.out.println(result);
+                        latestResult = result;
+                        showResult = true;
+                        updateInventorySlots();
+                        break;
+                    }
+                }
+
+                return false;
             }
 
             if(MyGame.getCurrentPlayer().getCurrentItem() != null &&
-            MyGame.getCurrentPlayer().getCurrentItem() instanceof Tool) {
+                !isCraftOpen && !isInvenotryOpen && !isCookingOpen) {
                 int tileX = (int) (world.x / TILE_SIZE);
                 int tileY = (int) (world.y / TILE_SIZE);
 
@@ -1493,70 +1679,116 @@ public class GameScreen implements Screen {
 
                     GameTile tile = GameMap.getTile(tileX, tileY);
                     if (tile != null) {
-                        Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
-                        if (currentItem instanceof Tool) {
+                        if (MyGame.getCurrentPlayer().getCurrentItem() instanceof Tool) {
+                            Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
                             if (currentItem instanceof FishingPole) {
                                 FishingPole pole = (FishingPole) currentItem;
-                                FishType fish =  controller.getRandomFish((FishingPole) currentItem);
+                                FishType fish = controller.getRandomFish((FishingPole) currentItem);
                                 Main.getMain().setScreen(new FishingMiniGame(screen, pole, fish));
-                            }
-                            else MyGame.getCurrentPlayer().useTool();
+                            } else MyGame.getCurrentPlayer().useTool();
                             Result result = ((Tool) currentItem).use(tile);
+                            latestResult = result;
+                            showResult = true;
+                        } else {
+                            Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
+                            Result result = controller.plantSeed(currentItem.getName(), tile);
+                            if(!result.getMessage().startsWith("That's not a valid seed")) {
+                                showResult = true;
+                                latestResult = result;
+                            } else {
+                                latestResult = controller.placeItem(currentItem, tile);
+                                Player player = MyGame.getCurrentPlayer();
+                                if (player.getBackPack().howManyOfItem(currentItem) == 0)
+                                    MyGame.getCurrentPlayer().setCurrentItem(null);
+                                updateInventorySlots();
+                                showResult = true;
+                            }
                         }
                     }
-
                 }
-            }
 
+            }
 
             return false;
         }
 
         @Override
         public boolean mouseMoved(int screenX, int screenY) {
-            if (!isCraftOpen) {
+            if (!isCraftOpen && !isCookingOpen) {
                 hoveredCraftType = null;
+                hoveredCookingRecipeType = null;
                 return false;
             }
-
             Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
-            hoveredCraftType = null;
+            if(isCraftOpen) {
+                hoveredCraftType = null;
 
-            ArrayList<CraftType> learnedRecipes = MyGame.getCurrentPlayer().getBackPack().getLearntRecipes();
+                ArrayList<CraftType> learnedRecipes = MyGame.getCurrentPlayer().getBackPack().getLearntRecipes();
 
-            int recipesPerRow = 12;
-            int maxRows = 4;
-            int recipesPerPage = recipesPerRow * maxRows;
+                int recipesPerRow = 12;
+                int maxRows = 4;
+                int recipesPerPage = recipesPerRow * maxRows;
 
-            int currentPage = craftPageIndex;
-            int startIndex = currentPage * recipesPerPage;
-            int endIndex = Math.min(startIndex + recipesPerPage, learnedRecipes.size());
+                int currentPage = craftPageIndex;
+                int startIndex = currentPage * recipesPerPage;
+                int endIndex = Math.min(startIndex + recipesPerPage, learnedRecipes.size());
 
-            float padding = 3f;
-            float iconSize = 74f;
-            float startX = CRAFT_X + 50f;
-            float startY = CRAFT_Y + (GameAssetManager.getCraftTexture().getRegionHeight() * 0.5f) - iconSize - 40f;
+                float padding = 3f;
+                float iconSize = 74f;
+                float startX = CRAFT_X + 50f;
+                float startY = CRAFT_Y + (GameAssetManager.getCraftTexture().getRegionHeight() * 0.5f) - iconSize - 40f;
 
-            for (int i = startIndex; i < endIndex; i++) {
-                int index = i - startIndex;
-                int row = index / recipesPerRow;
-                int col = index % recipesPerRow;
+                for (int i = startIndex; i < endIndex; i++) {
+                    int index = i - startIndex;
+                    int row = index / recipesPerRow;
+                    int col = index % recipesPerRow;
 
-                float x = startX + col * (iconSize + padding);
-                float y = startY - row * (iconSize + padding);
+                    float x = startX + col * (iconSize + padding);
+                    float y = startY - row * (iconSize + padding) - 20f;
 
-                if (world.x >= x && world.x <= x + iconSize &&
-                    world.y >= y && world.y <= y + iconSize) {
+                    if (world.x >= x && world.x <= x + iconSize &&
+                        world.y >= y && world.y <= y + iconSize) {
 
-                    hoveredCraftType = learnedRecipes.get(i);
-                    break;
+                        hoveredCraftType = learnedRecipes.get(i);
+                        break;
+                    }
+                }
+            } else if (isCookingOpen) {
+                hoveredCookingRecipeType = null;
+
+                ArrayList<CookingRecipeType> learnedRecipes = MyGame.getCurrentPlayer().getBackPack().getLearntCookingRecipe();
+
+                int recipesPerRow = 12;
+                int maxRows = 4;
+                int recipesPerPage = recipesPerRow * maxRows;
+
+                int currentPage = craftPageIndex;
+                int startIndex = currentPage * recipesPerPage;
+                int endIndex = Math.min(startIndex + recipesPerPage, learnedRecipes.size());
+
+                float padding = 3f;
+                float iconSize = 74f;
+                float startX = COOKING_X + 50f;
+                float startY = COOKING_Y + (GameAssetManager.getCookingTexture().getRegionHeight() * 0.5f) - iconSize - 40f;
+
+                for (int i = startIndex; i < endIndex; i++) {
+                    int index = i - startIndex;
+                    int row = index / recipesPerRow;
+                    int col = index % recipesPerRow;
+
+                    float x = startX + col * (iconSize + padding);
+                    float y = startY - row * (iconSize + padding) - 20f;
+
+                    if (world.x >= x && world.x <= x + iconSize &&
+                        world.y >= y && world.y <= y + iconSize) {
+
+                        hoveredCookingRecipeType = learnedRecipes.get(i);
+                        break;
+                    }
                 }
             }
-
             return false;
         }
-
-
     }
 
     public void addAnimalActor(AnimalActor animalActor) {

@@ -231,6 +231,10 @@ public class FruitAndVegetable implements Item {
                 "Current Growth Stage: " + currentGrowthStage + "\n" + "Has been watered today: " + hasBeenWatered +"\n" + "Has been fertilized: " + hasBeenFertilized;
     }
     public TextureRegion getTexture() {
-        return type.getTexture();
+        return type.getStageTexture(currentGrowthStage);
+    }
+
+    public boolean hasBeenWatered() {
+        return hasBeenWatered;
     }
 }

@@ -901,21 +901,18 @@ public class GameMenuController extends MenuController {
 
 
     //plant seed on a specific tile
-    public Result plantSeed(String seed, String direction) {
-        int[] dir = getDirections(direction);
-        GameMap map = MyGame.getGameMap();
-        GameTile tile = map.getTile(MyGame.getCurrentPlayer().getCoordinate().getKey() + dir[1], MyGame.getCurrentPlayer().getCoordinate().getValue() + dir[0]);
+    public Result plantSeed(String seed, GameTile tile) {
         //errors
-        if (tile == null) return new Result(false, "Tile not found");
-        if (tile.getX() == MyGame.getCurrentPlayer().getCoordinate().getKey() && tile.getY() == MyGame.getCurrentPlayer().getCoordinate().getValue()) {
-            return new Result(false, "You stare at your boots. The boots stare back. Nothing grows.");
-        }
-        if (tile.getTileType() != TileType.Soil)
-            return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
-        if (!tile.isTileValidForPlanting()) return new Result(false,
-                "You can't plant cause the tile is occupied!");
+//        if (tile == null) return new Result(false, "Tile not found");
+//        if (tile.getX() == MyGame.getCurrentPlayer().getCoordinate().getKey() && tile.getY() == MyGame.getCurrentPlayer().getCoordinate().getValue()) {
+//            return new Result(false, "You stare at your boots. The boots stare back. Nothing grows.");
+//        }
         boolean successful = MyGame.getCurrentPlayer().getFarmingSkill().plantSeed(seed, tile);
         if (successful) {
+            if (tile.getTileType() != TileType.Soil)
+                return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
+            if (!tile.isTileValidForPlanting()) return new Result(false,
+                "You can't plant cause the tile is occupied!");
             MyGame.getCurrentPlayer().getBackPack().removeFromInventory(
                     MyGame.getCurrentPlayer().getBackPack().getFromInventory(seed), 1
             );
@@ -975,22 +972,9 @@ public class GameMenuController extends MenuController {
 
 
     //place item on ground
-    public Result placeItem(String itemName, String direction) {
-        Item item = null;
-        int[] directions = getDirections(direction);
-        for (Item i : MyGame.getCurrentPlayer().getBackPack().getInventory().keySet()) {
-            if (i.getName().equals(itemName)) {
-                item = i;
-            }
-        }
-        if (item == null) return new Result(false, "No such item in your inventory");
-        else if (directions == null) return new Result(false, "Invalid direction");
-        GameMap map = MyGame.getGameMap();
-        GameTile tile = GameMap.getTile(MyGame.getCurrentPlayer().getCoordinate().getKey() + directions[1],
-                MyGame.getCurrentPlayer().getCoordinate().getValue() + directions[0]);
-        if (tile != null && tile.getItemOnTile() != null)
+    public Result placeItem(Item item, GameTile tile) {
+        if (tile.getItemOnTile() != null)
             return new Result(false, "The tile is already occupied.");
-        assert tile != null;
         tile.setItemOnTile(item);
         MyGame.getCurrentPlayer().getBackPack().removeFromInventory(tile.getItemOnTile(), 1);
         return new Result(true, "Item placed successfully");

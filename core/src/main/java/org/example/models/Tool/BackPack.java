@@ -121,7 +121,15 @@ public class BackPack implements Tool <BackPackType>{
     public void addLearntCookingRecipe(CookingRecipeType recipe) {
         learntCookingRecipe.add(recipe);
     }
-
+    public int howManyOfItem(Item item) {
+        int count = 0;
+        for(Item i : inventory.keySet()) {
+            if(i.getName().equals(item.getName())) {
+                count += inventory.get(i);
+            }
+        }
+        return count;
+    }
     @Override
     public String getName() {
         return "BackPack";

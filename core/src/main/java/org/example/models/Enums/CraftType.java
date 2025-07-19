@@ -17,7 +17,7 @@ public enum CraftType implements Material, Item {
     IridiumSprinkler("Iridium Sprinkler", () -> Map.of(MineralType.Gold, 1, MineralType.Iridium, 1), "Farming Level 3", 0,"Stardew_Valley_Images-main/Crafting/Iridium_Sprinkler.png"),
     CharcoalKlin("Charcoal Klin", () -> Map.of(MyGame.getDatabase().getItem("Wood"), 20, MineralType.Copper, 2), "Foraging Level 1", 0,"Stardew_Valley_Images-main/Crafting/Charcoal_Kiln.png"),
     Furnace("Furnace", () -> Map.of(MyGame.getDatabase().getItem("Copper Ore"), 20, MyGame.getDatabase().getItem("Stone"), 25), "", 0,"Stardew_Valley_Images-main/Crafting/Furnace.png"),
-    ScareCrow("Scarecrow", () -> Map.of(MyGame.getDatabase().getItem("Wood"), 50, MineralType.Coal, 1, MineralType.Fiber, 20), "", 0,"Stardew_Valley_Images-main/Crafting/Scarecrow.png"),
+    ScareCrow("Scarecrow", () -> Map.of(MineralType.Wood, 50, MineralType.Coal, 1, MineralType.Fiber, 20), "", 0,"Stardew_Valley_Images-main/Crafting/Scarecrow.png"),
     DeluxeScareCrow("Deluxe Scarecrow", () -> Map.of(MineralType.Wood, 50, MineralType.Coal, 1, MyGame.getDatabase().getItem("Fiber"), 20, MyGame.getDatabase().getItem("Iridium Ore"), 1), "Farming Level 2", 0,"Stardew_Valley_Images-main/Crafting/Deluxe_Scarecrow.png"),
     BeeHouse("Bee House", () -> Map.of(MyGame.getDatabase().getItem("Wood"), 40, MineralType.Coal, 8, MineralType.Iron, 1), "Farming Level 1", 0,"Stardew_Valley_Images-main/Crafting/Bee_House.png"),
     CheesePress("Cheese Press", () -> Map.of(MyGame.getDatabase().getItem("Wood"), 45, MineralType.Copper, 1), "Farming Level 2", 0,"Stardew_Valley_Images-main/Crafting/Cheese_Press.png"),
