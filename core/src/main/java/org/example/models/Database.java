@@ -2,6 +2,7 @@ package org.example.models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.google.gson.*;
 import org.example.models.Enums.BuildingType;
 import org.example.models.Enums.Season;
@@ -94,6 +95,7 @@ public class Database {
         }
         return null;
     }
+
 
     public List<Store> getStores() {
         return stores;

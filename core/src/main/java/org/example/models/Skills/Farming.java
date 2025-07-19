@@ -22,7 +22,7 @@ public class Farming implements Skill{
             FruitAndVegetable newCrop = mixedSeedPlant();
             tile.setItemOnTile(newCrop);
             newCrop.setCoordinates(new AbstractMap.SimpleEntry<>(tile.getX(), tile.getY()));
-            MyGame.getCurrentPlayer().getFarm().addCrop(newCrop);
+            //MyGame.getCurrentPlayer().getFarm().addCrop(newCrop);
             MyGame.getGameMap().addPlant(newCrop);
             //can become giant
             Result result = newCrop.expandToGiant(tile);
@@ -32,7 +32,7 @@ public class Farming implements Skill{
             FruitAndVegetable crop = new FruitAndVegetable(cropType);
             tile.setItemOnTile(crop);
             crop.setCoordinates(new AbstractMap.SimpleEntry<>(tile.getX(), tile.getY()));
-            MyGame.getCurrentPlayer().getFarm().addCrop(crop);
+           // MyGame.getCurrentPlayer().getFarm().addCrop(crop);
             MyGame.getGameMap().addPlant(crop);
             if(tile.hasBeenFertilized()) {
                 crop.fertilize(tile.getFertilizer());
@@ -42,7 +42,7 @@ public class Farming implements Skill{
         } else if (treeType != null) {
             Tree tree = new Tree(treeType);
             tile.setItemOnTile(tree);
-            MyGame.getCurrentPlayer().getFarm().addTree(tree);
+            //MyGame.getCurrentPlayer().getFarm().addTree(tree);
             MyGame.getGameMap().addTree(tree);
             tree.setCoordinates(new AbstractMap.SimpleEntry<>(tile.getX(), tile.getY()));
             return true;

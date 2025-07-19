@@ -74,6 +74,7 @@ public class Player {
     public Player(User user) {
         this.user = user;
         this.energy = 200;
+        //this.farm = new Farm(this,) //TODO fix this
         backPack.getInventory().put(new Hoe(), 1);
         backPack.getInventory().put(new Pickaxe(), 1);
         backPack.getInventory().put(new Scythe(), 1);
@@ -90,7 +91,7 @@ public class Player {
 //        backPack.getInventory().put(new FruitAndVegetable(CropType.FairyRose),1);
 //        backPack.getInventory().put(new FruitAndVegetable(CropType.Artichoke),1);
         backPack.addToInventory(CropType.Blueberry, 1);
-        backPack.addToInventory(CropType.Melon,1);
+        backPack.addToInventory(ForagingSeedType.ArtichokeSeeds,1);
         backPack.addToInventory(ForagingCrop.Apricot, 1);
         backPack.addToInventory(MineralType.Fiber, 30);
         backPack.addLearntCookingRecipe(CookingRecipeType.DishOTheSea);

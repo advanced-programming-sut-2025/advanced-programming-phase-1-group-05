@@ -1608,7 +1608,7 @@ public class GameScreen implements Screen {
             }
 
             if(MyGame.getCurrentPlayer().getCurrentItem() != null &&
-            !isToolSelectionOpen && !isCraftOpen && !isInvenotryOpen && !isCookingOpen) {
+                !isCraftOpen && !isInvenotryOpen && !isCookingOpen) {
                 int tileX = (int) (world.x / TILE_SIZE);
                 int tileY = (int) (world.y / TILE_SIZE);
 
@@ -1629,12 +1629,18 @@ public class GameScreen implements Screen {
                             showResult = true;
                         } else {
                             Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
-                            latestResult = controller.placeItem(currentItem, tile);
-                            Player player = MyGame.getCurrentPlayer();
-                            if(player.getBackPack().howManyOfItem(currentItem) == 0)
-                                MyGame.getCurrentPlayer().setCurrentItem(null);
-                            updateInventorySlots();
-                            showResult = true;
+                            Result result = controller.plantSeed(currentItem.getName(), tile);
+                            if(!result.getMessage().startsWith("That's not a valid seed")) {
+                                showResult = true;
+                                latestResult = result;
+                            } else {
+                                latestResult = controller.placeItem(currentItem, tile);
+                                Player player = MyGame.getCurrentPlayer();
+                                if (player.getBackPack().howManyOfItem(currentItem) == 0)
+                                    MyGame.getCurrentPlayer().setCurrentItem(null);
+                                updateInventorySlots();
+                                showResult = true;
+                            }
                         }
                     }
                 }
