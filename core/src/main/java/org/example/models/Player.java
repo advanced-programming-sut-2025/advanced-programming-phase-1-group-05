@@ -89,7 +89,8 @@ public class Player {
 //        backPack.getInventory().put(new FruitAndVegetable(CropType.Sunflower),1);
 //        backPack.getInventory().put(new FruitAndVegetable(CropType.FairyRose),1);
 //        backPack.getInventory().put(new FruitAndVegetable(CropType.Artichoke),1);
-        backPack.addToInventory(MineralType.Wood, 30);
+        backPack.addToInventory(MineralType.Wood, 50);
+        backPack.addToInventory(MineralType.Coal,1);
         backPack.addToInventory(MineralType.Stone, 20);
         backPack.addToInventory(MineralType.Fiber, 30);
         backPack.addLearntRecipe(CraftType.Dehydrator);
@@ -97,6 +98,10 @@ public class Player {
         backPack.addLearntRecipe(CraftType.Bomb);
         backPack.addLearntRecipe(CraftType.PreservesJar);
         backPack.addLearntRecipe(CraftType.MysticTreeSeed);
+        backPack.addLearntRecipe(CraftType.OilMaker);
+        backPack.addLearntRecipe(CraftType.ScareCrow);
+        backPack.addLearntRecipe(CraftType.MayonnaiseMachine);
+
 
         notifications.add("Have fun playing this game i'm just trying to see how the notification panel looks hahahaha long text ");
     }

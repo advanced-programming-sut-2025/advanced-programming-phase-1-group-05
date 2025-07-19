@@ -112,6 +112,13 @@ public class GameScreen implements Screen {
     private NPC lastNPC = null;
     private Player lastPlayer = null;
 
+    //result stuff
+    private TextureRegion resultBg = GameAssetManager.resultTexture;
+    private float resultTime = 0;
+    private float resultDuration = 2f;
+    private boolean showResult = false;
+    private Result latestResult;
+    private GlyphLayout layout = new GlyphLayout();
 
     public GameScreen(ArrayList<Player> playerList) {
         skin = GameAssetManager.getSkin();
@@ -256,6 +263,7 @@ public class GameScreen implements Screen {
         showToolSelection(batch);
         updateToolSelectionSlots();
         checkGifting();
+        if(showResult) showResult(batch,latestResult,delta);
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             isInvenotryOpen = !isInvenotryOpen;
             isCraftOpen = false;
@@ -285,7 +293,7 @@ public class GameScreen implements Screen {
             isSkillSetOpen = false;
             isInvenotryOpen = false;
             updateToolSelectionSlots();
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.V)) { //TODO fix
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.B)) { //TODO fix
             isCraftOpen = !isCraftOpen;
             isToolSelectionOpen = false;
             isSkillSetOpen = false;
@@ -600,8 +608,8 @@ public class GameScreen implements Screen {
             Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             TextureRegion infoBg = GameAssetManager.infoPage;
 
-            float boxWidth = infoBg.getRegionWidth() * 12f;
-            float boxHeight = infoBg.getRegionHeight() * 12f + hoveredCraftType.getIngredients().size() * 12f;
+            float boxWidth = infoBg.getRegionWidth() * 13f;
+            float boxHeight = infoBg.getRegionHeight() * 13f + hoveredCraftType.getIngredients().size() * 12f;
 
             float boxX = mouse.x + 30f ;
             float boxY = mouse.y - 30f;
@@ -1317,6 +1325,37 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void showResult(SpriteBatch batch, Result result, float delta) {
+        resultTime += delta;
+        if (resultTime > resultDuration) {
+            resultTime = 0;
+            showResult = false;
+            return;
+        }
+
+        String message = result.toString();
+        if(message.isEmpty()) return;
+        layout.setText(font, message);
+
+        float padding = 60f;
+        float bgWidth = layout.width + padding;
+        float bgHeight = resultBg.getRegionHeight() * 5f;
+
+        float x = camera.position.x - bgWidth / 2f;
+        float y = camera.position.y + camera.viewportHeight / 2f - bgHeight - 10f;
+
+        float textX = x + (bgWidth - layout.width) / 2f;
+        float textY = y + (bgHeight + layout.height) / 2f;
+
+        batch.begin();
+        batch.draw(resultBg, x, y, bgWidth, bgHeight);
+
+        font.setColor(result.isSuccess() ? Color.GREEN : Color.RED);
+        font.draw(batch, message, textX, textY);
+        font.setColor(Color.BLACK);
+        batch.end();
+    }
+
     private class InventoryInputHandler extends InputAdapter {
         GameScreen screen;
 
@@ -1378,6 +1417,44 @@ public class GameScreen implements Screen {
                         }
                     }
                 }
+            } else if(isCraftOpen) { //craft click mechanism
+                CraftType selectedCraft = null;
+                BackPack backPack = MyGame.getCurrentPlayer().getBackPack();
+                int recipesPerRow = 12;
+                int maxRows = 4;
+                int recipesPerPage = recipesPerRow * maxRows;
+
+                int currentPage = craftPageIndex;
+                int startIndex = currentPage * recipesPerPage;
+                int endIndex = Math.min(startIndex + recipesPerPage, backPack.getLearntRecipes().size());
+
+                float padding = 3f;
+                float iconSize = 74f;
+                float startX = CRAFT_X + 50f;
+                float startY = CRAFT_Y + (GameAssetManager.getCraftTexture().getRegionHeight() * 0.5f) - iconSize - 40f;
+
+                for (int i = startIndex; i < endIndex; i++) {
+                    int index = i - startIndex;
+                    int row = index / recipesPerRow;
+                    int col = index % recipesPerRow;
+
+                    float x = startX + col * (iconSize + padding);
+                    float y = startY - row * (iconSize + padding) - 20f;
+
+                    if (world.x >= x && world.x <= x + iconSize &&
+                        world.y >= y && world.y <= y + iconSize) {
+
+                        selectedCraft = backPack.getLearntRecipes().get(i);
+                        Result result = homeMenuController.craftItem(selectedCraft.getName());
+                        System.out.println(result);
+                        latestResult = result;
+                        showResult = true;
+                        updateInventorySlots();
+                        break;
+                    }
+                }
+
+                return false;
             }
 
             if(MyGame.getCurrentPlayer().getCurrentItem() != null &&
@@ -1399,6 +1476,8 @@ public class GameScreen implements Screen {
                             }
                             else MyGame.getCurrentPlayer().useTool();
                             Result result = ((Tool) currentItem).use(tile);
+                            latestResult = result;
+                            showResult = true;
                         }
                     }
 
