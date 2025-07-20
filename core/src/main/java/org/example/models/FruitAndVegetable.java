@@ -25,6 +25,7 @@ public class FruitAndVegetable implements Item {
     private int daysNoWater;
     private boolean alive = true;
     private boolean isGiant;
+    private boolean isFruit;
 
 
     public FruitAndVegetable(CropType type) {
@@ -40,6 +41,9 @@ public class FruitAndVegetable implements Item {
         this.regrowthCounter = 0;
     }
 
+    public CropType getType() {
+        return type;
+    }
     public boolean isFullyGrown() {
         return isFullyGrown;
     }
@@ -109,7 +113,10 @@ public class FruitAndVegetable implements Item {
         return matchingGroup;
     }
 
-
+    public void harvest() {
+        currentGrowthStage--;
+        isFullyGrown = false;
+    }
     public Result expandToGiant(GameTile tile) {
         ArrayList<GameTile> tilesToExpand = getMatchingGiantSquare(tile);
         if(tilesToExpand.isEmpty()) return new Result(false, "Cannot turn giant");
@@ -122,7 +129,9 @@ public class FruitAndVegetable implements Item {
         return new Result(true, "Crop turned giant!");
     }
 
-
+    public void setFruit(){
+        isFruit = true;
+    }
     public boolean isGiant() {
         return isGiant;
     }
@@ -170,7 +179,6 @@ public class FruitAndVegetable implements Item {
     public boolean isAlive() {
         return alive;
     }
-
     public int getAge(){
         return age;
     }
@@ -231,6 +239,8 @@ public class FruitAndVegetable implements Item {
                 "Current Growth Stage: " + currentGrowthStage + "\n" + "Has been watered today: " + hasBeenWatered +"\n" + "Has been fertilized: " + hasBeenFertilized;
     }
     public TextureRegion getTexture() {
+        if(isOneTime() && isHarvested) return type.getTexture();
+        else if(isFruit) return type.getTexture();
         return type.getStageTexture(currentGrowthStage);
     }
 

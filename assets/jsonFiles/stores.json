@@ -190,7 +190,7 @@
           "description": "The flagship product of Joja corporation."
         },
         {
-          "name": "Ancient seeds",
+          "name": "Ancient Seeds",
           "price": 500,
           "limit": 1,
           "season": [
@@ -250,7 +250,7 @@
           "description": "A basic grain often served under vegetables."
         },
         {
-          "name": "Parsnip seeds",
+          "name": "Parsnip Seeds",
           "price": 25,
           "limit": 5,
           "season": [
@@ -268,7 +268,7 @@
           ]
         },
         {
-          "name": "Cauliflower seeds",
+          "name": "Cauliflower Seeds",
           "price": 100,
           "limit": 5,
           "description": "Plant these in the spring. Takes 12 days to produce a large cauliflower.",
@@ -286,7 +286,7 @@
           ]
         },
         {
-          "name": "Strawberry seeds",
+          "name": "Strawberry Seeds",
           "price": 100,
           "limit": 5,
           "description": "Plant these in spring. Takes 8 days to mature, and keeps producing strawberries after that.",
@@ -304,7 +304,7 @@
           ]
         },
         {
-          "name": "Kale seeds",
+          "name": "Kale Seeds",
           "price": 87,
           "limit": 5,
           "description": "Plant these in the spring. Takes 6 days to mature. Harvest with the scythe.",
@@ -323,7 +323,7 @@
           ]
         },
         {
-          "name": "Carrot seeds",
+          "name": "Carrot Seeds",
           "price": 5,
           "limit": 10,
           "description": "Plant in the spring. Takes 3 days to grow.",
@@ -332,7 +332,7 @@
           ]
         },
         {
-          "name": "Rhubarb seeds",
+          "name": "Rhubarb Seeds",
           "price": 100,
           "limit": 5,
           "description": "Plant these in the spring. Takes 13 days to mature.",
@@ -341,7 +341,7 @@
           ]
         },
         {
-          "name": "Jazz seeds",
+          "name": "Jazz Seeds",
           "price": 37,
           "limit": 5,
           "description": "Plant in spring. Takes 7 days to produce a blue puffball flower.",
@@ -350,7 +350,7 @@
           ]
         },
         {
-          "name": "Tomato seeds",
+          "name": "Tomato Seeds",
           "price": 62,
           "limit": 5,
           "description": "Plant these in the summer. Takes 11 days to mature, and continues to produce after first harvest.",
@@ -359,7 +359,7 @@
           ]
         },
         {
-          "name": "Pepper seeds",
+          "name": "Pepper Seeds",
           "price": 50,
           "limit": 5,
           "description": "Plant these in the summer. Takes 5 days to mature, and continues to produce after first harvest.",
@@ -368,7 +368,7 @@
           ]
         },
         {
-          "name": "Wheat seeds",
+          "name": "Wheat Seeds",
           "price": 12,
           "limit": 10,
           "description": "Plant these in the summer or fall. Takes 4 days to mature. Harvest with the scythe",
@@ -378,7 +378,7 @@
           ]
         },
         {
-          "name": "Summer Squash seeds",
+          "name": "Summer Squash Seeds",
           "price": 10,
           "limit": 10,
           "description": "Plant in the summer. Takes 6 days to grow, and continues to produce after first harvest.",
@@ -387,7 +387,7 @@
           ]
         },
         {
-          "name": "Radish seeds",
+          "name": "Radish Seeds",
           "price": 50,
           "limit": 5,
           "description": "Plant these in the summer. Takes 6 days to mature.",
@@ -396,7 +396,7 @@
           ]
         },
         {
-          "name": "Melon seeds",
+          "name": "Melon Seeds",
           "price": 100,
           "limit": 5,
           "description": "Plant these in the summer. Takes 12 days to mature.",
@@ -414,7 +414,7 @@
           ]
         },
         {
-          "name": "Poppy seeds",
+          "name": "Poppy Seeds",
           "price": 125,
           "limit": 5,
           "description": "Plant in summer. Produces a bright red flower in 7 days.",
@@ -423,7 +423,7 @@
           ]
         },
         {
-          "name": "Spangle seeds",
+          "name": "Spangle Seeds",
           "price": 62,
           "limit": 5,
           "description": "Plant in summer. Takes 8 days to produce a vibrant tropical flower. Assorted colors.",
@@ -432,7 +432,7 @@
           ]
         },
         {
-          "name": "Starfruit seeds",
+          "name": "Starfruit Seeds",
           "price": 400,
           "limit": 5,
           "description": "Plant these in the summer. Takes 13 days to mature.",
@@ -441,7 +441,7 @@
           ]
         },
         {
-          "name": "Sunflower seeds",
+          "name": "Sunflower Seeds",
           "price": 125,
           "limit": 5,
           "description": "Plant in summer or fall. Takes 8 days to produce a large sunflower. Yields more seeds at harvest.",
@@ -451,7 +451,7 @@
           ]
         },
         {
-          "name": "Corn seeds",
+          "name": "Corn Seeds",
           "price": 187,
           "limit": 5,
           "description": "Plant these in the summer or fall. Takes 14 days to mature, and continues to produce after first harvest.",
@@ -461,7 +461,7 @@
           ]
         },
         {
-          "name": "Eggplant seeds",
+          "name": "Eggplant Seeds",
           "price": 25,
           "limit": 5,
           "description": "Plant these in the fall. Takes 5 days to mature, and continues to produce after first harvest.",
@@ -470,7 +470,7 @@
           ]
         },
         {
-          "name": "Pumpkin seeds",
+          "name": "Pumpkin Seeds",
           "price": 125,
           "limit": 5,
           "description": "Plant these in the fall. Takes 13 days to mature.",
@@ -479,7 +479,7 @@
           ]
         },
         {
-          "name": "Broccoli seeds",
+          "name": "Broccoli Seeds",
           "price": 15,
           "limit": 5,
           "description": "Plant in the fall. Takes 8 days to mature, and continues to produce after first harvest.",
@@ -488,7 +488,7 @@
           ]
         },
         {
-          "name": "Amaranth seeds",
+          "name": "Amaranth Seeds",
           "price": 87,
           "limit": 5,
           "description": "Plant these in the fall. Takes 7 days to grow. Harvest with the scythe.",
@@ -506,7 +506,7 @@
           ]
         },
         {
-          "name": "Beet seeds",
+          "name": "Beet Seeds",
           "price": 20,
           "limit": 5,
           "description": "Plant these in the fall. Takes 6 days to mature.",
@@ -515,7 +515,7 @@
           ]
         },
         {
-          "name": "Yam seeds",
+          "name": "Yam Seeds",
           "price": 75,
           "limit": 5,
           "description": "Plant these in the fall. Takes 10 days to mature.",
@@ -524,7 +524,7 @@
           ]
         },
         {
-          "name": "Bok Choy seeds",
+          "name": "Bok Choy Seeds",
           "price": 62,
           "limit": 5,
           "description": "Plant these in the fall. Takes 4 days to mature.",
@@ -533,7 +533,7 @@
           ]
         },
         {
-          "name": "Fairy seeds",
+          "name": "Fairy Seeds",
           "price": 250,
           "limit": 5,
           "description": "Plant in fall. Takes 12 days to produce a mysterious flower. Assorted Colors.",
@@ -542,7 +542,7 @@
           ]
         },
         {
-          "name": "Rare seeds",
+          "name": "Rare Seeds",
           "price": 1000,
           "limit": 1,
           "description": "Sow in fall. Takes all season to grow.",
@@ -551,7 +551,7 @@
           ]
         },
         {
-          "name": "Powdermelon seeds",
+          "name": "Powdermelon Seeds",
           "price": 20,
           "limit": 10,
           "description": "This special melon grows in the winter. Takes 7 days to grow.",
@@ -899,7 +899,7 @@
           "description": "Unlocks the 3rd row of inventory"
         },
         {
-          "name": "Parsnip seeds",
+          "name": "Parsnip Seeds",
           "price": 20,
           "limit": 5,
           "season": [
@@ -917,7 +917,7 @@
           "description": "Plant these in the spring. Takes 10 days to mature, but keeps producing after that. Grows on a trellis."
         },
         {
-          "name": "Cauliflower seeds",
+          "name": "Cauliflower Seeds",
           "price": 80,
           "limit": 5,
           "season": [
@@ -926,7 +926,7 @@
           "description": "Plant these in the spring. Takes 12 days to produce a large cauliflower."
         },
         {
-          "name": "Potato seeds",
+          "name": "Potato Seeds",
           "price": 50,
           "limit": 5,
           "season": [
@@ -944,7 +944,7 @@
           "description": "Plant in spring. Takes 6 days to produce a colorful flower. Assorted colors."
         },
         {
-          "name": "Kale seeds",
+          "name": "Kale Seeds",
           "price": 70,
           "limit": 5,
           "season": [
@@ -953,7 +953,7 @@
           "description": "Plant these in the spring. Takes 6 days to mature. Harvest with the scythe."
         },
         {
-          "name": "Jazz seeds",
+          "name": "Jazz Seeds",
           "price": 30,
           "limit": 5,
           "season": [
@@ -962,7 +962,7 @@
           "description": "Plant in spring. Takes 7 days to produce a blue puffball flower."
         },
         {
-          "name": "Garlic seeds",
+          "name": "Garlic Seeds",
           "price": 40,
           "limit": 5,
           "season": [
@@ -980,7 +980,7 @@
           "description": "Plant these in the spring. Takes 8 days to mature"
         },
         {
-          "name": "Melon seeds",
+          "name": "Melon Seeds",
           "price": 80,
           "limit": 5,
           "season": [
@@ -989,7 +989,7 @@
           "description": "Plant these in the summer. Takes 12 days to mature."
         },
         {
-          "name": "Tomato seeds",
+          "name": "Tomato Seeds",
           "price": 50,
           "limit": 5,
           "season": [
@@ -998,7 +998,7 @@
           "description": "Plant these in the summer. Takes 11 days to mature, and continues to produce after first harvest."
         },
         {
-          "name": "Blueberry seeds",
+          "name": "Blueberry Seeds",
           "price": 80,
           "limit": 5,
           "season": [
@@ -1007,7 +1007,7 @@
           "description": "Plant these in the summer. Takes 13 days to mature, and continues to produce after first harvest."
         },
         {
-          "name": "Pepper seeds",
+          "name": "Pepper Seeds",
           "price": 40,
           "limit": 5,
           "season": [
@@ -1016,7 +1016,7 @@
           "description": "Plant these in the summer. Takes 5 days to mature, and continues to produce after first harvest."
         },
         {
-          "name": "Wheat seeds",
+          "name": "Wheat Seeds",
           "price": 10,
           "limit": 5,
           "season": [
@@ -1026,7 +1026,7 @@
           "description": "Plant these in the summer or fall. Takes 4 days to mature. Harvest with the scythe."
         },
         {
-          "name": "Radish seeds",
+          "name": "Radish Seeds",
           "price": 40,
           "limit": 5,
           "season": [
@@ -1035,7 +1035,7 @@
           "description": "Plant these in the summer. Takes 6 days to mature."
         },
         {
-          "name": "Poppy seeds",
+          "name": "Poppy Seeds",
           "price": 100,
           "limit": 5,
           "season": [
@@ -1044,7 +1044,7 @@
           "description": "Plant in summer. Produces a bright red flower in 7 days."
         },
         {
-          "name": "Spangle seeds",
+          "name": "Spangle Seeds",
           "price": 50,
           "limit": 5,
           "season": [
@@ -1062,7 +1062,7 @@
           "description": "Plant these in the summer. Takes 11 days to grow, but keeps producing after that. Grows on a trellis."
         },
         {
-          "name": "Corn seeds",
+          "name": "Corn Seeds",
           "price": 150,
           "limit": 5,
           "season": [
@@ -1072,7 +1072,7 @@
           "description": "Plant these in the summer or fall. Takes 14 days to mature, and continues to produce after first harvest."
         },
         {
-          "name": "Sunflower seeds",
+          "name": "Sunflower Seeds",
           "price": 200,
           "limit": 5,
           "season": [
@@ -1082,7 +1082,7 @@
           "description": "Plant in summer or fall. Takes 8 days to produce a large sunflower. Yields more seeds at harvest."
         },
         {
-          "name": "Red Cabbage seeds",
+          "name": "Red Cabbage Seeds",
           "price": 100,
           "limit": 5,
           "season": [
@@ -1091,7 +1091,7 @@
           "description": "Plant these in the summer. Takes 9 days to mature."
         },
         {
-          "name": "Eggplant seeds",
+          "name": "Eggplant Seeds",
           "price": 20,
           "limit": 5,
           "season": [
@@ -1100,7 +1100,7 @@
           "description": "Plant these in the fall. Takes 5 days to mature, and continues to produce after first harvest."
         },
         {
-          "name": "Pumpkin seeds",
+          "name": "Pumpkin Seeds",
           "price": 100,
           "limit": 5,
           "season": [
@@ -1109,7 +1109,7 @@
           "description": "Plant these in the fall. Takes 13 days to mature."
         },
         {
-          "name": "Bok Choy seeds",
+          "name": "Bok Choy Seeds",
           "price": 50,
           "limit": 5,
           "season": [
@@ -1118,7 +1118,7 @@
           "description": "Plant these in the fall. Takes 4 days to mature."
         },
         {
-          "name": "Yam seeds",
+          "name": "Yam Seeds",
           "price": 60,
           "limit": 5,
           "season": [
@@ -1127,7 +1127,7 @@
           "description": "Plant these in the fall. Takes 10 days to mature."
         },
         {
-          "name": "Cranberry seeds",
+          "name": "Cranberry Seeds",
           "price": 240,
           "limit": 5,
           "season": [
@@ -1136,7 +1136,7 @@
           "description": "Plant these in the fall. Takes 7 days to mature, and continues to produce after first harvest."
         },
         {
-          "name": "Fairy seeds",
+          "name": "Fairy Seeds",
           "price": 200,
           "limit": 5,
           "season": [
@@ -1145,7 +1145,7 @@
           "description": "Plant in fall. Takes 12 days to produce a mysterious flower. Assorted Colors."
         },
         {
-          "name": "Amaranth seeds",
+          "name": "Amaranth Seeds",
           "price": 70,
           "limit": 5,
           "season": [
@@ -1163,7 +1163,7 @@
           "description": "Plant these in the fall. Takes 10 days to grow, but keeps producing after that. Grows on a trellis."
         },
         {
-          "name": "Artichoke seeds",
+          "name": "Artichoke Seeds",
           "price": 30,
           "limit": 5,
           "season": [
