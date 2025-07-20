@@ -83,13 +83,20 @@ public class Farming implements Skill{
     public void harvestCrop(GameTile tile) {
         Item item = tile.getItemOnTile();
         if(item instanceof FruitAndVegetable) {
-            MyGame.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
-            if (((FruitAndVegetable) item).isOneTime()) tile.setItemOnTile(null);
             ((FruitAndVegetable) item).setHarvested(true);
+            if (((FruitAndVegetable) item).isOneTime()) {
+                tile.setItemOnTile(null);
+                MyGame.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
+            } else {
+                FruitAndVegetable fruit = new FruitAndVegetable(((FruitAndVegetable)item).getType());
+                fruit.setFruit();
+                MyGame.getCurrentPlayer().getBackPack().addToInventory(fruit, 1);
+                ((FruitAndVegetable)item).harvest();
+            }
         } else if(item instanceof Tree) {
             String fruitName = ((Tree) item).getTreeType().getFruit();
             int fruitPrice = ((Tree) item).getTreeType().getFruitPrice();
-            Item fruit = new BasicItem(fruitName, fruitPrice);
+            ForagingItem fruit = new ForagingItem(ForagingCrop.fromString(fruitName), fruitName, fruitPrice);
             Random rand = new Random();
             int randomNum = rand.nextInt(5);
             MyGame.getCurrentPlayer().getBackPack().addToInventory(fruit, randomNum);

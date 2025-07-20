@@ -66,6 +66,7 @@ public class Tree implements Item {
             isHarvested = true;
             isFruitGrown = false;
             fruitGrowthCounter = 0;
+
             return new Result(true, "Successfully harvested from the tree");
         } else {
             return new Result(false, "No fruit ready to be harvested");

@@ -32,7 +32,7 @@ public class Player {
     private final Foraging foragingSkill = new Foraging();
     private final TrashCan trashCan = new TrashCan();
     private final BackPack backPack = new BackPack();
-    private boolean unlimitedEnergy = false;
+    private boolean unlimitedEnergy = true;
     private Item currentItem;
     private static final List<Friendship> friendships = new ArrayList<>();
     private int proposalRejectionDaysLeft = 0;
@@ -92,7 +92,14 @@ public class Player {
 //        backPack.getInventory().put(new FruitAndVegetable(CropType.Artichoke),1);
         backPack.addToInventory(CropType.Blueberry, 1);
         backPack.addToInventory(ForagingSeedType.CranberrySeeds,1);
-        backPack.addToInventory(ForagingSeedType.FairySeeds,1);
+        backPack.addToInventory(ForagingSeedType.StrawberrySeeds,1);
+        backPack.addToInventory(MyGame.getDatabase().getItem("Parsnip seeds"), 1 );
+        backPack.addToInventory(MyGame.getDatabase().getItem("Eggplant seeds"), 1 );
+        backPack.addToInventory(MyGame.getDatabase().getItem("Pumpkin seeds"), 1 );
+        backPack.addToInventory(MyGame.getDatabase().getItem("Artichoke seeds"), 1 );
+        backPack.addToInventory(MyGame.getDatabase().getItem("Grape Starter"), 1 );
+        backPack.addToInventory(MyGame.getDatabase().getItem("Sunflower seeds"), 1 );
+        backPack.addToInventory(ForagingSeedType.MixedSeeds, 1 );
         backPack.addToInventory(ForagingTreeSourceType.MahoganySeeds,1);
         backPack.addToInventory(ForagingCrop.Apricot, 1);
         backPack.addToInventory(MineralType.Fiber, 30);
