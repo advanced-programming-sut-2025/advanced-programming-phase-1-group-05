@@ -85,8 +85,8 @@ public class Farming implements Skill{
         if(item instanceof FruitAndVegetable) {
             ((FruitAndVegetable) item).setHarvested(true);
             if (((FruitAndVegetable) item).isOneTime()) {
-                tile.setItemOnTile(null);
                 MyGame.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
+                tile.setItemOnTile(null);
             } else {
                 FruitAndVegetable fruit = new FruitAndVegetable(((FruitAndVegetable)item).getType());
                 fruit.setFruit();
