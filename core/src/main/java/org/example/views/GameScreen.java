@@ -1067,11 +1067,9 @@ public class GameScreen implements Screen {
 
         for (Gift  gift : controller.getReceivedGifts(player)) {
             innerPanel.add(buildRow(gift,true)).padBottom(50).row();
-            System.out.println("added " + gift.getItem());
         }
         for (Gift gift : controller.getSentGifts(player)) {
             innerPanel.add(buildRow(gift, false)).padBottom(50).row();
-            System.out.println("added " + gift.getItem());
         }
         ImageButton closeButton = new ImageButton(closeDrawable);
         closeButton.addListener(new ClickListener() {

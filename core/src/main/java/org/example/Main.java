@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.example.controllers.DBController;
 import org.example.controllers.RegisterMenuController;
 import org.example.models.*;
+import org.example.views.GameScreen;
 import org.example.views.MenuNavigator;
 import org.example.views.StoreView;
 

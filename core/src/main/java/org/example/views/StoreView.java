@@ -1,6 +1,7 @@
 package org.example.views;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -27,19 +28,21 @@ import java.util.List;
 import java.util.Map;
 
 public class StoreView implements Screen {
-    //private final GameScreen previousScreen;
+    private final GameScreen previousScreen = null;
     private Stage stage;
     private final Skin skin;
     private Map<Product, Integer> quantities = new HashMap<>();
     Store store;
+    private boolean showOnlyAvailable = false;
+    Table itemTable;
+    ScrollPane scrollPane;
+
 
     public StoreView(Store store) {
-//        this.previousScreen = previousScreen;
         this.skin = GameAssetManager.getSkin();
         this.stage = new Stage(new ScreenViewport());
         this.store = store;
-        List<Product> products = store.getProducts();
-
+        //previousScreen = game;
     }
 
     private void buildUI(List<Product> storeItems) {
@@ -47,39 +50,68 @@ public class StoreView implements Screen {
         root.setFillParent(true);
         stage.addActor(root);
 
-        Table itemTable = new Table();
+        itemTable = new Table();
 
-        for (Product item : storeItems) {
+        scrollPane = new ScrollPane(itemTable, createScrollPaneStyle());
+        scrollPane.setFadeScrollBars(false);
+        rebuildItemList(storeItems);
+        root.add(scrollPane).height(800).expandX().fillX().pad(20).row();
+
+//        for (Product item : storeItems) {
+//            if (item.getName().contains("Tool")) continue;
+//            itemTable.add(createItemRow(item)).padBottom(50).row();
+//        }
+
+
+
+
+        Texture shoppingIcon = GameAssetManager.getInstance().getOrLoadTexture("stores/shoppingIcon.png");
+        ImageButton finishButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(shoppingIcon)));
+        TextButton filterButton = new TextButton("Only Available Products", skin);
+        filterButton.setColor(1, 210f/255, 132f/255, 1);
+        finishButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                StoreController.getInstance().purchase(quantities, store);
+            }
+        });
+        filterButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showOnlyAvailable = !showOnlyAvailable;
+                filterButton.setText(showOnlyAvailable ? "Show All Products" : "Only Available Products");
+                List<Product> filtered = showOnlyAvailable
+                    ? store.getProducts().stream()
+                    .filter(product -> product.isAvailable(store))
+                    .toList()
+                    : store.getProducts();
+                rebuildItemList(filtered);
+            }
+        });
+        Table buttonRow = new Table();
+        buttonRow.add(filterButton).padRight(20);
+        buttonRow.add(finishButton).size(70, 70);
+        root.add(buttonRow).padTop(20);
+    }
+
+    private void rebuildItemList(List<Product> products) {
+        itemTable.clear();
+        for (Product item : products) {
             if (item.getName().contains("Tool")) continue;
             itemTable.add(createItemRow(item)).padBottom(50).row();
         }
+    }
 
+    private ScrollPane.ScrollPaneStyle createScrollPaneStyle() {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(new Color(1, 212/255f, 130/255f, 1f));
         pixmap.fill();
-
         Texture backgroundTexture = new Texture(pixmap);
         pixmap.dispose();
         Drawable backgroundDrawable = new TextureRegionDrawable(new TextureRegion(backgroundTexture));
 
         ScrollPane.ScrollPaneStyle style = new ScrollPane.ScrollPaneStyle();
         style.background = backgroundDrawable;
-
-        ScrollPane scrollPane = new ScrollPane(itemTable, style);
-        scrollPane.setFadeScrollBars(false);
-        root.add(scrollPane).height(800).expandX().fillX().pad(20).row();
-
-
-        Texture shoppingIcon = GameAssetManager.getInstance().getOrLoadTexture("stores/shoppingIcon.png");
-        ImageButton finishButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(shoppingIcon)));
-        //TextButton finishButton = new TextButton("Finish Shopping", skin);
-        finishButton.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                StoreController.getInstance().purchase(quantities, store);
-            }
-        });
-        finishButton.getImageCell().size(70, 70);
-        root.add(finishButton).padTop(20).size(70, 70);
+        return style;
     }
 
     private Table createItemRow(Product item) {
@@ -103,12 +135,14 @@ public class StoreView implements Screen {
         minus.getImageCell().size(30, 30);;
         plus.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                int qty = Integer.parseInt(quantityLabel.getText().toString());
-                if (MyGame.getCurrentPlayer().getGold() < item.getPrice() * (qty + 1))
-                    return;
-                qty++;
-                quantityLabel.setText(String.valueOf(qty));
-                quantities.put(item, qty);
+                if (item.isAvailable(store)){
+                    int qty = Integer.parseInt(quantityLabel.getText().toString());
+                    if (MyGame.getCurrentPlayer().getGold() < item.getPrice() * (qty + 1))
+                        return;
+                    qty++;
+                    quantityLabel.setText(String.valueOf(qty));
+                    quantities.put(item, qty);
+                }
             }
         });
 
@@ -176,6 +210,9 @@ public class StoreView implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(v);
         stage.draw();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Main.getMain().setScreen(previousScreen);
+        }
     }
 
     @Override
