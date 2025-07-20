@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import com.badlogic.gdx.Game;
 import org.example.models.*;
 import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.*;
@@ -13,6 +14,7 @@ import java.util.regex.Matcher;
 
 public class StoreController {
     private static StoreController instance;
+
 
 
     public static StoreController getInstance() {
@@ -58,7 +60,7 @@ public class StoreController {
         }
         return Result.success(output.toString());
     }
-    public void purchase(Map<Product, Integer> products, Store store) {
+    public Result purchase(Map<Product, Integer> products, GameScreen screen) {
 
         Player player = getPlayer(products);
 
@@ -108,6 +110,7 @@ public class StoreController {
             }
             entry.getKey().addSold(entry.getValue());
         }
+        return Result.success("bought successfully!");
     }
 
     private static Player getPlayer(Map<Product, Integer> products) {
@@ -154,16 +157,8 @@ public class StoreController {
         return Result.success("You will receive the gold tomorrow morning!");
     }
 
-    public Result buyAnimal(Matcher m, GameScreen game) {
-        Store store = getCurrentStore();
-        if (store == null || !store.getStoreName().equalsIgnoreCase("marnie's ranch")) {
-            return Result.error("You can only do this in Marnie's ranch");
-        }
+    public Result buyAnimal(AnimalType type,Product product, GameScreen game, Animal animal) {
 
-        Product product = store.getProduct(m.group("animalType"));
-        if (product == null) {
-            return Result.error("Can't find animal type " + m.group("animalType"));
-        }
         Player player = MyGame.getCurrentPlayer();
         if (player.getGold() < product.getPrice()) {
             return Result.error("You do not have enough money to buy this animal!");
@@ -177,8 +172,6 @@ public class StoreController {
         if (animalHouse == null) {
             return Result.error("You don't have an empty " + enclosureType.toString().toLowerCase());
         }
-        AnimalType type = AnimalType.fromString(m.group("animalType"));
-        Animal animal = new Animal(m.group("animalName"), type, player);
         animalHouse.addAnimal(animal);
         player.addGold(-product.getPrice());
         game.addAnimalActor(new AnimalActor(animal));

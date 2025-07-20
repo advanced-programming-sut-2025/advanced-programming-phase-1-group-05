@@ -34,6 +34,7 @@ import org.example.models.Tool.Tool;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.example.models.GameMap.MAP_HEIGHT;
@@ -113,6 +114,11 @@ public class GameScreen implements Screen {
     private boolean giftMode =false;
     private NPC lastNPC = null;
     private Player lastPlayer = null;
+
+    // Artisan
+    private boolean artisanInputMode = false;
+    private List<InventorySlot> selectedSlots = new ArrayList<>();
+    private ArtisanMachine lastArtisan;
 
     //result stuff
     private TextureRegion resultBg = GameAssetManager.resultTexture;
@@ -266,10 +272,12 @@ public class GameScreen implements Screen {
         showCookingPage(batch);
         updateToolSelectionSlots();
         checkGifting();
+        checkArtisanInput();
         if(showResult) showResult(batch,latestResult,delta);
         if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             GameManager.getGameClock().advanceDay();
         }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             isInvenotryOpen = !isInvenotryOpen;
             isCraftOpen = false;
@@ -354,14 +362,54 @@ public class GameScreen implements Screen {
         }
 
     }
+    private void checkArtisanInput() {
+        if (!isInvenotryOpen || !artisanInputMode) return;
+
+        if (Gdx.input.justTouched()) {
+            Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+            for (InventorySlot slot : slots) {
+                if (mouse.x >= slot.x && mouse.x <= slot.x + SLOT_SIZE &&
+                    mouse.y >= slot.y && mouse.y <= slot.y + SLOT_SIZE) {
+
+                    if (slot.item != null) {
+                        if (selectedSlots.contains(slot)) {
+                            selectedSlots.remove(slot); // deselect
+                        } else {
+                            selectedSlots.add(slot); // select
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Confirm selection with Enter key
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            List<String> selectedItems = new ArrayList<>();
+            for (InventorySlot slot : selectedSlots) {
+                selectedItems.add(slot.item.getName());
+                MyGame.getCurrentPlayer().getBackPack().removeFromInventory(slot.item, 1);
+                // TODO ?????
+            }
+
+            latestResult = lastArtisan.insertItem(selectedItems);
+            artisanInputMode = false;
+            isInvenotryOpen = false;
+            selectedSlots.clear();
+        }
+    }
+
     private void handleInput(float delta) {
         Vector2 oldPos = new Vector2(player.getXX(), player.getYY());
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) player.moveUp(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) player.moveDown(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.moveLeft(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.moveRight(delta);
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F))
-            Main.getMain().setScreen(new FishingMiniGame(this, new FishingPole(), FishType.CrimsonFish));
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            MyGame.getCurrentPlayer().addGold(100000);
+            Main.getMain().setScreen(new StoreView(MyGame.getDatabase().getStoreByName("Marnie's Ranch"), this));
+        }
         float px = player.getXX() + player.getWidth() / 2f;
         float py = player.getYY() + player.getHeight() / 2f;
         if (!canWalk(px, py)) {
@@ -860,6 +908,12 @@ public class GameScreen implements Screen {
 
                 batch.draw(texture, drawX, drawY, drawWidth, drawHeight);
                 if(slot.count > 1) font.draw(batch,String.valueOf(slot.count), drawX + drawWidth - 15f,drawY + 10f);
+            }
+            if (selectedSlots.contains(slot)) {
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                shapeRenderer.setColor(Color.YELLOW);
+                shapeRenderer.rect(slot.x, slot.y, SLOT_SIZE, SLOT_SIZE);
+                shapeRenderer.end();
             }
         }
 
@@ -1813,11 +1867,21 @@ public class GameScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (button == Input.Buttons.RIGHT) {
-                    showArtisanMenu(machine);
+                    if (machine.isWorking())
+                        showArtisanMenu(machine);
+                    else {
+                        artisanInputMode = true;
+                        isInvenotryOpen = true;
+                        selectedSlots.clear();
+                    }
                     return true;
                 }
                 return false;
             }
         });
+    }
+
+    public SpriteBatch getBatch() {
+        return batch;
     }
 }

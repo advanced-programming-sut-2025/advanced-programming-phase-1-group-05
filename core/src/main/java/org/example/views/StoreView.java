@@ -18,17 +18,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Main;
 import org.example.controllers.StoreController;
 import org.example.models.*;
+import org.example.models.Enums.AnimalType;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class StoreView implements Screen {
-    private final GameScreen previousScreen = null;
+    private final GameScreen previousScreen;
     private Stage stage;
     private final Skin skin;
     private Map<Product, Integer> quantities = new HashMap<>();
@@ -36,13 +38,13 @@ public class StoreView implements Screen {
     private boolean showOnlyAvailable = false;
     Table itemTable;
     ScrollPane scrollPane;
+    MessageBanner banner;
 
-
-    public StoreView(Store store) {
+    public StoreView(Store store, GameScreen game) {
         this.skin = GameAssetManager.getSkin();
         this.stage = new Stage(new ScreenViewport());
         this.store = store;
-        //previousScreen = game;
+        previousScreen = game;
     }
 
     private void buildUI(List<Product> storeItems) {
@@ -71,7 +73,21 @@ public class StoreView implements Screen {
         filterButton.setColor(1, 210f/255, 132f/255, 1);
         finishButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                StoreController.getInstance().purchase(quantities, store);
+                Map<Product, Integer> toPurchase = new HashMap<>(quantities);
+
+                for (Map.Entry<Product, Integer> entry : toPurchase.entrySet()) {
+                    Product product = entry.getKey();
+                    int quantity = entry.getValue();
+                    if (quantity <= 0) continue;
+
+                    AnimalType animalType = AnimalType.fromString(product.getName());
+                    if (animalType != null) {
+                        showNameDialog(animalType, product);
+                        return;
+                    }
+                }
+                StoreController.getInstance().purchase(quantities, previousScreen);
+                Main.getMain().setScreen(previousScreen);
             }
         });
         filterButton.addListener(new ClickListener() {
@@ -92,6 +108,45 @@ public class StoreView implements Screen {
         buttonRow.add(finishButton).size(70, 70);
         root.add(buttonRow).padTop(20);
     }
+
+
+    private void showNameDialog(AnimalType type, Product product) {
+        TextField nameField = new TextField("", skin);
+        Dialog dialog = new Dialog("Name Your Animal", skin) {
+            protected void result(Object obj) {
+                if ((boolean) obj) {
+                    String name = nameField.getText().trim();
+                    if (name.isEmpty()) return;
+
+                    Animal animal = new Animal(name, type, MyGame.getCurrentPlayer());
+                    Result result = StoreController.getInstance().buyAnimal(type, product, previousScreen, animal);
+
+                    if (result.isSuccess()) {
+                        removeActor(this);
+                        quantities.remove(product);
+                        banner.showMessage(result.getMessage(), Color.GREEN, 2f);
+                    } else {
+                        banner.showMessage(result.getMessage(), Color.RED, 2f);
+                    }
+                }
+            }
+        };
+
+
+        dialog.getContentTable().add(new Label("Enter a name for your new animal:", skin)).padBottom(10).row();
+        dialog.getContentTable().add(nameField).width(300).padBottom(20).row();
+
+        dialog.button("Confirm", true);
+        dialog.button("Cancel", false);
+        dialog.key(Input.Keys.ENTER, true);
+        dialog.key(Input.Keys.ESCAPE, false);
+
+        stage.addActor(dialog);
+        dialog.show(stage);
+    }
+
+
+
 
     private void rebuildItemList(List<Product> products) {
         itemTable.clear();
@@ -202,6 +257,10 @@ public class StoreView implements Screen {
         background.setFillParent(true);
         stage.addActor(background);
         Gdx.input.setInputProcessor(stage);
+        banner = new MessageBanner(skin);
+        banner.setPosition(stage.getWidth() / 2f - 200, stage.getHeight() - 100);
+        stage.addActor(banner);
+
         buildUI(store.getProducts());
     }
 

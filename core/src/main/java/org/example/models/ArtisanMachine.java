@@ -14,7 +14,7 @@ public class ArtisanMachine extends Actor {
     private TextureRegion textureNormal;
     private TextureRegion textureReady;
     ArtisanType type;
-    private boolean ready = false;
+    private boolean ready = false, working = false;
     private float processingTime;
     private float elapsedTime;
     private ArtisanProduct product;
@@ -27,17 +27,18 @@ public class ArtisanMachine extends Actor {
         setSize(textureNormal.getRegionWidth(), textureNormal.getRegionHeight());
     }
 
-    public boolean insertItem(List<String> items) {
+    public Result insertItem(List<String> items) {
         type.useArtisan(items, this);
-        if (product == null) ;// error
-        else{
-            this.processingTime = product.getProcessingTime();
-            this.elapsedTime = 0;
-            this.ready = false;
-        } // success message
+        if (product == null)
+            return Result.error("invalid items!");
+
+        this.processingTime = product.getProcessingTime();
+        this.elapsedTime = 0;
+        this.ready = false;
+        working = true;
 
 
-        return true;
+        return new Result(true, product.getName() + " will be ready in " + processingTime + " hours!");
     }
 
     @Override
@@ -56,11 +57,13 @@ public class ArtisanMachine extends Actor {
         reset();
         return artisanProduct;
     }
+
     private void reset() {
         product = null;
         elapsedTime = 0;
         processingTime = 0;
         ready = false;
+        working = false;
     }
 
     public void setProduct(ArtisanProduct product) {
@@ -85,5 +88,9 @@ public class ArtisanMachine extends Actor {
             getX(), getY(),
             getWidth(), getHeight()
         );
+    }
+
+    public boolean isWorking() {
+        return working;
     }
 }
