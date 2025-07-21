@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import org.example.controllers.GameManager;
-import org.example.models.Enums.CropType;
-import org.example.models.Enums.TileType;
-import org.example.models.Enums.Season;
+import org.example.models.Enums.*;
 
+import java.awt.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -64,6 +64,7 @@ public class TileMapRenderer {
 
             fillArea(offsetX + 20, offsetY + 20, 5, 6, TileType.Water);
             fillArea(offsetX + 45, offsetY + 30, 3, 7, TileType.Water);
+            placeRandomDecorations();
 //            //jesus T-T
 ////            for (int i = 0; i < 15; i++) {
 ////                int tx = offsetX + 10 + random.nextInt(50);
@@ -263,9 +264,58 @@ public class TileMapRenderer {
         }
     }
 
+
     public void dispose() {
         for (Texture tex : textureMap.values()) {
             tex.dispose();
+        }
+    }
+
+    private void placeRandomDecorations() {
+        int cropCount = 0; //TODO fix this
+        int stoneCount = 50;
+        int woodCount = 50;
+        int fiberCount = 50;
+        int maxAttempts = (cropCount + stoneCount + woodCount + fiberCount) * 2;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+
+
+            int x = random.nextInt(MAP_WIDTH);
+            int y = random.nextInt(MAP_HEIGHT);
+
+
+            GameTile tile = GameMap.getTile(x, y);
+            if (tile == null || tile.getTileType() != TileType.FarmFlat) {
+                continue;
+            }
+            if(tile.getItemOnTile() != null) continue;
+
+            setRandomDecoration(tile);
+        }
+
+    }
+
+    public void setRandomDecoration(GameTile tile){
+        Random random = new Random();
+        int x = random.nextInt(100);
+        if(tile.getTileType() == TileType.Mine && tile.getItemOnTile() == null) {
+            tile.setItemOnTile(new Mineral(MineralType.getRandomMineralType()));
+        } else if (tile.getItemOnTile() == null) {
+            ForagingCrop type = ForagingCrop.getRandomForagingCrop(GameManager.getSeason());
+            TreeType type1 = TreeType.getRandomTreeType(GameManager.getSeason());
+            Tree newTree = new Tree(type1);
+            newTree.setFullyGrown();
+            newTree.setFullyGrown();
+            if(x%5 == 0) {
+                //tile.setItemOnTile(new ForagingItem(type, type.getName(), type.getPrice()));
+            }
+            else if(x%5 == 1) {
+                //tile.setItemOnTile(newTree);
+            }
+            else if(x%5 == 2) tile.setItemOnTile(MineralType.Wood);
+            else if(x%5 == 3) tile.setItemOnTile(MineralType.Stone);
+            else tile.setItemOnTile(MineralType.Fiber);
         }
     }
 }

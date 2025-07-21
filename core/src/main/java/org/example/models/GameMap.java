@@ -90,29 +90,30 @@ public class GameMap {
     public void setForagingItems() {
         int totalTiles = map.length * map[0].length;
         Random random = new Random();
-
-        if (random.nextInt(100) == 0) { // 1% chance
+        if (random.nextInt(2) == 0) {
             int chosen = random.nextInt(totalTiles);
             int row = chosen / map[0].length;
             int col = chosen % map[0].length;
 
             GameTile tile = map[row][col];
             Item item;
-            if (tile != null && tile.getTileType() == TileType.Soil && tile.getItemOnTile() == null) {
-                if (chosen % 4 == 0) {
+            if (tile != null && tile.getItemOnTile() == null) {
+                if (chosen % 5 == 0) {
                     ForagingTreeSourceType type = ForagingTreeSourceType.getRandomForagingTreeType(GameManager.getSeason());
                     item = new ForagingItem(type, type.getName(), type.getPrice());
                     tile.setItemOnTile(item);
-                } else if(chosen % 4 == 1) {
-                    ForagingSeedType type = ForagingSeedType.getRandomForagingSeedType(GameManager.getSeason());
+                } else if(chosen % 5 == 1) {
+                    ForagingCrop type = ForagingCrop.getRandomForagingCrop(GameManager.getSeason());
                     item = new ForagingItem(type, type.getName(), type.getPrice());
                     tile.setItemOnTile(item);
-                } else if(chosen % 4 == 2) {
+                } else if(chosen % 5 == 2) {
                     item = MineralType.Wood;
-
+                    tile.setItemOnTile(item);
+                } else if(chosen % 5 == 3){
+                    item = MineralType.Fiber;
                     tile.setItemOnTile(item);
                 } else {
-                    item = MineralType.Fiber;
+                    item = MineralType.Stone;
                     tile.setItemOnTile(item);
                 }
             }
@@ -152,17 +153,22 @@ public class GameMap {
         }
     }
     public void growPlants(){
-        for(FruitAndVegetable f: plants){
-            if(f.isAlive()) f.grow();
-            else {
-                //remove dead plants
-                GameTile tile = GameMap.getTile(f.getCoordinates().getKey(), f.getCoordinates().getValue());
-                tile.setItemOnTile(null);
-                MyGame.getGameMap().getPlants().remove(f);
+        for (int row = 0; row < map.length; row++) {
+            for (int col = 0; col < map[0].length; col++) {
+                GameTile tile = map[row][col];
+                if (tile == null) continue;
+                if (tile.getItemOnTile() != null) {
+                    Item item = tile.getItemOnTile();
+                    if (item instanceof FruitAndVegetable) {
+                        FruitAndVegetable plant = (FruitAndVegetable) item;
+                        if (plant.isAlive()) plant.grow();
+                        else tile.setItemOnTile(null);
+                    } else if (item instanceof Tree) {
+                        Tree tree = (Tree) item;
+                        tree.growTree();
+                    }
+                }
             }
-        }
-        for(Tree t: trees){
-            t.growTree();
         }
         dryTiles();
     }
@@ -248,13 +254,16 @@ public class GameMap {
         int x = random.nextInt(100);
         if(tile.getTileType() == TileType.Mine && tile.getItemOnTile() == null) {
             tile.setItemOnTile(new Mineral(MineralType.getRandomMineralType()));
-        } else if (tile.getTileType() == TileType.Soil && tile.getItemOnTile() == null) {
+        } else if (tile.getItemOnTile() == null) {
             ForagingCrop type = ForagingCrop.getRandomForagingCrop(GameManager.getSeason());
             TreeType type1 = TreeType.getRandomTreeType(GameManager.getSeason());
             Tree newTree = new Tree(type1);
             newTree.setFullyGrown();
+            newTree.setFullyGrown();
             if(x%4 == 0) tile.setItemOnTile(new ForagingItem(type, type.getName(), type.getPrice()));
-            else tile.setItemOnTile(newTree);
+            else if(x%4 == 1) tile.setItemOnTile(newTree);
+            else if(x%4 == 2) tile.setItemOnTile(MineralType.Wood);
+            else tile.setItemOnTile(MineralType.Stone);
         }
     }
 
@@ -447,17 +456,6 @@ public class GameMap {
             for (int j = startY; j < startY + width; j++) {
                 if (isInBounds(i, j)) {
                     setTile(i, j, new GameTile(i, j, type));
-                }
-            }
-        }
-    }
-
-    public void setPlayerCoordinates(){
-        for(int i = 1; i < MAP_HEIGHT; i ++) {
-            for(int j = 1; j < MAP_WIDTH; j ++) {
-                GameTile tile = getTile(i, j);
-                if(tile.getTileType().equals(TileType.House)) {
-                    MyGame.getCurrentPlayer().setCoordinate(i, j);
                 }
             }
         }

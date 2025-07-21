@@ -6,9 +6,9 @@ import org.example.models.Enums.Material;
 public class ForagingItem implements Item{
     private final String name;
     private final int price;
-    private final Material material;
+    private final Item material;
 
-    public ForagingItem(Material material, String name, int price) {
+    public ForagingItem(Item material, String name, int price) {
         this.material = material;
         this.name = name;
         this.price = price;
@@ -23,6 +23,6 @@ public class ForagingItem implements Item{
         return price;
     }
     public TextureRegion getTexture() {
-        return null; //TODO implement
+        return material.getTexture();
     }
 }
