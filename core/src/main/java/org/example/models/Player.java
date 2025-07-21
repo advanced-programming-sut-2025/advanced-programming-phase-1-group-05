@@ -32,7 +32,7 @@ public class Player {
     private final Foraging foragingSkill = new Foraging();
     private final TrashCan trashCan = new TrashCan();
     private final BackPack backPack = new BackPack();
-    private boolean unlimitedEnergy = true;
+    private boolean unlimitedEnergy = false;
     private Item currentItem;
     private static final List<Friendship> friendships = new ArrayList<>();
     private int proposalRejectionDaysLeft = 0;
@@ -50,6 +50,7 @@ public class Player {
     private final float energyCostPerStep = 0.05f;
     private float distanceTraveled = 0f;
     private List<ArtisanMachine> machines = new ArrayList<>();
+    private boolean isFainting = false;
 
     //walking animations
     private Animation<TextureRegion> walkUpAnimation;
@@ -57,7 +58,7 @@ public class Player {
     private Animation<TextureRegion> walkLeftAnimation;
     private Animation<TextureRegion> walkRightAnimation;
     private Animation<TextureRegion> currentAnimation = null;
-
+    private Animation<TextureRegion> faintAnimation = null;
     private float stateTime = 0f;
     private Direction lastDirection = Direction.DOWN;
 
@@ -124,6 +125,17 @@ public class Player {
         walkDownAnimation = loadAnimations('d');
         walkLeftAnimation = loadAnimations('l');
         walkRightAnimation = loadAnimations('r');
+        faintAnimation = loadFaintAnimation();
+    }
+
+    public Animation<TextureRegion> loadFaintAnimation() {
+        TextureRegion[] frames = new TextureRegion[3];
+        for (int i = 0; i < frames.length; i++) {
+            Texture tex = new Texture("player-female/faint " + i + ".png");
+            tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+            frames[i] = new TextureRegion(tex);
+        }
+        return new Animation<>(0.5f, frames);
     }
 
     public Animation<TextureRegion> loadAnimations(char direction) {
@@ -170,6 +182,7 @@ public class Player {
     }
 
     public void moveUp(float delta) {
+        if(isFainting) return;
         Y += speed * delta;
         currentAnimation = walkUpAnimation;
         lastDirection = Direction.UP;
@@ -178,6 +191,7 @@ public class Player {
     }
 
     public void moveDown(float delta) {
+        if(isFainting) return;
         Y -= speed * delta;
         currentAnimation = walkDownAnimation;
         lastDirection = Direction.DOWN;
@@ -186,6 +200,7 @@ public class Player {
     }
 
     public void moveLeft(float delta) {
+        if(isFainting) return;
         X -= speed * delta;
         currentAnimation = walkLeftAnimation;
         lastDirection = Direction.LEFT;
@@ -194,6 +209,7 @@ public class Player {
     }
 
     public void moveRight(float delta) {
+        if(isFainting) return;
         X += speed * delta;
         currentAnimation = walkRightAnimation;
         lastDirection = Direction.RIGHT;
@@ -219,7 +235,16 @@ public class Player {
     public void draw(SpriteBatch batch) {
         TextureRegion frameToDraw;
 
-        if (currentAnimation != null) {
+        if (isFainting) {
+            stateTime += Gdx.graphics.getDeltaTime();
+            frameToDraw = faintAnimation.getKeyFrame(stateTime, false);
+
+            if (faintAnimation.isAnimationFinished(stateTime)) {
+                isFainting = false;
+                currentAnimation = null;
+            }
+        } else if (currentAnimation != null) {
+            stateTime += Gdx.graphics.getDeltaTime();
             frameToDraw = currentAnimation.getKeyFrame(stateTime, true);
         } else {
             if (lastDirection == Direction.UP) {
@@ -295,30 +320,6 @@ public class Player {
         batch.draw(currentTexture, x * tileSize, y * tileSize);
     }
 
-    public void update() {
-        int newX = x;
-        int newY = y;
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
-            newY++;
-            currentTexture = backStill;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            newY--;
-            currentTexture = frontStill;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-            newX--;
-            currentTexture = leftStill;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
-            newX++;
-            currentTexture = rightStill;
-        }
-
-        if (canMoveTo(newX, newY)) {
-            x = newX;
-            y = newY;
-        }
-    }
-
     private boolean canMoveTo(int newX, int newY) {
         int mapId = getMapNum();
         if (mapId == 1 && newX < 70 && newY < 70) return true;
@@ -384,11 +385,13 @@ public class Player {
     }
 
     public void faint() {
-        //TODO use time controller
-        GameManager.getGameClock().advanceDay();
-        //TODO waking up in the same spot // wait for map mechanism
+        isFainting = true;
+        stateTime = 0f;
+        currentAnimation = faintAnimation;
         energy = energy * 3 / 4;
+        GameManager.getGameClock().advanceDay();
     }
+
 
     public void increaseEnergy(int amount) {
         if (amount < 0 && unlimitedEnergy) return;
