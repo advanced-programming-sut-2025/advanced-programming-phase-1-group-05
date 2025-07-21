@@ -14,6 +14,7 @@ public class WateringCan implements Tool<ItemLevel> {
 
     @Override
     public Result use(GameTile tile){
+        GameAssetManager.playSfx("use watering can");
         GameMap map = MyGame.getGameMap();
         Farming farming = MyGame.getCurrentPlayer().getFarmingSkill();
         int energyUsage = level.getEnergyUsage();

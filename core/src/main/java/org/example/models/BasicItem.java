@@ -20,6 +20,7 @@ public class BasicItem implements Item {
         this.material = material;
     }
 
+
     public Material getMaterial() {
         return material;
     }

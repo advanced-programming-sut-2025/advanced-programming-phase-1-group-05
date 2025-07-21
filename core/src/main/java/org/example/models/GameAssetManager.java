@@ -21,7 +21,7 @@ public class GameAssetManager {
 
     private static final Skin skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
 
-    private final Map<String, Sound> sfxMap = new HashMap<>();
+    private static Map<String, Sound> sfxMap = new HashMap<>();
     private Music music;
     private static final Map<String, Texture> textureCache = new HashMap<>();
     public static final TextureRegion trashcanOpen = new TextureRegion(new Texture("trashcan/open trashcan.png"));
@@ -41,6 +41,7 @@ public class GameAssetManager {
         } catch (Exception e) {
             Gdx.app.log("GameAssetManager", "Cursor not loaded: " + e.getMessage());
         }
+        loadSfx();
         loadNPCAvatars();
     }
 
@@ -121,7 +122,28 @@ public class GameAssetManager {
         return MyGame.getCurrentPlayer().getBackPack().getLevel().getCookingTexture();
     }
 
+    private void loadSfx(){
+        sfxMap.put("open page", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Interface/bigSelect.wav")));
+        sfxMap.put("close page", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Interface/bigDeSelect.wav")));
+        sfxMap.put("use axe", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/axchop.wav")));
+        sfxMap.put("crafted", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/crafting.wav")));
+        sfxMap.put("use hoe", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/hoeHit.wav")));
+        sfxMap.put("sand step", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/sandyStep.wav")));
+        sfxMap.put("grass step", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/grassyStep.wav")));
+        sfxMap.put("place item", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/throwDownITem.wav")));
+        sfxMap.put("thunder", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/thunder.wav")));
+        sfxMap.put("trashcan", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/trashcan.wav")));
+        sfxMap.put("use watering can", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/water_lap1.wav")));
+        sfxMap.put("use pickaxe", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/hammer.wav")));
 
+    }
 
+    public static void playSfx(String sfxName) {
+        for(Map.Entry<String,Sound> entry : sfxMap.entrySet()){
+            if(entry.getKey().equals(sfxName)){
+                entry.getValue().play();
+            }
+        }
+    }
 
 }

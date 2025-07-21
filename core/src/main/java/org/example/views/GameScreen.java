@@ -279,6 +279,7 @@ public class GameScreen implements Screen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            GameAssetManager.playSfx("open page");
             isInvenotryOpen = !isInvenotryOpen;
             isCraftOpen = false;
             isSkillSetOpen = false;
@@ -298,19 +299,22 @@ public class GameScreen implements Screen {
                 updateInventorySlots();
             }
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            GameAssetManager.playSfx("open page");
             isSkillSetOpen = !isSkillSetOpen;
             isCraftOpen = false;
             isInvenotryOpen = false;
             isToolSelectionOpen = false;
             isCookingOpen = false;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+            GameAssetManager.playSfx("open page");
             isToolSelectionOpen = !isToolSelectionOpen;
             isCraftOpen = false;
             isSkillSetOpen = false;
             isInvenotryOpen = false;
             isCookingOpen = false;
             updateToolSelectionSlots();
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.B)) { //TODO fix
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            GameAssetManager.playSfx("open page");
             isCraftOpen = !isCraftOpen;
             isToolSelectionOpen = false;
             isSkillSetOpen = false;
@@ -318,6 +322,7 @@ public class GameScreen implements Screen {
             isCookingOpen = false;
             updateInventorySlots();
         } else if(Gdx.input.isKeyJustPressed(Input.Keys.G)) {
+            GameAssetManager.playSfx("open page");
             isCookingOpen = !isCookingOpen;
             isToolSelectionOpen = false;
             isCraftOpen = false;
@@ -402,7 +407,9 @@ public class GameScreen implements Screen {
 
     private void handleInput(float delta) {
         Vector2 oldPos = new Vector2(player.getXX(), player.getYY());
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) player.moveUp(delta);
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            player.moveUp(delta);
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) player.moveDown(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.moveLeft(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.moveRight(delta);
@@ -1710,9 +1717,9 @@ public class GameScreen implements Screen {
 
                         selectedCraft = backPack.getLearntRecipes().get(i);
                         Result result = homeMenuController.craftItem(selectedCraft.getName());
-                        System.out.println(result);
                         latestResult = result;
                         showResult = true;
+                        if(result.isSuccess()) GameAssetManager.playSfx("crafted");
                         updateInventorySlots();
                         break;
                     }
@@ -1748,6 +1755,7 @@ public class GameScreen implements Screen {
                                 showResult = true;
                                 latestResult = result;
                             } else {
+                                GameAssetManager.playSfx("place item");
                                 latestResult = controller.placeItem(currentItem, tile);
                                 Player player = MyGame.getCurrentPlayer();
                                 if (player.getBackPack().howManyOfItem(currentItem) == 0)

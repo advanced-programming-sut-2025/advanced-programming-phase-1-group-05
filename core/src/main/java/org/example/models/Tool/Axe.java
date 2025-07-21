@@ -22,6 +22,7 @@ public class Axe implements Tool <ItemLevel>{
     }
     @Override
     public Result use(GameTile tile) {
+        GameAssetManager.playSfx("use axe");
         GameMap map = MyGame.getGameMap();
         Skill foraging = MyGame.getCurrentPlayer().getForagingSkill();
         int energyUsage = level.getEnergyUsage();

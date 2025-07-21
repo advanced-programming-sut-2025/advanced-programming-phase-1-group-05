@@ -1,12 +1,9 @@
 package org.example.models.Tool;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import org.example.models.*;
 import org.example.models.Enums.ItemLevel;
 import org.example.models.Enums.TileType;
-import org.example.models.MyGame;
-import org.example.models.GameMap;
-import org.example.models.GameTile;
-import org.example.models.Result;
 
 import java.util.HashMap;
 
@@ -23,6 +20,7 @@ public class Hoe implements Tool <ItemLevel> {
     }
     @Override
     public Result use(GameTile tile){
+        GameAssetManager.playSfx("use hoe");
         if(!reduceEnergy(level.getEnergyUsage()))
             return new Result(false, "You don't have enough energy.");
         GameMap map = MyGame.getGameMap();

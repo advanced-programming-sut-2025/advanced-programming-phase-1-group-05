@@ -22,6 +22,7 @@ public class Pickaxe implements Tool <ItemLevel> {
     }
     @Override
     public Result use(GameTile tile){
+        GameAssetManager.playSfx("use pickaxe");
         Skill mining = MyGame.getCurrentPlayer().getMiningSkill();
         int energyUsage = level.getEnergyUsage();
 
