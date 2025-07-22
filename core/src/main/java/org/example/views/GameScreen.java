@@ -281,7 +281,11 @@ public class GameScreen implements Screen {
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             latestResult = controller.eatFood(player.getCurrentItem());
+            if(latestResult.isSuccess()) {
+                player.setEating(true);
+            }
             showResult = true;
+
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             GameAssetManager.playSfx("open page");
