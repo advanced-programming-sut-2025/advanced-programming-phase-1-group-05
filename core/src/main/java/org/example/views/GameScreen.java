@@ -617,7 +617,7 @@ public class GameScreen implements Screen {
         //show craft recipes
         ArrayList<CookingRecipeType> learnedRecipes = MyGame.getCurrentPlayer().getBackPack().getLearntCookingRecipe();
 
-        int recipesPerRow = 12;
+        int recipesPerRow = 15;
         int maxRows = 4;
         int recipesPerPage = recipesPerRow * maxRows;
 
@@ -626,10 +626,10 @@ public class GameScreen implements Screen {
         int startIndex = currentPage * recipesPerPage;
         int endIndex = Math.min(startIndex + recipesPerPage, learnedRecipes.size());
 
-        float padding = 3f;
-        float iconSize = 74f;
+        float padding = 8f;
+        float iconSize = 64f;
         float startX = COOKING_X + 50f;
-        float startY = COOKING_Y + scaledHeight - iconSize - 40f;
+        float startY = COOKING_Y + scaledHeight - iconSize;
 
         for (int i = startIndex; i < endIndex; i++) {
             CookingRecipeType recipe = learnedRecipes.get(i);
@@ -646,7 +646,7 @@ public class GameScreen implements Screen {
             float texWidth = text.getRegionWidth();
             float texHeight = text.getRegionHeight();
 
-            float maxIconSize = 74f;
+            float maxIconSize = 64f;
             float craftScale = Math.min(maxIconSize / texWidth, maxIconSize / texHeight);
 
             float drawWidth = texWidth * craftScale;
@@ -1725,7 +1725,42 @@ public class GameScreen implements Screen {
                     }
                 }
 
-                return false;
+            } else if(isCookingOpen) {
+                CookingRecipeType selectedRecipe = null;
+
+                BackPack backPack = MyGame.getCurrentPlayer().getBackPack();
+
+                int recipesPerRow = 12;
+                int maxRows = 4;
+                int recipesPerPage = recipesPerRow * maxRows;
+
+                int currentPage = craftPageIndex;
+                int startIndex = currentPage * recipesPerPage;
+                int endIndex = Math.min(startIndex + recipesPerPage, backPack.getLearntCookingRecipe().size());
+
+                float padding = 3f;
+                float iconSize = 74f;
+                float startX = COOKING_X + 50f;
+                float startY = COOKING_Y + (GameAssetManager.getCookingTexture().getRegionHeight() * 0.5f) - iconSize;
+
+                for (int i = startIndex; i < endIndex; i++) {
+                    int index = i - startIndex;
+                    int row = index / recipesPerRow;
+                    int col = index % recipesPerRow;
+
+                    float x = startX + col * (iconSize + padding);
+                    float y = startY - row * (iconSize + padding) - 20f;
+
+                    if (world.x >= x && world.x <= x + iconSize &&
+                        world.y >= y && world.y <= y + iconSize) {
+
+                        selectedRecipe = backPack.getLearntCookingRecipe().get(i);
+                        Result result = homeMenuController.prepareFood(selectedRecipe.getName());
+                        latestResult = result;
+                        showResult = true;
+                        break;
+                    }
+                }
             }
 
             if(MyGame.getCurrentPlayer().getCurrentItem() != null &&
@@ -1829,7 +1864,7 @@ public class GameScreen implements Screen {
                 float padding = 3f;
                 float iconSize = 74f;
                 float startX = COOKING_X + 50f;
-                float startY = COOKING_Y + (GameAssetManager.getCookingTexture().getRegionHeight() * 0.5f) - iconSize - 40f;
+                float startY = COOKING_Y + (GameAssetManager.getCookingTexture().getRegionHeight() * 0.5f) - iconSize;
 
                 for (int i = startIndex; i < endIndex; i++) {
                     int index = i - startIndex;

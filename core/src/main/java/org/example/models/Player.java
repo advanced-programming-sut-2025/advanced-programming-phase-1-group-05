@@ -92,6 +92,7 @@ public class Player {
 //        backPack.getInventory().put(new FruitAndVegetable(CropType.FairyRose),1);
 //        backPack.getInventory().put(new FruitAndVegetable(CropType.Artichoke),1);
         backPack.addToInventory(CropType.Blueberry, 1);
+        backPack.addToInventory(CropType.Melon, 1);
         backPack.addToInventory(ForagingSeedType.CranberrySeeds,1);
         backPack.addToInventory(ForagingSeedType.StrawberrySeeds,1);
         backPack.addToInventory(MyGame.getDatabase().getItem("Parsnip seeds"), 1 );
@@ -105,8 +106,11 @@ public class Player {
         backPack.addToInventory(ForagingCrop.Apricot, 1);
         backPack.addToInventory(MineralType.Fiber, 30);
         backPack.addLearntCookingRecipe(CookingRecipeType.DishOTheSea);
-        backPack.addLearntCookingRecipe(CookingRecipeType.VegetableMedley);
         backPack.addLearntCookingRecipe(CookingRecipeType.FruitSalad);
+        backPack.addLearntCookingRecipe(CookingRecipeType.Spaghetti);
+        backPack.addLearntCookingRecipe(CookingRecipeType.BakedFish);
+        backPack.addLearntCookingRecipe(CookingRecipeType.VegetableMedley);
+
 //        backPack.addLearntRecipe(CraftType.Dehydrator);
 //        backPack.addLearntRecipe(CraftType.BeeHouse);
 //        backPack.addLearntRecipe(CraftType.Bomb);
