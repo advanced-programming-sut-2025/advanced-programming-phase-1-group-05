@@ -628,8 +628,8 @@ public class GameScreen implements Screen {
 
         float padding = 3f;
         float iconSize = 74f;
-        float startX = CRAFT_X + 50f;
-        float startY = CRAFT_Y + scaledHeight - iconSize - 40f;
+        float startX = COOKING_X + 50f;
+        float startY = COOKING_Y + scaledHeight - iconSize - 40f;
 
         for (int i = startIndex; i < endIndex; i++) {
             CookingRecipeType recipe = learnedRecipes.get(i);

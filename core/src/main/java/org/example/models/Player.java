@@ -235,16 +235,14 @@ public class Player {
     public void draw(SpriteBatch batch) {
         TextureRegion frameToDraw;
 
-        if (isFainting) {
+        if(isFainting) {
             stateTime += Gdx.graphics.getDeltaTime();
-            frameToDraw = faintAnimation.getKeyFrame(stateTime, false);
-
+            frameToDraw = faintAnimation.getKeyFrame(stateTime,false);
             if (faintAnimation.isAnimationFinished(stateTime)) {
                 isFainting = false;
                 currentAnimation = null;
             }
         } else if (currentAnimation != null) {
-            stateTime += Gdx.graphics.getDeltaTime();
             frameToDraw = currentAnimation.getKeyFrame(stateTime, true);
         } else {
             if (lastDirection == Direction.UP) {
@@ -457,9 +455,6 @@ public class Player {
         return miningSkill;
     }
 
-    public Map.Entry<Integer, Integer> getCoordinate() {
-        return new AbstractMap.SimpleEntry<>(x, y);
-    }
     public int getItemQuantity(Item item) {
         return backPack.getInventory().getOrDefault(item, 0);
     }
