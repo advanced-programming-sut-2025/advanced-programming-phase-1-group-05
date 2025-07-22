@@ -277,8 +277,11 @@ public class GameScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             GameManager.getGameClock().advanceDay();
         }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            latestResult = controller.eatFood(player.getCurrentItem());
+            showResult = true;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             GameAssetManager.playSfx("open page");
             isInvenotryOpen = !isInvenotryOpen;
             isCraftOpen = false;

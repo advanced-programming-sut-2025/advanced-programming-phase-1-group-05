@@ -1180,14 +1180,13 @@ public class GameMenuController extends MenuController {
         }
     }
 
-    public Result eatFood(String foodName) {
-        Item food = MyGame.getCurrentPlayer().getBackPack().getFromInventory(foodName);
-        if (food == null) return new Result(false, "You don't have that food in your inventory.");
-        else if (food instanceof Food) {
+    public Result eatFood(Item food) {
+        if (food instanceof Food) {
             int energy = ((Food) food).getEnergy();
             if(((Food) food).getRecipeType().Buff()) MyGame.getCurrentPlayer().setEnergy(200);
             else MyGame.getCurrentPlayer().increaseEnergy(energy);
             MyGame.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
+            MyGame.getCurrentPlayer().setCurrentItem(null);
             return new Result(true, "You consumed the food successfully!");
         } else return new Result(false, "That's...not edible.");
     }
