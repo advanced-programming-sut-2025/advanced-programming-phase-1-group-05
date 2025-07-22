@@ -1182,6 +1182,7 @@ public class GameMenuController extends MenuController {
 
     public Result eatFood(Item food) {
         if (food instanceof Food) {
+            GameAssetManager.playSfx("eat");
             int energy = ((Food) food).getEnergy();
             if(((Food) food).getRecipeType().Buff()) MyGame.getCurrentPlayer().setEnergy(200);
             else MyGame.getCurrentPlayer().increaseEnergy(energy);

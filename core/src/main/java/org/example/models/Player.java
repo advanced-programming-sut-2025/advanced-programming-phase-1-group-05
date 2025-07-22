@@ -13,6 +13,7 @@ import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.*;
 import org.example.models.Skills.*;
 import org.example.models.Tool.*;
+import org.w3c.dom.Text;
 
 import java.util.*;
 
@@ -51,6 +52,7 @@ public class Player {
     private float distanceTraveled = 0f;
     private List<ArtisanMachine> machines = new ArrayList<>();
     private boolean isFainting = false;
+    private boolean isEating = false;
 
     //walking animations
     private Animation<TextureRegion> walkUpAnimation;
@@ -59,6 +61,7 @@ public class Player {
     private Animation<TextureRegion> walkRightAnimation;
     private Animation<TextureRegion> currentAnimation = null;
     private Animation<TextureRegion> faintAnimation = null;
+    private Animation<TextureRegion> eatingAnimation = null;
     private float stateTime = 0f;
     private Direction lastDirection = Direction.DOWN;
 
@@ -130,12 +133,23 @@ public class Player {
         walkLeftAnimation = loadAnimations('l');
         walkRightAnimation = loadAnimations('r');
         faintAnimation = loadFaintAnimation();
+        eatingAnimation = loadEatingAnimation();
     }
 
     public Animation<TextureRegion> loadFaintAnimation() {
         TextureRegion[] frames = new TextureRegion[3];
         for (int i = 0; i < frames.length; i++) {
             Texture tex = new Texture("player-female/faint " + i + ".png");
+            tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+            frames[i] = new TextureRegion(tex);
+        }
+        return new Animation<>(0.5f, frames);
+    }
+
+    public Animation<TextureRegion> loadEatingAnimation() {
+        TextureRegion[] frames = new TextureRegion[3];
+        for (int i = 0; i < frames.length; i++) {
+            Texture tex = new Texture("player-female/eat " + i + ".png");
             tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
             frames[i] = new TextureRegion(tex);
         }
@@ -246,6 +260,14 @@ public class Player {
                 isFainting = false;
                 currentAnimation = null;
             }
+        } else if(isEating) {
+            stateTime += Gdx.graphics.getDeltaTime();
+            frameToDraw = eatingAnimation.getKeyFrame(stateTime,false);
+            if (eatingAnimation.isAnimationFinished(stateTime)) {
+                isEating = false;
+                currentAnimation = null;
+            }
+
         } else if (currentAnimation != null) {
             frameToDraw = currentAnimation.getKeyFrame(stateTime, true);
         } else {
@@ -483,6 +505,10 @@ public class Player {
         currentItem = item;
     }
 
+    public void setEating(boolean eating) {
+        isEating = eating;
+    }
+
     public Item getCurrentItem() {
         return currentItem;
     }
@@ -696,6 +722,7 @@ public class Player {
             return hasProposed;
         }
     }
+
 
     private static class SharedWallet {
         private int gold;
