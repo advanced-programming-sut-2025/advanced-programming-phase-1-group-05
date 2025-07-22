@@ -11,16 +11,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class Animal implements Item{
+public class Animal implements Item {
+    public enum State {
+        IDLE,
+        EATING,
+        WALK_DOWN,
+        WALK_RIGHT,
+        WALK_LEFT,
+        WALK_UP
+    }
+
     private String name;
     private EnclosureType enclosureType;
     private List<Item> products = new ArrayList<>();
     private List<Product> unCollectedProducts = new ArrayList<>();
-    private boolean wasFed = false, petToday  = false, isOut = false;
+    private boolean wasFed = false, petToday = false, isOut = false;
     int friendshipPoints = 0;
     private AnimalType type;
     private int x, y;
-
+    private State state;
 
     public Animal(String name, AnimalType type, Player player) {
         this.name = name;
@@ -31,6 +40,7 @@ public class Animal implements Item{
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
+        state = State.IDLE;
     }
 
     public int getX() {
@@ -45,24 +55,18 @@ public class Animal implements Item{
         this.x = x;
         this.y = y;
     }
+
     private void setCoordinates(Player player) {
         Farm farm = player.getFarm();
         float startX = farm.getStartX(), startY = farm.getStartY(), endX = farm.getEndX(), endY = farm.getEndY();
         Random random = new Random();
 
-        while (true) {
             int x = (int) (random.nextInt((int) (endX - startX + 1)) + startX);
             int y = (int) (random.nextInt((int) (endY - startY + 1)) + startY);
-            GameTile tile = GameMap.getTile(x, y);
 
-            assert tile != null;
-            if (!tile.isOccupied()) {
-                this.x = x;
-                this.y = y;
-                tile.setItemOnTile(this);
-                break;
-            }
-        }
+            this.x = x;
+            this.y = y;
+
     }
 
     public AnimalType getType() {
@@ -80,7 +84,7 @@ public class Animal implements Item{
             Item item = products.get(index);
             Product product = new Product(item.getName(), item.getPrice(), 0, null, List.of(), Map.of(), "blallalal");
             unCollectedProducts.add(product);
-            double levelValue = ((friendshipPoints/1000f) * (0.5 + random.nextDouble()));
+            double levelValue = ((friendshipPoints / 1000f) * (0.5 + random.nextDouble()));
             ItemLevel level;
             if (levelValue < 0.5) level = ItemLevel.Normal;
             else if (levelValue < 0.7) level = ItemLevel.Iron;
@@ -89,6 +93,7 @@ public class Animal implements Item{
             product.setItemLevel(level);
         }
     }
+
     public String getName() {
         return name;
     }
@@ -101,41 +106,41 @@ public class Animal implements Item{
 
     private void initializeAnimal() {
         switch (type) {
-            case COW : {
+            case COW: {
                 enclosureType = EnclosureType.BARN;
                 products.add(MyGame.getDatabase().getItem("Milk"));
                 products.add(MyGame.getDatabase().getItem("Large milk"));
                 break;
             }
-            case GOAT : {
+            case GOAT: {
                 enclosureType = EnclosureType.BARN;
                 products.add(MyGame.getDatabase().getItem("Goat Milk"));
                 products.add(MyGame.getDatabase().getItem("Large goat milk"));
                 break;
             }
-            case PIG : {
+            case PIG: {
                 enclosureType = EnclosureType.BARN;
                 products.add(MyGame.getDatabase().getItem("Truffle"));
                 break;
             }
-            case DUCK : {
+            case DUCK: {
                 enclosureType = EnclosureType.COOP;
                 products.add(MyGame.getDatabase().getItem("Duck feather"));
                 products.add(MyGame.getDatabase().getItem("Duck egg"));
                 break;
             }
-            case RABBIT : {
+            case RABBIT: {
                 enclosureType = EnclosureType.COOP;
                 products.add(MyGame.getDatabase().getItem("Wool"));
                 products.add(MyGame.getDatabase().getItem("Rabbit's foot"));
                 break;
             }
-            case SHEEP : {
+            case SHEEP: {
                 enclosureType = EnclosureType.BARN;
                 products.add(MyGame.getDatabase().getItem("Wool"));
                 break;
             }
-            case CHICKEN : {
+            case CHICKEN: {
                 enclosureType = EnclosureType.COOP;
                 products.add(MyGame.getDatabase().getItem("Egg"));
                 products.add(MyGame.getDatabase().getItem("Large egg"));
@@ -145,7 +150,7 @@ public class Animal implements Item{
         }
     }
 
-    public void adjustFriendshipPoints (int amount) {
+    public void adjustFriendshipPoints(int amount) {
         friendshipPoints = Math.min(1000, friendshipPoints + amount);
     }
 
@@ -158,29 +163,42 @@ public class Animal implements Item{
     }
 
     public boolean wasFed() {
-        return  wasFed;
+        return wasFed;
     }
+
     public boolean wasPetToday() {
         return petToday;
     }
+
     public void setPetToday(boolean petToday) {
         this.petToday = petToday;
     }
+
     public List<Product> getUnCollectedProducts() {
         return unCollectedProducts;
     }
+
     public void setFeedingStatus(boolean wasFed) {
         this.wasFed = wasFed;
     }
-    public void shepherd () {
+
+    public void shepherd() {
         isOut = !isOut;
     }
 
     public boolean isOut() {
         return isOut;
     }
+
     public TextureRegion getTexture() {
-        return null; //TODO implement
+        return new TextureRegion(GameAssetManager.getInstance().getItemTexture(type.toString().toLowerCase()));
     }
 
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public State getState() {
+        return state;
+    }
 }

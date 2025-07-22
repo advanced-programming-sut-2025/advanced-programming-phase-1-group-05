@@ -8,9 +8,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.example.controllers.DBController;
 import org.example.controllers.RegisterMenuController;
 import org.example.models.*;
+import org.example.models.Enums.AnimalType;
 import org.example.views.GameScreen;
 import org.example.views.MenuNavigator;
 import org.example.views.StoreView;
+import org.example.views.TestScreen;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -42,7 +44,8 @@ public class Main extends Game {
         MenuNavigator.init(this, skin);
         checkAutoLogin();
         MenuNavigator.showMainMenu();
-      //  MenuNavigator.showTestScreen();
+        //MenuNavigator.showTestScreen();
+       // setScreen(new TestScreen(GameAssetManager.getInstance().animalAnimations.get(AnimalType.CHICKEN).walk_left));
     }
 
     public static void checkAutoLogin() {

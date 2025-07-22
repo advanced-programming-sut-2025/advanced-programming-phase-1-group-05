@@ -461,12 +461,9 @@ public class GameMenuController extends MenuController {
         animal.setFeedingStatus(true);
         return Result.success( animal.getName()  +" follows your lead, trotting along obediently.");
     }
-    public Result feedHay(Matcher m) {
-        String animalName = m.group("animalName");
+    public Result feedHay(Animal animal) {
         Player player = MyGame.getCurrentPlayer();
-        Animal animal = player.getAnimal(animalName);
         Item hay = MyGame.getDatabase().getItem("Hay");
-        if (animal == null) return Result.error("animal doesn't exist or isn't yours");
         if (player.getItemQuantity(hay) < 1)
             return Result.error("you don't have enough hay");
         animal.setFeedingStatus(true);

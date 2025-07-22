@@ -382,6 +382,12 @@ public class Player {
         coopAndBarns.add(animalHouse);
     }
 
+    public AnimalHouse getHouse(Animal animal) {
+        for (AnimalHouse animalHouse : coopAndBarns) {
+            if (animalHouse.contains(animal)) return animalHouse;
+        }
+        return null;
+    }
     public String getGender() {
         return user.gender;
     }
@@ -520,6 +526,7 @@ public class Player {
         for (AnimalHouse animalHouse : coopAndBarns) {
             animals.addAll(animalHouse.getAnimals());
         }
+
         return animals;
     }
     public static void initializeFriendships(List<Player> players) {

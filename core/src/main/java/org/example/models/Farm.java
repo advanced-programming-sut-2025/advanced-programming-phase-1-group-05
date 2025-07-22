@@ -13,7 +13,6 @@ public class Farm {
     private HashMap<Food, Integer> refrigeratedFoods = new HashMap<>();
     private final ArrayList<FruitAndVegetable> crops = new ArrayList<>();
     private final ArrayList<Tree> trees = new ArrayList<>();
-    //private final int startX , startY, endX, endY ;
     private final ShippingBin shippingBin;
     private Rectangle bounds;
 

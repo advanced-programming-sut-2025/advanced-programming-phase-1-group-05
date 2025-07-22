@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
+import org.example.models.Enums.AnimalType;
 import org.example.models.Enums.Direction;
 
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class GameAssetManager {
     public static final TextureRegion infoPage = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/info opener.png"));
     public static final TextureRegion toolSelection = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/tool selection.png"));
     public static final TextureRegion resultTexture = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/result.png"));
-
+    public Map<AnimalType, AnimalAnimations> animalAnimations = new HashMap<>();
     private GameAssetManager() {
         // Load skin from assets/skin/
         try {
@@ -43,6 +44,7 @@ public class GameAssetManager {
         }
         loadSfx();
         loadNPCAvatars();
+        loadAnimalAnimations();
     }
 
     public static GameAssetManager getInstance() {
@@ -73,6 +75,38 @@ public class GameAssetManager {
         textureCache.clear();
     }
 
+    public TextureRegion getIdle(AnimalType type) {
+        return animalAnimations.get(type).walk_down.getKeyFrame(0);
+    }
+    public void loadAnimalAnimations() {
+        Texture duckTextureSheet = getOrLoadTexture("Animals/duck/sheet.png");
+        Texture chickenTextureSheet = getOrLoadTexture("Animals/chicken/sheet.png");
+        Texture rabbitTextureSheet = getOrLoadTexture("Animals/rabbit/sheet.png");
+
+
+        //animalAnimations.put(AnimalType.DUCK, buildDuckAnimation(duckTextureSheet));
+        animalAnimations.put(AnimalType.CHICKEN, buildChickenAnimation(chickenTextureSheet));
+    }
+
+//    private AnimalAnimations buildDuckAnimation(Texture textureSheet) {
+//        TextureRegion[][] regions = TextureRegion.split(textureSheet, 16, 16);
+//        Animation<TextureRegion> idle = new Animation<>(0.3f, regions[0]);
+//        Animation<TextureRegion> walk = new Animation<>(0.2f, regions[1]);
+//        Animation<TextureRegion> eat = new Animation<>(0.4f, regions[2]);
+//        return new AnimalAnimations(idle, walk, eat);
+//    }
+
+    private AnimalAnimations buildChickenAnimation(Texture textureSheet) {
+        TextureRegion[][] regions = TextureRegion.split(textureSheet, 16, 16);
+        Animation<TextureRegion> walkDown = new Animation<>(0.2f, regions[0]);
+        Animation<TextureRegion> walkRight = new Animation<>(0.2f, regions[1]);
+        Animation<TextureRegion> walkUp = new Animation<>(0.2f, regions[2]);
+        Animation<TextureRegion> walkLeft = new Animation<>(0.2f, regions[3]);
+        Animation<TextureRegion> petting = new Animation<>(0.2f, regions[4]);
+        // region[5]
+        Animation<TextureRegion> eating = new Animation<>(0.2f, regions[6]);
+        return new AnimalAnimations(walkDown, walkRight, walkUp, walkLeft, petting,eating);
+    }
     public Animation<TextureRegion> getNPCWalkingAnimation(NPC npc, Direction direction) {
         Array<TextureRegion> frames = new Array<>();
 

@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -27,6 +28,7 @@ import org.example.controllers.GameManager;
 import org.example.controllers.GameMenuController;
 import org.example.controllers.HomeMenuController;
 import org.example.models.*;
+import org.example.models.Building.AnimalHouse;
 import org.example.models.Enums.*;
 import org.example.models.Tool.BackPack;
 import org.example.models.Tool.FishingPole;
@@ -368,7 +370,6 @@ public class GameScreen implements Screen {
                 }
             }
         }
-
     }
     private void checkArtisanInput() {
         if (!isInvenotryOpen || !artisanInputMode) return;
@@ -1056,6 +1057,14 @@ public class GameScreen implements Screen {
         uiStage.addActor(notificationButton);
         forceViewportReset();
 
+        Player player1 = MyGame.getCurrentPlayer();
+        AnimalHouse house = new AnimalHouse(EnclosureType.COOP, AnimalHouseLevel.Big);
+        player1.addAnimalHouse(house);
+        Animal animal = new Animal("chicko", AnimalType.CHICKEN, player1);
+        house.addAnimal(animal);
+        addAnimalActor(new AnimalActor(animal));
+        player1.getBackPack().addToInventory(MyGame.getDatabase().getItem("Hay"), 10);
+
     }
 
     private void forceViewportReset() {
@@ -1395,6 +1404,14 @@ public class GameScreen implements Screen {
         innerPanel.add(feedButton).fillX();
         innerPanel.row();
         feedButton.setColor(1, 210f/255, 132f/255, 1);
+        feedButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                latestResult = controller.feedHay(animalActor.getAnimal());
+                feedAnimal(animalActor);
+                animalMenuTable.setVisible(false);
+            }
+        });
         TextButton petButton = new TextButton("pet " + name, skin);
         innerPanel.add(petButton).fillX();
         innerPanel.row();
@@ -1414,8 +1431,8 @@ public class GameScreen implements Screen {
         sellAnimal.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                controller.sellAnimal(animalActor);
-                animalMenuTable.setVisible(false);
+               latestResult =  controller.sellAnimal(animalActor);
+               animalMenuTable.setVisible(false);
             }
         });
 
@@ -1432,17 +1449,29 @@ public class GameScreen implements Screen {
         animalMenuTable.add(innerPanel).center();
     }
 
-    private void showNPCMenu(NPC npc) {
-        TextButton giftButton = new TextButton("gift " + npc.getName(), skin);
-        giftButton.addListener(new ClickListener() {
+    public void feedAnimal(AnimalActor animal) {
+        Texture hayTexture = GameAssetManager.getInstance().getOrLoadTexture("Items/Hay.png");
+        Image hayImage = new Image(hayTexture);
+
+        float animalX = animal.getX();
+        float animalY = animal.getY();
+
+
+        float hayX = animalX;
+        float hayY = animalY - 50;
+
+        hayImage.setPosition(hayX, hayY);
+        stage.addActor(hayImage);
+
+        animal.setState(Animal.State.EATING);
+
+        Timer.schedule(new Timer.Task() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                isInvenotryOpen = true;
-                giftMode = true;
-                lastNPC = npc;
-                lastPlayer = null;
+            public void run() {
+                hayImage.remove();
+                animal.setState(Animal.State.IDLE);
             }
-        });
+        }, 5);
     }
 
     private void showMissionList(NPC npc) {
