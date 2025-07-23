@@ -143,7 +143,7 @@ public class Player {
             tex.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
             frames[i] = new TextureRegion(tex);
         }
-        return new Animation<>(0.5f, frames);
+        return new Animation<>(0.4f, frames);
     }
 
     public Animation<TextureRegion> loadEatingAnimation() {

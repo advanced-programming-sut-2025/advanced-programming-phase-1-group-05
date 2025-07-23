@@ -898,12 +898,16 @@ public class GameMenuController extends MenuController {
 
 
     //plant seed on a specific tile
-    public Result plantSeed(String seed, GameTile tile) {
+    public Result plantSeed(Item item, GameTile tile) {
         //errors
 //        if (tile == null) return new Result(false, "Tile not found");
 //        if (tile.getX() == MyGame.getCurrentPlayer().getCoordinate().getKey() && tile.getY() == MyGame.getCurrentPlayer().getCoordinate().getValue()) {
 //            return new Result(false, "You stare at your boots. The boots stare back. Nothing grows.");
 //        }
+        if(item instanceof FruitAndVegetable || item instanceof Tree) {
+            return new Result(false,"");
+        }
+        String seed = item.getName();
         boolean successful = MyGame.getCurrentPlayer().getFarmingSkill().plantSeed(seed, tile);
         if (successful) {
             if (tile.getTileType() != TileType.Soil)

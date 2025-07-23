@@ -285,7 +285,6 @@ public class GameScreen implements Screen {
                 player.setEating(true);
             }
             showResult = true;
-
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             GameAssetManager.playSfx("open page");
@@ -1821,7 +1820,7 @@ public class GameScreen implements Screen {
                             showResult = true;
                         } else {
                             Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
-                            Result result = controller.plantSeed(currentItem.getName(), tile);
+                            Result result = controller.plantSeed(currentItem, tile);
                             if(!result.getMessage().startsWith("That's not a valid seed")) {
                                 showResult = true;
                                 latestResult = result;
