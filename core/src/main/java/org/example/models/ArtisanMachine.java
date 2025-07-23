@@ -21,8 +21,8 @@ public class ArtisanMachine extends Actor {
 
     public ArtisanMachine(ArtisanType type) {
         this.type = type;
-        this.textureNormal = new TextureRegion(new Texture("ArtisanMachines/" + type.name().toLowerCase() + ".png"));
-        this.textureReady = new TextureRegion(new Texture("ArtisanMachines/" + type.name().toLowerCase() + "_ready.png"));
+        this.textureNormal = new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("ArtisanMachines/" + type.name().toLowerCase() + ".png"));
+        this.textureReady = new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("ArtisanMachines/" + type.name().toLowerCase() + "_ready.png"));
         // TODO set the position
         setSize(textureNormal.getRegionWidth(), textureNormal.getRegionHeight());
     }

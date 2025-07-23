@@ -16,8 +16,8 @@ import java.util.Random;
 
 public class TileMapRenderer {
     private static final int TILE_SIZE = 64;
-    private static final int MAP_WIDTH = 140;
-    private static final int MAP_HEIGHT = 140;
+    private static final int MAP_WIDTH = 200;
+    private static final int MAP_HEIGHT = 200;
     private static final int PLAYER_FARM_WIDTH = 70;
     private static final int PLAYER_FARM_HEIGHT = 70;
 
@@ -41,7 +41,13 @@ public class TileMapRenderer {
             for (int x = 0; x < MAP_WIDTH; x++) {
                 GameTile tile = GameMap.getTile(x, y);
                 if(tile == null) continue;
-                tile.setTileType(TileType.Flat);
+                boolean isBorder = x < 5 || x >= MAP_WIDTH - 5 || y < 5 || y >= MAP_HEIGHT - 5;
+
+                if (isBorder) {
+                    tile.setTileType(TileType.Water); // Border = water
+                } else {
+                    tile.setTileType(TileType.Flat);  // Interior = flat land
+                }
                 isTopLeft[y][x] = false;
             }
         }

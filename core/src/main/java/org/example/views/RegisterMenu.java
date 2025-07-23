@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import org.example.controllers.RegisterMenuController;
+import org.example.models.GameAssetManager;
 import org.example.models.Result;
 
 import java.util.Random;
@@ -36,7 +37,7 @@ public class RegisterMenu implements Screen {
     public void show() {
         Gdx.input.setInputProcessor(stage);
 
-        Texture bg = new Texture(Gdx.files.internal("backgrounds/login_bg.png"));
+        Texture bg = GameAssetManager.getInstance().getOrLoadTexture("backgrounds/login_bg.png");
         Table root = new Table();
         root.setFillParent(true);
         root.setBackground(new TextureRegionDrawable(new TextureRegion(bg)));

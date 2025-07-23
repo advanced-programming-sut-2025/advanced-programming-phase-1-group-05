@@ -51,6 +51,6 @@ public class FishingPole implements Tool<FishingPoleType> {
     }
     @Override
     public TextureRegion getTexture() {
-        return null;
+        return level.getTexture();
     }
 }

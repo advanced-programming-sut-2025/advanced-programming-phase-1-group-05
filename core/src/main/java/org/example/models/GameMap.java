@@ -16,8 +16,8 @@ import java.util.Random;
 
 
 public class GameMap {
-    public static final int MAP_WIDTH = 140;
-    public static final int MAP_HEIGHT = 140;
+    public static final int MAP_WIDTH = 200;
+    public static final int MAP_HEIGHT = 200;
     private static GameTile[][] map = new GameTile[MAP_HEIGHT][MAP_WIDTH];
     private static final int TILE_SIZE = 64;
     private static final int PLAYER_FARM_WIDTH = 70;

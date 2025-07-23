@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import org.example.Main;
 import org.example.models.*;
 import org.example.models.Enums.FishType;
 import org.example.models.Enums.FishingPoleType;
@@ -28,17 +29,28 @@ public class FishingMiniGame implements Screen {
     Skin skin = GameAssetManager.getSkin();
     private FishingPole pole;
     private  FishType fishType;
+    private GameScreen previousScreen;
+    private Fish fish;
     public FishingMiniGame(GameScreen game, FishingPole pole, FishType type) {
         this.pole = pole;
         fishType = type;
+        previousScreen = game;
     }
      @Override
     public void show() {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        backgroundTexture = new Texture("ui/FishingBG.png");
+        backgroundTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/FishingBg.png");
         progressMeter = new ProgressMeter();
+        Player player = MyGame.getCurrentPlayer();
+        Item sonarBobber = MyGame.getDatabase().getItem("sonar bobber");
+        if (player.getItemQuantity(sonarBobber) > 0) {
+            player.getBackPack().removeFromInventory(sonarBobber, 1);
+            fish = new Fish(fishType, true);
+        }
+        else fish = new Fish(fishType, false);
+
     }
 
     @Override
@@ -70,6 +82,7 @@ public class FishingMiniGame implements Screen {
                 @Override
                 public void run() {
                     caughtDialog.hide();
+                    Main.getMain().setScreen(previousScreen);
                 }
             }, 3);
         }

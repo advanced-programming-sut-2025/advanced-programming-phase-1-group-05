@@ -86,7 +86,9 @@ public class StoreView implements Screen {
                         return;
                     }
                 }
-                StoreController.getInstance().purchase(quantities, previousScreen);
+                Result result = StoreController.getInstance().purchase(quantities, previousScreen);
+                if (result.isSuccess()) banner.showMessage(result.getMessage(), Color.GREEN, 5);
+                else banner.showMessage(result.getMessage(), Color.RED, 5);
                 Main.getMain().setScreen(previousScreen);
             }
         });
@@ -192,11 +194,19 @@ public class StoreView implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if (item.isAvailable(store)){
                     int qty = Integer.parseInt(quantityLabel.getText().toString());
-                    if (MyGame.getCurrentPlayer().getGold() < item.getPrice() * (qty + 1))
+                    if (MyGame.getCurrentPlayer().getGold() < item.getPrice() * (qty + 1)) {
+                        banner.showMessage("you don't have enough gold!", Color.RED, 5f);
                         return;
+                    }
                     qty++;
+                    if (item.getRemainingForToday() < qty && item.getRemainingForToday() > 0) {
+                        banner.showMessage("No more of this item available.", Color.RED, 5f);
+                    }
                     quantityLabel.setText(String.valueOf(qty));
                     quantities.put(item, qty);
+                }
+                else {
+                    banner.showMessage("item not available!", Color.RED, 5f);
                 }
             }
         });

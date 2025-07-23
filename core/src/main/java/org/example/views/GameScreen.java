@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -236,7 +237,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.6f, 0.8f, 0.5f, 1);
+        Gdx.gl.glClearColor(0f, 136/255f, 199/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         handleInput(delta);
@@ -409,6 +410,7 @@ public class GameScreen implements Screen {
             artisanInputMode = false;
             isInvenotryOpen = false;
             selectedSlots.clear();
+            showResult = true;
         }
     }
 
@@ -1098,6 +1100,16 @@ public class GameScreen implements Screen {
             }
         }
 
+        int tileX = (int)(x / TILE_SIZE);
+        int tileY = (int)(y / TILE_SIZE);
+
+        if (tileX >= 0 && tileX < MAP_WIDTH &&
+            tileY >= 0 && tileY < MAP_HEIGHT) {
+
+            GameTile tile = GameMap.getTile(tileX, tileY);
+            return tile == null || tile.getTileType() != TileType.Water; // can't walk on water
+        }
+
         return true;
     }
 
@@ -1435,6 +1447,7 @@ public class GameScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                latestResult =  controller.sellAnimal(animalActor);
+               showResult = true;
                animalMenuTable.setVisible(false);
             }
         });
@@ -1688,29 +1701,6 @@ public class GameScreen implements Screen {
                         world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
 
                         MyGame.getCurrentPlayer().setCurrentItem(slot.item);
-
-//                        if (draggedItem == null && slot.item != null) {
-//                            draggedItem = slot.item;
-//                            selectedSlot = slot;
-//                            slot.item = null;
-//                            MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
-//                            return true;
-//                        } else if (draggedItem != null && slot.item == null) {
-//                            slot.item = draggedItem;
-//                            draggedItem = null;
-//                            selectedSlot = null;
-//                            MyGame.getCurrentPlayer().setCurrentItem(null);
-//                            syncBackPackFromSlots();
-//                            return true;
-//                        } else if (draggedItem != null && slot.item != null) {
-//                            Item temp = slot.item;
-//                            slot.item = draggedItem;
-//                            draggedItem = temp;
-//                            selectedSlot = slot;
-//                            MyGame.getCurrentPlayer().setCurrentItem(slot.item);
-//                            syncBackPackFromSlots();
-//                            return true;
-//                        }
                     }
                 }
             } else if (isToolSelectionOpen) {
@@ -1810,7 +1800,7 @@ public class GameScreen implements Screen {
                     if (tile != null) {
                         if (MyGame.getCurrentPlayer().getCurrentItem() instanceof Tool) {
                             Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
-                            if (currentItem instanceof FishingPole) {
+                            if (currentItem instanceof FishingPole && tile.getTileType() == TileType.Water) {
                                 FishingPole pole = (FishingPole) currentItem;
                                 FishType fish = controller.getRandomFish((FishingPole) currentItem);
                                 Main.getMain().setScreen(new FishingMiniGame(screen, pole, fish));
