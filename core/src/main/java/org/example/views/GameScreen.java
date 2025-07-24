@@ -1822,19 +1822,23 @@ public class GameScreen implements Screen {
                             showResult = true;
                         } else {
                             Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
-                            Result result = controller.plantSeed(currentItem, tile);
-                            if(!result.getMessage().startsWith("That's not a valid seed")) {
+                            Result result = null;
+                            if(!(result = controller.plantSeed(currentItem, tile)).getMessage().startsWith("That's not a valid seed")) {
                                 showResult = true;
                                 latestResult = result;
-                            } else {
+                                MyGame.getCurrentPlayer().getBackPack().removeFromInventory(currentItem, 1);
+                            } else if (currentItem.getName().equals("Speed-Gro") || currentItem.getName().equals("Retaining-Soil")) {
+                                latestResult = controller.fertilizeCrop(currentItem.getName(), tile);
+                                showResult = true;
+                                MyGame.getCurrentPlayer().getBackPack().removeFromInventory(currentItem, 1);
+                            }else {
                                 GameAssetManager.playSfx("place item");
                                 latestResult = controller.placeItem(currentItem, tile);
-                                Player player = MyGame.getCurrentPlayer();
-                                if (player.getBackPack().howManyOfItem(currentItem) == 0)
-                                    MyGame.getCurrentPlayer().setCurrentItem(null);
-                                updateInventorySlots(INVENTORY_X,INVENTORY_Y);
                                 showResult = true;
                             }
+                            Player player = MyGame.getCurrentPlayer();
+                            if (player.getBackPack().howManyOfItem(currentItem) == 0)
+                                MyGame.getCurrentPlayer().setCurrentItem(null);
                         }
                     }
                 }
