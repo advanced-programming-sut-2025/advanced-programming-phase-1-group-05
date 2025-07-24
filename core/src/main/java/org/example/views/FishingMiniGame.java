@@ -51,6 +51,7 @@ public class FishingMiniGame implements Screen {
         }
         else fish = new Fish(fishType, false);
 
+        stage.addActor(progressMeter);
     }
 
     @Override
@@ -58,6 +59,8 @@ public class FishingMiniGame implements Screen {
 
         ScreenUtils.clear(0, 0, 0, 1);
 
+        //boolean catching = fish collides bar
+        //progressMeter.update(catching,delta);
         if (progressMeter.isComplete()&& !fishCaught) {
             fishCaught  = true;
             String fishName = fishType.getName();
@@ -70,7 +73,7 @@ public class FishingMiniGame implements Screen {
             caughtDialog.getContentTable().add(fishImage).pad(10).row();
 
             caughtDialog.text("You caught a " + level.toString() + " " + fishName + "!");
-            caughtDialog.button("OK");
+//            caughtDialog.button("OK");
             caughtDialog.show(stage);
             Product product = new Product(fishName, fishType.getPrice(), -1, null, List.of(), Map.of(), "fish");
             product.setItemLevel(level);
@@ -84,13 +87,27 @@ public class FishingMiniGame implements Screen {
                     caughtDialog.hide();
                     Main.getMain().setScreen(previousScreen);
                 }
-            }, 3);
+            }, 4);
         }
 
+        if (progressMeter.isEmpty() && !fishCaught) {
+            fishCaught = true;
+            Dialog lostDialog = new Dialog("Fish Escaped!", skin);
+            lostDialog.text("The fish got away... Better luck next time!");
+            lostDialog.show(stage);
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    lostDialog.hide();
+                    Main.getMain().setScreen(previousScreen);
+                }
+            }, 4);
+        }
 
 
         stage.getBatch().begin();
         stage.getBatch().draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
         stage.getBatch().end();
 
         stage.act(delta);

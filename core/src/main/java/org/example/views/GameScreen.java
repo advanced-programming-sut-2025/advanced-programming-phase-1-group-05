@@ -424,7 +424,7 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.moveRight(delta);
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             MyGame.getCurrentPlayer().addGold(100000);
-            Main.getMain().setScreen(new StoreView(MyGame.getDatabase().getStoreByName("Marnie's Ranch"), this));
+            Main.getMain().setScreen(new FishingMiniGame(this, new FishingPole(), FishType.CrimsonFish));
         }
         float px = player.getXX() + player.getWidth() / 2f;
         float py = player.getYY() + player.getHeight() / 2f;

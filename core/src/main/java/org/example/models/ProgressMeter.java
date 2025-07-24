@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class ProgressMeter extends Actor {
-    private float progress = 0;
+    private float progress = 10;
     private float progressRate = 30f;
     private float decayRate = 20f;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -28,14 +28,21 @@ public class ProgressMeter extends Actor {
         return progress >= 100;
     }
 
+    public boolean isEmpty() {
+        return progress <= 0;
+    }
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
+        batch.end();
+        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 //        shapeRenderer.setColor(Color.GRAY);
 //        shapeRenderer.rect(50, 20, 200, 20);
         shapeRenderer.setColor(Color.YELLOW);
-        shapeRenderer.rect(50, 20, 2 * progress, 20);
+        shapeRenderer.rect(1415, 240, 25, 9.8f * progress);
         shapeRenderer.end();
+        batch.begin();
     }
 }
 

@@ -9,10 +9,9 @@ import org.example.controllers.DBController;
 import org.example.controllers.RegisterMenuController;
 import org.example.models.*;
 import org.example.models.Enums.AnimalType;
-import org.example.views.GameScreen;
-import org.example.views.MenuNavigator;
-import org.example.views.StoreView;
-import org.example.views.TestScreen;
+import org.example.models.Enums.FishType;
+import org.example.models.Tool.FishingPole;
+import org.example.views.*;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -43,9 +42,8 @@ public class Main extends Game {
         skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
         MenuNavigator.init(this, skin);
         checkAutoLogin();
-        MenuNavigator.showMainMenu();
-        //MenuNavigator.showTestScreen();
-       // setScreen(new TestScreen(GameAssetManager.getInstance().animalAnimations.get(AnimalType.CHICKEN).walk_left));
+        //MenuNavigator.showMainMenu();
+       setScreen(new StoreView(MyGame.getDatabase().getStoreByName("Joja Mart"), null));
     }
 
     public static void checkAutoLogin() {

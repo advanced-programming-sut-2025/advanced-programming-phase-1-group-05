@@ -3,11 +3,9 @@ package org.example.views;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -30,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 public class StoreView implements Screen {
+    private ShaderProgram grayscaleShader;
     private final GameScreen previousScreen;
     private Stage stage;
     private final Skin skin;
@@ -174,7 +173,10 @@ public class StoreView implements Screen {
     private Table createItemRow(Product item) {
         Table row = new Table();
 
-        Image itemIcon = new Image(item.getTexture());
+        Image itemIcon;
+        if (item.isAvailable(store))
+            itemIcon = new Image(item.getTexture());
+        else itemIcon = new Image(makeGrayscale(GameAssetManager.getInstance().getItemTexture(item.getName())));
         Label nameLabel = new Label(item.getName(), skin);
         Label priceLabel = new Label(item.getPrice() + "g", skin);
         Label quantityLabel = new Label("0", skin);
@@ -267,6 +269,13 @@ public class StoreView implements Screen {
         background.setFillParent(true);
         stage.addActor(background);
         Gdx.input.setInputProcessor(stage);
+        String vertexShader = Gdx.files.internal("shaders/default.vert").readString();
+        String fragmentShader = Gdx.files.internal("shaders/grayscale.frag").readString();
+        grayscaleShader = new ShaderProgram(vertexShader, fragmentShader);
+
+        if (!grayscaleShader.isCompiled()) {
+            Gdx.app.error("Shader", grayscaleShader.getLog());
+        }
         banner = new MessageBanner(skin);
         banner.setPosition(stage.getWidth() / 2f - 200, stage.getHeight() - 100);
         stage.addActor(banner);
@@ -308,4 +317,33 @@ public class StoreView implements Screen {
     public void dispose() {
         stage.dispose();
     }
+    private Texture makeGrayscale(Texture original) {
+        TextureData textureData = original.getTextureData();
+
+        if (!textureData.isPrepared()) {
+            textureData.prepare();
+        }
+
+        Pixmap pixmap = textureData.consumePixmap();
+        Pixmap grayPixmap = new Pixmap(pixmap.getWidth(), pixmap.getHeight(), Pixmap.Format.RGBA8888);
+
+        for (int y = 0; y < pixmap.getHeight(); y++) {
+            for (int x = 0; x < pixmap.getWidth(); x++) {
+                int pixel = pixmap.getPixel(x, y);
+                int r = (pixel >> 24) & 0xff;
+                int g = (pixel >> 16) & 0xff;
+                int b = (pixel >> 8) & 0xff;
+                int a = pixel & 0xff;
+
+                int gray = (int)(0.3 * r + 0.59 * g + 0.11 * b);
+                grayPixmap.drawPixel(x, y, (gray << 24) | (gray << 16) | (gray << 8) | a);
+            }
+        }
+
+        Texture grayscaleTexture = new Texture(grayPixmap);
+        pixmap.dispose();
+        grayPixmap.dispose();
+        return grayscaleTexture;
+    }
+
 }
