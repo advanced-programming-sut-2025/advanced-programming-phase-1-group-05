@@ -258,6 +258,16 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
+        if (isInvenotryOpen) {
+            updateInventorySlots(INVENTORY_X, INVENTORY_Y);
+        }
+        if (isCraftOpen) {
+            updateInventorySlots(CRAFT_X, CRAFT_Y);
+        }
+        if (isCookingOpen) {
+            updateInventorySlots(COOKING_X, COOKING_Y);
+        }
+
         mapRenderer.render(batch, camera);
         player.draw(batch);
         drawEnergyBar();
@@ -305,7 +315,7 @@ public class GameScreen implements Screen {
 
                 skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
 
-                updateInventorySlots();
+                updateInventorySlots(INVENTORY_X,INVENTORY_Y);
             }
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             GameAssetManager.playSfx("open page");
@@ -329,7 +339,7 @@ public class GameScreen implements Screen {
             isSkillSetOpen = false;
             isInvenotryOpen = false;
             isCookingOpen = false;
-            updateInventorySlots();
+            updateInventorySlots(CRAFT_X, CRAFT_Y);
         } else if(Gdx.input.isKeyJustPressed(Input.Keys.G)) {
             GameAssetManager.playSfx("open page");
             isCookingOpen = !isCookingOpen;
@@ -337,6 +347,7 @@ public class GameScreen implements Screen {
             isCraftOpen = false;
             isSkillSetOpen = false;
             isInvenotryOpen = false;
+           updateInventorySlots(COOKING_X,COOKING_Y);
         }
         stage.act(delta);
         stage.draw();
@@ -352,6 +363,7 @@ public class GameScreen implements Screen {
     }
 
     private void checkGifting() {
+        updateInventorySlots(INVENTORY_X,INVENTORY_Y);
         if (isInvenotryOpen && giftMode && Gdx.input.justTouched()) {
             Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 
@@ -683,8 +695,8 @@ public class GameScreen implements Screen {
                 float drawWidth = texWidth * scale1;
                 float drawHeight = texHeight * scale1;
 
-                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f + 235f;
-                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f + 65f; //fix
+                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f ;
+                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f - 310f;
 
                 batch.draw(texture, drawX, drawY, drawWidth, drawHeight);
                 if(slot.count > 1) font.draw(batch,String.valueOf(slot.count), drawX + drawWidth - 15f,drawY + 10f);
@@ -818,8 +830,8 @@ public class GameScreen implements Screen {
                 float drawWidth = texWidth * scale1;
                 float drawHeight = texHeight * scale1;
 
-                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f + 235f;
-                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f + 65f; //fix
+                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f ;
+                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f - 310f;
 
                 batch.draw(texture, drawX, drawY, drawWidth, drawHeight);
                 if(slot.count > 1) font.draw(batch,String.valueOf(slot.count), drawX + drawWidth - 15f,drawY + 10f);
@@ -1604,7 +1616,7 @@ public class GameScreen implements Screen {
 
     }
 
-    public void updateInventorySlots() {
+    public void updateInventorySlots(float x, float y) {
         slots.clear();
 
         float slotPadding = 1f;
@@ -1619,8 +1631,8 @@ public class GameScreen implements Screen {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 InventorySlot slot = new InventorySlot();
-                slot.x = INVENTORY_X + leftOffset + col * (SLOT_SIZE + slotPadding) + 5f;
-                slot.y = INVENTORY_Y + (3 - row - 1) * (SLOT_SIZE + 10f) + topOffset - 150f;
+                slot.x = x + leftOffset + col * (SLOT_SIZE + slotPadding) + 5f;
+                slot.y = y + (3 - row - 1) * (SLOT_SIZE + 10f) + topOffset - 150f;
 
                 if (index < items.size()) {
                     Item item = items.get(index++);
@@ -1691,7 +1703,7 @@ public class GameScreen implements Screen {
                     MyGame.getCurrentPlayer().getBackPack().removeFromInventory(draggedItem, 1);
                     draggedItem = null;
                     selectedSlot = null;
-                    updateInventorySlots();
+                    updateInventorySlots(INVENTORY_X,INVENTORY_Y);
                     syncBackPackFromSlots();
                     return true;
                 }
@@ -1745,7 +1757,7 @@ public class GameScreen implements Screen {
                         latestResult = result;
                         showResult = true;
                         if(result.isSuccess()) GameAssetManager.playSfx("crafted");
-                        updateInventorySlots();
+                        updateInventorySlots(CRAFT_X,CRAFT_Y);
                         break;
                     }
                 }
@@ -1820,7 +1832,7 @@ public class GameScreen implements Screen {
                                 Player player = MyGame.getCurrentPlayer();
                                 if (player.getBackPack().howManyOfItem(currentItem) == 0)
                                     MyGame.getCurrentPlayer().setCurrentItem(null);
-                                updateInventorySlots();
+                                updateInventorySlots(INVENTORY_X,INVENTORY_Y);
                                 showResult = true;
                             }
                         }
