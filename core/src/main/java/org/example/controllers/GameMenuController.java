@@ -1,5 +1,7 @@
 package org.example.controllers;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import org.example.models.*;
 import org.example.models.Enums.*;
 import org.example.models.Tool.FishingPole;
@@ -265,22 +267,22 @@ public class GameMenuController extends MenuController {
     }
 
     public Result deleteGame() {
-        Scanner scanner = MyGame.getScanner();
-        int[] OK = new int[selectedPlayers.size()];
-        System.out.println("Vote to delete the game (1 for yes, 0 for no):");
-        for (int i = 0; i < selectedPlayers.size(); i++) {
-            Player player = selectedPlayers.get(i);
-            System.out.print(player.getUsername() + "'s vote: ");
-            OK[i] = scanner.nextInt();
+        if (selectedPlayers.isEmpty()) {
+            return Result.error("No active game to delete!");
         }
-        for (int i = 0; i < selectedPlayers.size(); i++) {
-            if (OK[i] != 1) {
-                return Result.error("Game deletion canceled! Not all players agreed.");
+        Result result = terminateGame();
+
+        if (result.isSuccess()) {
+            // پاک کردن فایل players.json
+            FileHandle file = Gdx.files.local("players.json");
+            if (file.exists()) {
+                file.writeString("", false);
             }
         }
 
-        return terminateGame();
+        return result;
     }
+
 
     private Result terminateGame() {
         try {
