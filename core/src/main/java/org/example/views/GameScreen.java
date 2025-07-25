@@ -410,7 +410,6 @@ public class GameScreen implements Screen {
 
             skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
 
-            updateInventorySlots();
             Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 
             Vector3 playerPos = camera.project(new Vector3(player.getX(), player.getY(), 0));
@@ -577,14 +576,14 @@ public class GameScreen implements Screen {
     }
 
     private void drawEnergyBar() {
-        float barWidth = 30;
-        float barHeight = 150;
+        float barWidth = 60;
+        float barHeight = 300;
         float x = camera.position.x + camera.viewportWidth / 2 - barWidth - 10;
         float y = camera.position.y - camera.viewportHeight / 2 + 10;
 
         batch.draw(energyBarBg, x, y, barWidth, barHeight);
-        float fill = barHeight * (player.getEnergy() / 200f);
-        batch.draw(energyBarFill, x, y, barWidth, fill);
+        float fill = (barHeight - 70f) * (player.getEnergy() / 200f);
+        batch.draw(energyBarFill, x + 10f, y + 5f, barWidth - 20f, fill);
     }
 
     private void drawHUD() {
