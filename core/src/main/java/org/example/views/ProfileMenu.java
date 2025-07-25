@@ -170,6 +170,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -185,6 +186,7 @@ public class ProfileMenu implements Screen {
     private final Stage stage;
     private final Skin skin;
     private ProfileMenuController controller;
+    private Texture avatarTexture;
 
     // UI components
     private TextField usernameField, nicknameField, emailField, oldPasswordField, newPasswordField;
@@ -213,6 +215,16 @@ public class ProfileMenu implements Screen {
         table.setFillParent(true);
         table.center();
         stage.addActor(table);
+        String avatarPath;
+        if (currentUser.getGender().equals("Male")) {
+            avatarPath = "assets/NPCs/sebastian/avatar.png";
+        } else {
+            avatarPath = "assets/NPCs/abigail/avatar.png";
+        }
+
+        avatarTexture = new Texture(Gdx.files.internal(avatarPath));
+        Image avatarImage = new Image(avatarTexture);
+
 
         // فیلدها
         usernameField = new TextField("", skin);
@@ -265,6 +277,7 @@ public class ProfileMenu implements Screen {
         table.add(genderLabel).colspan(2).pad(5).row();
         table.add(infoLabel).colspan(2).width(400).expandX().fillX().pad(5).row();
         table.add(resultLabel).colspan(2).pad(5).row();
+//        table.add(avatarImage).size(80, 80).padBottom(10).row();
         table.add(backBtn).colspan(2).padTop(10).row();
 
         ScrollPane scrollPane = new ScrollPane(table, skin);

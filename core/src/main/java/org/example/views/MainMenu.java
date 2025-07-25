@@ -51,6 +51,7 @@ public class MainMenu implements Screen {
         TextButton gameButton = new TextButton("Game", skin);
         TextButton avatarButton = new TextButton("Avatar", skin);
         TextButton logoutButton = new TextButton("Logout", skin);
+        TextButton exitButton = new TextButton("Exit", skin);
 
         table.add(avatarImage).size(80, 80).padBottom(10).row();
         table.add(nicknameLabel).padBottom(20).row();
@@ -59,6 +60,7 @@ public class MainMenu implements Screen {
         table.add(gameButton).pad(5).width(200).row();
         table.add(avatarButton).pad(5).width(200).row();
         table.add(logoutButton).padTop(15).width(200).row();
+        table.add(exitButton).padTop(10).width(200).row();
 
         stage.clear();
         stage.addActor(table);
@@ -91,6 +93,13 @@ public class MainMenu implements Screen {
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
+            }
+        });
+
+        exitButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
             }
         });
     }
