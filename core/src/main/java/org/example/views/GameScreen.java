@@ -6,14 +6,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -49,7 +47,7 @@ public class GameScreen implements Screen {
     HomeMenuController homeMenuController;
     Stage stage;
     Table missionListTable, animalMenuTable, notificationTable, giftMenuTable, giftHistoryTable, rateTable,
-        playerMenuTable, artisanMenuTable;
+        playerMenuTable, artisanMenuTable, npcMenuTable;
     Skin skin;
     ImageButton notificationButton;
     Viewport viewport;
@@ -115,7 +113,7 @@ public class GameScreen implements Screen {
 
     //NPC/friendship stuff
     private boolean giftMode =false;
-    private NPC lastNPC = null;
+    private NpcActor lastNPC = null;
     private Player lastPlayer = null;
 
     // Artisan
@@ -268,6 +266,18 @@ public class GameScreen implements Screen {
         batch.end();
         tileOutline(mouse);
         cheatCodeWindow.render();
+        stage.act(delta);
+        stage.draw();
+        if (isInvenotryOpen) {
+            for (NpcActor npc : NPCs) {
+                npc.setVisible(false);
+            }
+        }
+        else {
+            for (NpcActor npc : NPCs) {
+                npc.setVisible(true);
+            }
+        }
         showInventory(batch);
         showSkillSet(batch);
         showCraftPage(batch);
@@ -353,7 +363,20 @@ public class GameScreen implements Screen {
 
     private void checkGifting() {
         if (isInvenotryOpen && giftMode && Gdx.input.justTouched()) {
+            TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
+                .getLevel().getInventoryTexture();
+            float scale = 0.5f;
+            float scaledWidth = inventory.getRegionWidth() * scale;
+            float scaledHeight = inventory.getRegionHeight() * scale;
+            INVENTORY_X = camera.position.x - scaledWidth / 2f;
+            INVENTORY_Y = camera.position.y - scaledHeight / 2f;
+
+            skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
+
+            updateInventorySlots();
             Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+            Vector3 playerPos = camera.project(new Vector3(player.getX(), player.getY(), 0));
 
             for (InventorySlot slot : slots) {
                 if (mouse.x >= slot.x && mouse.x <= slot.x + SLOT_SIZE &&
@@ -361,11 +384,48 @@ public class GameScreen implements Screen {
 
                     if (slot.item != null) {
                         Item giftedItem = slot.item;
-                        slot.item = null;
-                        if (lastNPC!= null)
-                            controller.giftNPC(lastNPC, giftedItem);
-                        else if (lastPlayer != null)
-                            controller.giftPlayer(lastPlayer, giftedItem, 1);
+                        Vector3 receiverPos = null;
+
+                        if (lastNPC!= null) {
+                           latestResult =  controller.giftNPC(lastNPC.getNpc(), giftedItem);
+                           showResult = true;
+                            receiverPos = camera.project(new Vector3(lastNPC.getX(), lastNPC.getY(), 0));
+                        }
+                        else if (lastPlayer != null) {
+                            latestResult = controller.giftPlayer(lastPlayer, giftedItem, 1);
+                            showResult = true;
+                            receiverPos = camera.project(new Vector3(lastPlayer.getX(), lastPlayer.getY(), 0));
+                        }
+                        if (receiverPos != null && latestResult.isSuccess()) {
+                            slot.item = null;
+                            TextureRegionDrawable drawable = new TextureRegionDrawable(giftedItem.getTexture());
+                            Image flyingGift = new Image(drawable);
+                            Vector2 stagePos = stage.screenToStageCoordinates(new Vector2(playerPos.x, playerPos.y));
+                            Vector2 targetPos = stage.screenToStageCoordinates(new Vector2(receiverPos.x, receiverPos.y));
+                            Vector2 startPos = new Vector2(player.getXX(), player.getYY());
+                            Vector2 endPos = lastNPC != null
+                                ? new Vector2(lastNPC.getX(), lastNPC.getY())
+                                : new Vector2(lastPlayer.getXX(), lastPlayer.getYY());
+
+                            flyingGift.setSize(32, 32);
+                            flyingGift.setColor(Color.WHITE); // In case alpha is weird
+                            flyingGift.setPosition(playerPos.x, playerPos.y);
+                            stage.addActor(flyingGift);
+                            isInvenotryOpen = false;
+                            flyingGift.setPosition(stagePos.x, stagePos.y);
+                            flyingGift.setPosition(startPos.x, startPos.y);
+                            stage.addActor(flyingGift);
+
+                            flyingGift.addAction(Actions.sequence(
+                                Actions.moveTo(endPos.x, endPos.y, 1f, Interpolation.sine),
+                                Actions.fadeOut(0.2f),
+                                Actions.run(() -> {
+                                    flyingGift.remove();
+                                    if (lastNPC!= null) lastNPC.setWalking(true);
+                                })
+                            ));
+
+                        }
                         giftMode = false;
                         isInvenotryOpen = false;
 
@@ -428,17 +488,36 @@ public class GameScreen implements Screen {
         }
         float px = player.getXX() + player.getWidth() / 2f;
         float py = player.getYY() + player.getHeight() / 2f;
-        if (!canWalk(px, py)) {
-            player.setPosition(oldPos.x, oldPos.y);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
-            toggleOverviewMode();
+        Store stoore = null;
+        Rectangle playerRect = new Rectangle(player.getXX(), player.getYY(), player.getWidth(), player.getHeight());
+        for (Store store : MyGame.getDatabase().getStores()) {
+            if (store.getBoundingRectangle().overlaps(playerRect)) {
+                stoore = store;
+                player.setPosition(oldPos.x, oldPos.y);
+            }
         }
 
-        if (!overviewMode) {
-            camera.position.set(player.getXX() + player.getWidth() / 2f,
-                player.getYY() + player.getHeight() / 2f, 0);
+       if (stoore == null){
+            if (!canWalk(px, py)) {
+                player.setPosition(oldPos.x, oldPos.y);
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+                toggleOverviewMode();
+            }
+
+            if (!overviewMode) {
+                camera.position.set(player.getXX() + player.getWidth() / 2f,
+                    player.getYY() + player.getHeight() / 2f, 0);
+            }
         }
+       else {
+           if (stoore.isOpen(GameManager.getCurrentHour()))
+               Main.getMain().setScreen(new StoreView(stoore, this));
+           else {
+               latestResult = Result.error(stoore.getStoreName()  + " is closed right now");
+               showResult = true;
+           }
+       }
     }
 
     private void toggleOverviewMode() {
@@ -893,6 +972,7 @@ public class GameScreen implements Screen {
     public void showInventory(SpriteBatch batch) {
         if (!isInvenotryOpen) return;
 
+
         TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack().getLevel().getInventoryTexture();
 
         float scale = 0.5f;
@@ -1034,10 +1114,28 @@ public class GameScreen implements Screen {
         artisanMenuTable.setVisible(false);
         artisanMenuTable.setFillParent(true);
         uiStage.addActor(artisanMenuTable);
+        npcMenuTable = new Table();
+        npcMenuTable.setVisible(false);
+        npcMenuTable.setFillParent(true);
+        uiStage.addActor(npcMenuTable);
+
 
         for (NpcActor npc : NPCs) {
             stage.addActor(npc);
-            // TODO add listeners
+            npc.addListener(new InputListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    if (button == Input.Buttons.RIGHT) {
+                        showNpcMenu(npc);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            npc.toBack();
+        }
+        for (Store store : MyGame.getDatabase().getStores()) {
+            stage.addActor(store);
         }
         Texture mail = GameAssetManager.getInstance().getOrLoadTexture("ui/mailSign.png");
         Drawable mailDrawable = new TextureRegionDrawable(new TextureRegion(mail));
@@ -1465,6 +1563,46 @@ public class GameScreen implements Screen {
         animalMenuTable.add(innerPanel).center();
     }
 
+    private void showNpcMenu(NpcActor npcActor) {
+        NPC npc = npcActor.getNpc();
+        npcMenuTable.clear();
+        npcMenuTable.setVisible(true);
+        Table innerPanel = new Table(skin);
+        Texture menuTexture = GameAssetManager.getInstance().getOrLoadTexture("Animals/MenuBackground2.png");
+
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        innerPanel.setBackground(menuDrawable);
+        innerPanel.pad(30);
+
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+
+        ImageButton closeButton = new ImageButton(closeDrawable);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                npcMenuTable.setVisible(false);
+            }
+        });
+        TextButton gift = new TextButton("gift " + npc.getName(), skin);
+        gift.setColor(1, 210f/255, 132f/255, 1);
+        gift.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                giftMode = true;
+                isInvenotryOpen = true;
+                lastNPC = npcActor;
+                lastPlayer = null;
+                npcMenuTable.setVisible(false);
+                npcActor.setWalking(false);
+            }
+        });
+        innerPanel.add(gift).fillX().row();
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
+        npcMenuTable.add(innerPanel).center();
+
+    }
     public void feedAnimal(AnimalActor animal) {
         Texture hayTexture = GameAssetManager.getInstance().getOrLoadTexture("Items/Hay.png");
         Image hayImage = new Image(hayTexture);
@@ -1700,7 +1838,7 @@ public class GameScreen implements Screen {
                     if (world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
                         world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
 
-                        MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                       if(!giftMode) MyGame.getCurrentPlayer().setCurrentItem(slot.item);
                     }
                 }
             } else if (isToolSelectionOpen) {

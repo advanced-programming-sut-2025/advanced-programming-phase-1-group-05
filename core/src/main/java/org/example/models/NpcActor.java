@@ -28,6 +28,7 @@ public class NpcActor extends Actor {
     private final NPC npc;
     private boolean dialogueReady = false;
     private final int dialogueTime;
+    private  boolean walking = true;
     public NpcActor (NPC npc) {
         this.npc = npc;
         Texture npcTexture = new Texture("NPCs/" + npc.getName().toLowerCase() + "/walkdown1.png");
@@ -57,6 +58,7 @@ public class NpcActor extends Actor {
             exclamationImage.setVisible(true);
         }
 
+        if (!walking) return;
         super.act(delta);
         moveTimer -= delta;
         exclamationImage.act(delta);
@@ -114,5 +116,13 @@ public class NpcActor extends Actor {
 
         }
 
+    }
+
+    public NPC getNpc() {
+        return npc;
+    }
+
+    public void setWalking(boolean walking) {
+        this.walking = walking;
     }
 }

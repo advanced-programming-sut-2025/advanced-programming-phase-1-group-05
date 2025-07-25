@@ -834,13 +834,14 @@ public class GameMenuController extends MenuController {
         String itemName = item.getName();
         if (item instanceof Tool<?>)
             return new Result(false,
-                    "Gifting your old tools? What’s next—handing out used socks?");
+                    "Gifting your old tools? What’s next-handing out used socks?");
         lastNPC = npc;
         if (npc.isFavorite(itemName)) {
             npc.addFriendShipPoints(player, 200);
             return new Result(true,
                     "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
         }
+        player.getBackPack().removeFromInventory(item, 1);
         npc.addFriendShipPoints(player, 50);
         return new Result(true, "Oh, a " + itemName + " ? Thanks, " + player.getName());
     }
