@@ -75,6 +75,12 @@ public class GameScreen implements Screen {
     public static Array<Rectangle> farms = new Array<>();
     Array<NpcActor> NPCs = new Array<>();
 
+    // lightning effect
+    private boolean lightningEffectActive = false;
+    private float lightningTimer = 0f;
+    private float lightningDuration = 1f;
+
+
     //inventory stuff
     private ArrayList<InventorySlot> slots = new ArrayList<>();
     private float SLOT_SIZE = 64;
@@ -311,6 +317,37 @@ public class GameScreen implements Screen {
 
         applyLightingOverlay();
 
+
+        if (lightningEffectActive) {
+            lightningTimer += delta;
+
+            float stage = (lightningTimer / lightningDuration) * 3;
+
+            // تنظیم رنگ افکت
+            if (stage < 1) {
+                batch.setColor(0f, 0f, 0f, 0.9f);   // مشکی
+            } else if (stage < 2) {
+                batch.setColor(0.7f, 0.7f, 0.7f, 0.7f); // طوسی
+            } else {
+                batch.setColor(1f, 1f, 1f, 0f); // شفاف (هیچ)
+            }
+
+            // فقط وقتی رنگ شفاف نیست، بکش
+            if (stage < 2) {
+                batch.draw(blackOverlay,
+                    camera.position.x - camera.viewportWidth / 2,
+                    camera.position.y - camera.viewportHeight / 2,
+                    camera.viewportWidth, camera.viewportHeight);
+            }
+
+            // ریست به رنگ عادی
+            batch.setColor(1, 1, 1, 1);
+
+            if (lightningTimer >= lightningDuration) {
+                lightningEffectActive = false;
+            }
+        }
+
         batch.end();
         tileOutline(mouse);
         stage.act(delta);
@@ -347,6 +384,9 @@ public class GameScreen implements Screen {
                     }
                 }
             }
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+            triggerLightningEffect();
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             GameManager.getGameClock().advanceDay();
@@ -436,6 +476,12 @@ public class GameScreen implements Screen {
         isCraftOpen = false;
         isToolSelectionOpen = false;
     }
+
+    public void triggerLightningEffect() {
+        lightningEffectActive = true;
+        lightningTimer = 0f;
+    }
+
 
     private void checkGifting() {
         updateInventorySlots(INVENTORY_X,INVENTORY_Y);
@@ -636,7 +682,8 @@ public class GameScreen implements Screen {
         font.draw(batch, "Gold: " + MyGame.getCurrentPlayer().getGold(), x, y);
         font.draw(batch, "Time: " + String.format("%02d:%02d", GameManager.getCurrentHour(), GameManager.getGameClock().getMinute()), x, y - 30);
         font.draw(batch, "Season: " + currentSeason.toString(), x, y - 60);
-        font.draw(batch, GameManager.getDayOfTheWeek() + ", Day " + GameManager.getDay(), x, y - 90);
+        font.draw(batch, "Weather: " + MyGame.currentWeather, x, y - 90);
+        font.draw(batch, GameManager.getDayOfTheWeek() + ", Day " + GameManager.getDay(), x, y - 120);
     }
 
     private void applyLightingOverlay() {
