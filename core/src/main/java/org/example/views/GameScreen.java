@@ -57,6 +57,7 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private TileMapRenderer mapRenderer;
+
     Stage uiStage;
     private Texture energyBarBg, energyBarFill, overlay, blackOverlay;
     private BitmapFont font;
@@ -617,15 +618,15 @@ public class GameScreen implements Screen {
     }
 
     private void drawEnergyBar() {
-        float barWidth = 30;
-        float barHeight = 150;
+        float barWidth = 60;
+        float barHeight = 300;
         float x = camera.position.x + camera.viewportWidth / 2 - barWidth - 10;
         float y = camera.position.y - camera.viewportHeight / 2 + 10;
 
         batch.draw(energyBarBg, x, y, barWidth, barHeight);
         Player player = MyGame.getCurrentPlayer();
-        float fill = barHeight * (player.getEnergy() / 200f);
-        batch.draw(energyBarFill, x, y, barWidth, fill);
+        float fill = (barHeight - 70f) * (player.getEnergy() / 200f);
+        batch.draw(energyBarFill, x + 10f, y + 5f, barWidth - 20f, fill);
     }
 
     private void drawHUD() {
