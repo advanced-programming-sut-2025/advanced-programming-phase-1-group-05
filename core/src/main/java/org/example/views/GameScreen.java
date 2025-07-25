@@ -480,6 +480,7 @@ public class GameScreen implements Screen {
     public void triggerLightningEffect() {
         lightningEffectActive = true;
         lightningTimer = 0f;
+        GameAssetManager.playSfx("thor");
     }
 
 
