@@ -7,7 +7,7 @@ import org.example.models.Enums.ItemLevel;
 import java.util.HashMap;
 
 public class Shear implements Tool<ItemLevel> {
-    ItemLevel level;
+    ItemLevel level = ItemLevel.Normal;
 
     @Override
     public String getName() {

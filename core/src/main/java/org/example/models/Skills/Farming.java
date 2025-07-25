@@ -61,7 +61,7 @@ public class Farming implements Skill{
     }
 
     //fertilize crop
-    public boolean fertilizeCrop(Map.Entry<Integer, Integer> coordinantes, String fertilizer) {
+    public boolean fertilizeCrop(GameTile tile, String fertilizer) {
         HashMap<Item, Integer> items = MyGame.getCurrentPlayer().getBackPack().getInventory();
         for(Item item : items.keySet()) {
             if(item.getName().equals(fertilizer)) {

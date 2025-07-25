@@ -84,6 +84,10 @@ public class Player {
         backPack.getInventory().put(new Scythe(), 1);
         backPack.getInventory().put(new Axe(), 1);
         backPack.getInventory().put(new WateringCan(), 1);
+        backPack.getInventory().put(new Shear(), 1);
+        backPack.getInventory().put(new MilkPail(), 1);
+        backPack.getInventory().put(new FishingPole(), 1);
+
         initializeAnimations();
         //TODO fix new row
 //        backPack.getInventory().put(new Food(CookingRecipeType.FruitSalad), 1);
@@ -98,7 +102,7 @@ public class Player {
         backPack.addToInventory(CropType.Melon, 1);
         backPack.addToInventory(ForagingSeedType.CranberrySeeds,1);
         backPack.addToInventory(ForagingSeedType.StrawberrySeeds,1);
-        backPack.addToInventory(MyGame.getDatabase().getItem("Parsnip seeds"), 1 );
+        backPack.addToInventory(MyGame.getDatabase().getItem("Speed-Gro"), 1 );
         backPack.addToInventory(MyGame.getDatabase().getItem("Eggplant seeds"), 1 );
         backPack.addToInventory(MyGame.getDatabase().getItem("Pumpkin seeds"), 1 );
         backPack.addToInventory(MyGame.getDatabase().getItem("Artichoke seeds"), 1 );

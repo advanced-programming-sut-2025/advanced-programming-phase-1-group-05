@@ -20,6 +20,10 @@ public enum ItemLevel {
                 return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Scythe.png"));
             } else if (tool instanceof WateringCan) {
                 return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Watering_Can/Watering_Can.png"));
+            } else if(tool instanceof Shear) {
+                return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Shears.png"));
+            } else if (tool instanceof MilkPail){
+                return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Milk_Pail.png"));
             }
             return null;
         }
@@ -37,6 +41,10 @@ public enum ItemLevel {
                 return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Scythe.png"));
             } else if (tool instanceof WateringCan) {
                 return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Watering_Can/Copper_Watering_Can.png"));
+            }else if(tool instanceof Shear) {
+                return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Shears.png"));
+            } else if (tool instanceof MilkPail){
+                return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Milk_Pail.png"));
             }
             return null;
         }
@@ -54,6 +62,10 @@ public enum ItemLevel {
                 return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Scythe.png"));
             } else if (tool instanceof WateringCan) {
                 return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Watering_Can/Steel_Watering_Can.png"));
+            }else if(tool instanceof Shear) {
+                return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Shears.png"));
+            } else if (tool instanceof MilkPail){
+                return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Milk_Pail.png"));
             }
             return null;
         }
@@ -71,6 +83,10 @@ public enum ItemLevel {
                 return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Golden_Scythe.png"));
             } else if (tool instanceof WateringCan) {
                 return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Watering_Can/Gold_Watering_Can.png"));
+            }else if(tool instanceof Shear) {
+                return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Shears.png"));
+            } else if (tool instanceof MilkPail){
+                return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Milk_Pail.png"));
             }
             return null;
         }
@@ -88,6 +104,10 @@ public enum ItemLevel {
                 return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Iridium_Scythe.png"));
             } else if (tool instanceof WateringCan) {
                 return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Watering_Can/Iridium_Watering_Can.png"));
+            }else if(tool instanceof Shear) {
+                return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Shears.png"));
+            } else if (tool instanceof MilkPail){
+                return new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("Stardew_Valley_Images-main/Tools/Milk_Pail.png"));
             }
             return null;
         }

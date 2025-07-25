@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -68,8 +71,6 @@ public class GameScreen implements Screen {
     private Season currentSeason;
     private final ArrayList<Player> players;
 
-    private CheatCodeWindow cheatCodeWindow;
-
     private boolean isInvenotryOpen = false;
     public static Array<Rectangle> farms = new Array<>();
     Array<NpcActor> NPCs = new Array<>();
@@ -129,12 +130,15 @@ public class GameScreen implements Screen {
     private Result latestResult;
     private GlyphLayout layout = new GlyphLayout();
 
+    //cheat code window
+    private boolean isCheatCodeOpen = false;
+    private TextField cheatCodeTextField;
+
     public GameScreen(ArrayList<Player> playerList) {
         skin = GameAssetManager.getSkin();
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
         batch = new SpriteBatch();
-        cheatCodeWindow = new CheatCodeWindow(batch);
         players = playerList;
         controller = new GameMenuController(this);
         homeMenuController = new HomeMenuController();
@@ -166,6 +170,7 @@ public class GameScreen implements Screen {
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
+        cheatCodeTextField = new TextField("Enter Cheat Code", GameAssetManager.getSkin());
 
     }
 
@@ -256,6 +261,16 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
+        if (isInvenotryOpen) {
+            updateInventorySlots(INVENTORY_X, INVENTORY_Y);
+        }
+        if (isCraftOpen) {
+            updateInventorySlots(CRAFT_X, CRAFT_Y);
+        }
+        if (isCookingOpen) {
+            updateInventorySlots(COOKING_X, COOKING_Y);
+        }
+
         mapRenderer.render(batch, camera);
         player.draw(batch);
         drawEnergyBar();
@@ -265,7 +280,6 @@ public class GameScreen implements Screen {
 
         batch.end();
         tileOutline(mouse);
-        cheatCodeWindow.render();
         stage.act(delta);
         stage.draw();
         if (isInvenotryOpen) {
@@ -315,7 +329,7 @@ public class GameScreen implements Screen {
 
                 skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
 
-                updateInventorySlots();
+                updateInventorySlots(INVENTORY_X,INVENTORY_Y);
             }
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             GameAssetManager.playSfx("open page");
@@ -339,7 +353,7 @@ public class GameScreen implements Screen {
             isSkillSetOpen = false;
             isInvenotryOpen = false;
             isCookingOpen = false;
-            updateInventorySlots();
+            updateInventorySlots(CRAFT_X, CRAFT_Y);
         } else if(Gdx.input.isKeyJustPressed(Input.Keys.G)) {
             GameAssetManager.playSfx("open page");
             isCookingOpen = !isCookingOpen;
@@ -347,6 +361,7 @@ public class GameScreen implements Screen {
             isCraftOpen = false;
             isSkillSetOpen = false;
             isInvenotryOpen = false;
+           updateInventorySlots(COOKING_X,COOKING_Y);
         }
         stage.act(delta);
         stage.draw();
@@ -362,6 +377,7 @@ public class GameScreen implements Screen {
     }
 
     private void checkGifting() {
+        updateInventorySlots(INVENTORY_X,INVENTORY_Y);
         if (isInvenotryOpen && giftMode && Gdx.input.justTouched()) {
             TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
                 .getLevel().getInventoryTexture();
@@ -762,8 +778,8 @@ public class GameScreen implements Screen {
                 float drawWidth = texWidth * scale1;
                 float drawHeight = texHeight * scale1;
 
-                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f + 235f;
-                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f + 65f; //fix
+                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f ;
+                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f - 310f;
 
                 batch.draw(texture, drawX, drawY, drawWidth, drawHeight);
                 if(slot.count > 1) font.draw(batch,String.valueOf(slot.count), drawX + drawWidth - 15f,drawY + 10f);
@@ -897,8 +913,8 @@ public class GameScreen implements Screen {
                 float drawWidth = texWidth * scale1;
                 float drawHeight = texHeight * scale1;
 
-                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f + 235f;
-                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f + 65f; //fix
+                float drawX = slot.x + (SLOT_SIZE - drawWidth) / 2f ;
+                float drawY = slot.y + (SLOT_SIZE - drawHeight) / 2f - 310f;
 
                 batch.draw(texture, drawX, drawY, drawWidth, drawHeight);
                 if(slot.count > 1) font.draw(batch,String.valueOf(slot.count), drawX + drawWidth - 15f,drawY + 10f);
@@ -966,6 +982,10 @@ public class GameScreen implements Screen {
         skillHitboxes.put(SkillSetInfo.Foraging, new Rectangle(skillX + 200, skillY + 400, width, height));
         skillHitboxes.put(SkillSetInfo.Fishing, new Rectangle(skillX + 200, skillY + 350, width, height));
         skillHitboxes.put(SkillSetInfo.Combat, new Rectangle(skillX + 200, skillY + 300, width, height));
+
+    }
+
+    public void showCheatCodeWindow(SpriteBatch spriteBatch) {
 
     }
 
@@ -1074,7 +1094,6 @@ public class GameScreen implements Screen {
         uiStage = new Stage(new ScreenViewport(), batch);
         stage = new Stage(viewport, batch);
         InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(cheatCodeWindow);
         multiplexer.addProcessor(stage);
         multiplexer.addProcessor(new InventoryInputHandler(this));
         multiplexer.addProcessor(uiStage);
@@ -1742,7 +1761,7 @@ public class GameScreen implements Screen {
 
     }
 
-    public void updateInventorySlots() {
+    public void updateInventorySlots(float x, float y) {
         slots.clear();
 
         float slotPadding = 1f;
@@ -1757,8 +1776,8 @@ public class GameScreen implements Screen {
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 InventorySlot slot = new InventorySlot();
-                slot.x = INVENTORY_X + leftOffset + col * (SLOT_SIZE + slotPadding) + 5f;
-                slot.y = INVENTORY_Y + (3 - row - 1) * (SLOT_SIZE + 10f) + topOffset - 150f;
+                slot.x = x + leftOffset + col * (SLOT_SIZE + slotPadding) + 5f;
+                slot.y = y + (3 - row - 1) * (SLOT_SIZE + 10f) + topOffset - 150f;
 
                 if (index < items.size()) {
                     Item item = items.get(index++);
@@ -1829,7 +1848,7 @@ public class GameScreen implements Screen {
                     MyGame.getCurrentPlayer().getBackPack().removeFromInventory(draggedItem, 1);
                     draggedItem = null;
                     selectedSlot = null;
-                    updateInventorySlots();
+                    updateInventorySlots(INVENTORY_X,INVENTORY_Y);
                     syncBackPackFromSlots();
                     return true;
                 }
@@ -1883,7 +1902,7 @@ public class GameScreen implements Screen {
                         latestResult = result;
                         showResult = true;
                         if(result.isSuccess()) GameAssetManager.playSfx("crafted");
-                        updateInventorySlots();
+                        updateInventorySlots(CRAFT_X,CRAFT_Y);
                         break;
                     }
                 }
@@ -1948,19 +1967,23 @@ public class GameScreen implements Screen {
                             showResult = true;
                         } else {
                             Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
-                            Result result = controller.plantSeed(currentItem, tile);
-                            if(!result.getMessage().startsWith("That's not a valid seed")) {
+                            Result result = null;
+                            if(!(result = controller.plantSeed(currentItem, tile)).getMessage().startsWith("That's not a valid seed")) {
                                 showResult = true;
                                 latestResult = result;
-                            } else {
+                                MyGame.getCurrentPlayer().getBackPack().removeFromInventory(currentItem, 1);
+                            } else if (currentItem.getName().equals("Speed-Gro") || currentItem.getName().equals("Retaining-Soil")) {
+                                latestResult = controller.fertilizeCrop(currentItem.getName(), tile);
+                                showResult = true;
+                                MyGame.getCurrentPlayer().getBackPack().removeFromInventory(currentItem, 1);
+                            }else {
                                 GameAssetManager.playSfx("place item");
                                 latestResult = controller.placeItem(currentItem, tile);
-                                Player player = MyGame.getCurrentPlayer();
-                                if (player.getBackPack().howManyOfItem(currentItem) == 0)
-                                    MyGame.getCurrentPlayer().setCurrentItem(null);
-                                updateInventorySlots();
                                 showResult = true;
                             }
+                            Player player = MyGame.getCurrentPlayer();
+                            if (player.getBackPack().howManyOfItem(currentItem) == 0)
+                                MyGame.getCurrentPlayer().setCurrentItem(null);
                         }
                     }
                 }
