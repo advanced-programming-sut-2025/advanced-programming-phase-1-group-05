@@ -24,42 +24,14 @@ public class StoreController {
     private Store getCurrentStore() {
         Player player = MyGame.getCurrentPlayer();
         for (Store store : MyGame.getDatabase().getStores()){
-            if (store.isInside(player.getX(), player.getY())){
+            if (store.isInside(player.getXX(), player.getYY())){
                 return store;
             }
         }
         return null;
     }
 
-    public Result showAllProducts() {
-        StringBuilder output = new StringBuilder();
-        Store store = getCurrentStore();
-        if (store == null)
-            return Result.error("No store, no shelves, no products.");
-        if (!store.isOpen(GameManager.getCurrentHour()))
-            return Result.error("store not open right now.");
-        output.append("All products: \n");
-        for (Product product : store.getProducts()) {
-            output.append(product.getName()).append(" ").append(product.getPrice()).append("\n");
-        }
-        return Result.success(output.toString());
-    }
 
-    public Result showAvailableProducts() {
-        StringBuilder output = new StringBuilder();
-        Store store = getCurrentStore();
-        if (store == null)
-            return Result.error("No store, no shelves, no products.");
-        if (!store.isOpen(GameManager.getCurrentHour()))
-            return Result.error("store not open right now.");
-        output.append("Available products:\n");
-        for (Product product : store.getProducts()) {
-            if (product.isAvailable(store)) {
-                output.append(product.getName()).append(" ").append(product.getPrice()).append("\n");
-            }
-        }
-        return Result.success(output.toString());
-    }
     public Result purchase(Map<Product, Integer> products, GameScreen screen) {
 
         Player player = getPlayer(products);
@@ -149,9 +121,9 @@ public class StoreController {
         if (currentPlayer.getItemQuantity(item) < count) {
             return Result.error("You can't sell what you don't have. Unless you're secretly a magician");
         }
-
-        if (!currentPlayer.getFarm().getShippingBin().isNear(currentPlayer.getX(), currentPlayer.getY()))
-            return Result.error("You can't just toss things into air and hope for a sale. Find a shipping bin first.");
+//
+//        if (!currentPlayer.getFarm().getShippingBin().isNear(currentPlayer.getX(), currentPlayer.getY()))
+//            return Result.error("You can't just toss things into air and hope for a sale. Find a shipping bin first.");
 
         MyGame.soldItems.put(currentPlayer, item);
         return Result.success("You will receive the gold tomorrow morning!");

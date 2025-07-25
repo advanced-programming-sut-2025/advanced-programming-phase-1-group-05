@@ -43,7 +43,7 @@ public class Main extends Game {
         MenuNavigator.init(this, skin);
         checkAutoLogin();
         MenuNavigator.showMainMenu();
-       //setScreen(new StoreView(MyGame.getDatabase().getStoreByName("Joja Mart"), null));
+       //setScreen(new FishingMiniGame(null , new FishingPole(), FishType.CrimsonFish));
     }
 
     public static void checkAutoLogin() {

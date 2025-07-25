@@ -98,7 +98,7 @@ public class StoreView implements Screen {
                 filterButton.setText(showOnlyAvailable ? "Show All Products" : "Only Available Products");
                 List<Product> filtered = showOnlyAvailable
                     ? store.getProducts().stream()
-                    .filter(product -> product.isAvailable(store))
+                    .filter(Product::isAvailable)
                     .toList()
                     : store.getProducts();
                 rebuildItemList(filtered);
@@ -174,7 +174,7 @@ public class StoreView implements Screen {
         Table row = new Table();
 
         Image itemIcon;
-        if (item.isAvailable(store))
+        if (item.isAvailable())
             itemIcon = new Image(item.getTexture());
         else itemIcon = new Image(makeGrayscale(GameAssetManager.getInstance().getItemTexture(item.getName())));
         Label nameLabel = new Label(item.getName(), skin);
@@ -194,7 +194,7 @@ public class StoreView implements Screen {
         minus.getImageCell().size(30, 30);;
         plus.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                if (item.isAvailable(store)){
+                if (item.isAvailable()){
                     int qty = Integer.parseInt(quantityLabel.getText().toString());
                     if (MyGame.getCurrentPlayer().getGold() < item.getPrice() * (qty + 1)) {
                         banner.showMessage("you don't have enough gold!", Color.RED, 5f);

@@ -66,11 +66,8 @@ public class Product implements Item {
         return (int) (price * itemLevel.getPriceCoefficient());
     }
 
-    public boolean isInSeason(Store store) {
-        if (store.getStoreName().equals("Joja Mart")) {
-            return seasons.contains(GameManager.getSeason());
-        }
-        return true;
+    public boolean isInSeason() {
+        return seasons.isEmpty() || seasons.contains(GameManager.getSeason());
     }
 
 
@@ -93,8 +90,8 @@ public class Product implements Item {
     public int getLimit() {
         return limit;
     }
-    public boolean isAvailable(Store store){
-        if (!isInSeason(store)) return false;
+    public boolean isAvailable(){
+        if (!isInSeason()) return false;
         return limit == -1 || getRemainingForToday() > 0;
     }
 

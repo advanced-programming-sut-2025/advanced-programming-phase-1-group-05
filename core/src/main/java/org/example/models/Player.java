@@ -160,6 +160,8 @@ public class Player {
         return new Animation<>(0.5f, frames);
     }
 
+
+
     public Animation<TextureRegion> loadAnimations(char direction) {
         if(direction == 'u') {
             //walk up
@@ -203,6 +205,7 @@ public class Player {
         return null;
     }
 
+
     public void moveUp(float delta) {
         if(isFainting) return;
         Y += speed * delta;
@@ -220,7 +223,17 @@ public class Player {
         stateTime += delta;
         reduceEnergyByStep(speed * delta);
     }
+    public void setFacingRight(boolean right) {
+        if (right) lastDirection = Direction.RIGHT;
+        else lastDirection = Direction.LEFT;
+    }
 
+    public void setX(float x) {
+        X = x;
+    }
+    public void setY(float y) {
+        Y = y;
+    }
     public void moveLeft(float delta) {
         if(isFainting) return;
         X -= speed * delta;
@@ -254,7 +267,7 @@ public class Player {
         Y = MathUtils.clamp(Y, minY, maxY);
     }
 
-    public void draw(SpriteBatch batch) {
+    public void draw(SpriteBatch batch, float bounceOffset) {
         TextureRegion frameToDraw;
 
         if(isFainting) {
@@ -286,7 +299,7 @@ public class Player {
             }
         }
 
-        batch.draw(frameToDraw, X, Y, width, height);
+        batch.draw(frameToDraw, X, Y + bounceOffset, width, height);
 
         if (currentItem != null && currentItem.getTexture() != null) {
             TextureRegion textureRegion = currentItem.getTexture();
@@ -365,13 +378,6 @@ public class Player {
         return mapNum;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
 
     public void setCoordinate(int x, int y) {
         this.x = x;
