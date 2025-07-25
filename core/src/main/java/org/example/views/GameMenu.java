@@ -139,9 +139,6 @@ public class GameMenu implements Screen {
     private final Label resultLabel;
     List<String> usernames = new ArrayList<>();
 
-    //terminal window for cheat codes
-    private CheatCodeWindow cheatCodeWindow;
-
     public GameMenu(Skin skin, GameMenuController controller) {
         this.skin = skin;
         this.controller = controller;
@@ -261,21 +258,17 @@ public class GameMenu implements Screen {
     public void show() {
         Gdx.input.setInputProcessor(stage);
         batch = new SpriteBatch();
-        cheatCodeWindow = new CheatCodeWindow(batch);
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        cheatCodeWindow.update(delta);
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
         batch.end();
-
-        cheatCodeWindow.render();
         stage.act();
         stage.draw();
     }

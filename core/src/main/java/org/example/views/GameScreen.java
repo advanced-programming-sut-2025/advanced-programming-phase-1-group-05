@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -70,8 +68,6 @@ public class GameScreen implements Screen {
     private Season currentSeason;
     private final ArrayList<Player> players;
 
-    private CheatCodeWindow cheatCodeWindow;
-
     private boolean isInvenotryOpen = false;
     public static Array<Rectangle> farms = new Array<>();
     Array<NpcActor> NPCs = new Array<>();
@@ -131,12 +127,15 @@ public class GameScreen implements Screen {
     private Result latestResult;
     private GlyphLayout layout = new GlyphLayout();
 
+    //cheat code window
+    private boolean isCheatCodeOpen = false;
+    private TextField cheatCodeTextField;
+
     public GameScreen(ArrayList<Player> playerList) {
         skin = GameAssetManager.getSkin();
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
         batch = new SpriteBatch();
-        cheatCodeWindow = new CheatCodeWindow(batch);
         players = playerList;
         controller = new GameMenuController(this);
         homeMenuController = new HomeMenuController();
@@ -168,6 +167,7 @@ public class GameScreen implements Screen {
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
+        cheatCodeTextField = new TextField("Enter Cheat Code", GameAssetManager.getSkin());
 
     }
 
@@ -277,7 +277,6 @@ public class GameScreen implements Screen {
 
         batch.end();
         tileOutline(mouse);
-        cheatCodeWindow.render();
         showInventory(batch);
         showSkillSet(batch);
         showCraftPage(batch);
@@ -902,6 +901,10 @@ public class GameScreen implements Screen {
 
     }
 
+    public void showCheatCodeWindow(SpriteBatch spriteBatch) {
+
+    }
+
     public void showInventory(SpriteBatch batch) {
         if (!isInvenotryOpen) return;
 
@@ -1006,7 +1009,6 @@ public class GameScreen implements Screen {
         uiStage = new Stage(new ScreenViewport(), batch);
         stage = new Stage(viewport, batch);
         InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(cheatCodeWindow);
         multiplexer.addProcessor(stage);
         multiplexer.addProcessor(new InventoryInputHandler(this));
         multiplexer.addProcessor(uiStage);
