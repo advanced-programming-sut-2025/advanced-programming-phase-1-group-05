@@ -49,14 +49,21 @@ public class ProfileMenu implements Screen {
         table.setFillParent(true);
         table.center();
         stage.addActor(table);
-        String avatarPath;
-        if (currentUser.getGender().equals("Male")) {
-            avatarPath = "assets/NPCs/sebastian/avatar.png";
+//        String avatarPath = "assets/NPCs/sebastian/avatar.png";
+//        if (currentUser.getGender().equals("Male")) {
+//            avatarPath = "assets/NPCs/sebastian/avatar.png";
+//        } else {
+//            avatarPath = "assets/NPCs/sebastian/avatar.png";
+//        }
+        String path = "NPCs/sebastian/avatar.png";
+        if (Gdx.files.internal(path).exists()) {
+            avatarTexture = new Texture(Gdx.files.internal(path));
         } else {
-            avatarPath = "assets/NPCs/abigail/avatar.png";
+            avatarTexture = new Texture(Gdx.files.internal("default.png"));
         }
 
-        avatarTexture = new Texture(Gdx.files.internal(avatarPath));
+
+        avatarTexture = new Texture(Gdx.files.internal(path));
         Image avatarImage = new Image(avatarTexture);
 
 

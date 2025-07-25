@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import org.example.controllers.DBController;
 import org.example.controllers.LoginMenuController;
 import org.example.models.*;
 
@@ -112,45 +113,127 @@ public class LoginMenu implements Screen {
     }
 
 
+//    private void showRecoveryDialog() {
+//        Dialog dialog = new Dialog("Recover Password", skin);
+//
+//        TextField username = new TextField("", skin);
+//        TextField answer = new TextField("", skin);
+//        Label result = new Label("", skin);
+//        TextButton copyBtn = new TextButton("Copy", skin);
+//        copyBtn.setVisible(false);
+//
+//        Table content = dialog.getContentTable();
+//        content.add("Username:").pad(3);
+//        content.add(username).width(200).pad(3).row();
+//        content.add("Answer:").pad(3);
+//        content.add(answer).width(200).pad(3).row();
+//        content.add(result).colspan(2).pad(5).row();
+//        content.add(copyBtn).colspan(2).pad(5).row();
+//
+//        dialog.button("OK");
+//        dialog.button("Check").addListener(new ChangeListener() {
+//            @Override public void changed(ChangeEvent event, Actor actor) {
+//                User user = UserDatabase.getUserByUsername(username.getText().trim());
+//                if (user != null && user.getSecurityAnswer().equals(answer.getText().trim())) {
+//                    result.setText("Password: " + user.getPlainPassword());
+//                    copyBtn.setVisible(true);
+//                } else {
+//                    result.setText("Incorrect answer");
+//                    copyBtn.setVisible(false);
+//                }
+//            }
+//        });
+//
+//        copyBtn.addListener(new ChangeListener() {
+//            @Override public void changed(ChangeEvent event, Actor actor) {
+//                Gdx.app.getClipboard().setContents(result.getText().toString().replace("Password: ", ""));
+//                result.setText("Copied to clipboard");
+//            }
+//        });
+//
+//        dialog.show(stage);
+//    }
+
     private void showRecoveryDialog() {
         Dialog dialog = new Dialog("Recover Password", skin);
 
         TextField username = new TextField("", skin);
         TextField answer = new TextField("", skin);
+        TextField newPasswordField = new TextField("", skin);
+        newPasswordField.setPasswordMode(true);
+        newPasswordField.setPasswordCharacter('*');
+        newPasswordField.setVisible(false); // اول مخفی است
+
         Label result = new Label("", skin);
-        TextButton copyBtn = new TextButton("Copy", skin);
-        copyBtn.setVisible(false);
+        result.setColor(Color.RED);
+
+        // دکمه‌ها
+        TextButton checkBtn = new TextButton("Check", skin);
+        TextButton saveBtn = new TextButton("Save", skin);
+        saveBtn.setVisible(false); // بعد از چک کردن فعال می‌شود
 
         Table content = dialog.getContentTable();
         content.add("Username:").pad(3);
         content.add(username).width(200).pad(3).row();
+
         content.add("Answer:").pad(3);
         content.add(answer).width(200).pad(3).row();
-        content.add(result).colspan(2).pad(5).row();
-        content.add(copyBtn).colspan(2).pad(5).row();
 
-        dialog.button("OK");
-        dialog.button("Check").addListener(new ChangeListener() {
-            @Override public void changed(ChangeEvent event, Actor actor) {
+        content.add("New Password:").pad(3);
+        content.add(newPasswordField).width(200).pad(3).row();
+
+        content.add(result).colspan(2).pad(5).row();
+
+        // اضافه کردن دکمه‌ها
+        Table buttonTable = dialog.getButtonTable();
+        buttonTable.add(checkBtn).pad(5);
+        buttonTable.add(saveBtn).pad(5);
+
+        // چک کردن پاسخ امنیتی
+        checkBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
                 User user = UserDatabase.getUserByUsername(username.getText().trim());
                 if (user != null && user.getSecurityAnswer().equals(answer.getText().trim())) {
-                    result.setText("Password: " + user.getPlainPassword());
-                    copyBtn.setVisible(true);
+                    result.setText("Answer correct. Please enter new password.");
+                    result.setColor(Color.GREEN);
+                    newPasswordField.setVisible(true);
+                    saveBtn.setVisible(true);
                 } else {
-                    result.setText("Incorrect answer");
-                    copyBtn.setVisible(false);
+                    result.setText("Incorrect answer!");
+                    result.setColor(Color.RED);
+                    newPasswordField.setVisible(false);
+                    saveBtn.setVisible(false);
                 }
             }
         });
 
-        copyBtn.addListener(new ChangeListener() {
-            @Override public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.getClipboard().setContents(result.getText().toString().replace("Password: ", ""));
-                result.setText("Copied to clipboard");
+        // ذخیره رمز جدید
+        saveBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                User user = UserDatabase.getUserByUsername(username.getText().trim());
+                if (user != null) {
+                    user.setPassword(newPasswordField.getText().trim());
+                    changePassword(newPasswordField.getText().trim() ,  user);
+                    result.setText("Password updated successfully!");
+                    result.setColor(Color.GREEN);
+                    dialog.hide();
+                }
             }
         });
 
         dialog.show(stage);
+    }
+
+    private Result changePassword(String newPassword, User currentUser) {
+        if (currentUser.getPlainPassword().equals(newPassword)) {
+            return Result.error("Your pass must be different from last one!");
+        }
+        currentUser.setPassword(DBController.hashPassword(newPassword));
+        currentUser.setPlainPassword(newPassword);
+        DBController.saveAllUsers();
+        return Result.success("Password changed successfully!");
     }
 
     @Override public void render(float delta) {
