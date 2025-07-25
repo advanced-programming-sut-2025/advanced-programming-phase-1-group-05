@@ -1,12 +1,12 @@
 [
   {
     "username": "Nima-2",
-    "password": "952e380a3fbc5292f5e9702443c24c37c23edba8de868c0f276169948590b96b",
-    "nickName": "nima",
+    "password": "b6e91a7dbb4e2a3b09fa62bfb12fc814c5fa4ccdfdd35cf6063331da30798786",
+    "nickName": "nimaa",
     "gender": "Male",
     "email": "Nila.-a11@gma-il.com",
     "gamesPlayed": 0,
-    "plainPassword": "!@Nila1184",
+    "plainPassword": "!@Nima1184",
     "securityQuestion": "What was your first pet\u0027s name?",
     "securityAnswer": "q",
     "friends": []
@@ -45,6 +45,30 @@
     "plainPassword": "!@Sana1184",
     "securityQuestion": "What was your first pet\u0027s name?",
     "securityAnswer": "e",
+    "friends": []
+  },
+  {
+    "username": "Nima-22",
+    "password": "c6970ca19eb41e00fb5edc85b568a83378e98cab1e15de187e2ebbab324a970a",
+    "nickName": "nila",
+    "gender": "Male",
+    "email": "Nila.-a111@gma-il.com",
+    "gamesPlayed": 0,
+    "plainPassword": "!@Roya1184",
+    "securityQuestion": "What is your favorite color?",
+    "securityAnswer": "red",
+    "friends": []
+  },
+  {
+    "username": "Nima-2222",
+    "password": "3cb8c1dbdfa9c9d942ad771d5952a61c917be0cd1dd8faca4b51d2cbbdf1931c",
+    "nickName": "nima",
+    "gender": "Male",
+    "email": "Nila.-a11@gma-il.com",
+    "gamesPlayed": 0,
+    "plainPassword": "zG2#22*uMH",
+    "securityQuestion": "What city were you born in?",
+    "securityAnswer": "karaj",
     "friends": []
   }
 ]

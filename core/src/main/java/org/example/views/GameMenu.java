@@ -159,6 +159,7 @@ public class GameMenu implements Screen {
         TextButton loadGameBtn = new TextButton("Load Game", skin);
         TextButton deleteGameBtn = new TextButton("Delete Game", skin);
         TextButton backBtn = new TextButton("Back to Main Menu", skin);
+        TextButton exitGameBtn = new TextButton("Exit Game", skin);
 
         table.add(titleLabel).colspan(2).padBottom(15).row();
 
@@ -174,8 +175,9 @@ public class GameMenu implements Screen {
         table.add(startGameBtn).colspan(2).pad(5).row();
         table.add(loadGameBtn).colspan(2).pad(5).row();
         table.add(deleteGameBtn).colspan(2).pad(5).row();
+        table.add(exitGameBtn).colspan(2).pad(5).row();
         table.add(resultLabel).colspan(2).pad(5).width(400).row();
-        table.add(backBtn).colspan(2).pad(10).row();
+//        table.add(backBtn).colspan(2).pad(10).row();
 
         addPlayersBtn.addListener(new ChangeListener() {
             @Override
@@ -312,13 +314,20 @@ public class GameMenu implements Screen {
             }
         });
 
-
-        backBtn.addListener(new ChangeListener() {
+        exitGameBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 MenuNavigator.showMainMenu();
             }
         });
+
+
+//        backBtn.addListener(new ChangeListener() {
+//            @Override
+//            public void changed(ChangeEvent event, Actor actor) {
+//                MenuNavigator.showMainMenu();
+//            }
+//        });
     }
 
 
