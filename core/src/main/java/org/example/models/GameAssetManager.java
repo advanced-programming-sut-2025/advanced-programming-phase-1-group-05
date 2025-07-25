@@ -31,6 +31,7 @@ public class GameAssetManager {
     public static final TextureRegion infoPage = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/info opener.png"));
     public static final TextureRegion toolSelection = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/tool selection.png"));
     public static final TextureRegion resultTexture = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/result.png"));
+    public static final TextureRegion journalBg = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/journal page.png"));
     public Map<AnimalType, AnimalAnimations> animalAnimations = new HashMap<>();
     private GameAssetManager() {
         // Load skin from assets/skin/

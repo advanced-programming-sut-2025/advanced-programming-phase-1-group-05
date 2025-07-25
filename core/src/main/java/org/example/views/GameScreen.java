@@ -134,6 +134,13 @@ public class GameScreen implements Screen {
     private boolean isCheatCodeOpen = false;
     private TextField cheatCodeTextField;
 
+    //journal stuff
+    private TextureRegion journalBg = GameAssetManager.journalBg;
+    private boolean isJournalOpen = false;
+    private float JOURNAL_X = 0;
+    private float JOURNAL_Y = 0;
+
+
     public GameScreen(ArrayList<Player> playerList) {
         skin = GameAssetManager.getSkin();
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
@@ -297,6 +304,7 @@ public class GameScreen implements Screen {
         showCraftPage(batch);
         showToolSelection(batch);
         showCookingPage(batch);
+        showJournalPage(batch);
         updateToolSelectionSlots();
         checkGifting();
         checkArtisanInput();
@@ -318,6 +326,7 @@ public class GameScreen implements Screen {
             isSkillSetOpen = false;
             isToolSelectionOpen = false;
             isCookingOpen = false;
+            isJournalOpen = false;
             if (isInvenotryOpen) {
                 TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
                     .getLevel().getInventoryTexture();
@@ -338,6 +347,7 @@ public class GameScreen implements Screen {
             isInvenotryOpen = false;
             isToolSelectionOpen = false;
             isCookingOpen = false;
+            isJournalOpen = false;
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
             GameAssetManager.playSfx("open page");
             isToolSelectionOpen = !isToolSelectionOpen;
@@ -345,6 +355,7 @@ public class GameScreen implements Screen {
             isSkillSetOpen = false;
             isInvenotryOpen = false;
             isCookingOpen = false;
+            isJournalOpen = false;
             updateToolSelectionSlots();
         } else if(Gdx.input.isKeyJustPressed(Input.Keys.B)) {
             GameAssetManager.playSfx("open page");
@@ -353,6 +364,7 @@ public class GameScreen implements Screen {
             isSkillSetOpen = false;
             isInvenotryOpen = false;
             isCookingOpen = false;
+            isJournalOpen = false;
             updateInventorySlots(CRAFT_X, CRAFT_Y);
         } else if(Gdx.input.isKeyJustPressed(Input.Keys.G)) {
             GameAssetManager.playSfx("open page");
@@ -361,7 +373,16 @@ public class GameScreen implements Screen {
             isCraftOpen = false;
             isSkillSetOpen = false;
             isInvenotryOpen = false;
+            isJournalOpen = false;
            updateInventorySlots(COOKING_X,COOKING_Y);
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.J)) {
+            GameAssetManager.playSfx("open page");
+            isJournalOpen = !isJournalOpen;
+            isCraftOpen = false;
+            isToolSelectionOpen = false;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
         }
         stage.act(delta);
         stage.draw();
@@ -699,6 +720,29 @@ public class GameScreen implements Screen {
         }
 
         batch.end();
+    }
+
+    public void showJournalPage(SpriteBatch batch) {
+        if(!isJournalOpen) return;
+
+        float scale = 0.5f;
+        float drawWidth = journalBg.getRegionWidth() * scale;
+        float drawHeight = journalBg.getRegionHeight() * scale;
+
+        JOURNAL_X = camera.position.x - drawWidth / 2f;
+        JOURNAL_Y = camera.position.y - drawHeight / 2f;
+
+        batch.begin();
+        batch.draw(journalBg, JOURNAL_X, JOURNAL_Y, drawWidth, drawHeight);
+
+        //TODO show quests
+//        Map<String, NPC> quests = new HashMap<>();
+//        List<NPC> npcs = MyGame.getDatabase().getNPCs();
+//        for(NPC npc : npcs) {
+
+//        }
+        batch.end();
+
     }
 
     public void showCookingPage(SpriteBatch batch) {
