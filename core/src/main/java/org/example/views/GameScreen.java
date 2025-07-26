@@ -338,6 +338,7 @@ public class GameScreen implements Screen {
             if (greenhouseMessageTimer <= 0) {
                 buildGreenHouseMessage = false;
             } else  {
+                MyGame.getCurrentPlayer().setBuildGreenHouse(true);
                 font.setColor(Color.WHITE);
                 font.draw(
                     batch,
