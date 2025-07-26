@@ -32,6 +32,7 @@ public class FishingMiniGame implements Screen {
     private GameScreen previousScreen;
     private Fish fish;
     private FishBar bar;
+    private boolean perfectCatch = true;
     public FishingMiniGame(GameScreen game, FishingPole pole, FishType type) {
         this.pole = pole;
         fishType = type;
@@ -63,8 +64,15 @@ public class FishingMiniGame implements Screen {
 
         ScreenUtils.clear(0, 0, 0, 1);
 
-        //boolean catching = fish collides bar
-        //progressMeter.update(catching,delta);
+        boolean catching;
+        if (fish.getBounds().overlaps(bar.getBounds())){
+            catching = true;
+        }
+        else {
+            catching = false;
+            perfectCatch = false;
+        }
+        if (!fishCaught) progressMeter.update(catching,delta);
         if (progressMeter.isComplete()&& !fishCaught) {
             fishCaught  = true;
             String fishName = fishType.getName();
@@ -81,9 +89,17 @@ public class FishingMiniGame implements Screen {
             caughtDialog.show(stage);
             Product product = new Product(fishName, fishType.getPrice(), -1, null, List.of(), Map.of(), "fish");
             product.setItemLevel(level);
-            MyGame.getCurrentPlayer().getBackPack().addToInventory(product, 1);
+            Player player = MyGame.getCurrentPlayer();
+            player.getFishingSkill().increaseCapacity();
 
-            MyGame.getCurrentPlayer().getFishingSkill().increaseCapacity();
+            if (perfectCatch) {
+               product.setItemLevel(level.upgradeLevel());
+               int capacity = player.getFishingSkill().getCapacity();
+               player.getFishingSkill().setCapacity((int) (capacity * 2.4));
+           }
+
+            player.getBackPack().addToInventory(product, 1);
+
 
             Timer.schedule(new Timer.Task() {
                 @Override
@@ -114,7 +130,7 @@ public class FishingMiniGame implements Screen {
 
         stage.getBatch().end();
 
-        stage.act(delta);
+        if (!fishCaught)stage.act(delta);
         stage.draw();
 
     }

@@ -57,6 +57,7 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private TileMapRenderer mapRenderer;
+    InputMultiplexer multiplexer;
 
     Stage uiStage;
     private Texture energyBarBg, energyBarFill, overlay, blackOverlay;
@@ -123,6 +124,12 @@ public class GameScreen implements Screen {
     private static final float BOUNCE_HEIGHT = 10f;
     private static final float BOUNCE_SPEED = 10f;
 
+    //Animal stuff
+    private boolean isInBuildMode = false;
+    private Texture buildingPreviewTexture;
+    InputProcessor buildInputProcessor;
+    private EnclosureType lastType;
+    private AnimalHouseLevel lastLevel;
     // Artisan
     private boolean artisanInputMode = false;
     private List<InventorySlot> selectedSlots = new ArrayList<>();
@@ -305,6 +312,16 @@ public class GameScreen implements Screen {
             if (player.equals(playerA) || player.equals(playerB))
                 player.draw(batch, bounceOffset);
             else player.draw(batch, 0);
+            for (AnimalHouse house : player.getCoopsAndBarns()) {
+                house.draw(batch);
+            }
+        }
+        if (isInBuildMode && buildingPreviewTexture != null) {
+            Vector2 mousse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+            Vector3 worldCoords = camera.unproject(new Vector3(mousse.x, mousse.y, 0));
+            batch.setColor(1f, 1f, 1f, 0.5f);
+            batch.draw(buildingPreviewTexture, worldCoords.x, worldCoords.y);
+            batch.setColor(1f, 1f, 1f, 1f);
         }
         drawEnergyBar();
         drawHUD();
@@ -1179,13 +1196,28 @@ public class GameScreen implements Screen {
 
         uiStage = new Stage(new ScreenViewport(), batch);
         stage = new Stage(viewport, batch);
-        InputMultiplexer multiplexer = new InputMultiplexer();
+         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(stage);
         multiplexer.addProcessor(new InventoryInputHandler(this));
         multiplexer.addProcessor(uiStage);
-
+        if (isInBuildMode) multiplexer.addProcessor(0, buildInputProcessor);
         Gdx.input.setInputProcessor(multiplexer);
         System.out.println("InputMultiplexer set with cheatCodeWindow");
+
+         buildInputProcessor = new InputAdapter() {
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                if (isInBuildMode && button == Input.Buttons.LEFT) {
+                    Vector3 worldPos = camera.unproject(new Vector3(screenX, screenY, 0));
+                    placeBuilding(worldPos.x, worldPos.y, lastType, lastLevel);
+                    isInBuildMode = false;
+                    System.out.println("ello");
+                    multiplexer.removeProcessor(buildInputProcessor);
+                }
+                return true;
+            }
+        };
+
 
         missionListTable = new Table();
         missionListTable.setVisible(false);
@@ -1267,11 +1299,11 @@ public class GameScreen implements Screen {
         forceViewportReset();
 
         Player player1 = MyGame.getCurrentPlayer();
-        AnimalHouse house = new AnimalHouse(EnclosureType.COOP, AnimalHouseLevel.Big);
-        player1.addAnimalHouse(house);
-        Animal animal = new Animal("chicko", AnimalType.CHICKEN, player1);
-        house.addAnimal(animal);
-        addAnimalActor(new AnimalActor(animal));
+//        AnimalHouse house = new AnimalHouse(EnclosureType.COOP, AnimalHouseLevel.Big, 500, 500);
+//        player1.addAnimalHouse(house);
+//        Animal animal = new Animal("chicko", AnimalType.CHICKEN, player1);
+//        house.addAnimal(animal);
+//        addAnimalActor(new AnimalActor(animal));
         player1.getBackPack().addToInventory(MyGame.getDatabase().getItem("Hay"), 10);
 
     }
@@ -2258,4 +2290,21 @@ public class GameScreen implements Screen {
     public SpriteBatch getBatch() {
         return batch;
     }
+    public void enterBuildMode(Texture buildingTexture, EnclosureType type, AnimalHouseLevel level) {
+        isInBuildMode = true;
+        buildingPreviewTexture = buildingTexture;
+        lastType = type;
+        lastLevel = level;
+        System.out.println("Multiplexer now has: " + multiplexer.getProcessors().size + " processors");
+        multiplexer.addProcessor(0, buildInputProcessor);
+        System.out.println("Multiplexer now has: " + multiplexer.getProcessors().size + " processors");
+        System.out.println("set the input processor");
+    }
+
+    private void placeBuilding(float x, float y, EnclosureType type, AnimalHouseLevel level) {
+        AnimalHouse building = new AnimalHouse(type, level, x, y, buildingPreviewTexture);
+        Player player = MyGame.getCurrentPlayer();
+        player.addAnimalHouse(building);
+    }
+
 }

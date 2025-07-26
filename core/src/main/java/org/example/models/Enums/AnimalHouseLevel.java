@@ -15,4 +15,9 @@ public enum AnimalHouseLevel {
         return this == Deluxe;
     }
 
+    public static AnimalHouseLevel fromString(String input) {
+        if (input.contains("Big")) return Big;
+        else if (input.contains("Deluxe")) return Deluxe;
+        return Small;
+    }
 }

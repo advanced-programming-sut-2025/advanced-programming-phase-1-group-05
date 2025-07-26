@@ -15,6 +15,12 @@ public class Fishing implements Skill {
         increaseCapacity();
     }
 
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+    public int getCapacity() {
+        return capacity;
+    }
     @Override
     public int getLevel() {
         return level;
@@ -44,6 +50,7 @@ public class Fishing implements Skill {
     public void increaseCapacity() {
         this.capacity += 10;
     }
+
     @Override
     public void handleLevelChangeTrophies(int level){
         switch(level){

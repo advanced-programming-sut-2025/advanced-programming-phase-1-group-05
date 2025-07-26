@@ -150,28 +150,10 @@ public class StoreController {
         return Result.success("animal bought successfully!");
     }
 
-    public Result buildAnimalHouse(Matcher m) {
-        Store store = getCurrentStore();
-        if (store == null || !store.getStoreName().equals("Carpenter's shop")) {
-            return Result.error("You can only do this in the carpenter's shop.");
-        }
-
-        Product product = store.getProduct(m.group("buildingName"));
-        EnclosureType type;
-        if (product == null)
-            return Result.error("invalid enclosure type");
-        if (product.getName().contains("Coop")) {
-            type = EnclosureType.COOP;
-        }
-        else if (product.getName().contains("Barn")) {
-            type = EnclosureType.BARN;
-        }
-        else   return Result.error("You can only build a coop or a barn.");
-        int x = Integer.parseInt(m.group("x")), y = Integer.parseInt(m.group("y"));
-
+    public Result buildAnimalHouse(EnclosureType type, AnimalHouseLevel level, float x, float y) {
         Player player = MyGame.getCurrentPlayer();
-        for (int i = x; i < type.getRows() + x; i++) {
-            for (int j = y; j < type.getColumns() + y; j++) {
+        for (int i = (int) x; i < type.getRows() + x; i++) {
+            for (int j = (int) y; j < type.getColumns() + y; j++) {
                 GameTile tile = MyGame.getGameMap().getTile(i, j);
                 if (tile == null || !tile.getTileType().equals(TileType.Soil)) {
                     return Result.error("You can’t build here. The area must be completely flat.");
@@ -180,29 +162,19 @@ public class StoreController {
                     return Result.error("Nice try, but that patch of land isn’t yours. No trespassing… or building!");
             }
         }
-
-        if (!canAfford(product)) {
-            return Result.error("Looks like your gold took one look at the blueprint and noped out. You can’t afford to build this right now!");
-        }
-        player.addGold(-product.getPrice());
-
-        AnimalHouseLevel level;
-        if (product.getName().contains("Big")) level = AnimalHouseLevel.Big;
-        else if (product.getName().contains("Deluxe")) level = AnimalHouseLevel.Deluxe;
-        else level = AnimalHouseLevel.Small;
-        AnimalHouse animalHouse = new AnimalHouse(type, level);
-        player.addAnimalHouse(animalHouse);
-
-        for (int i = x; i < type.getRows() + x; i++) {
-            for (int j = y; j < type.getColumns() + y; j++) {
-                GameTile tile = MyGame.getGameMap().getTile(i, j);
-                tile.setTileType(TileType.House);
-                // اینجا باید چک شه که نباشه چیزی ولی خب
-                tile.setItemOnTile(null);
-                tile.setBuilding(animalHouse.getType());
-            }
-        }
-        return Result.success(product.getName() + " built successfully!");
+//        AnimalHouse animalHouse = new AnimalHouse(type, level, x, y);
+//        player.addAnimalHouse(animalHouse);
+//
+//        for (int i = x; i < type.getRows() + x; i++) {
+//            for (int j = y; j < type.getColumns() + y; j++) {
+//                GameTile tile = MyGame.getGameMap().getTile(i, j);
+//                tile.setTileType(TileType.House);
+//                // اینجا باید چک شه که نباشه چیزی ولی خب
+//                tile.setItemOnTile(null);
+//                tile.setBuilding(animalHouse.getType());
+//            }
+//        }
+        return Result.success(type + " built successfully!");
 
     }
 

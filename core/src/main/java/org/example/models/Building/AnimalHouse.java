@@ -1,9 +1,12 @@
 package org.example.models.Building;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.example.models.Animal;
 import org.example.models.Enums.AnimalHouseLevel;
 import org.example.models.Enums.EnclosureType;
 import org.example.models.Enums.BuildingType;
+import org.example.models.GameAssetManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +16,15 @@ public class AnimalHouse extends Building{
     private AnimalHouseLevel level;
     private List<Animal> animals = new ArrayList<Animal>();
     private int capacity;
-
-    public AnimalHouse(EnclosureType type, AnimalHouseLevel level) {
+    private Texture texture;
+    float x, y;
+    public AnimalHouse(EnclosureType type, AnimalHouseLevel level, float x, float y, Texture texture) {
         this.Type = type;
         this.level = level;
         this.capacity = level.getCapacity();
+        this.texture = texture;
+        this.x = x;
+        this.y = y;
     }
 
     public void addAnimal(Animal animal) {
@@ -48,4 +55,8 @@ public class AnimalHouse extends Building{
         }
         return null;
     }
-}
+
+    public void draw(SpriteBatch batch)
+    {
+        batch.draw(texture, x, y);
+    }}

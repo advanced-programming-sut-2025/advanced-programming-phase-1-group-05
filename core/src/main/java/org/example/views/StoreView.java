@@ -21,7 +21,9 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Main;
 import org.example.controllers.StoreController;
 import org.example.models.*;
+import org.example.models.Enums.AnimalHouseLevel;
 import org.example.models.Enums.AnimalType;
+import org.example.models.Enums.EnclosureType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -200,6 +202,16 @@ public class StoreView implements Screen {
                         banner.showMessage("you don't have enough gold!", Color.RED, 5f);
                         return;
                     }
+                    
+                    if (item.getName().contains("Barn")) {
+                        Texture tex  = GameAssetManager.getInstance().getItemTexture(item.getName());
+                        AnimalHouseLevel level = AnimalHouseLevel.fromString(item.getName());
+                        previousScreen.enterBuildMode(tex, EnclosureType.BARN, level);
+                        Player player = MyGame.getCurrentPlayer();
+                        player.addGold(- item.getPrice());
+                        Main.getMain().setScreen(previousScreen);
+                    }
+
                     qty++;
                     if (item.getRemainingForToday() < qty && item.getRemainingForToday() > 0) {
                         banner.showMessage("No more of this item available.", Color.RED, 5f);

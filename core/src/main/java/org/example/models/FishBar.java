@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import java.util.PrimitiveIterator;
 
 public class FishBar extends Actor {
-    private float speed = 60;
+    private float speed = 100;
     private float barY = 500;
     private float barHeight = 200;
     private final float barWidth = 81;

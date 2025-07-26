@@ -1189,7 +1189,14 @@ public class GameMenuController extends MenuController {
             MyGame.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
             MyGame.getCurrentPlayer().setCurrentItem(null);
             return new Result(true, "You consumed the food successfully!");
-        } else return new Result(false, "That's...not edible.");
+        }
+        else if (food instanceof  Product && ((Product) food).getDescription().equalsIgnoreCase("fish")) {
+            GameAssetManager.playSfx("eat");
+            MyGame.getCurrentPlayer().increaseEnergy(100);
+            MyGame.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
+            MyGame.getCurrentPlayer().setCurrentItem(null);
+            return new Result(true, "You consumed the fish successfully!");
+        }else return new Result(false, "That's...not edible.");
     }
 
 
