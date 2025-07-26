@@ -131,8 +131,7 @@ public class GameScreen implements Screen {
     private GlyphLayout layout = new GlyphLayout();
 
     //cheat code window
-    private boolean isCheatCodeOpen = false;
-    private TextField cheatCodeTextField;
+    private CheatCodeWindow cheatCodeWindow;
 
     //journal stuff
     private TextureRegion journalBg = GameAssetManager.journalBg;
@@ -142,6 +141,7 @@ public class GameScreen implements Screen {
 
 
     public GameScreen(ArrayList<Player> playerList) {
+        MyGame.setGameScreen(this);
         skin = GameAssetManager.getSkin();
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
@@ -177,7 +177,7 @@ public class GameScreen implements Screen {
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
-        cheatCodeTextField = new TextField("Enter Cheat Code", GameAssetManager.getSkin());
+        cheatCodeWindow = new CheatCodeWindow(camera, Gdx.input.getInputProcessor());
 
     }
 
@@ -250,8 +250,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0f, 136/255f, 199/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-        handleInput(delta);
-        //cheatCodeWindow.update(delta);
+        if(!cheatCodeWindow.isVisible()) handleInput(delta);
 
         timeAccumulator += delta;
         if (timeAccumulator >= 42f) {
@@ -289,6 +288,7 @@ public class GameScreen implements Screen {
         tileOutline(mouse);
         stage.act(delta);
         stage.draw();
+        cheatCodeWindow.render(delta);
         if (isInvenotryOpen) {
             for (NpcActor npc : NPCs) {
                 npc.setVisible(false);
@@ -309,81 +309,7 @@ public class GameScreen implements Screen {
         checkGifting();
         checkArtisanInput();
         if(showResult) showResult(batch,latestResult,delta);
-        if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
-            GameManager.getGameClock().advanceDay();
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            latestResult = controller.eatFood(player.getCurrentItem());
-            if(latestResult.isSuccess()) {
-                player.setEating(true);
-            }
-            showResult = true;
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            GameAssetManager.playSfx("open page");
-            isInvenotryOpen = !isInvenotryOpen;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isToolSelectionOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-            if (isInvenotryOpen) {
-                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
-                    .getLevel().getInventoryTexture();
-                float scale = 0.5f;
-                float scaledWidth = inventory.getRegionWidth() * scale;
-                float scaledHeight = inventory.getRegionHeight() * scale;
-                INVENTORY_X = camera.position.x - scaledWidth / 2f;
-                INVENTORY_Y = camera.position.y - scaledHeight / 2f;
 
-                skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
-
-                updateInventorySlots(INVENTORY_X,INVENTORY_Y);
-            }
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            GameAssetManager.playSfx("open page");
-            isSkillSetOpen = !isSkillSetOpen;
-            isCraftOpen = false;
-            isInvenotryOpen = false;
-            isToolSelectionOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
-            GameAssetManager.playSfx("open page");
-            isToolSelectionOpen = !isToolSelectionOpen;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isInvenotryOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-            updateToolSelectionSlots();
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.B)) {
-            GameAssetManager.playSfx("open page");
-            isCraftOpen = !isCraftOpen;
-            isToolSelectionOpen = false;
-            isSkillSetOpen = false;
-            isInvenotryOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-            updateInventorySlots(CRAFT_X, CRAFT_Y);
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.G)) {
-            GameAssetManager.playSfx("open page");
-            isCookingOpen = !isCookingOpen;
-            isToolSelectionOpen = false;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isInvenotryOpen = false;
-            isJournalOpen = false;
-           updateInventorySlots(COOKING_X,COOKING_Y);
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.J)) {
-            GameAssetManager.playSfx("open page");
-            isJournalOpen = !isJournalOpen;
-            isCraftOpen = false;
-            isToolSelectionOpen = false;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isInvenotryOpen = false;
-        }
         stage.act(delta);
         stage.draw();
         uiStage.act(delta);
@@ -518,10 +444,88 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) player.moveDown(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.moveLeft(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.moveRight(delta);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+            cheatCodeWindow.toggle();
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             MyGame.getCurrentPlayer().addGold(100000);
             Main.getMain().setScreen(new FishingMiniGame(this, new FishingPole(), FishType.CrimsonFish));
         }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            GameManager.getGameClock().advanceDay();
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            latestResult = controller.eatFood(player.getCurrentItem());
+            if(latestResult.isSuccess()) {
+                player.setEating(true);
+            }
+            showResult = true;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            GameAssetManager.playSfx("open page");
+            isInvenotryOpen = !isInvenotryOpen;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isToolSelectionOpen = false;
+            isCookingOpen = false;
+            isJournalOpen = false;
+            if (isInvenotryOpen) {
+                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
+                    .getLevel().getInventoryTexture();
+                float scale = 0.5f;
+                float scaledWidth = inventory.getRegionWidth() * scale;
+                float scaledHeight = inventory.getRegionHeight() * scale;
+                INVENTORY_X = camera.position.x - scaledWidth / 2f;
+                INVENTORY_Y = camera.position.y - scaledHeight / 2f;
+
+                skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
+
+                updateInventorySlots(INVENTORY_X,INVENTORY_Y);
+            }
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            GameAssetManager.playSfx("open page");
+            isSkillSetOpen = !isSkillSetOpen;
+            isCraftOpen = false;
+            isInvenotryOpen = false;
+            isToolSelectionOpen = false;
+            isCookingOpen = false;
+            isJournalOpen = false;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+            GameAssetManager.playSfx("open page");
+            isToolSelectionOpen = !isToolSelectionOpen;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
+            isCookingOpen = false;
+            isJournalOpen = false;
+            updateToolSelectionSlots();
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            GameAssetManager.playSfx("open page");
+            isCraftOpen = !isCraftOpen;
+            isToolSelectionOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
+            isCookingOpen = false;
+            isJournalOpen = false;
+            updateInventorySlots(CRAFT_X, CRAFT_Y);
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.G)) {
+            GameAssetManager.playSfx("open page");
+            isCookingOpen = !isCookingOpen;
+            isToolSelectionOpen = false;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
+            isJournalOpen = false;
+            updateInventorySlots(COOKING_X,COOKING_Y);
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.J)) {
+            GameAssetManager.playSfx("open page");
+            isJournalOpen = !isJournalOpen;
+            isToolSelectionOpen = false;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
+        }
+
         float px = player.getXX() + player.getWidth() / 2f;
         float py = player.getYY() + player.getHeight() / 2f;
         Store stoore = null;
@@ -1998,6 +2002,11 @@ public class GameScreen implements Screen {
 
                     GameTile tile = GameMap.getTile(tileX, tileY);
                     if (tile != null) {
+                        if(tile.getItemOnTile() != null && tile.getItemOnTile().getName().equals("Crow")) {
+                            latestResult = new Result(false, "Your plant was attacked by a crow.");
+                            showResult = true;
+                            tile.setItemOnTile(null);
+                        }
                         if (MyGame.getCurrentPlayer().getCurrentItem() instanceof Tool) {
                             Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
                             if (currentItem instanceof FishingPole && tile.getTileType() == TileType.Water) {
@@ -2155,5 +2164,9 @@ public class GameScreen implements Screen {
 
     public SpriteBatch getBatch() {
         return batch;
+    }
+
+    public GameMenuController getController() {
+        return controller;
     }
 }

@@ -1450,5 +1450,16 @@ public class GameMenuController extends MenuController {
         return turns;
     }
 
+    //handle cheat codes TODO add yours!!
+    public Result handleCheatCodes(String command) {
+        Matcher matcher = null;
+        if((matcher = GameMenuCommands.AddItemCC.getMatcher(command)) != null) {
+            String itemName = matcher.group("itemName");
+            int count = Integer.parseInt(matcher.group("count"));
+            return addItemCheatCode(itemName, count);
+        }
+        return new Result(false, "Invalid command.");
+    }
+
 
 }
