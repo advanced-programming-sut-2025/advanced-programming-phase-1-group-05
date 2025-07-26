@@ -1380,6 +1380,16 @@ public class GameMenuController extends MenuController {
             }
 
             return Result.success("⚡ Thor's wrath has been unleashed! ⚡");
+        } else if ((matcher = GameMenuCommands.AdvanceDate.getMatcher(command)) != null) {
+            int day = Integer.parseInt(matcher.group("x"));
+            for (int i = 0 ;i < day; i++) {
+                GameManager.getGameClock().advanceDay();
+            }
+            return Result.success("advanced date!");
+        } else if ((matcher = GameMenuCommands.AdvanceTime.getMatcher(command)) != null) {
+            int time = Integer.parseInt(matcher.group("x"));
+            GameManager.getGameClock().advanceTime(time*60);
+            return Result.success("advanced time!");
         }
         return new Result(false, "Invalid command.");
     }
