@@ -73,21 +73,19 @@ public class MyGame {
         return forecastedWeather;
     }
 
-
-    //    public static void startTheGame() {
-//        database.initializeStoresAndItems();
-//        database.initializePlantDatabase();
-//        database.loadNPCs();
-//        Player.initializeFriendships(players);
+//    public static void advanceToNextPlayer() {
+//        currentPlayerIndex++;
+//        if (currentPlayerIndex >= players.size()) {
+//            currentPlayerIndex = 0;
+//            GameManager.getGameClock().advanceTime(60);
+//        }
+//
+//        currentPlayer = players.get(currentPlayerIndex);
 //    }
-    public static void advanceToNextPlayer() {
-        currentPlayerIndex++;
-        if (currentPlayerIndex >= players.size()) {
-            currentPlayerIndex = 0;
-            GameManager.getGameClock().advanceTime(60);
-        }
 
-        currentPlayer = players.get(currentPlayerIndex);
+    public static void advanceToNextPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % getAllPlayers().size();
+        setCurrentPlayer(getAllPlayers().get(currentPlayerIndex));
     }
 
     public static void initializeFarms() {

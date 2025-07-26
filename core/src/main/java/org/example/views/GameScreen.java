@@ -57,6 +57,7 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private TileMapRenderer mapRenderer;
+    private boolean turnJustChanged = false;
 
     Stage uiStage;
     private Texture energyBarBg, energyBarFill, overlay, blackOverlay;
@@ -534,6 +535,30 @@ public class GameScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
             triggerLightningEffect();
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            Result result = controller.nextTurn();
+            if (result.isSuccess()) {
+                Player currentPlayer = MyGame.getCurrentPlayer();
+                String map = GameMenuController.getMapForPlayer(currentPlayer.getUsername());
+
+                farms.clear();
+                farms.add(getAllowedAreaForMap(map));
+
+                Vector2 pos = getInitialPositionForMap(map);
+                camera.viewportWidth = VIEW_WIDTH * TILE_SIZE;
+                camera.viewportHeight = VIEW_HEIGHT * TILE_SIZE;
+                camera.position.set(
+                    pos.x + currentPlayer.getWidth() / 2f,
+                    pos.y + currentPlayer.getHeight() / 2f,
+                    0
+                );
+                camera.update();
+
+                turnJustChanged = true;
+            }
+            return;
+        }
+
         if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             GameManager.getGameClock().advanceDay();
         }
@@ -628,11 +653,19 @@ public class GameScreen implements Screen {
                 toggleOverviewMode();
             }
 
-            if (!overviewMode) {
-                camera.position.set(player.getXX() + player.getWidth() / 2f,
-                    player.getYY() + player.getHeight() / 2f, 0);
-            }
-        }
+//            if (!overviewMode) {
+//                camera.position.set(player.getXX() + player.getWidth() / 2f,
+//                    player.getYY() + player.getHeight() / 2f, 0);
+//            }
+           if (!overviewMode && !turnJustChanged) {
+               camera.position.set(
+                   player.getXX() + player.getWidth() / 2f,
+                   player.getYY() + player.getHeight() / 2f,
+                   0
+               );
+           }
+
+       }
        else {
            if (stoore.isOpen(GameManager.getCurrentHour()))
                Main.getMain().setScreen(new StoreView(stoore, this));
@@ -641,6 +674,7 @@ public class GameScreen implements Screen {
                showResult = true;
            }
        }
+        turnJustChanged = false;
     }
 
     private void toggleOverviewMode() {

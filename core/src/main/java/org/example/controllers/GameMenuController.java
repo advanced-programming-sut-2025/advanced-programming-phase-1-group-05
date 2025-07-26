@@ -244,27 +244,23 @@ public class GameMenuController extends MenuController {
 
 
     public Result nextTurn() {
-        MyGame game = activeGames.get(currentUser.getUsername());
-        if (game == null) {
-            return Result.error("There is no active game.");
-        }
-        pendingGame = game;
-
-//        if (!currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername())) {
-//            return Result.error("It's not your turn.");
+//        MyGame game = activeGames.get(currentUser.getUsername());
+//        if (game == null) {
+//            return Result.error("There is no active game.");
 //        }
+//        pendingGame = game;
 
         MyGame.getCurrentPlayer().increaseEnergy(-50);
 
         MyGame.advanceToNextPlayer();
-        //reset energy for next turn??
+
         if (!MyGame.getCurrentPlayer().isEnergyUnlimited()) {
             MyGame.getCurrentPlayer().resetEnergy();
         }
 
-        return Result.success("Now it's " + MyGame.getCurrentPlayer().getUsername() + "'s turn." +
-                MyGame.getCurrentPlayer().getNotifications());
+        return Result.success("Now it's " + MyGame.getCurrentPlayer().getUsername() + "'s turn.");
     }
+
 
     public Result deleteGame() {
         if (selectedPlayers.isEmpty()) {
