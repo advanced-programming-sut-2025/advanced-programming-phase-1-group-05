@@ -58,6 +58,9 @@ public class GameScreen implements Screen {
     private SpriteBatch batch;
     private TileMapRenderer mapRenderer;
     private boolean turnJustChanged = false;
+    private boolean showGreenhouseMessage = false;
+    private float greenhouseMessageTimer = 0f;
+    private boolean buildGreenHouseMessage = false;
 
     Stage uiStage;
     private Texture energyBarBg, energyBarFill, overlay, blackOverlay;
@@ -315,22 +318,50 @@ public class GameScreen implements Screen {
 
         applyLightingOverlay();
 
+        if (showGreenhouseMessage) {
+            greenhouseMessageTimer -= delta;
+            if (greenhouseMessageTimer <= 0) {
+                showGreenhouseMessage = false;
+            } else {
+                font.setColor(Color.RED);
+                font.draw(
+                    batch,
+                    "Press Q to build a Greenhouse\n (Cost: 1000 coins & 500 wood)",
+                    camera.position.x - 350,
+                    camera.position.y + camera.viewportHeight / 2 - 20
+                );
+            }
+        }
+
+        if (buildGreenHouseMessage) {
+            greenhouseMessageTimer -= delta;
+            if (greenhouseMessageTimer <= 0) {
+                buildGreenHouseMessage = false;
+            } else  {
+                font.setColor(Color.RED);
+                font.draw(
+                    batch,
+                    "Green house built, " + MyGame.getCurrentPlayer().getGold() + " gold",
+                    camera.position.x - 350,
+                    camera.position.y + camera.viewportHeight / 2 - 20
+                );
+            }
+        }
+
 
         if (lightningEffectActive) {
             lightningTimer += delta;
 
             float stage = (lightningTimer / lightningDuration) * 3;
 
-            // تنظیم رنگ افکت
             if (stage < 1) {
-                batch.setColor(0f, 0f, 0f, 0.9f);   // مشکی
+                batch.setColor(0f, 0f, 0f, 0.9f);
             } else if (stage < 2) {
-                batch.setColor(0.7f, 0.7f, 0.7f, 0.7f); // طوسی
+                batch.setColor(0.7f, 0.7f, 0.7f, 0.7f);
             } else {
-                batch.setColor(1f, 1f, 1f, 0f); // شفاف (هیچ)
+                batch.setColor(1f, 1f, 1f, 0f);
             }
 
-            // فقط وقتی رنگ شفاف نیست، بکش
             if (stage < 2) {
                 batch.draw(blackOverlay,
                     camera.position.x - camera.viewportWidth / 2,
@@ -338,7 +369,6 @@ public class GameScreen implements Screen {
                     camera.viewportWidth, camera.viewportHeight);
             }
 
-            // ریست به رنگ عادی
             batch.setColor(1, 1, 1, 1);
 
             if (lightningTimer >= lightningDuration) {
@@ -532,6 +562,39 @@ public class GameScreen implements Screen {
                 }
             }
         }
+        if (Gdx.input.justTouched() && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            Vector3 click = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            int tileX = (int) (click.x / TILE_SIZE);
+            int tileY = (int) (click.y / TILE_SIZE);
+
+            GameTile clickedTile = GameMap.getTile(tileX, tileY);
+            if (clickedTile != null) {
+                TileType type = clickedTile.getTileType();
+
+                if (type.name().startsWith("GREENHOUSE_")) {
+                    showGreenhouseMessage = true;
+                    greenhouseMessageTimer = 3f;
+                }
+            }
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+            Item wood = MyGame.getDatabase().getItem("wood");
+
+            if (MyGame.getCurrentPlayer().getGold() >= 1000 &&
+                MyGame.getCurrentPlayer().getBackPack().howManyOfItem(wood) >= 500) {
+
+                MyGame.getCurrentPlayer().addGold(-1000);
+                MyGame.getCurrentPlayer().getBackPack().removeFromInventory(wood, 500);
+
+                buildGreenHouseMessage = true;
+                greenhouseMessageTimer = 3f;
+            } else {
+                latestResult = Result.error("Not enough gold or wood!");
+                showResult = true;
+            }
+        }
+
         if(Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
             triggerLightningEffect();
         }
