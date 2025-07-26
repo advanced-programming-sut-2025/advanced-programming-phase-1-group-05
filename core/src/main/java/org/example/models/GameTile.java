@@ -94,8 +94,8 @@ public class GameTile {
     public String toString() {
         Player currentPlayer = MyGame.getCurrentPlayer();
         if (currentPlayer != null &&
-                currentPlayer.getX() == this.x &&
-                currentPlayer.getY() == this.y) {
+                currentPlayer.getXX() == this.x &&
+                currentPlayer.getYY() == this.y) {
             return "🧍"; // Player character
         }
         if (isOccupied) return "♥️";

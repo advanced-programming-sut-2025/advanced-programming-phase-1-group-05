@@ -57,7 +57,7 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private TileMapRenderer mapRenderer;
-    private Player player;
+
     Stage uiStage;
     private Texture energyBarBg, energyBarFill, overlay, blackOverlay;
     private BitmapFont font;
@@ -74,6 +74,12 @@ public class GameScreen implements Screen {
     private boolean isInvenotryOpen = false;
     public static Array<Rectangle> farms = new Array<>();
     Array<NpcActor> NPCs = new Array<>();
+
+    // lightning effect
+    private boolean lightningEffectActive = false;
+    private float lightningTimer = 0f;
+    private float lightningDuration = 1f;
+
 
     //inventory stuff
     private ArrayList<InventorySlot> slots = new ArrayList<>();
@@ -116,6 +122,12 @@ public class GameScreen implements Screen {
     private boolean giftMode =false;
     private NpcActor lastNPC = null;
     private Player lastPlayer = null;
+    private boolean hugMode = false;
+    private  Player playerA = null, playerB = null;
+    private float hugTimer = 0f;
+    private static final float HUG_DURATION = 2f;
+    private static final float BOUNCE_HEIGHT = 10f;
+    private static final float BOUNCE_SPEED = 10f;
 
     // Artisan
     private boolean artisanInputMode = false;
@@ -131,7 +143,8 @@ public class GameScreen implements Screen {
     private GlyphLayout layout = new GlyphLayout();
 
     //cheat code window
-    private CheatCodeWindow cheatCodeWindow;
+    private boolean isCheatCodeOpen = false;
+    private TextField cheatCodeTextField;
 
     //journal stuff
     private TextureRegion journalBg = GameAssetManager.journalBg;
@@ -141,7 +154,6 @@ public class GameScreen implements Screen {
 
 
     public GameScreen(ArrayList<Player> playerList) {
-        MyGame.setGameScreen(this);
         skin = GameAssetManager.getSkin();
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
@@ -156,16 +168,18 @@ public class GameScreen implements Screen {
         mapRenderer = new TileMapRenderer();
         mapRenderer.setSeason(currentSeason);
 
-        Player currentPlayer = MyGame.getCurrentPlayer();
-        String selectedMap = GameMenuController.getMapForPlayer(currentPlayer.getUsername());
-        Vector2 spawnPosition = getInitialPositionForMap(selectedMap);
+        Vector2 spawnPos = null;
+        for (Player player : players){
+            String selectedMap = GameMenuController.getMapForPlayer(player.getUsername());
+            Vector2 spawnPosition = getInitialPositionForMap(selectedMap);
+            if (players.indexOf(player) == 0) spawnPos = spawnPosition;
+            player.setPosition(spawnPosition.x, spawnPosition.y);
+
+        }
         initializeFarmArea();
-
-        player = MyGame.getCurrentPlayer();
-        player.setPosition(spawnPosition.x, spawnPosition.y);
-
-        camera.position.set(spawnPosition.x + player.getWidth() / 2f,
-            spawnPosition.y + player.getHeight() / 2f, 0);
+        Player player = MyGame.getCurrentPlayer();
+        camera.position.set(spawnPos.x + player.getWidth() / 2f,
+            spawnPos.y + player.getHeight() / 2f, 0);
         camera.update();
 
 
@@ -177,7 +191,7 @@ public class GameScreen implements Screen {
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
-        cheatCodeWindow = new CheatCodeWindow(camera, Gdx.input.getInputProcessor());
+        cheatCodeTextField = new TextField("Enter Cheat Code", GameAssetManager.getSkin());
 
     }
 
@@ -250,7 +264,8 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0f, 136/255f, 199/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-        if(!cheatCodeWindow.isVisible()) handleInput(delta);
+        handleInput(delta);
+        //cheatCodeWindow.update(delta);
 
         timeAccumulator += delta;
         if (timeAccumulator >= 42f) {
@@ -277,18 +292,66 @@ public class GameScreen implements Screen {
             updateInventorySlots(COOKING_X, COOKING_Y);
         }
 
+        float bounceOffset = 0;
+        if (hugMode) {
+            hugTimer += delta;
+
+            bounceOffset = MathUtils.sin(hugTimer * BOUNCE_SPEED) * BOUNCE_HEIGHT;
+
+            if (hugTimer >= HUG_DURATION) {
+                hugMode = false;
+                playerA = null;
+                playerB = null;
+            }
+        }
+
         mapRenderer.render(batch, camera);
-        player.draw(batch);
+//        player.draw(batch);
+        for (Player player : players) {
+            if (player.equals(playerA) || player.equals(playerB))
+                player.draw(batch, bounceOffset);
+            else player.draw(batch, 0);
+        }
         drawEnergyBar();
         drawHUD();
 
         applyLightingOverlay();
 
+
+        if (lightningEffectActive) {
+            lightningTimer += delta;
+
+            float stage = (lightningTimer / lightningDuration) * 3;
+
+            // تنظیم رنگ افکت
+            if (stage < 1) {
+                batch.setColor(0f, 0f, 0f, 0.9f);   // مشکی
+            } else if (stage < 2) {
+                batch.setColor(0.7f, 0.7f, 0.7f, 0.7f); // طوسی
+            } else {
+                batch.setColor(1f, 1f, 1f, 0f); // شفاف (هیچ)
+            }
+
+            // فقط وقتی رنگ شفاف نیست، بکش
+            if (stage < 2) {
+                batch.draw(blackOverlay,
+                    camera.position.x - camera.viewportWidth / 2,
+                    camera.position.y - camera.viewportHeight / 2,
+                    camera.viewportWidth, camera.viewportHeight);
+            }
+
+            // ریست به رنگ عادی
+            batch.setColor(1, 1, 1, 1);
+
+            if (lightningTimer >= lightningDuration) {
+                lightningEffectActive = false;
+            }
+        }
+
         batch.end();
         tileOutline(mouse);
         stage.act(delta);
         stage.draw();
-        cheatCodeWindow.render(delta);
         if (isInvenotryOpen) {
             for (NpcActor npc : NPCs) {
                 npc.setVisible(false);
@@ -309,7 +372,98 @@ public class GameScreen implements Screen {
         checkGifting();
         checkArtisanInput();
         if(showResult) showResult(batch,latestResult,delta);
+        if (Gdx.input.justTouched() && Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            Vector3 click = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 
+            for (Player player : players) {
+                if (!player.equals(MyGame.getCurrentPlayer())) {
+                    Rectangle bounds = new Rectangle(player.getXX(), player.getYY(), player.getWidth(), player.getHeight());
+                    if (bounds.contains(click.x, click.y)) {
+                        showPlayerMenu(player);
+                        break;
+                    }
+                }
+            }
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+            triggerLightningEffect();
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            GameManager.getGameClock().advanceDay();
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            Player player = MyGame.getCurrentPlayer();
+            latestResult = controller.eatFood(player.getCurrentItem());
+            if(latestResult.isSuccess()) {
+                player.setEating(true);
+            }
+            showResult = true;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            GameAssetManager.playSfx("open page");
+            isInvenotryOpen = !isInvenotryOpen;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isToolSelectionOpen = false;
+            isCookingOpen = false;
+            isJournalOpen = false;
+            if (isInvenotryOpen) {
+                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
+                    .getLevel().getInventoryTexture();
+                float scale = 0.5f;
+                float scaledWidth = inventory.getRegionWidth() * scale;
+                float scaledHeight = inventory.getRegionHeight() * scale;
+                INVENTORY_X = camera.position.x - scaledWidth / 2f;
+                INVENTORY_Y = camera.position.y - scaledHeight / 2f;
+
+                skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
+
+                updateInventorySlots(INVENTORY_X,INVENTORY_Y);
+            }
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            GameAssetManager.playSfx("open page");
+            isSkillSetOpen = !isSkillSetOpen;
+            isCraftOpen = false;
+            isInvenotryOpen = false;
+            isToolSelectionOpen = false;
+            isCookingOpen = false;
+            isJournalOpen = false;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+            GameAssetManager.playSfx("open page");
+            isToolSelectionOpen = !isToolSelectionOpen;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
+            isCookingOpen = false;
+            isJournalOpen = false;
+            updateToolSelectionSlots();
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            GameAssetManager.playSfx("open page");
+            isCraftOpen = !isCraftOpen;
+            isToolSelectionOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
+            isCookingOpen = false;
+            isJournalOpen = false;
+            updateInventorySlots(CRAFT_X, CRAFT_Y);
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.G)) {
+            GameAssetManager.playSfx("open page");
+            isCookingOpen = !isCookingOpen;
+            isToolSelectionOpen = false;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
+            isJournalOpen = false;
+           updateInventorySlots(COOKING_X,COOKING_Y);
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.J)) {
+            GameAssetManager.playSfx("open page");
+            isJournalOpen = !isJournalOpen;
+            isCraftOpen = false;
+            isToolSelectionOpen = false;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
+        }
         stage.act(delta);
         stage.draw();
         uiStage.act(delta);
@@ -322,6 +476,13 @@ public class GameScreen implements Screen {
         isCraftOpen = false;
         isToolSelectionOpen = false;
     }
+
+    public void triggerLightningEffect() {
+        lightningEffectActive = true;
+        lightningTimer = 0f;
+        GameAssetManager.playSfx("thor");
+    }
+
 
     private void checkGifting() {
         updateInventorySlots(INVENTORY_X,INVENTORY_Y);
@@ -338,7 +499,8 @@ public class GameScreen implements Screen {
 
             Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 
-            Vector3 playerPos = camera.project(new Vector3(player.getX(), player.getY(), 0));
+            Player player = MyGame.getCurrentPlayer();
+            Vector3 playerPos = camera.project(new Vector3(player.getXX(), player.getYY(), 0));
 
             for (InventorySlot slot : slots) {
                 if (mouse.x >= slot.x && mouse.x <= slot.x + SLOT_SIZE &&
@@ -356,7 +518,7 @@ public class GameScreen implements Screen {
                         else if (lastPlayer != null) {
                             latestResult = controller.giftPlayer(lastPlayer, giftedItem, 1);
                             showResult = true;
-                            receiverPos = camera.project(new Vector3(lastPlayer.getX(), lastPlayer.getY(), 0));
+                            receiverPos = camera.project(new Vector3(lastPlayer.getXX(), lastPlayer.getYY(), 0));
                         }
                         if (receiverPos != null && latestResult.isSuccess()) {
                             slot.item = null;
@@ -374,7 +536,6 @@ public class GameScreen implements Screen {
                             flyingGift.setPosition(playerPos.x, playerPos.y);
                             stage.addActor(flyingGift);
                             isInvenotryOpen = false;
-                            flyingGift.setPosition(stagePos.x, stagePos.y);
                             flyingGift.setPosition(startPos.x, startPos.y);
                             stage.addActor(flyingGift);
 
@@ -437,6 +598,7 @@ public class GameScreen implements Screen {
     }
 
     private void handleInput(float delta) {
+        Player player = MyGame.getCurrentPlayer();
         Vector2 oldPos = new Vector2(player.getXX(), player.getYY());
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             player.moveUp(delta);
@@ -444,88 +606,10 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) player.moveDown(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.moveLeft(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.moveRight(delta);
-        if(Gdx.input.isKeyJustPressed(Input.Keys.C)) {
-            cheatCodeWindow.toggle();
-        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             MyGame.getCurrentPlayer().addGold(100000);
             Main.getMain().setScreen(new FishingMiniGame(this, new FishingPole(), FishType.CrimsonFish));
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
-            GameManager.getGameClock().advanceDay();
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            latestResult = controller.eatFood(player.getCurrentItem());
-            if(latestResult.isSuccess()) {
-                player.setEating(true);
-            }
-            showResult = true;
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            GameAssetManager.playSfx("open page");
-            isInvenotryOpen = !isInvenotryOpen;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isToolSelectionOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-            if (isInvenotryOpen) {
-                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
-                    .getLevel().getInventoryTexture();
-                float scale = 0.5f;
-                float scaledWidth = inventory.getRegionWidth() * scale;
-                float scaledHeight = inventory.getRegionHeight() * scale;
-                INVENTORY_X = camera.position.x - scaledWidth / 2f;
-                INVENTORY_Y = camera.position.y - scaledHeight / 2f;
-
-                skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
-
-                updateInventorySlots(INVENTORY_X,INVENTORY_Y);
-            }
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            GameAssetManager.playSfx("open page");
-            isSkillSetOpen = !isSkillSetOpen;
-            isCraftOpen = false;
-            isInvenotryOpen = false;
-            isToolSelectionOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
-            GameAssetManager.playSfx("open page");
-            isToolSelectionOpen = !isToolSelectionOpen;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isInvenotryOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-            updateToolSelectionSlots();
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.B)) {
-            GameAssetManager.playSfx("open page");
-            isCraftOpen = !isCraftOpen;
-            isToolSelectionOpen = false;
-            isSkillSetOpen = false;
-            isInvenotryOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-            updateInventorySlots(CRAFT_X, CRAFT_Y);
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.G)) {
-            GameAssetManager.playSfx("open page");
-            isCookingOpen = !isCookingOpen;
-            isToolSelectionOpen = false;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isInvenotryOpen = false;
-            isJournalOpen = false;
-            updateInventorySlots(COOKING_X,COOKING_Y);
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.J)) {
-            GameAssetManager.playSfx("open page");
-            isJournalOpen = !isJournalOpen;
-            isToolSelectionOpen = false;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isInvenotryOpen = false;
-        }
-
         float px = player.getXX() + player.getWidth() / 2f;
         float py = player.getYY() + player.getHeight() / 2f;
         Store stoore = null;
@@ -574,6 +658,7 @@ public class GameScreen implements Screen {
             String map = GameMenuController.getMapForPlayer(currentPlayer.getUsername());
             Vector2 pos = getInitialPositionForMap(map);
 
+            Player player = MyGame.getCurrentPlayer();
             camera.position.set(pos.x + player.getWidth() / 2f,
                 pos.y + player.getHeight() / 2f, 0);
         }
@@ -586,6 +671,7 @@ public class GameScreen implements Screen {
         float y = camera.position.y - camera.viewportHeight / 2 + 10;
 
         batch.draw(energyBarBg, x, y, barWidth, barHeight);
+        Player player = MyGame.getCurrentPlayer();
         float fill = (barHeight - 70f) * (player.getEnergy() / 200f);
         batch.draw(energyBarFill, x + 10f, y + 5f, barWidth - 20f, fill);
     }
@@ -597,7 +683,8 @@ public class GameScreen implements Screen {
         font.draw(batch, "Gold: " + MyGame.getCurrentPlayer().getGold(), x, y);
         font.draw(batch, "Time: " + String.format("%02d:%02d", GameManager.getCurrentHour(), GameManager.getGameClock().getMinute()), x, y - 30);
         font.draw(batch, "Season: " + currentSeason.toString(), x, y - 60);
-        font.draw(batch, GameManager.getDayOfTheWeek() + ", Day " + GameManager.getDay(), x, y - 90);
+        font.draw(batch, "Weather: " + MyGame.currentWeather, x, y - 90);
+        font.draw(batch, GameManager.getDayOfTheWeek() + ", Day " + GameManager.getDay(), x, y - 120);
     }
 
     private void applyLightingOverlay() {
@@ -1203,6 +1290,7 @@ public class GameScreen implements Screen {
         for (Store store : MyGame.getDatabase().getStores()) {
             stage.addActor(store);
         }
+
         Texture mail = GameAssetManager.getInstance().getOrLoadTexture("ui/mailSign.png");
         Drawable mailDrawable = new TextureRegionDrawable(new TextureRegion(mail));
         notificationButton = new ImageButton(mailDrawable);
@@ -1249,7 +1337,10 @@ public class GameScreen implements Screen {
     public void dispose() {
         batch.dispose();
         mapRenderer.dispose();
-        player.dispose();
+
+        for (Player player : players){
+            player.dispose();
+        }
         font.dispose();
         overlay.dispose();
         blackOverlay.dispose();
@@ -1437,6 +1528,8 @@ public class GameScreen implements Screen {
     }
 
     private void showPlayerMenu(Player player) {
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        if (currentPlayer.equals(player)) return;
         playerMenuTable.clear();
         playerMenuTable.setVisible(true);
         Table innerPanel = new Table(skin);
@@ -1448,6 +1541,7 @@ public class GameScreen implements Screen {
 
         Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
         Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+
 
         TextButton giveBouquet = new TextButton("give a bouquet", skin);
         innerPanel.add(giveBouquet).fillX();
@@ -1470,10 +1564,62 @@ public class GameScreen implements Screen {
                 playerMenuTable.setVisible(false);
             }
         });
-
+        TextButton hugButton = new TextButton("hug " + player.getName(), skin);
+        innerPanel.add(hugButton).fillX();
+        innerPanel.row();
+//        hugButton.setDisabled(!MyGame.getCurrentPlayer().canHug(player));
+//        if (hugButton.isDisabled()) {
+//            hugButton.setTouchable(Touchable.disabled);
+//            hugButton.setColor(Color.DARK_GRAY);
+//        }
+//        else hugButton.setTouchable(Touchable.enabled);
+        hugButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (playersAreClose(currentPlayer, player)) {
+                    System.out.println("teeheee");
+                    hugMode = true;
+                    playerA = currentPlayer;
+                    playerB = player;
+                    hugTimer = 0f;
+                    faceEachOther(currentPlayer, player);
+                    moveToCenter(currentPlayer, player);
+                }
+                playerMenuTable.setVisible(false);
+            }
+        });
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                playerMenuTable.setVisible(false);
+            }
+        });
         innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
         closeButton.getImageCell().size(48, 48);
         playerMenuTable.add(innerPanel).center();
+    }
+
+    private boolean playersAreClose(Player player1, Player player2) {
+        Vector2 pos1 = new Vector2(player1.getXX(), player1.getYY());
+        Vector2 pos2 = new Vector2(player2.getXX(), player2.getYY());
+        float distance = pos1.dst(pos2);
+        System.out.println(distance);
+        return distance < 100f;
+    }
+    private void faceEachOther(Player a, Player b) {
+        if (a.getXX() < b.getXX()) {
+            a.setFacingRight(true);
+            b.setFacingRight(false);
+        } else {
+            a.setFacingRight(false);
+            b.setFacingRight(true);
+        }
+    }
+
+    private void moveToCenter(Player a, Player b) {
+        float centerX = (a.getXX() + b.getXX()) / 2f;
+        a.setX(centerX - 25);
+        b.setX(centerX + 25);
     }
 
     private void showGiftMenu(Player player) {
@@ -2002,11 +2148,6 @@ public class GameScreen implements Screen {
 
                     GameTile tile = GameMap.getTile(tileX, tileY);
                     if (tile != null) {
-                        if(tile.getItemOnTile() != null && tile.getItemOnTile().getName().equals("Crow")) {
-                            latestResult = new Result(false, "Your plant was attacked by a crow.");
-                            showResult = true;
-                            tile.setItemOnTile(null);
-                        }
                         if (MyGame.getCurrentPlayer().getCurrentItem() instanceof Tool) {
                             Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
                             if (currentItem instanceof FishingPole && tile.getTileType() == TileType.Water) {
@@ -2164,9 +2305,5 @@ public class GameScreen implements Screen {
 
     public SpriteBatch getBatch() {
         return batch;
-    }
-
-    public GameMenuController getController() {
-        return controller;
     }
 }

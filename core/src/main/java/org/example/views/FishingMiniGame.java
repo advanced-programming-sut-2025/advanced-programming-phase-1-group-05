@@ -31,6 +31,7 @@ public class FishingMiniGame implements Screen {
     private  FishType fishType;
     private GameScreen previousScreen;
     private Fish fish;
+    private FishBar bar;
     public FishingMiniGame(GameScreen game, FishingPole pole, FishType type) {
         this.pole = pole;
         fishType = type;
@@ -50,8 +51,11 @@ public class FishingMiniGame implements Screen {
             fish = new Fish(fishType, true);
         }
         else fish = new Fish(fishType, false);
-
+        bar = new FishBar();
         stage.addActor(progressMeter);
+        stage.addActor(bar);
+        stage.addActor(fish);
+
     }
 
     @Override

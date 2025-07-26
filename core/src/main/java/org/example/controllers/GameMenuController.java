@@ -1,5 +1,7 @@
 package org.example.controllers;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import org.example.models.*;
 import org.example.models.Enums.*;
 import org.example.models.Tool.FishingPole;
@@ -265,22 +267,22 @@ public class GameMenuController extends MenuController {
     }
 
     public Result deleteGame() {
-        Scanner scanner = MyGame.getScanner();
-        int[] OK = new int[selectedPlayers.size()];
-        System.out.println("Vote to delete the game (1 for yes, 0 for no):");
-        for (int i = 0; i < selectedPlayers.size(); i++) {
-            Player player = selectedPlayers.get(i);
-            System.out.print(player.getUsername() + "'s vote: ");
-            OK[i] = scanner.nextInt();
+        if (selectedPlayers.isEmpty()) {
+            return Result.error("No active game to delete!");
         }
-        for (int i = 0; i < selectedPlayers.size(); i++) {
-            if (OK[i] != 1) {
-                return Result.error("Game deletion canceled! Not all players agreed.");
+        Result result = terminateGame();
+
+        if (result.isSuccess()) {
+            // پاک کردن فایل players.json
+            FileHandle file = Gdx.files.local("players.json");
+            if (file.exists()) {
+                file.writeString("", false);
             }
         }
 
-        return terminateGame();
+        return result;
     }
+
 
     private Result terminateGame() {
         try {
@@ -415,8 +417,8 @@ public class GameMenuController extends MenuController {
             return Result.error("animal doesn't exist or isn't yours");
         }
         Player currentPlayer = MyGame.getCurrentPlayer();
-        if (Math.abs(animal.getX() - currentPlayer.getX()) > 1 ||
-                Math.abs(animal.getY() - currentPlayer.getY()) > 1) {
+        if (Math.abs(animal.getX() - currentPlayer.getXX()) > 1 ||
+                Math.abs(animal.getY() - currentPlayer.getYY()) > 1) {
             return Result.error("You need to get closer to the animal. animal coordinates: " + animal.getX() + " " + animal.getY());
         }
         animal.adjustFriendshipPoints(15);
@@ -601,7 +603,7 @@ public class GameMenuController extends MenuController {
         Player currentPlayer = MyGame.getCurrentPlayer();
 
         if (targetPlayer == null) return new Result(false, "Hmmm... either they moved away, or they never existed!");
-        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 || Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
+        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 1 || Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 1)
             return new Result(false, "You can't have a heart-to-heart with someone who's miles away!");
         MyGame.addMessage(new Message(currentPlayer, targetPlayer, message));
         currentPlayer.changeFriendshipXP(20, targetPlayer);
@@ -714,8 +716,8 @@ public class GameMenuController extends MenuController {
         if (targetPlayer == null)
             return new Result(false,
                     "You open your arms wide... but there's no one by that name to recieve it");
-        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 ||
-                Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
+        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 1 ||
+                Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 1)
             return new Result(false, "They're not here to catch your hug. Maybe next time!");
         if (!currentPlayer.canHug(targetPlayer))
             return Result.error("They awkwardly sidestep the hug. Friendship takes time, pal.");
@@ -732,8 +734,8 @@ public class GameMenuController extends MenuController {
         Item bouquet = MyGame.getDatabase().getItem("bouquet");
         if (targetPlayer == null)
             return Result.error("Bouquet in hand, heart full of hope... too bad that player doesn't even exist.");
-        if (Math.abs(targetPlayer.getX() - currentPlayer.getX()) > 1 ||
-                Math.abs(targetPlayer.getY() - currentPlayer.getY()) > 1)
+        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 1 ||
+                Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 1)
             return Result.error
                     ("You wave the bouquet around like a romantic maniac, but there's no one nearby to impress");
         if (!currentPlayer.canGiveBouquet(targetPlayer))
@@ -754,8 +756,8 @@ public class GameMenuController extends MenuController {
         Player currentPlayer = MyGame.getCurrentPlayer();
         if (targetPlayer == null) return new Result(false,
                 "Imaginary partners don't make great spouses.");
-        if (Math.abs(currentPlayer.getX() - targetPlayer.getX()) > 1 ||
-                Math.abs(currentPlayer.getY() - targetPlayer.getY()) > 1)
+        if (Math.abs(currentPlayer.getXX() - targetPlayer.getXX()) > 1 ||
+                Math.abs(currentPlayer.getYY() - targetPlayer.getYY()) > 1)
             return new Result(false, "Your love might be strong, but your range isn't. Get closer!");
         if (ring == null || currentPlayer.getItemQuantity(ring) == 0)
             return new Result(false, "You reach for the ring... but your pockets are full of nothing");
@@ -821,7 +823,7 @@ public class GameMenuController extends MenuController {
         NPC npc = MyGame.getNPCByName(npcName);
         Player player = MyGame.getCurrentPlayer();
         if (npc == null) return new Result(false, "NPC not found");
-        if (Math.abs(player.getX() - npc.getX()) > 1 || Math.abs(player.getY() - npc.getY()) > 1)
+        if (Math.abs(player.getXX() - npc.getX()) > 1 || Math.abs(player.getYY() - npc.getY()) > 1)
             return new Result(false,
                     "You're talking to thin air. That NPC must be off doing NPC things.");
         lastNPC = npc;
@@ -876,7 +878,7 @@ public class GameMenuController extends MenuController {
         Map.Entry<String, Integer> quest = lastNPC.getQuest(questIndex);
         if (quest == null) return new Result(false, "Quest not found");
         Player player = MyGame.getCurrentPlayer();
-        if (Math.abs(player.getX() - lastNPC.getX()) > 1 || Math.abs(player.getY() - lastNPC.getY()) > 1) {
+        if (Math.abs(player.getXX() - lastNPC.getX()) > 1 || Math.abs(player.getYY() - lastNPC.getY()) > 1) {
             return new Result(false,
                     "You can't wrap this up from here. Get back to " + lastNPC.getName() + " first!");
         }
@@ -1333,72 +1335,72 @@ public class GameMenuController extends MenuController {
         return new Result(true, "Green House built!");
     }
 
-    public Result walkPlayer(Matcher matcher) {
-        try {
-            if (matcher.group("x") != null && matcher.group("y") != null) {
-                int targetX = Integer.parseInt(matcher.group("x"));
-                int targetY = Integer.parseInt(matcher.group("y"));
-
-                if (!GameMap.isInBounds(targetX, targetY)) {
-                    return new Result(false, "Target coordinates are out of bounds.");
-                }
-
-                // بررسی مزرعه دیگران
-                if (!canWalk(targetX, targetY)) {
-                    return new Result(false, "You cannot enter another player's farm!");
-                }
-
-                Player currentPlayer = MyGame.getCurrentPlayer();
-                int startX = currentPlayer.getX();
-                int startY = currentPlayer.getY();
-
-                //بررسی کردن موانع
-                GameTile targetTile = GameMap.getTile(targetX, targetY);
-                if (targetTile == null || targetTile.getTileType() == TileType.Water ||
-                        targetTile.getTileType() == TileType.Stone || targetTile.isOccupied()) {
-                    return new Result(false, "Target tile is blocked.");
-                }
-
-                // یافتن کوتاه‌ترین مسیر با BFS
-                List<Point> path = findShortestPath(startX, startY, targetX, targetY);
-
-                if (path.isEmpty()) {
-                    return new Result(false, "No valid path to target.");
-                }
-
-                int tilesWalked = path.size();
-                int turns = countTurns(path);
-                int energyCost = (int)((tilesWalked + (10 * turns))/20.0);
-
-                boolean faint = false;
-                if (MyGame.getCurrentPlayer().getEnergy() < energyCost) {
-                    faint = true;
-                }
-                MyGame.getCurrentPlayer().increaseEnergy(-energyCost);
-
-                if(faint) return new Result(false, "You fainted while walking!");
-                Point finalStep = path.get(path.size() - 1);
-
-                GameTile previousTile = GameMap.getTile(currentPlayer.getX(), currentPlayer.getY());
-                if (previousTile != null) {
-                    previousTile.setTileType(TileType.Flat);
-                    previousTile.setOccupied(false);
-                }
-
-                currentPlayer.setCoordinate(finalStep.x, finalStep.y);
-
-                GameTile newTile = GameMap.getTile(finalStep.x, finalStep.y);
-                if (newTile != null) {
-                    newTile.setTileType(TileType.Player);
-                    newTile.setOccupied(true);
-                }
-                return new Result(true, "Player moved to (" + finalStep.x + "," + finalStep.y + ")");
-            }
-        } catch (Exception e) {
-            return new Result(false, "Invalid input format.");
-        }
-        return new Result(false, "Invalid command.");
-    }
+//    public Result walkPlayer(Matcher matcher) {
+//        try {
+//            if (matcher.group("x") != null && matcher.group("y") != null) {
+//                int targetX = Integer.parseInt(matcher.group("x"));
+//                int targetY = Integer.parseInt(matcher.group("y"));
+//
+//                if (!GameMap.isInBounds(targetX, targetY)) {
+//                    return new Result(false, "Target coordinates are out of bounds.");
+//                }
+//
+//                // بررسی مزرعه دیگران
+//                if (!canWalk(targetX, targetY)) {
+//                    return new Result(false, "You cannot enter another player's farm!");
+//                }
+//
+//                Player currentPlayer = MyGame.getCurrentPlayer();
+//                int startX = currentPlayer.getX();
+//                int startY = currentPlayer.getY();
+//
+//                //بررسی کردن موانع
+//                GameTile targetTile = GameMap.getTile(targetX, targetY);
+//                if (targetTile == null || targetTile.getTileType() == TileType.Water ||
+//                        targetTile.getTileType() == TileType.Stone || targetTile.isOccupied()) {
+//                    return new Result(false, "Target tile is blocked.");
+//                }
+//
+//                // یافتن کوتاه‌ترین مسیر با BFS
+//                List<Point> path = findShortestPath(startX, startY, targetX, targetY);
+//
+//                if (path.isEmpty()) {
+//                    return new Result(false, "No valid path to target.");
+//                }
+//
+//                int tilesWalked = path.size();
+//                int turns = countTurns(path);
+//                int energyCost = (int)((tilesWalked + (10 * turns))/20.0);
+//
+//                boolean faint = false;
+//                if (MyGame.getCurrentPlayer().getEnergy() < energyCost) {
+//                    faint = true;
+//                }
+//                MyGame.getCurrentPlayer().increaseEnergy(-energyCost);
+//
+//                if(faint) return new Result(false, "You fainted while walking!");
+//                Point finalStep = path.get(path.size() - 1);
+//
+//                GameTile previousTile = GameMap.getTile(currentPlayer.getX(), currentPlayer.getY());
+//                if (previousTile != null) {
+//                    previousTile.setTileType(TileType.Flat);
+//                    previousTile.setOccupied(false);
+//                }
+//
+//                currentPlayer.setCoordinate(finalStep.x, finalStep.y);
+//
+//                GameTile newTile = GameMap.getTile(finalStep.x, finalStep.y);
+//                if (newTile != null) {
+//                    newTile.setTileType(TileType.Player);
+//                    newTile.setOccupied(true);
+//                }
+//                return new Result(true, "Player moved to (" + finalStep.x + "," + finalStep.y + ")");
+//            }
+//        } catch (Exception e) {
+//            return new Result(false, "Invalid input format.");
+//        }
+//        return new Result(false, "Invalid command.");
+//    }
 
 
     // بررسی قابل امکان رد شدن از یک تایل

@@ -70,7 +70,7 @@ public class RegisterMenuController {
             existing.setSecurityAnswer(answer.trim());
         }
 
-        UserDatabase.saveUsers(); // 👈 بدون این، در فایل ذخیره نمی‌شود
+        UserDatabase.saveUsers();
     }
 
 

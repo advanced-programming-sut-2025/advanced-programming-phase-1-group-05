@@ -114,6 +114,7 @@ package org.example.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -158,6 +159,7 @@ public class GameMenu implements Screen {
         TextButton loadGameBtn = new TextButton("Load Game", skin);
         TextButton deleteGameBtn = new TextButton("Delete Game", skin);
         TextButton backBtn = new TextButton("Back to Main Menu", skin);
+        TextButton exitGameBtn = new TextButton("Exit Game", skin);
 
         table.add(titleLabel).colspan(2).padBottom(15).row();
 
@@ -173,8 +175,9 @@ public class GameMenu implements Screen {
         table.add(startGameBtn).colspan(2).pad(5).row();
         table.add(loadGameBtn).colspan(2).pad(5).row();
         table.add(deleteGameBtn).colspan(2).pad(5).row();
+        table.add(exitGameBtn).colspan(2).pad(5).row();
         table.add(resultLabel).colspan(2).pad(5).width(400).row();
-        table.add(backBtn).colspan(2).pad(10).row();
+//        table.add(backBtn).colspan(2).pad(10).row();
 
         addPlayersBtn.addListener(new ChangeListener() {
             @Override
@@ -228,29 +231,103 @@ public class GameMenu implements Screen {
         });
 
 
+//        loadGameBtn.addListener(new ChangeListener() {
+//            @Override
+//            public void changed(ChangeEvent event, Actor actor) {
+//                Result result = controller.loadGame();
+//                resultLabel.setText(result.getMessage());
+//            }
+//        });
         loadGameBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                FileHandle file = Gdx.files.local("players.json");
+
+                // اگر فایل وجود داره و خالی نیست
+                if (file.exists() && file.length() > 0) {
+                    resultLabel.setText("Another player is already in a game!");
+                    return;
+                }
+
                 Result result = controller.loadGame();
                 resultLabel.setText(result.getMessage());
             }
         });
 
+
         deleteGameBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                DBController.loadGameState();
-                MenuNavigator.showGameExitConfirmation(skin);
+                if (GameMenuController.selectedPlayers.isEmpty()) {
+                    resultLabel.setText("No active game to delete!");
+                    return;
+                }
+
+                // Define checkBoxes first (so it's accessible inside the dialog)
+                final List<CheckBox> checkBoxes = new ArrayList<>();
+
+                // Create dialog with overridden result method
+                Dialog confirmDialog = new Dialog("Delete Game", skin) {
+                    @Override
+                    protected void result(Object obj) {
+                        boolean confirmed = (boolean) obj;
+
+                        if (confirmed) {
+                            // Check if all players confirmed
+                            for (CheckBox cb : checkBoxes) {
+                                if (!cb.isChecked()) {
+                                    resultLabel.setText("All players must confirm deletion!");
+                                    return;
+                                }
+                            }
+
+                            // All confirmed → delete the game
+                            Result deleteResult = controller.deleteGame();
+                            if (deleteResult.isSuccess()) {
+                                usernames.clear();
+                                GameMenuController.selectedPlayers.clear();
+                                resultLabel.setText("Game deleted successfully. No active game!");
+                            } else {
+                                resultLabel.setText(deleteResult.getMessage());
+                            }
+
+                        } else {
+                            resultLabel.setText("Game deletion canceled!");
+                        }
+                    }
+                };
+
+                // Checkboxes for each player
+                Table playersTable = new Table();
+                for (Player player : GameMenuController.selectedPlayers) {
+                    CheckBox cb = new CheckBox(" Confirm by " + player.getUsername(), skin);
+                    playersTable.add(cb).left().row();
+                    checkBoxes.add(cb);
+                }
+                confirmDialog.getContentTable().add(playersTable).pad(10);
+
+                // Buttons
+                confirmDialog.button("OK", true);
+                confirmDialog.button("Cancel", false);
+
+                confirmDialog.show(stage);
             }
         });
 
-
-        backBtn.addListener(new ChangeListener() {
+        exitGameBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 MenuNavigator.showMainMenu();
             }
         });
+
+
+//        backBtn.addListener(new ChangeListener() {
+//            @Override
+//            public void changed(ChangeEvent event, Actor actor) {
+//                MenuNavigator.showMainMenu();
+//            }
+//        });
     }
 
 
