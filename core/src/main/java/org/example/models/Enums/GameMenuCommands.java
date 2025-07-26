@@ -49,7 +49,9 @@ public enum GameMenuCommands {
     Hug("hug\\s+-u\\s+(?<username>\\S+)"),
     PlowTile("plow tile (?<x>\\d+) (?<y>\\d+)"),
     EatFood("eat (?<foodName>\\S+(\\s*\\S+)*)"),
-    PutBack("put back -i (?<itemName>\\S+(\\s*\\S+)*)");
+    PutBack("put back -i (?<itemName>\\S+(\\s*\\S+)*)"),
+    AdvanceDate("cheat advance date (?<x>\\d+)"),
+    AdvanceTime("cheat advance time (?<x>\\d+)");
 
     private final String pattern;
     GameMenuCommands(String pattern) {

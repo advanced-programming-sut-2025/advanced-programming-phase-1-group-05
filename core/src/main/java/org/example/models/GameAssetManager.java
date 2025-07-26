@@ -171,6 +171,7 @@ public class GameAssetManager {
         sfxMap.put("use watering can", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/water_lap1.wav")));
         sfxMap.put("use pickaxe", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/hammer.wav")));
         sfxMap.put("eat", Gdx.audio.newSound(Gdx.files.internal("sfx & music/Miscellaneous/eat.wav")));
+        sfxMap.put("thor", Gdx.audio.newSound(Gdx.files.internal("sfx & music/thor/thor.wav")));
     }
 
     public static void playSfx(String sfxName) {

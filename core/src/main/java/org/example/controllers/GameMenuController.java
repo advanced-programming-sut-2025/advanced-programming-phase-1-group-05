@@ -1,5 +1,7 @@
 package org.example.controllers;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import org.example.models.*;
 import org.example.models.Enums.*;
 import org.example.models.Tool.FishingPole;
@@ -27,7 +29,7 @@ public class GameMenuController extends MenuController {
     private List<User> players = new ArrayList<>();
     private static final Map<String, String> playerMapSelections = new HashMap<>();
     private GameScreen view;
-
+    public static boolean canCheatThor = false;
 
     public GameMenuController(User currentUser) {
         GameMenuController.currentUser = currentUser;
@@ -242,45 +244,41 @@ public class GameMenuController extends MenuController {
 
 
     public Result nextTurn() {
-        MyGame game = activeGames.get(currentUser.getUsername());
-        if (game == null) {
-            return Result.error("There is no active game.");
-        }
-        pendingGame = game;
-
-//        if (!currentUser.getUsername().equals(Game.getCurrentPlayer().getUsername())) {
-//            return Result.error("It's not your turn.");
+//        MyGame game = activeGames.get(currentUser.getUsername());
+//        if (game == null) {
+//            return Result.error("There is no active game.");
 //        }
+//        pendingGame = game;
 
         MyGame.getCurrentPlayer().increaseEnergy(-50);
 
         MyGame.advanceToNextPlayer();
-        //reset energy for next turn??
+
         if (!MyGame.getCurrentPlayer().isEnergyUnlimited()) {
             MyGame.getCurrentPlayer().resetEnergy();
         }
 
-        return Result.success("Now it's " + MyGame.getCurrentPlayer().getUsername() + "'s turn." +
-                MyGame.getCurrentPlayer().getNotifications());
+        return Result.success("Now it's " + MyGame.getCurrentPlayer().getUsername() + "'s turn.");
     }
 
+
     public Result deleteGame() {
-        Scanner scanner = MyGame.getScanner();
-        int[] OK = new int[selectedPlayers.size()];
-        System.out.println("Vote to delete the game (1 for yes, 0 for no):");
-        for (int i = 0; i < selectedPlayers.size(); i++) {
-            Player player = selectedPlayers.get(i);
-            System.out.print(player.getUsername() + "'s vote: ");
-            OK[i] = scanner.nextInt();
+        if (selectedPlayers.isEmpty()) {
+            return Result.error("No active game to delete!");
         }
-        for (int i = 0; i < selectedPlayers.size(); i++) {
-            if (OK[i] != 1) {
-                return Result.error("Game deletion canceled! Not all players agreed.");
+        Result result = terminateGame();
+
+        if (result.isSuccess()) {
+            // پاک کردن فایل players.json
+            FileHandle file = Gdx.files.local("players.json");
+            if (file.exists()) {
+                file.writeString("", false);
             }
         }
 
-        return terminateGame();
+        return result;
     }
+
 
     private Result terminateGame() {
         try {
@@ -1136,20 +1134,24 @@ public class GameMenuController extends MenuController {
 
             String weatherType = tokens[3];
 
-            Weather newForecastedWeather;
+            Weather newWeather;
             try {
-                newForecastedWeather = Weather.valueOf(weatherType);
+                newWeather = Weather.valueOf(weatherType.toUpperCase());
             } catch (IllegalArgumentException e) {
                 return Result.error("Invalid weather type. Valid types: SUNNY, RAIN, STORM, SNOW");
             }
 
-            MyGame.setForecastedWeather(newForecastedWeather);
-            return Result.success("Forecasted weather for tomorrow set to: " + newForecastedWeather);
+            MyGame.currentWeather = newWeather;
+
+            MyGame.setForecastedWeather(newWeather);
+
+            return Result.success("Weather changed to: " + newWeather);
 
         } catch (Exception e) {
-            return Result.error("Error while setting forecasted weather: " + e.getMessage());
+            return Result.error("Error while setting weather: " + e.getMessage());
         }
     }
+
 
     public Result printMap(Matcher matcher) {
 //        GameMap map = Game.getGameMap();
@@ -1293,6 +1295,7 @@ public class GameMenuController extends MenuController {
         return true;
     }
 
+    //todo - greenhouse
     public Result buildGreenHouse() {
         Player currentPlayer = MyGame.getCurrentPlayer();
         MyGame.canBuildGreenHouse = true;
@@ -1300,25 +1303,6 @@ public class GameMenuController extends MenuController {
         for (int i = 0; i < 100; i++) {
             for (int j = 0; j < 100; j++) {
                 GameTile.greenHouseBuilt = true;
-//                if(Game.getGameMap().getTile(i,j).getTileType().equals(TileType.GreenHouse)) {
-//                    if (GameTile.greenHouseBuilt && i >= 0 && i <= 50 &&
-//                            j >= 0 && j <= 50 && currentPlayer.getMapNum() == 1) {
-//                        GameTile.greenHouseBuilt = true;
-//                    }
-//                    else if (GameTile.greenHouseBuilt && i >= 50 && i <= 99 &&
-//                            j >= 0 && j <= 50 && currentPlayer.getMapNum() == 2) {
-//                        GameTile.greenHouseBuilt = true;
-//
-//                    }
-//                    else if (GameTile.greenHouseBuilt && i >= 0 && i <= 50 &&
-//                            j >= 50 && j <= 99 && currentPlayer.getMapNum() == 3) {
-//                        GameTile.greenHouseBuilt = true;
-//                    }
-//                    else if (GameTile.greenHouseBuilt && i >= 50 && i <= 99 &&
-//                            j >= 50 && j <= 99 && currentPlayer.getMapNum() == 4) {
-//                        GameTile.greenHouseBuilt = true;
-//                    }
-//                }
             }
         }
         if (currentPlayer.getMapNum() == 1) {
@@ -1339,75 +1323,6 @@ public class GameMenuController extends MenuController {
 
         return new Result(true, "Green House built!");
     }
-
-//    public Result walkPlayer(Matcher matcher) {
-//        try {
-//            if (matcher.group("x") != null && matcher.group("y") != null) {
-//                int targetX = Integer.parseInt(matcher.group("x"));
-//                int targetY = Integer.parseInt(matcher.group("y"));
-//
-//                if (!GameMap.isInBounds(targetX, targetY)) {
-//                    return new Result(false, "Target coordinates are out of bounds.");
-//                }
-//
-//                // بررسی مزرعه دیگران
-//                if (!canWalk(targetX, targetY)) {
-//                    return new Result(false, "You cannot enter another player's farm!");
-//                }
-//
-//                Player currentPlayer = MyGame.getCurrentPlayer();
-//                int startX = currentPlayer.getX();
-//                int startY = currentPlayer.getY();
-//
-//                //بررسی کردن موانع
-//                GameTile targetTile = GameMap.getTile(targetX, targetY);
-//                if (targetTile == null || targetTile.getTileType() == TileType.Water ||
-//                        targetTile.getTileType() == TileType.Stone || targetTile.isOccupied()) {
-//                    return new Result(false, "Target tile is blocked.");
-//                }
-//
-//                // یافتن کوتاه‌ترین مسیر با BFS
-//                List<Point> path = findShortestPath(startX, startY, targetX, targetY);
-//
-//                if (path.isEmpty()) {
-//                    return new Result(false, "No valid path to target.");
-//                }
-//
-//                int tilesWalked = path.size();
-//                int turns = countTurns(path);
-//                int energyCost = (int)((tilesWalked + (10 * turns))/20.0);
-//
-//                boolean faint = false;
-//                if (MyGame.getCurrentPlayer().getEnergy() < energyCost) {
-//                    faint = true;
-//                }
-//                MyGame.getCurrentPlayer().increaseEnergy(-energyCost);
-//
-//                if(faint) return new Result(false, "You fainted while walking!");
-//                Point finalStep = path.get(path.size() - 1);
-//
-//                GameTile previousTile = GameMap.getTile(currentPlayer.getX(), currentPlayer.getY());
-//                if (previousTile != null) {
-//                    previousTile.setTileType(TileType.Flat);
-//                    previousTile.setOccupied(false);
-//                }
-//
-//                currentPlayer.setCoordinate(finalStep.x, finalStep.y);
-//
-//                GameTile newTile = GameMap.getTile(finalStep.x, finalStep.y);
-//                if (newTile != null) {
-//                    newTile.setTileType(TileType.Player);
-//                    newTile.setOccupied(true);
-//                }
-//                return new Result(true, "Player moved to (" + finalStep.x + "," + finalStep.y + ")");
-//            }
-//        } catch (Exception e) {
-//            return new Result(false, "Invalid input format.");
-//        }
-//        return new Result(false, "Invalid command.");
-//    }
-
-
     // بررسی قابل امکان رد شدن از یک تایل
     private boolean isWalkable(int x, int y) {
         GameTile tile = GameMap.getTile(x, y);
@@ -1457,5 +1372,35 @@ public class GameMenuController extends MenuController {
         return turns;
     }
 
+    //handle cheat codes TODO add yours!!
+    public Result handleCheatCodes(String command) {
+        Matcher matcher = null;
+        if((matcher = GameMenuCommands.AddItemCC.getMatcher(command)) != null) {
+            String itemName = matcher.group("itemName");
+            int count = Integer.parseInt(matcher.group("count"));
+            return addItemCheatCode(itemName, count);
+        }
+        if ((matcher = GameMenuCommands.CheatThor.getMatcher(command)) != null || command.equalsIgnoreCase("cheat Thor")) {
+            canCheatThor = true;
 
+            if (view != null) {
+                view.triggerLightningEffect();
+            }
+
+            return Result.success("⚡ Thor's wrath has been unleashed! ⚡");
+        } else if ((matcher = GameMenuCommands.AdvanceDate.getMatcher(command)) != null) {
+            int day = Integer.parseInt(matcher.group("x"));
+            for (int i = 0 ;i < day; i++) {
+                GameManager.getGameClock().advanceDay();
+            }
+            return Result.success("advanced date!");
+        } else if ((matcher = GameMenuCommands.AdvanceTime.getMatcher(command)) != null) {
+            int time = Integer.parseInt(matcher.group("x"));
+            GameManager.getGameClock().advanceTime(time*60);
+            return Result.success("advanced time!");
+        } else if (command.startsWith("cheat weather set")) {
+            return cheatWeatherSet(command);
+        }
+        return new Result(false, "Invalid command.");
+    }
 }

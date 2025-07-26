@@ -56,6 +56,7 @@ public class GameManager {
                     player.setEnergy(200);
             }
         }
+        MyGame.getCurrentPlayer().resetEnergy();
     }
     public static void checkNPCGifts(){
         Random rand = new Random();

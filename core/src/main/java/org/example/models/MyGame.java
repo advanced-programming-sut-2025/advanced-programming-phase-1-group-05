@@ -3,6 +3,7 @@ package org.example.models;
 import org.example.controllers.GameManager;
 import org.example.models.Enums.Season;
 import org.example.models.Enums.Weather;
+import org.example.views.GameScreen;
 
 import java.util.*;
 
@@ -18,6 +19,7 @@ public class MyGame {
     private static final Database database = new Database();
     public static int currentPlayerIndex = 0;
     public static boolean canBuildGreenHouse = false;
+    private static GameScreen gameScreen;
 //    public static boolean greenHouseBuilt = false;
     public static Map<Player, Item> soldItems = new HashMap<>();
 
@@ -37,7 +39,12 @@ public class MyGame {
     public static List<Player> getAllPlayers() {
         return players;
     }
-
+    public static void setGameScreen(GameScreen gameScreen) {
+        MyGame.gameScreen = gameScreen;
+    }
+    public static GameScreen getGameScreen() {
+        return gameScreen;
+    }
     public static void setForecastedWeatherBySeason(Season season) {
         List<Weather> possibleWeathers = null;
             switch (season) {
@@ -66,21 +73,19 @@ public class MyGame {
         return forecastedWeather;
     }
 
-
-    //    public static void startTheGame() {
-//        database.initializeStoresAndItems();
-//        database.initializePlantDatabase();
-//        database.loadNPCs();
-//        Player.initializeFriendships(players);
+//    public static void advanceToNextPlayer() {
+//        currentPlayerIndex++;
+//        if (currentPlayerIndex >= players.size()) {
+//            currentPlayerIndex = 0;
+//            GameManager.getGameClock().advanceTime(60);
+//        }
+//
+//        currentPlayer = players.get(currentPlayerIndex);
 //    }
-    public static void advanceToNextPlayer() {
-        currentPlayerIndex++;
-        if (currentPlayerIndex >= players.size()) {
-            currentPlayerIndex = 0;
-            GameManager.getGameClock().advanceTime(60);
-        }
 
-        currentPlayer = players.get(currentPlayerIndex);
+    public static void advanceToNextPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % getAllPlayers().size();
+        setCurrentPlayer(getAllPlayers().get(currentPlayerIndex));
     }
 
     public static void initializeFarms() {
@@ -175,4 +180,5 @@ public class MyGame {
     public static void setForecastedWeather(Weather forecastedWeather) {
         MyGame.forecastedWeather = forecastedWeather;
     }
+
 }

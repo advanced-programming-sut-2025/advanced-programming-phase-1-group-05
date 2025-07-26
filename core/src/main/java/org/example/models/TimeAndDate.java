@@ -2,6 +2,7 @@ package org.example.models;
 
 import org.example.controllers.GameManager;
 import org.example.models.Enums.Season;
+import org.example.models.Enums.Weather;
 
 public class TimeAndDate {
     int day = 1;
@@ -51,6 +52,9 @@ public class TimeAndDate {
         }
     }
     public void advanceDay() {
+        if (MyGame.getForecastedWeather() != Weather.Sunny) {
+            MyGame.currentWeather = MyGame.getForecastedWeather();
+        }
         day++;
         hour = 9;
         minute = 0;

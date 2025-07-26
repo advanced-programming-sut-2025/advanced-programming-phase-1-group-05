@@ -57,6 +57,11 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private TileMapRenderer mapRenderer;
+
+    private boolean turnJustChanged = false;
+    private boolean showGreenhouseMessage = false;
+    private float greenhouseMessageTimer = 0f;
+    private boolean buildGreenHouseMessage = false;
     InputMultiplexer multiplexer;
 
     Stage uiStage;
@@ -75,6 +80,12 @@ public class GameScreen implements Screen {
     private boolean isInvenotryOpen = false;
     public static Array<Rectangle> farms = new Array<>();
     Array<NpcActor> NPCs = new Array<>();
+
+    // lightning effect
+    private boolean lightningEffectActive = false;
+    private float lightningTimer = 0f;
+    private float lightningDuration = 1f;
+
 
     //inventory stuff
     private ArrayList<InventorySlot> slots = new ArrayList<>();
@@ -144,8 +155,7 @@ public class GameScreen implements Screen {
     private GlyphLayout layout = new GlyphLayout();
 
     //cheat code window
-    private boolean isCheatCodeOpen = false;
-    private TextField cheatCodeTextField;
+    private CheatCodeWindow cheatCodeWindow;
 
     //journal stuff
     private TextureRegion journalBg = GameAssetManager.journalBg;
@@ -155,6 +165,7 @@ public class GameScreen implements Screen {
 
 
     public GameScreen(ArrayList<Player> playerList) {
+        MyGame.setGameScreen(this);
         skin = GameAssetManager.getSkin();
         camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
         camera.setToOrtho(false);
@@ -162,9 +173,8 @@ public class GameScreen implements Screen {
         players = playerList;
         controller = new GameMenuController(this);
         homeMenuController = new HomeMenuController();
-
+        cheatCodeWindow = new CheatCodeWindow(camera,Gdx.input.getInputProcessor());
         shapeRenderer = new ShapeRenderer();
-
         currentSeason = GameManager.getSeason();
         mapRenderer = new TileMapRenderer();
         mapRenderer.setSeason(currentSeason);
@@ -192,7 +202,6 @@ public class GameScreen implements Screen {
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
-        cheatCodeTextField = new TextField("Enter Cheat Code", GameAssetManager.getSkin());
 
     }
 
@@ -265,8 +274,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0f, 136/255f, 199/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-        handleInput(delta);
-        //cheatCodeWindow.update(delta);
+        if(!cheatCodeWindow.isVisible()) handleInput(delta);
 
         timeAccumulator += delta;
         if (timeAccumulator >= 42f) {
@@ -328,10 +336,70 @@ public class GameScreen implements Screen {
 
         applyLightingOverlay();
 
+        if (showGreenhouseMessage) {
+            greenhouseMessageTimer -= delta;
+            if (greenhouseMessageTimer <= 0) {
+                showGreenhouseMessage = false;
+            } else {
+                font.setColor(Color.WHITE);
+                font.draw(
+                    batch,
+                    "Press Q to build a Greenhouse\n (Cost: 1000 coins & 500 wood)",
+                    camera.position.x - 350,
+                    camera.position.y + camera.viewportHeight / 2 - 20
+                );
+            }
+        }
+
+        if (buildGreenHouseMessage) {
+            greenhouseMessageTimer -= delta;
+            if (greenhouseMessageTimer <= 0) {
+                buildGreenHouseMessage = false;
+            } else  {
+                MyGame.getCurrentPlayer().setBuildGreenHouse(true);
+                font.setColor(Color.WHITE);
+                font.draw(
+                    batch,
+                    "Green house built, " + MyGame.getCurrentPlayer().getGold() + " gold",
+                    camera.position.x - 350,
+                    camera.position.y + camera.viewportHeight / 2 - 20
+                );
+            }
+        }
+
+
+        if (lightningEffectActive) {
+            lightningTimer += delta;
+
+            float stage = (lightningTimer / lightningDuration) * 3;
+
+            if (stage < 1) {
+                batch.setColor(0f, 0f, 0f, 0.9f);
+            } else if (stage < 2) {
+                batch.setColor(0.7f, 0.7f, 0.7f, 0.7f);
+            } else {
+                batch.setColor(1f, 1f, 1f, 0f);
+            }
+
+            if (stage < 2) {
+                batch.draw(blackOverlay,
+                    camera.position.x - camera.viewportWidth / 2,
+                    camera.position.y - camera.viewportHeight / 2,
+                    camera.viewportWidth, camera.viewportHeight);
+            }
+
+            batch.setColor(1, 1, 1, 1);
+
+            if (lightningTimer >= lightningDuration) {
+                lightningEffectActive = false;
+            }
+        }
+
         batch.end();
         tileOutline(mouse);
         stage.act(delta);
         stage.draw();
+        cheatCodeWindow.render(delta);
         if (isInvenotryOpen) {
             for (NpcActor npc : NPCs) {
                 npc.setVisible(false);
@@ -352,95 +420,6 @@ public class GameScreen implements Screen {
         checkGifting();
         checkArtisanInput();
         if(showResult) showResult(batch,latestResult,delta);
-        if (Gdx.input.justTouched() && Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-            Vector3 click = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-
-            for (Player player : players) {
-                if (!player.equals(MyGame.getCurrentPlayer())) {
-                    Rectangle bounds = new Rectangle(player.getXX(), player.getYY(), player.getWidth(), player.getHeight());
-                    if (bounds.contains(click.x, click.y)) {
-                        showPlayerMenu(player);
-                        break;
-                    }
-                }
-            }
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
-            GameManager.getGameClock().advanceDay();
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            Player player = MyGame.getCurrentPlayer();
-            latestResult = controller.eatFood(player.getCurrentItem());
-            if(latestResult.isSuccess()) {
-                player.setEating(true);
-            }
-            showResult = true;
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            GameAssetManager.playSfx("open page");
-            isInvenotryOpen = !isInvenotryOpen;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isToolSelectionOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-            if (isInvenotryOpen) {
-                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
-                    .getLevel().getInventoryTexture();
-                float scale = 0.5f;
-                float scaledWidth = inventory.getRegionWidth() * scale;
-                float scaledHeight = inventory.getRegionHeight() * scale;
-                INVENTORY_X = camera.position.x - scaledWidth / 2f;
-                INVENTORY_Y = camera.position.y - scaledHeight / 2f;
-
-                skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
-
-                updateInventorySlots(INVENTORY_X,INVENTORY_Y);
-            }
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            GameAssetManager.playSfx("open page");
-            isSkillSetOpen = !isSkillSetOpen;
-            isCraftOpen = false;
-            isInvenotryOpen = false;
-            isToolSelectionOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
-            GameAssetManager.playSfx("open page");
-            isToolSelectionOpen = !isToolSelectionOpen;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isInvenotryOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-            updateToolSelectionSlots();
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.B)) {
-            GameAssetManager.playSfx("open page");
-            isCraftOpen = !isCraftOpen;
-            isToolSelectionOpen = false;
-            isSkillSetOpen = false;
-            isInvenotryOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-            updateInventorySlots(CRAFT_X, CRAFT_Y);
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.G)) {
-            GameAssetManager.playSfx("open page");
-            isCookingOpen = !isCookingOpen;
-            isToolSelectionOpen = false;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isInvenotryOpen = false;
-            isJournalOpen = false;
-           updateInventorySlots(COOKING_X,COOKING_Y);
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.J)) {
-            GameAssetManager.playSfx("open page");
-            isJournalOpen = !isJournalOpen;
-            isCraftOpen = false;
-            isToolSelectionOpen = false;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isInvenotryOpen = false;
-        }
         stage.act(delta);
         stage.draw();
         uiStage.act(delta);
@@ -453,6 +432,13 @@ public class GameScreen implements Screen {
         isCraftOpen = false;
         isToolSelectionOpen = false;
     }
+
+    public void triggerLightningEffect() {
+        lightningEffectActive = true;
+        lightningTimer = 0f;
+        GameAssetManager.playSfx("thor");
+    }
+
 
     private void checkGifting() {
         updateInventorySlots(INVENTORY_X,INVENTORY_Y);
@@ -576,9 +562,159 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) player.moveDown(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.moveLeft(delta);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.moveRight(delta);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+            cheatCodeWindow.toggle();
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             MyGame.getCurrentPlayer().addGold(100000);
             Main.getMain().setScreen(new FishingMiniGame(this, new FishingPole(), FishType.CrimsonFish));
+        }if (Gdx.input.justTouched() && Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            Vector3 click = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+            for (Player p : players) {
+                if (!p.equals(MyGame.getCurrentPlayer())) {
+                    Rectangle bounds = new Rectangle(p.getXX(), p.getYY(), p.getWidth(), p.getHeight());
+                    if (bounds.contains(click.x, click.y)) {
+                        showPlayerMenu(p);
+                        break;
+                    }
+                }
+            }
+        }
+        if (Gdx.input.justTouched() && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            Vector3 click = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            int tileX = (int) (click.x / TILE_SIZE);
+            int tileY = (int) (click.y / TILE_SIZE);
+
+            GameTile clickedTile = GameMap.getTile(tileX, tileY);
+            if (clickedTile != null) {
+                TileType type = clickedTile.getTileType();
+
+                if (type.name().startsWith("GREENHOUSE_")) {
+                    showGreenhouseMessage = true;
+                    greenhouseMessageTimer = 3f;
+                }
+            }
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+            Item wood = MyGame.getDatabase().getItem("wood");
+
+            if (MyGame.getCurrentPlayer().getGold() >= 1000 &&
+                MyGame.getCurrentPlayer().getBackPack().howManyOfItem(wood) >= 500) {
+
+                MyGame.getCurrentPlayer().addGold(-1000);
+                MyGame.getCurrentPlayer().getBackPack().removeFromInventory(wood, 500);
+
+                buildGreenHouseMessage = true;
+                greenhouseMessageTimer = 3f;
+            } else {
+                latestResult = Result.error("Not enough gold or wood!");
+                showResult = true;
+            }
+        }
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+            triggerLightningEffect();
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            Result result = controller.nextTurn();
+            if (result.isSuccess()) {
+                Player currentPlayer = MyGame.getCurrentPlayer();
+                String map = GameMenuController.getMapForPlayer(currentPlayer.getUsername());
+
+                farms.clear();
+                farms.add(getAllowedAreaForMap(map));
+
+                Vector2 pos = getInitialPositionForMap(map);
+                camera.viewportWidth = VIEW_WIDTH * TILE_SIZE;
+                camera.viewportHeight = VIEW_HEIGHT * TILE_SIZE;
+                camera.position.set(
+                    pos.x + currentPlayer.getWidth() / 2f,
+                    pos.y + currentPlayer.getHeight() / 2f,
+                    0
+                );
+                camera.update();
+
+                turnJustChanged = true;
+            }
+            return;
+        }
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            GameManager.getGameClock().advanceDay();
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            latestResult = controller.eatFood(player.getCurrentItem());
+            if(latestResult.isSuccess()) {
+                player.setEating(true);
+            }
+            showResult = true;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            GameAssetManager.playSfx("open page");
+            isInvenotryOpen = !isInvenotryOpen;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isToolSelectionOpen = false;
+            isCookingOpen = false;
+            isJournalOpen = false;
+            if (isInvenotryOpen) {
+                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
+                    .getLevel().getInventoryTexture();
+                float scale = 0.5f;
+                float scaledWidth = inventory.getRegionWidth() * scale;
+                float scaledHeight = inventory.getRegionHeight() * scale;
+                INVENTORY_X = camera.position.x - scaledWidth / 2f;
+                INVENTORY_Y = camera.position.y - scaledHeight / 2f;
+
+                skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
+
+                updateInventorySlots(INVENTORY_X,INVENTORY_Y);
+            }
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            GameAssetManager.playSfx("open page");
+            isSkillSetOpen = !isSkillSetOpen;
+            isCraftOpen = false;
+            isInvenotryOpen = false;
+            isToolSelectionOpen = false;
+            isCookingOpen = false;
+            isJournalOpen = false;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+            GameAssetManager.playSfx("open page");
+            isToolSelectionOpen = !isToolSelectionOpen;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
+            isCookingOpen = false;
+            isJournalOpen = false;
+            updateToolSelectionSlots();
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            GameAssetManager.playSfx("open page");
+            isCraftOpen = !isCraftOpen;
+            isToolSelectionOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
+            isCookingOpen = false;
+            isJournalOpen = false;
+            updateInventorySlots(CRAFT_X, CRAFT_Y);
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.G)) {
+            GameAssetManager.playSfx("open page");
+            isCookingOpen = !isCookingOpen;
+            isToolSelectionOpen = false;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
+            isJournalOpen = false;
+            updateInventorySlots(COOKING_X,COOKING_Y);
+        } else if(Gdx.input.isKeyJustPressed(Input.Keys.J)) {
+            GameAssetManager.playSfx("open page");
+            isJournalOpen = !isJournalOpen;
+            isCraftOpen = false;
+            isToolSelectionOpen = false;
+            isCraftOpen = false;
+            isSkillSetOpen = false;
+            isInvenotryOpen = false;
         }
         float px = player.getXX() + player.getWidth() / 2f;
         float py = player.getYY() + player.getHeight() / 2f;
@@ -599,11 +735,19 @@ public class GameScreen implements Screen {
                 toggleOverviewMode();
             }
 
-            if (!overviewMode) {
-                camera.position.set(player.getXX() + player.getWidth() / 2f,
-                    player.getYY() + player.getHeight() / 2f, 0);
-            }
-        }
+//            if (!overviewMode) {
+//                camera.position.set(player.getXX() + player.getWidth() / 2f,
+//                    player.getYY() + player.getHeight() / 2f, 0);
+//            }
+           if (!overviewMode && !turnJustChanged) {
+               camera.position.set(
+                   player.getXX() + player.getWidth() / 2f,
+                   player.getYY() + player.getHeight() / 2f,
+                   0
+               );
+           }
+
+       }
        else {
            if (stoore.isOpen(GameManager.getCurrentHour()))
                Main.getMain().setScreen(new StoreView(stoore, this));
@@ -612,6 +756,7 @@ public class GameScreen implements Screen {
                showResult = true;
            }
        }
+        turnJustChanged = false;
     }
 
     private void toggleOverviewMode() {
@@ -653,7 +798,8 @@ public class GameScreen implements Screen {
         font.draw(batch, "Gold: " + MyGame.getCurrentPlayer().getGold(), x, y);
         font.draw(batch, "Time: " + String.format("%02d:%02d", GameManager.getCurrentHour(), GameManager.getGameClock().getMinute()), x, y - 30);
         font.draw(batch, "Season: " + currentSeason.toString(), x, y - 60);
-        font.draw(batch, GameManager.getDayOfTheWeek() + ", Day " + GameManager.getDay(), x, y - 90);
+        font.draw(batch, "Weather: " + MyGame.currentWeather, x, y - 90);
+        font.draw(batch, GameManager.getDayOfTheWeek() + ", Day " + GameManager.getDay(), x, y - 120);
     }
 
     private void applyLightingOverlay() {
@@ -2290,15 +2436,16 @@ public class GameScreen implements Screen {
     public SpriteBatch getBatch() {
         return batch;
     }
+
+    public GameMenuController getController() {
+        return controller;
+    }
     public void enterBuildMode(Texture buildingTexture, EnclosureType type, AnimalHouseLevel level) {
         isInBuildMode = true;
         buildingPreviewTexture = buildingTexture;
         lastType = type;
         lastLevel = level;
-        System.out.println("Multiplexer now has: " + multiplexer.getProcessors().size + " processors");
         multiplexer.addProcessor(0, buildInputProcessor);
-        System.out.println("Multiplexer now has: " + multiplexer.getProcessors().size + " processors");
-        System.out.println("set the input processor");
     }
 
     private void placeBuilding(float x, float y, EnclosureType type, AnimalHouseLevel level) {

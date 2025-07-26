@@ -42,6 +42,7 @@ public class GameMap {
 
     //crow damage during the night with 25% probability
     public Result crowDamage() {
+        System.out.println("caw caw mf");
         //TODO nothing from greenhouse
         ArrayList<FruitAndVegetable> plants = new ArrayList<>();
         ArrayList<Tree> trees = new ArrayList<>();
@@ -72,7 +73,7 @@ public class GameMap {
                             fruitAndVegetable.getCoordinates().getValue());
                     if(tile.getTileType() != null && tile.getTileType().equals(TileType.GreenHouse))
                         return new Result(true, "Your plant was protected in the green house.");
-                    tile.setItemOnTile(null);
+                    tile.setItemOnTile(new Animal("Crow", AnimalType.CROW, MyGame.getCurrentPlayer()));
                     return new Result(true, "A crow destroyed your plant during the night");
                 } else if (targetPlant && !trees.isEmpty()) {
                     int index = random.nextInt(trees.size());

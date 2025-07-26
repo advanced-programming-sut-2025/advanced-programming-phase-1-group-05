@@ -53,6 +53,7 @@ public class Player {
     private List<ArtisanMachine> machines = new ArrayList<>();
     private boolean isFainting = false;
     private boolean isEating = false;
+    private boolean buildGreenHouse = false;
 
     //walking animations
     private Animation<TextureRegion> walkUpAnimation;
@@ -756,5 +757,9 @@ public class Player {
             gold += amount;
         }
 
+    }
+
+    public void setBuildGreenHouse(boolean buildGreenHouse) {
+        this.buildGreenHouse = buildGreenHouse;
     }
 }

@@ -131,6 +131,7 @@ public class ProfileMenuController extends MenuController {
 //        System.out.println(Game.getAllPlayers());
         info.append("Username: ").append(currentUser.getUsername()).append("\n");
         info.append("Nickname: ").append(currentUser.getNickName()).append("\n");
+        info.append("Email ").append(currentUser.getEmail()).append("\n");
 //        for (Player player : MyGame.getAllPlayers()) {
 //            if (player.getUsername().equals(currentUser.getUsername())) {
 //                info.append("Money: ").append(player.getGold()).append("\n");
