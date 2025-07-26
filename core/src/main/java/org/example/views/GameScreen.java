@@ -323,7 +323,7 @@ public class GameScreen implements Screen {
             if (greenhouseMessageTimer <= 0) {
                 showGreenhouseMessage = false;
             } else {
-                font.setColor(Color.RED);
+                font.setColor(Color.WHITE);
                 font.draw(
                     batch,
                     "Press Q to build a Greenhouse\n (Cost: 1000 coins & 500 wood)",
@@ -338,7 +338,7 @@ public class GameScreen implements Screen {
             if (greenhouseMessageTimer <= 0) {
                 buildGreenHouseMessage = false;
             } else  {
-                font.setColor(Color.RED);
+                font.setColor(Color.WHITE);
                 font.draw(
                     batch,
                     "Green house built, " + MyGame.getCurrentPlayer().getGold() + " gold",
