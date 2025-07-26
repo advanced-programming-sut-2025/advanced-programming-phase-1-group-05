@@ -2306,4 +2306,8 @@ public class GameScreen implements Screen {
     public SpriteBatch getBatch() {
         return batch;
     }
+
+    public GameMenuController getController() {
+        return controller;
+    }
 }
