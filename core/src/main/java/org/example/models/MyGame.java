@@ -182,4 +182,5 @@ public class MyGame {
     public static void setForecastedWeather(Weather forecastedWeather) {
         MyGame.forecastedWeather = forecastedWeather;
     }
+
 }

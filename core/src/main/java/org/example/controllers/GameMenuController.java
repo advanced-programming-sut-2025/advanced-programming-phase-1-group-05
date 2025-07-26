@@ -1138,20 +1138,24 @@ public class GameMenuController extends MenuController {
 
             String weatherType = tokens[3];
 
-            Weather newForecastedWeather;
+            Weather newWeather;
             try {
-                newForecastedWeather = Weather.valueOf(weatherType);
+                newWeather = Weather.valueOf(weatherType.toUpperCase());
             } catch (IllegalArgumentException e) {
                 return Result.error("Invalid weather type. Valid types: SUNNY, RAIN, STORM, SNOW");
             }
 
-            MyGame.setForecastedWeather(newForecastedWeather);
-            return Result.success("Forecasted weather for tomorrow set to: " + newForecastedWeather);
+            MyGame.currentWeather = newWeather;
+
+            MyGame.setForecastedWeather(newWeather);
+
+            return Result.success("Weather changed to: " + newWeather);
 
         } catch (Exception e) {
-            return Result.error("Error while setting forecasted weather: " + e.getMessage());
+            return Result.error("Error while setting weather: " + e.getMessage());
         }
     }
+
 
     public Result printMap(Matcher matcher) {
 //        GameMap map = Game.getGameMap();
@@ -1390,6 +1394,8 @@ public class GameMenuController extends MenuController {
             int time = Integer.parseInt(matcher.group("x"));
             GameManager.getGameClock().advanceTime(time*60);
             return Result.success("advanced time!");
+        } else if (command.startsWith("cheat weather set")) {
+            return cheatWeatherSet(command);
         }
         return new Result(false, "Invalid command.");
     }
