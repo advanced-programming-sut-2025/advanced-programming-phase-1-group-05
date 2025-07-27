@@ -1,6 +1,7 @@
 package org.example.views;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -64,6 +65,9 @@ public class FishingMiniGame implements Screen {
 
         ScreenUtils.clear(0, 0, 0, 1);
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+            Main.getMain().setScreen(previousScreen);
+        }
         boolean catching;
         if (fish.getBounds().overlaps(bar.getBounds())){
             catching = true;
