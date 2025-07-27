@@ -1,5 +1,8 @@
 package org.example.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Mission {
     public enum Status {
         LOCKED,
@@ -16,6 +19,7 @@ public class Mission {
     private int rewardAmount;
     private Status status = Status.NOT_STARTED;
     private String playerUsername = "";
+    private List<Player> claimed = new ArrayList<>();
 
     public Mission(String title, String itemRequired, int amountRequired, String rewardItem, int rewardAmount) {
         this.title = title;
@@ -35,6 +39,7 @@ public class Mission {
 
     public void completed(String username) {
         playerUsername = username;
+        setStatus(Status.COMPLETED);
     }
 
     public Status getStatus() {
@@ -45,4 +50,12 @@ public class Mission {
         return playerUsername;
     }
 
+    public void claimedMission(Player player) {
+        claimed.add(player);
+    }
+
+    public boolean hasClaimed(Player player) {
+        return claimed.contains(player);
+    }
 }
+

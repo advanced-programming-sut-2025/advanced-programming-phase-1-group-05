@@ -483,12 +483,9 @@ public class GameMenuController extends MenuController {
         return Result.success(builder.toString());
     }
 
-    public Result collectProduce(Matcher m) {
-        String animalName = m.group("name");
-        Animal animal = MyGame.getCurrentPlayer().getAnimal(animalName);
+    public Result collectProduce(Animal animal) {
         if (animal == null)
             return Result.error("Selected animal doesn't exist or isn't yours");
-
         List<Product> products = animal.getUnCollectedProducts();
         if (products.isEmpty()) return Result.error("no uncollected products found");
         for (Product product : products) {
@@ -503,8 +500,6 @@ public class GameMenuController extends MenuController {
     public Result sellAnimal(AnimalActor animalActor) {
         Animal animal = animalActor.getAnimal();
         String animalName = animal.getName();
-
-
         int basePrice = MyGame.getDatabase().getItem(animal.getType().name()).getPrice();
         int price = (int) (basePrice * (((double) animal.getFriendshipPoints() / 1000) + 0.3));
         Player player = MyGame.getCurrentPlayer();
@@ -520,28 +515,6 @@ public class GameMenuController extends MenuController {
         FishType caughtFish = FishType.getRandomFish(GameManager.getSeason(), fishingLevel);
         return caughtFish;
     }
-    public Result otherFishingStuff(FishingPole pole, FishType caughtFish) {
-        Player player = MyGame.getCurrentPlayer();
-        int fishingLevel = player.getFishingSkill().getLevel();
-        Random rand = new Random();
-        double weatherCoefficient = MyGame.getCurrentWeather().getFishingCoefficient();
-        int numOfFish = Math.min((int) (rand.nextDouble() * weatherCoefficient * (fishingLevel + 2)), 6);
-        int qualityScore = (int) ((rand.nextDouble() * (fishingLevel + 2) * pole.getLevel().getFishingCoefficient()) / (7 - weatherCoefficient));
-        ItemLevel level;
-        if (qualityScore <= 0.5) level = ItemLevel.Normal;
-        else if (qualityScore <= 0.7) level = ItemLevel.Brass;
-        else if (qualityScore <= 0.9) level = ItemLevel.Gold;
-        else level = ItemLevel.Iridium;
-        Product product = new Product(caughtFish.getName(), caughtFish.getPrice(), -1, null, List.of(), Map.of(), "blablabla");
-        product.setItemLevel(level);
-        Result result = player.getBackPack().addToInventory(product, numOfFish);
-        player.getFishingSkill().increaseCapacity();
-        if (result.isSuccess())
-            return Result.success("You caught " + numOfFish + " " + level.toString() + " " + caughtFish.getName());
-        return result;
-
-    }
-
     public Result useArtisan(Matcher m) {
         String args = m.group("args");
         ArtisanType artisan = ArtisanType.getArtisan(args);

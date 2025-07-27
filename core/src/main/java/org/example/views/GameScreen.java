@@ -940,12 +940,16 @@ public class GameScreen implements Screen {
         batch.begin();
         batch.draw(journalBg, JOURNAL_X, JOURNAL_Y, drawWidth, drawHeight);
 
-        //TODO show quests
-//        Map<String, NPC> quests = new HashMap<>();
-//        List<NPC> npcs = MyGame.getDatabase().getNPCs();
-//        for(NPC npc : npcs) {
-
-//        }
+        Map<Mission, NPC> quests = new HashMap<>();
+        Player player = MyGame.getCurrentPlayer();
+        for(NpcActor npcActor : NPCs) {
+            NPC npc = npcActor.getNpc();
+            for (Mission mission : npc.getMissions()) {
+                if (mission.hasClaimed(player)) {
+                    quests.put(mission, npc);
+                }
+            }
+        }
         batch.end();
 
     }
@@ -1879,6 +1883,14 @@ public class GameScreen implements Screen {
         innerPanel.add(collectProduceButton).fillX();
         innerPanel.row();
         collectProduceButton.setColor(1, 210f/255, 132f/255, 1);
+        collectProduceButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                latestResult = controller.collectProduce(animal);
+                showResult = true;
+                animalMenuTable.setVisible(false);
+            }
+        });
         TextButton sellAnimal = new TextButton("sell " + name, skin);
         innerPanel.add(sellAnimal).fillX();
         innerPanel.row();
