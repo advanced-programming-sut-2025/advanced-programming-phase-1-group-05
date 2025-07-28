@@ -58,7 +58,7 @@ public class ArtisanMachine extends Actor {
         return artisanProduct;
     }
 
-    private void reset() {
+    public void reset() {
         product = null;
         elapsedTime = 0;
         processingTime = 0;
@@ -93,4 +93,6 @@ public class ArtisanMachine extends Actor {
     public boolean isWorking() {
         return working;
     }
+
+
 }

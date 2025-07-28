@@ -612,8 +612,8 @@ public class GameMenuController extends MenuController {
 
     public Result giftPlayer(Player targetPlayer, Item item, int amount) {
         Player currentPlayer = MyGame.getCurrentPlayer();
-        if (Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 1 ||
-                Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 1)
+        if (Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 100 ||
+                Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 100)
             return Result.error("You can't just throw gifts across the valley... get closer first!");
         if (currentPlayer.getItemQuantity(item) < amount)
             return Result.error("You hold out your gift... and reality holds out a calculator.");

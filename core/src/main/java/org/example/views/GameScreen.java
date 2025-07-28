@@ -53,7 +53,7 @@ public class GameScreen implements Screen {
     Table missionListTable, animalMenuTable, notificationTable, giftMenuTable, giftHistoryTable, rateTable,
         playerMenuTable, artisanMenuTable, npcMenuTable, friendshipMenuTable;
     Skin skin;
-    ImageButton notificationButton;
+    ImageButton notificationButton, friendshipButton;
     Viewport viewport;
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -478,8 +478,6 @@ public class GameScreen implements Screen {
                             slot.item = null;
                             TextureRegionDrawable drawable = new TextureRegionDrawable(giftedItem.getTexture());
                             Image flyingGift = new Image(drawable);
-                            Vector2 stagePos = stage.screenToStageCoordinates(new Vector2(playerPos.x, playerPos.y));
-                            Vector2 targetPos = stage.screenToStageCoordinates(new Vector2(receiverPos.x, receiverPos.y));
                             Vector2 startPos = new Vector2(player.getXX(), player.getYY());
                             Vector2 endPos = lastNPC != null
                                 ? new Vector2(lastNPC.getX(), lastNPC.getY())
@@ -541,7 +539,6 @@ public class GameScreen implements Screen {
             for (InventorySlot slot : selectedSlots) {
                 selectedItems.add(slot.item.getName());
                 MyGame.getCurrentPlayer().getBackPack().removeFromInventory(slot.item, 1);
-                // TODO ?????
             }
 
             latestResult = lastArtisan.insertItem(selectedItems);
@@ -1449,15 +1446,20 @@ public class GameScreen implements Screen {
             }
         });
         uiStage.addActor(notificationButton);
+        Texture heart = GameAssetManager.getInstance().getOrLoadTexture("ui/heart.png");
+        Drawable heartDrawable = new TextureRegionDrawable(new TextureRegion(heart));
+        friendshipButton = new ImageButton(heartDrawable);
+        friendshipButton.setPosition(x, y- 80);
+        friendshipButton.getImageCell().size(70, 60);
+        friendshipButton.setSize(70, 60);
+        friendshipButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showFriendshipMenu();
+            }
+        });
+        uiStage.addActor(friendshipButton);
         forceViewportReset();
-
-        Player player1 = MyGame.getCurrentPlayer();
-//        AnimalHouse house = new AnimalHouse(EnclosureType.COOP, AnimalHouseLevel.Big, 500, 500);
-//        player1.addAnimalHouse(house);
-//        Animal animal = new Animal("chicko", AnimalType.CHICKEN, player1);
-//        house.addAnimal(animal);
-//        addAnimalActor(new AnimalActor(animal));
-        player1.getBackPack().addToInventory(MyGame.getDatabase().getItem("Hay"), 10);
 
     }
 
@@ -1573,6 +1575,8 @@ public class GameScreen implements Screen {
         Texture giftTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/gift.png");
         Drawable giftDrawable = new TextureRegionDrawable(new TextureRegion(giftTexture));
         ImageButton giftButton = new ImageButton(giftDrawable);
+        giftButton.getImageCell().size(32, 32);
+
         giftButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -1583,7 +1587,7 @@ public class GameScreen implements Screen {
                 friendshipMenuTable.setVisible(false);
             }
         });
-        row.add(giftButton).padRight(10);
+        row.add(giftButton).size(32, 32).padRight(10);
         Texture fullHeartTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/heart.png");
         Texture greyHeartTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/greyHeart.png");
         int friendshipLevel = MyGame.getCurrentPlayer().getFriendshipLevel(player);
@@ -1901,6 +1905,30 @@ public class GameScreen implements Screen {
             }
         });
 
+        TextButton cancelButton = new TextButton("cancel", skin);
+        innerPanel.add(cancelButton).fillX();
+        innerPanel.row();
+        cancelButton.setColor(1, 210f / 255, 132f / 255, 1);
+        cancelButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (machine.isWorking() || machine.isReady()) {
+                    machine.reset();
+                }
+            }
+        });
+        TextButton collectProductButton = new TextButton("collect product", skin);
+        if (machine.isReady()) innerPanel.add(collectProductButton).fillX();
+        innerPanel.row();
+        collectProductButton.setColor(1, 210f/255, 132f/255, 1);
+        collectProductButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ArtisanProduct product = machine.getProduct();
+                Player player = MyGame.getCurrentPlayer();
+                player.getBackPack().addToInventory(product, 1);
+            }
+        });
         ImageButton closeButton = new ImageButton(closeDrawable);
         closeButton.addListener(new ClickListener() {
             @Override
