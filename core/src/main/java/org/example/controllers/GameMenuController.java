@@ -1351,8 +1351,7 @@ public class GameMenuController extends MenuController {
             String itemName = matcher.group("itemName");
             int count = Integer.parseInt(matcher.group("count"));
             return addItemCheatCode(itemName, count);
-        }
-        if ((matcher = GameMenuCommands.CheatThor.getMatcher(command)) != null || command.equalsIgnoreCase("cheat Thor")) {
+        }else if ((matcher = GameMenuCommands.CheatThor.getMatcher(command)) != null || command.equalsIgnoreCase("cheat Thor")) {
             canCheatThor = true;
 
             if (view != null) {
@@ -1372,6 +1371,9 @@ public class GameMenuController extends MenuController {
             return Result.success("advanced time!");
         } else if (command.startsWith("cheat weather set")) {
             return cheatWeatherSet(command);
+        } else if((matcher = GameMenuCommands.EnergySetCC.getMatcher(command)) != null) {
+            int value = Integer.parseInt(matcher.group("value"));
+            return setEnergy(value);
         }
         return new Result(false, "Invalid command.");
     }
