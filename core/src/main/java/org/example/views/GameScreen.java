@@ -399,7 +399,6 @@ public class GameScreen implements Screen {
         tileOutline(mouse);
         stage.act(delta);
         stage.draw();
-        cheatCodeWindow.render(delta);
         if (isInvenotryOpen) {
             for (NpcActor npc : NPCs) {
                 npc.setVisible(false);
@@ -421,6 +420,7 @@ public class GameScreen implements Screen {
         if (showResult) showResult(batch, latestResult, delta);
         stage.act(delta);
         stage.draw();
+        cheatCodeWindow.render(delta);
         uiStage.act(delta);
         uiStage.draw();
     }
@@ -945,6 +945,15 @@ public class GameScreen implements Screen {
                     quests.put(mission, npc);
                 }
             }
+        }
+
+        float add = 0;
+        for (Map.Entry<Mission, NPC> quest : quests.entrySet()) { //test later
+            float x = JOURNAL_X;
+            float y = JOURNAL_Y - add;
+            font.draw(batch, quest.getKey().getTitle(), x, y);
+            font.draw(batch,quest.getValue().getName(), x, y + 5);
+            add += 20f;
         }
         batch.end();
 
