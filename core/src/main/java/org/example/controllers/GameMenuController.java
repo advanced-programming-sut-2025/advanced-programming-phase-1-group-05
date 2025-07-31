@@ -39,6 +39,10 @@ public class GameMenuController extends MenuController {
     }
     private NPC lastNPC = null;
 
+    //LOBBY
+    private static List<Lobby> activeLobbies = new ArrayList<>();
+    private Lobby currentLobby = null;
+
     public Result newGame(String input) {
         Pattern pattern = Pattern.compile(
                 "^game new(?: -u (?<username>[\\w-]+))" +
@@ -1371,5 +1375,60 @@ public class GameMenuController extends MenuController {
             return setEnergy(value);
         }
         return new Result(false, "Invalid command.");
+    }
+
+    public List<Lobby> getActiveLobbies() {
+        // پاک کردن لابی‌های قدیمی بدون پلیر
+        long now = System.currentTimeMillis();
+        Iterator<Lobby> iterator = activeLobbies.iterator();
+        while(iterator.hasNext()) {
+            Lobby lobby = iterator.next();
+            if(lobby.isEmpty() ||
+                (lobby.getPlayers().size() == 1 && (now - lobby.getCreationTime() > 5 * 60 * 1000))) {
+                iterator.remove();
+            }
+        }
+
+        // فقط لابی‌های visible رو نشون بده
+        List<Lobby> visible = new ArrayList<>();
+        for(Lobby lobby : activeLobbies) {
+            if(lobby.isVisible()) visible.add(lobby);
+        }
+        return visible;
+    }
+
+    public Lobby createLobby(String name, boolean isPrivate, String password, boolean isVisible, User creator) {
+        Lobby lobby = new Lobby(name, isPrivate, password, isVisible, creator);
+        activeLobbies.add(lobby);
+        currentLobby = lobby;
+        return lobby;
+    }
+
+    public boolean joinLobby(String id, User user, String password) {
+        for(Lobby lobby : activeLobbies) {
+            if(lobby.getId().equals(id)) {
+                if(lobby.isPrivate() && (password == null || !lobby.getPassword().equals(password))) {
+                    return false;
+                }
+                lobby.addPlayer(user);
+                currentLobby = lobby;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void leaveLobby(User user) {
+        if(currentLobby != null) {
+            currentLobby.removePlayer(user);
+            if(currentLobby.isEmpty()) {
+                activeLobbies.remove(currentLobby);
+            }
+            currentLobby = null;
+        }
+    }
+
+    public Lobby getCurrentLobby() {
+        return currentLobby;
     }
 }
