@@ -74,7 +74,7 @@ public class GameScreen implements Screen {
     private static final int VIEW_HEIGHT = 15;
 
     private float timeAccumulator = 0f;
-    private boolean overviewMode = false;
+    private boolean overviewMode = false, messageMode;
     private Season currentSeason;
     private final ArrayList<Player> players;
 
@@ -275,7 +275,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0f, 136 / 255f, 199 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-        if (!cheatCodeWindow.isVisible()) handleInput(delta);
+        if (!cheatCodeWindow.isVisible() && !messageMode) handleInput(delta);
 
         timeAccumulator += delta;
         if (timeAccumulator >= 42f) {
@@ -1754,6 +1754,41 @@ public class GameScreen implements Screen {
         Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
         Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
 
+        TextButton talkButton = new TextButton("talk to " + player.getUsername(), skin);
+        innerPanel.add(talkButton).fillX();
+        innerPanel.row();
+        talkButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Window window = new Window("Enter Message", skin);
+                TextField messageField = new TextField("", skin);
+                TextButton submitButton = new TextButton("Submit", skin);
+                messageMode = true;
+                window.add(messageField).width(200).pad(10);
+                window.row();
+                window.add(submitButton).pad(10);
+                window.pack();
+                window.setPosition(
+                    (Gdx.graphics.getWidth() - window.getWidth()) / 2f,
+                    (Gdx.graphics.getHeight() - window.getHeight()) / 2f
+                );
+
+                uiStage.addActor(window);
+
+                submitButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        String message = messageField.getText();
+                        latestResult = controller.talkToPlayer(player, message);
+                        if (!latestResult.isSuccess()) showResult = true;
+                        playerMenuTable.setVisible(false);
+                        messageMode = false;
+                        window.remove();
+                    }
+                });
+            }
+        });
+
 
         TextButton giveBouquet = new TextButton("give a bouquet", skin);
         innerPanel.add(giveBouquet).fillX();
@@ -1792,6 +1827,17 @@ public class GameScreen implements Screen {
                     faceEachOther(currentPlayer, player);
                     moveToCenter(currentPlayer, player);
                 }
+                playerMenuTable.setVisible(false);
+            }
+        });
+        TextButton proposeMarriage = new TextButton("propose marriage", skin);
+        innerPanel.add(proposeMarriage).fillX();
+        innerPanel.row();
+        proposeMarriage.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                latestResult = controller.askMarriage(player);
+                showResult = true;
                 playerMenuTable.setVisible(false);
             }
         });

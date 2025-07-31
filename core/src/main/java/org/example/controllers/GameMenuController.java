@@ -413,8 +413,8 @@ public class GameMenuController extends MenuController {
             return Result.error("animal doesn't exist or isn't yours");
         }
         Player currentPlayer = MyGame.getCurrentPlayer();
-        if (Math.abs(animal.getX() - currentPlayer.getXX()) > 1 ||
-                Math.abs(animal.getY() - currentPlayer.getYY()) > 1) {
+        if (Math.abs(animal.getX() - currentPlayer.getXX()) > 100 ||
+                Math.abs(animal.getY() - currentPlayer.getYY()) > 100) {
             return Result.error("You need to get closer to the animal. animal coordinates: " + animal.getX() + " " + animal.getY());
         }
         animal.adjustFriendshipPoints(15);
@@ -565,14 +565,11 @@ public class GameMenuController extends MenuController {
         return new Result(true, builder.toString());
     }
 
-    public Result talkToPlayer(Matcher m) {
-
-        String username = m.group("username"), message = m.group("message");
-        Player targetPlayer = MyGame.getPlayerByUsername(username);
+    public Result talkToPlayer(Player targetPlayer, String message) {
         Player currentPlayer = MyGame.getCurrentPlayer();
 
         if (targetPlayer == null) return new Result(false, "Hmmm... either they moved away, or they never existed!");
-        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 1 || Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 1)
+        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 100 || Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 100)
             return new Result(false, "You can't have a heart-to-heart with someone who's miles away!");
         MyGame.addMessage(new Message(currentPlayer, targetPlayer, message));
         currentPlayer.changeFriendshipXP(20, targetPlayer);
@@ -685,8 +682,8 @@ public class GameMenuController extends MenuController {
         if (targetPlayer == null)
             return new Result(false,
                     "You open your arms wide... but there's no one by that name to recieve it");
-        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 1 ||
-                Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 1)
+        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 100 ||
+                Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 100)
             return new Result(false, "They're not here to catch your hug. Maybe next time!");
         if (!currentPlayer.canHug(targetPlayer))
             return Result.error("They awkwardly sidestep the hug. Friendship takes time, pal.");
@@ -717,21 +714,19 @@ public class GameMenuController extends MenuController {
                 "They accepted the bouquet! Quick, act cool before your face turns red.");
     }
 
-    public Result askMarriage(Matcher m) {
-        String username = m.group("username");
-        Player targetPlayer = MyGame.getPlayerByUsername(username);
+    public Result askMarriage(Player targetPlayer) {
         Item ring = MyGame.getDatabase().getItem("Wedding Ring");
         Player currentPlayer = MyGame.getCurrentPlayer();
         if (targetPlayer == null) return new Result(false,
                 "Imaginary partners don't make great spouses.");
-        if (Math.abs(currentPlayer.getXX() - targetPlayer.getXX()) > 1 ||
-                Math.abs(currentPlayer.getYY() - targetPlayer.getYY()) > 1)
+        if (Math.abs(currentPlayer.getXX() - targetPlayer.getXX()) > 100 ||
+                Math.abs(currentPlayer.getYY() - targetPlayer.getYY()) > 100)
             return new Result(false, "Your love might be strong, but your range isn't. Get closer!");
         if (ring == null || currentPlayer.getItemQuantity(ring) == 0)
             return new Result(false, "You reach for the ring... but your pockets are full of nothing");
         if (!currentPlayer.canAskMarriage(targetPlayer))
             return new Result(false, "Slow down, lovebird-you're still just friendly acquaintances");
-        if (!currentPlayer.getGender().equals("male"))
+        if (!currentPlayer.getGender().equalsIgnoreCase("male"))
             return new Result(false,
                     "Only the boys can propose... for now. Rules of the valley, not mine!");
 
@@ -846,7 +841,7 @@ public class GameMenuController extends MenuController {
         Map.Entry<String, Integer> quest = lastNPC.getQuest(questIndex);
         if (quest == null) return new Result(false, "Quest not found");
         Player player = MyGame.getCurrentPlayer();
-        if (Math.abs(player.getXX() - lastNPC.getX()) > 1 || Math.abs(player.getYY() - lastNPC.getY()) > 1) {
+        if (Math.abs(player.getXX() - lastNPC.getX()) > 100 || Math.abs(player.getYY() - lastNPC.getY()) > 100) {
             return new Result(false,
                     "You can't wrap this up from here. Get back to " + lastNPC.getName() + " first!");
         }
