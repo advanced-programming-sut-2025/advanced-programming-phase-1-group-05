@@ -400,7 +400,7 @@ public class GameMenu implements Screen {
             }
         });
 
-        // ---------------- لابی ----------------
+        //todo: loby
         refreshLobbyBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

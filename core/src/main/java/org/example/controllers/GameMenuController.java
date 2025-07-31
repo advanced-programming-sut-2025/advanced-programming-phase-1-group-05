@@ -1377,6 +1377,7 @@ public class GameMenuController extends MenuController {
         return new Result(false, "Invalid command.");
     }
 
+    //todo : lobby
     public List<Lobby> getActiveLobbies() {
         // پاک کردن لابی‌های قدیمی بدون پلیر
         long now = System.currentTimeMillis();
