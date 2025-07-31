@@ -155,6 +155,11 @@ public class GameScreen implements Screen {
     private Result latestResult;
     private GlyphLayout layout = new GlyphLayout();
 
+    //food buff stuff
+    private float buffTime = 0;
+    private float buffDuration = 2f;
+    private boolean buffStarted = false;
+
     //cheat code window
     private CheatCodeWindow cheatCodeWindow;
 
@@ -414,6 +419,7 @@ public class GameScreen implements Screen {
         showToolSelection(batch);
         showCookingPage(batch);
         showJournalPage(batch);
+        showFoodBuff(batch, delta);
         updateToolSelectionSlots();
         checkGifting();
         checkArtisanInput();
@@ -437,7 +443,6 @@ public class GameScreen implements Screen {
         lightningTimer = 0f;
         GameAssetManager.playSfx("thor");
     }
-
 
     private void checkGifting() {
         updateInventorySlots(INVENTORY_X, INVENTORY_Y);
@@ -1748,6 +1753,30 @@ public class GameScreen implements Screen {
 
     }
 
+    public void startFoodBuff(){
+        buffStarted = true;
+    }
+
+    public void showFoodBuff(SpriteBatch batch ,float delta) {
+       if(!buffStarted) return;
+
+       buffTime += delta;
+       if(buffTime >= buffDuration) {
+           buffTime = 0f;
+           buffStarted = false;
+       }
+
+       TextureRegion buff = CookingRecipeType.getBuffTexture();
+       float x = camera.position.x - 400f;
+       float y = camera.position.y + 400f;
+
+       batch.begin();
+       batch.draw(buff, x, y);
+       font.setColor(Color.WHITE);
+       font.draw(batch,"food buff",x,y - 10f);
+       font.setColor(Color.BLACK);
+       batch.end();
+    }
     private void showPlayerMenu(Player player) {
         Player currentPlayer = MyGame.getCurrentPlayer();
         if (currentPlayer.equals(player)) return;
@@ -2328,7 +2357,6 @@ public class GameScreen implements Screen {
 
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            //if (!isInvenotryOpen && !isToolSelectionOpen) return false;
 
             Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 
@@ -2346,7 +2374,30 @@ public class GameScreen implements Screen {
                 for (InventorySlot slot : slots) {
                     if (world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
                         world.y >= slot.y && world.y <= slot.y + SLOT_SIZE) {
-
+                            if(draggedItem == null && slot.item == null) {
+                            MyGame.getCurrentPlayer().setCurrentItem(null);
+                            }
+                            if (draggedItem == null && slot.item != null) {
+                                draggedItem = slot.item;
+                                selectedSlot = slot;
+                                slot.item = null;
+                                MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                                return true;
+                            } else if (draggedItem != null && slot.item == null) {
+                                slot.item = draggedItem;
+                                draggedItem = null;
+                                selectedSlot = null;
+                                syncBackPackFromSlots();
+                                return true;
+                            } else if (draggedItem != null && slot.item != null) {
+                                Item temp = slot.item;
+                                slot.item = draggedItem;
+                                draggedItem = temp;
+                                selectedSlot = slot;
+                                MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                                syncBackPackFromSlots();
+                                return true;
+                            }
                         if (!giftMode) MyGame.getCurrentPlayer().setCurrentItem(slot.item);
                     }
                 }
