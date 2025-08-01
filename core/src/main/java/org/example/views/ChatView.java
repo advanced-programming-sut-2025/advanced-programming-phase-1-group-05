@@ -1,17 +1,13 @@
 package org.example.views;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import org.example.controllers.ChatController;
 import org.example.models.ChatMessage;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-
 import java.util.List;
 
 public class ChatView {
@@ -30,25 +26,24 @@ public class ChatView {
         this.skin = skin;
         this.controller = controller;
 
-        // پنجره چت بسازیم
         chatWindow = new Window("Chat", skin);
-        chatWindow.setSize(Gdx.graphics.getWidth() * 0.4f, Gdx.graphics.getHeight() * 0.3f);
-        chatWindow.setPosition(20, Gdx.graphics.getHeight() - chatWindow.getHeight() - 80); // پایین بیاد
+        float width = Gdx.graphics.getWidth() * 0.4f;
+        float height = Gdx.graphics.getHeight() * 0.4f;
+        chatWindow.setSize(width, height);
+        chatWindow.setPosition((Gdx.graphics.getWidth() - width) / 2f, (Gdx.graphics.getHeight() - height) / 2f);
         chatWindow.setVisible(false);
+        chatWindow.setColor(1, 1, 1, 0.9f);
 
-        // SelectBox مقصد
         targetSelect = new SelectBox<>(skin);
         targetSelect.setItems(playerNames.toArray(new String[0]));
         chatWindow.add(new Label("ارسال به:", skin)).pad(5);
         chatWindow.add(targetSelect).growX().pad(5).row();
 
-        // جدول پیام‌ها
         messageTable = new Table();
         messageTable.top().left();
         scrollPane = new ScrollPane(messageTable, skin);
         chatWindow.add(scrollPane).colspan(2).grow().pad(5).row();
 
-        // ورودی پیام + دکمه ارسال
         inputField = new TextField("", skin);
         inputField.setMessageText("پیام...");
         TextButton sendButton = new TextButton("ارسال", skin);
@@ -56,7 +51,6 @@ public class ChatView {
         chatWindow.add(inputField).growX().pad(5);
         chatWindow.add(sendButton).pad(5);
 
-        // رویدادهای ارسال
         sendButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -70,7 +64,7 @@ public class ChatView {
 
         targetSelect.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor) {
                 controller.onTargetChanged(targetSelect.getSelected());
             }
         });
@@ -106,11 +100,11 @@ public class ChatView {
             }
             chatWindow.setVisible(true);
             stage.setKeyboardFocus(inputField);
-            System.out.println("Chat window added and visible!");
+            System.out.println("Chat window added and visible");
         } else {
             chatWindow.remove();
             stage.unfocus(inputField);
-            System.out.println("Chat window removed!");
+            System.out.println("Chat window removed");
         }
     }
 
