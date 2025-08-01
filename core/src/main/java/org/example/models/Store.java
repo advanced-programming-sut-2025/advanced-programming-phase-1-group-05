@@ -54,7 +54,6 @@ public class Store extends Actor {
         batch.draw(tex, getX(), getY());
     }
 
-
     public Rectangle getBoundingRectangle() {
         return new Rectangle(getX(), getY(), getWidth(), getHeight());
     }

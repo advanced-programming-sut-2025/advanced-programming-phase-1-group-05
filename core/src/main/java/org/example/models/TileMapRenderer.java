@@ -260,7 +260,6 @@ public class TileMapRenderer {
                 map[tileY][tileX] = tile;
                 GameTile gameTile = GameMap.getTile(tileX, tileY);
                 if(gameTile == null) {
-                    System.out.println("shit's null");
                     continue;
                 }
                 gameTile.setTileType(tile);
