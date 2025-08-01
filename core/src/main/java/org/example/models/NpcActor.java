@@ -72,7 +72,7 @@ public class NpcActor extends Actor {
         float newX = getX() + directionVector.x * speed * delta;
         float newY = getY() + directionVector.y * speed * delta;
 
-        if (newX < -23 || newX + getWidth() > 8900 || newY < 7 || newY + getHeight() > 8925) {
+        if (newX < 100 || newX + getWidth() > 8500 || newY < 100 || newY + getHeight() > 8525) {
             return; // skip movement this frame
         }
         Rectangle nextBounds = new Rectangle(newX, newY, getWidth(), getHeight());

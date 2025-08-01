@@ -1,7 +1,10 @@
 package org.example.models;
 
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -67,9 +70,6 @@ public class Farm {
         refrigeratedFoods.put(food, refrigeratedFoods.get(food) - amount);
     }
 
-//    public boolean containsTile (int x, int y) {
-//        return (x >= startX && x <= endX) && (y >= startY && y <= endY);
-//    }
     public ShippingBin getShippingBin() {
         return shippingBin;
     }
@@ -81,25 +81,19 @@ public class Farm {
         trees.add(tree);
     }
 
-    public static class ShippingBin {
-        float startX, startY, endX, endY;
+    public static class ShippingBin extends Actor {
+        float startX, startY;
+        Texture tex = GameAssetManager.getInstance().getOrLoadTexture("Items/Shipping_bin.png");
 
         public ShippingBin(float farmStartY, float farmEndX) {
-            startX = farmEndX - 5;
-            startY = farmStartY + 5;
-            endX = startX + 2;
-            endY = startY + 1;
-        }
-        public boolean isNear(int x, int y) {
-            boolean nearX = (x >= startX - 1 && x <= endX + 1);
-            boolean nearY = (y >= startY - 1 && y <= endY + 1);
-            return nearX && nearY;
+            startX = farmEndX + 300;
+            startY = farmStartY - 200;
         }
 
-        public void getCoordinates() {
-            System.out.println(startX + "to" + endX + "," + startY + "to" + endY);
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            batch.draw(tex, startX, startY);
         }
-
     }
 
 

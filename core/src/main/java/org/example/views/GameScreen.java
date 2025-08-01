@@ -142,10 +142,15 @@ public class GameScreen implements Screen {
     InputProcessor buildInputProcessor;
     private EnclosureType lastType;
     private AnimalHouseLevel lastLevel;
+
     // Artisan
     private boolean artisanInputMode = false;
     private List<InventorySlot> selectedSlots = new ArrayList<>();
     private ArtisanMachine lastArtisan;
+    private boolean artisanMode = false;
+    private Texture artisanPreviewTexture;
+    private ArtisanType lastArtisanType;
+
 
     //result stuff
     private TextureRegion resultBg = GameAssetManager.resultTexture;
@@ -186,6 +191,7 @@ public class GameScreen implements Screen {
             Vector2 spawnPosition = getInitialPositionForMap(selectedMap);
             if (players.indexOf(player) == 0) spawnPos = spawnPosition;
             player.setPosition(spawnPosition.x, spawnPosition.y);
+
 
         }
         initializeFarmArea();
@@ -331,6 +337,13 @@ public class GameScreen implements Screen {
             batch.draw(buildingPreviewTexture, worldCoords.x, worldCoords.y);
             batch.setColor(1f, 1f, 1f, 1f);
         }
+        if (artisanMode && artisanPreviewTexture != null) {
+            Vector2 mousse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+            Vector3 worldCoords = camera.unproject(new Vector3(mousse.x, mousse.y, 0));
+            batch.setColor(1f, 1f, 1f, 0.5f);
+            batch.draw(artisanPreviewTexture, worldCoords.x, worldCoords. y);
+            batch.setColor(1f, 1f, 1f, 1f);
+        }
         drawEnergyBar();
         drawHUD();
 
@@ -418,8 +431,8 @@ public class GameScreen implements Screen {
         checkGifting();
         checkArtisanInput();
         if (showResult) showResult(batch, latestResult, delta);
-        stage.act(delta);
-        stage.draw();
+//        stage.act(delta);
+//        stage.draw();
         cheatCodeWindow.render(delta);
         uiStage.act(delta);
         uiStage.draw();
@@ -536,16 +549,19 @@ public class GameScreen implements Screen {
         // Confirm selection with Enter key
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             List<String> selectedItems = new ArrayList<>();
-            for (InventorySlot slot : selectedSlots) {
-                selectedItems.add(slot.item.getName());
-                MyGame.getCurrentPlayer().getBackPack().removeFromInventory(slot.item, 1);
-            }
 
             latestResult = lastArtisan.insertItem(selectedItems);
+            if (latestResult.isSuccess()){
+                for (InventorySlot slot : selectedSlots) {
+                    selectedItems.add(slot.item.getName());
+                    MyGame.getCurrentPlayer().getBackPack().removeFromInventory(slot.item, 1);
+                }
+            }
             artisanInputMode = false;
             isInvenotryOpen = false;
             selectedSlots.clear();
             showResult = true;
+            lastArtisan.setVisible(true);
         }
     }
 
@@ -952,7 +968,7 @@ public class GameScreen implements Screen {
             float x = JOURNAL_X;
             float y = JOURNAL_Y - add;
             font.draw(batch, quest.getKey().getTitle(), x, y);
-            font.draw(batch,quest.getValue().getName(), x, y + 5);
+            font.draw(batch, quest.getValue().getName(), x, y + 5);
             add += 20f;
         }
         batch.end();
@@ -1356,7 +1372,7 @@ public class GameScreen implements Screen {
         multiplexer.addProcessor(stage);
         multiplexer.addProcessor(new InventoryInputHandler(this));
         multiplexer.addProcessor(uiStage);
-        if (isInBuildMode) multiplexer.addProcessor(0, buildInputProcessor);
+        if (isInBuildMode || artisanMode) multiplexer.addProcessor(0, buildInputProcessor);
         Gdx.input.setInputProcessor(multiplexer);
         System.out.println("InputMultiplexer set with cheatCodeWindow");
 
@@ -1367,6 +1383,12 @@ public class GameScreen implements Screen {
                     Vector3 worldPos = camera.unproject(new Vector3(screenX, screenY, 0));
                     placeBuilding(worldPos.x, worldPos.y, lastType, lastLevel);
                     isInBuildMode = false;
+                    multiplexer.removeProcessor(buildInputProcessor);
+                } else if (artisanMode && button == Input.Buttons.LEFT) {
+                    Vector3 worldPos = camera.unproject(new Vector3(screenX, screenY, 0));
+                    Player player = MyGame.getCurrentPlayer();
+                    addArtisanMachine(new ArtisanMachine(lastArtisanType, player, worldPos.x, worldPos.y));
+                    artisanMode = false;
                     multiplexer.removeProcessor(buildInputProcessor);
                 }
                 return true;
@@ -1433,6 +1455,9 @@ public class GameScreen implements Screen {
         for (Store store : MyGame.getDatabase().getStores()) {
             stage.addActor(store);
         }
+        for (Player player : players) {
+            stage.addActor(player.getFarm().getShippingBin());
+        }
 
         Texture mail = GameAssetManager.getInstance().getOrLoadTexture("ui/mailSign.png");
         Drawable mailDrawable = new TextureRegionDrawable(new TextureRegion(mail));
@@ -1458,7 +1483,7 @@ public class GameScreen implements Screen {
         Texture heart = GameAssetManager.getInstance().getOrLoadTexture("ui/heart.png");
         Drawable heartDrawable = new TextureRegionDrawable(new TextureRegion(heart));
         friendshipButton = new ImageButton(heartDrawable);
-        friendshipButton.setPosition(x, y- 80);
+        friendshipButton.setPosition(x, y - 80);
         friendshipButton.getImageCell().size(70, 60);
         friendshipButton.setSize(70, 60);
         friendshipButton.addListener(new ClickListener() {
@@ -1956,6 +1981,8 @@ public class GameScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 machine.finish();
+                latestResult = Result.success("you can now collect the artisan product!");
+                showResult = true;
                 artisanMenuTable.setVisible(false);
             }
         });
@@ -1969,19 +1996,27 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if (machine.isWorking() || machine.isReady()) {
                     machine.reset();
+                    latestResult = Result.success("canceled successfully");
+                    showResult = true;
                 }
+                artisanMenuTable.setVisible(false);
+                latestResult = Result.error("nothing to cancel");
+                showResult = true;
             }
         });
         TextButton collectProductButton = new TextButton("collect product", skin);
         if (machine.isReady()) innerPanel.add(collectProductButton).fillX();
         innerPanel.row();
-        collectProductButton.setColor(1, 210f/255, 132f/255, 1);
+        collectProductButton.setColor(1, 210f / 255, 132f / 255, 1);
         collectProductButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 ArtisanProduct product = machine.getProduct();
                 Player player = MyGame.getCurrentPlayer();
                 player.getBackPack().addToInventory(product, 1);
+                latestResult  = Result.success("artisan product added to your inventory!");
+                showResult = true;
+                artisanMenuTable.setVisible(false);
             }
         });
         ImageButton closeButton = new ImageButton(closeDrawable);
@@ -2333,6 +2368,7 @@ public class GameScreen implements Screen {
             Vector3 world = camera.unproject(new Vector3(screenX, screenY, 0));
 
             if (isInvenotryOpen) {
+                if (artisanInputMode) return true;
                 //check trash can
                 if (draggedItem != null && trashcan.contains(world.x, world.y)) {
                     MyGame.getCurrentPlayer().getBackPack().removeFromInventory(draggedItem, 1);
@@ -2466,6 +2502,13 @@ public class GameScreen implements Screen {
                                 latestResult = controller.fertilizeCrop(currentItem.getName(), tile);
                                 showResult = true;
                                 MyGame.getCurrentPlayer().getBackPack().removeFromInventory(currentItem, 1);
+                            } else if (currentItem instanceof Craft && ArtisanType.getArtisan(((Craft) currentItem).getType()) != null) {
+                                lastArtisanType = ArtisanType.getArtisan(((Craft) currentItem).getType());
+                                artisanMode = true;
+                                MyGame.getCurrentPlayer().getBackPack().removeFromInventory(currentItem, 1);
+                                multiplexer.addProcessor(0, buildInputProcessor);
+                                String texturePath = "ArtisanMachines/" + lastArtisanType.name().toLowerCase() + "_ready.png";
+                                artisanPreviewTexture = GameAssetManager.getInstance().getOrLoadTexture(texturePath);
                             } else {
                                 GameAssetManager.playSfx("place item");
                                 latestResult = controller.placeItem(currentItem, tile);
@@ -2586,11 +2629,15 @@ public class GameScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (button == Input.Buttons.RIGHT) {
-                    if (machine.isWorking())
-                        showArtisanMenu(machine);
+                    if (machine.isWorking()) {
+                        if (machine.getOwner().equals(MyGame.getCurrentPlayer()))
+                            showArtisanMenu(machine);
+                    }
                     else {
+                        lastArtisan = machine;
                         artisanInputMode = true;
                         isInvenotryOpen = true;
+                        machine.setVisible(false);
                         selectedSlots.clear();
                     }
                     return true;
@@ -2599,6 +2646,7 @@ public class GameScreen implements Screen {
             }
         });
     }
+
     public GameMenuController getController() {
         return controller;
     }

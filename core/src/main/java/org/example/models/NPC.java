@@ -38,7 +38,7 @@ public class NPC {
             x = 1129.33f; y= 3902.43f;
         }
         else if (name.equalsIgnoreCase("Robin")) {
-            x = 56.41f; y = 4823;
+            x = 156.41f; y = 4823;
         }
     }
 

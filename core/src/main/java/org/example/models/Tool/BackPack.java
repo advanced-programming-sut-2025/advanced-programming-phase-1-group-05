@@ -124,7 +124,7 @@ public class BackPack implements Tool <BackPackType>{
     public int howManyOfItem(Item item) {
         int count = 0;
         for(Item i : inventory.keySet()) {
-            if(i.getName().equals(item.getName())) {
+            if(i.getName().equalsIgnoreCase(item.getName())) {
                 count += inventory.get(i);
             }
         }

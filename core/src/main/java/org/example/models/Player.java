@@ -50,7 +50,6 @@ public class Player {
     private TextureRegion currentTexture;
     private final float energyCostPerStep = 0.05f;
     private float distanceTraveled = 0f;
-    private List<ArtisanMachine> machines = new ArrayList<>();
     private boolean isFainting = false;
     private boolean isEating = false;
     private boolean buildGreenHouse = false;
@@ -113,14 +112,16 @@ public class Player {
         backPack.addToInventory(ForagingTreeSourceType.MahoganySeeds,1);
         backPack.addToInventory(ForagingCrop.Apricot, 1);
         backPack.addToInventory(MineralType.Fiber, 30);
+        backPack.addToInventory(MineralType.Copper, 1);
         backPack.addLearntCookingRecipe(CookingRecipeType.DishOTheSea);
         backPack.addLearntCookingRecipe(CookingRecipeType.FruitSalad);
         backPack.addLearntCookingRecipe(CookingRecipeType.Spaghetti);
         backPack.addLearntCookingRecipe(CookingRecipeType.BakedFish);
         backPack.addLearntCookingRecipe(CookingRecipeType.VegetableMedley);
 
-//        backPack.addLearntRecipe(CraftType.Dehydrator);
-//        backPack.addLearntRecipe(CraftType.BeeHouse);
+          backPack.addLearntRecipe(CraftType.Dehydrator);
+ //         backPack.addLearntRecipe(CraftType.BeeHouse);
+        backPack.addLearntRecipe(CraftType.CheesePress);
 //        backPack.addLearntRecipe(CraftType.Bomb);
 //        backPack.addLearntRecipe(CraftType.PreservesJar);
 //        backPack.addLearntRecipe(CraftType.MysticTreeSeed);
@@ -128,6 +129,9 @@ public class Player {
 //        backPack.addLearntRecipe(CraftType.ScareCrow);
 //        backPack.addLearntRecipe(CraftType.MayonnaiseMachine);
 
+        for (NPC npc : MyGame.getAllNPCs()) {
+            npc.getMissions().get(0).claimedMission(this);
+        }
 
         notifications.add("Have fun playing this game i'm just trying to see how the notification panel looks hahahaha long text ");
     }

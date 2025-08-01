@@ -1,7 +1,6 @@
 package org.example.models.Enums;
 
-import org.example.models.ArtisanMachine;
-import org.example.models.ArtisanProduct;
+import org.example.models.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -170,32 +169,21 @@ public enum ArtisanType {
         return null;
     }
 
-    public static ArtisanType getArtisan(String input) {
-        input = input.replaceAll(" ", "").trim().toLowerCase();
-        if (input.startsWith("beehouse")) {
-            return BEE_HOUSE;
-        } else if (input.startsWith("cheesepress")) {
-            return CHEESE_PRESS;
-        } else if (input.startsWith("keg")) {
-            return Keg;
-        } else if (input.startsWith("dehydrator")) {
-            return Dehydrator;
-        } else if (input.startsWith("charcoalklin")) {
-            return CharcoalKlin;
-        } else if (input.startsWith("loom")) {
-            return Loom;
-        } else if (input.startsWith("mayonnaisemachine")) {
-            return MayonnaiseMachine;
-        } else if (input.startsWith("oilmaker")) {
-            return OilMaker;
-        } else if (input.startsWith("preservesjar")) {
-            return PreservesJar;
-        } else if (input.startsWith("fishsmoker")) {
-            return FishSmoker;
-        } else if (input.startsWith("furnace")) {
-            return Furnace;
+    public static ArtisanType getArtisan(CraftType craftType) {
+        switch (craftType) {
+            case BeeHouse: return BEE_HOUSE;
+            case CheesePress: return CHEESE_PRESS;
+            case Keg: return Keg;
+            case Dehydrator: return Dehydrator;
+            case CharcoalKlin: return CharcoalKlin;
+            case Loom: return Loom;
+            case MayonnaiseMachine: return MayonnaiseMachine;
+            case OilMaker: return OilMaker;
+            case PreservesJar: return PreservesJar;
+            case FishSmoker: return FishSmoker;
+            case Furnace: return Furnace;
+            default: return null;
         }
-        return null;
     }
 
     private String getName() {
@@ -234,57 +222,6 @@ public enum ArtisanType {
         return "";
     }
 
-//    public void useArtisan(String input) {
-//        input = input.toLowerCase().replaceAll(" ", "").replaceAll(getName(), "");
-//        for (Map<Map<String, Integer>, ArtisanProduct> recipes : items) {
-//            List<Map.Entry<Map<String, Integer>, ArtisanProduct>> sortedEntries = new ArrayList<>(recipes.entrySet());
-//
-//            sortedEntries.sort((e1, e2) -> {
-//                String key1 = e1.getKey().keySet().iterator().next();
-//                String key2 = e2.getKey().keySet().iterator().next();
-//                return Integer.compare(key2.length(), key1.length()); // Descending
-//            });
-//
-//            for (Map.Entry<Map<String, Integer>, ArtisanProduct> entry : sortedEntries) {
-//                String newInput = input;
-//                boolean found = true;
-//                boolean canAfford = true;
-//
-//                for (Map.Entry<String, Integer> ingredient : entry.getKey().entrySet()) {
-//                    if (input.contains(ingredient.getKey().toLowerCase().replaceAll(" ", ""))) {
-//
-////                        if (Game.getCurrentPlayer().getItemQuantity(Game.getDatabase().getItem(ingredient.getKey())) < ingredient.getValue()) {
-////                            canAfford = false;
-////                        }
-//
-//                        newInput = newInput.replaceAll(ingredient.getKey().toLowerCase().replaceAll(" ", ""), "");
-//                    } else {
-//                        found = false;
-//                        break;
-//                    }
-//                }
-//
-
-    /// /                if (found && !canAfford) {
-    /// /                    System.out.println("not enough ingredients in inventory");
-    /// /                    return;
-    /// /                }
-//                if (found && newInput.isEmpty()) {
-//                    System.out.print(entry.getValue().getName() + " will be ready in " + entry.getValue().getProcessingTime() + " hours");
-//                    ArtisanProduct product = entry.getValue();
-//                    products.add(new ArtisanProduct(product.getName(), product.getEnergy(), product.getProcessingTime(), product.getPrice()));
-//
-//                    return;
-//                }
-//                if (found && !newInput.isEmpty()) {
-//                    System.out.print("Extra items in input: " + input + ".");
-//                    return;
-//                }
-//            }
-//        }
-//
-//        System.out.println("invalid items.");
-//    }
     public void useArtisan(List<String> inputItems, ArtisanMachine machine) {
         List<String> input = inputItems.stream()
             .map(s -> s.toLowerCase().replaceAll(" ", ""))
@@ -308,14 +245,17 @@ public enum ArtisanType {
                 boolean matches = true;
 
                 for (Map.Entry<String, Integer> ingredient : requiredIngredients.entrySet()) {
-                    String ingredientName = ingredient.getKey().toLowerCase().replaceAll(" ", "");
+                    String ingredientName = ingredient.getKey();
                     int requiredAmount = ingredient.getValue();
 
-                    long count = inputCopy.stream()
-                        .filter(i -> i.equals(ingredientName))
-                        .count();
+//                    long count = inputCopy.stream()
+//                        .filter(i -> i.equals(ingredientName))
+//                        .count();
 
+                    int count = MyGame.getCurrentPlayer().getBackPack().howManyOfItem(new BasicItem(ingredientName, 0));
+                    System.out.println(ingredientName);
                     if (count < requiredAmount) {
+                        System.out.println("count : " + count);
                         matches = false;
                         break;
                     }
@@ -335,6 +275,7 @@ public enum ArtisanType {
                     return;
                 }
             }
+
         }
 
         System.out.println("Invalid items.");
@@ -356,6 +297,4 @@ public enum ArtisanType {
         return artisanProducts;
     }
 
-    //public void render or something
-    // if texture width < 15 -> size * 2
 }

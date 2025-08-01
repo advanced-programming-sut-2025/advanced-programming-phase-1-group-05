@@ -18,13 +18,17 @@ public class ArtisanMachine extends Actor {
     private float processingTime;
     private float elapsedTime;
     private ArtisanProduct product;
+    private Player owner;
 
-    public ArtisanMachine(ArtisanType type) {
+    public ArtisanMachine(ArtisanType type, Player player, float x, float y) {
         this.type = type;
         this.textureNormal = new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("ArtisanMachines/" + type.name().toLowerCase() + ".png"));
         this.textureReady = new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("ArtisanMachines/" + type.name().toLowerCase() + "_ready.png"));
-        // TODO set the position
-        setSize(textureNormal.getRegionWidth(), textureNormal.getRegionHeight());
+        setPosition(x, y);
+        if (textureNormal.getRegionWidth() < 15)
+            setSize(textureNormal.getRegionWidth() *2, textureNormal.getRegionHeight() * 2);
+        else setSize(textureNormal.getRegionWidth(), textureNormal.getRegionHeight());
+        owner = player;
     }
 
     public Result insertItem(List<String> items) {
@@ -46,7 +50,7 @@ public class ArtisanMachine extends Actor {
         super.act(delta);
         if (product == null || ready) return;
         elapsedTime += delta;
-        if (elapsedTime >= processingTime) {
+        if (elapsedTime / 42 >= processingTime) {
             ready = true;
         }
     }
@@ -94,5 +98,9 @@ public class ArtisanMachine extends Actor {
         return working;
     }
 
+
+    public Player getOwner() {
+        return owner;
+    }
 
 }

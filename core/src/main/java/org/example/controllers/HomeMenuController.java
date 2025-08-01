@@ -86,14 +86,31 @@ public class HomeMenuController {
 
     //check if a recipe can be crafted
     public boolean craftIngredientCheck(CraftType craft) {
-        BackPack playerBackpack = MyGame.getCurrentPlayer().getBackPack();
-        for(Map.Entry<Item, Integer> ingredientEntry : craft.getIngredients().entrySet()) {
-            if(!playerBackpack.getInventory().containsKey(ingredientEntry.getKey())) {
-                return false;
+//        BackPack playerBackpack = MyGame.getCurrentPlayer().getBackPack();
+//        for(Map.Entry<Item, Integer> ingredientEntry : craft.getIngredients().entrySet()) {
+//            if(!playerBackpack.getInventory().containsKey(ingredientEntry.getKey())) {
+//                return false;
+//            }
+//            if(playerBackpack.getInventory().get((ingredientEntry.getKey())) < ingredientEntry.getValue()) {
+//                return false;
+//            }
+//        }
+//        return true;
+        Map<Item, Integer> ingredients = craft.getIngredients();
+        Map<Item, Integer> inventory = MyGame.getCurrentPlayer().getBackPack().getInventory();
+        for (Item requiredItem : ingredients.keySet()) {
+            boolean found = false;
+
+            for (Item invItem : inventory.keySet()) {
+                if (invItem.getName().equalsIgnoreCase(requiredItem.getName())) {
+                    if (inventory.get(invItem) >= ingredients.get(requiredItem)) {
+                        found = true;
+                        break;
+                    }
+                }
             }
-            if(playerBackpack.getInventory().get((ingredientEntry.getKey())) < ingredientEntry.getValue()) {
-                return false;
-            }
+
+            if (!found) return false;
         }
         return true;
     }

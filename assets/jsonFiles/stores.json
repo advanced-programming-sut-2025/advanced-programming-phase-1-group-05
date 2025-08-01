@@ -765,9 +765,9 @@
     },
     {
       "name": "Pierre's General Store",
-      "xStart": 2250,
+      "xStart": 3250,
       "xEnd": 40,
-      "yStart": 3150,
+      "yStart": 4000,
       "yEnd": 45,
       "openingTime": 9,
       "closingTime": 17,

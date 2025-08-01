@@ -37,9 +37,8 @@ public class ProgressMeter extends Actor {
         batch.end();
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-//        shapeRenderer.setColor(Color.GRAY);
-//        shapeRenderer.rect(50, 20, 200, 20);
-        shapeRenderer.setColor(Color.YELLOW);
+        if (progress >= 70) shapeRenderer.setColor(Color.GREEN);
+        else shapeRenderer.setColor(Color.YELLOW);
         shapeRenderer.rect(1415, 240, 25, 9.8f * progress);
         shapeRenderer.end();
         batch.begin();

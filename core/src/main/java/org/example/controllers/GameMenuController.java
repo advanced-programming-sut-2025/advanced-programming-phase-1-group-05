@@ -519,37 +519,37 @@ public class GameMenuController extends MenuController {
         FishType caughtFish = FishType.getRandomFish(GameManager.getSeason(), fishingLevel);
         return caughtFish;
     }
-    public Result useArtisan(Matcher m) {
-        String args = m.group("args");
-        ArtisanType artisan = ArtisanType.getArtisan(args);
-        if (artisan == null)
-            return Result.error("That machine doesn’t seem to exist. Are you sure it’s real?");
+//    public Result useArtisan(Matcher m) {
+//        String args = m.group("args");
+//        ArtisanType artisan = ArtisanType.getArtisan(args);
+//        if (artisan == null)
+//            return Result.error("That machine doesn’t seem to exist. Are you sure it’s real?");
+//
+//        Player player = MyGame.getCurrentPlayer();
+////        if (!player.getBackPack().hasThisCraft(artisan.getCraftType()))
+////            return Result.error("Nope, artisan machines don’t have Wi-Fi. Go stand next to it!");
+//        //if (artisan != null) artisan.useArtisan(args);
+//        return Result.success("");
+//    }
 
-        Player player = MyGame.getCurrentPlayer();
-//        if (!player.getBackPack().hasThisCraft(artisan.getCraftType()))
-//            return Result.error("Nope, artisan machines don’t have Wi-Fi. Go stand next to it!");
-        //if (artisan != null) artisan.useArtisan(args);
-        return Result.success("");
-    }
-
-    public Result artisanGet(Matcher m) {
-        String args = m.group("artisanName");
-        ArtisanType artisan = ArtisanType.getArtisan(args);
-        if (artisan == null)
-            return Result.error("That machine doesn’t seem to exist. Are you sure it’s real?");
-        List<ArtisanProduct> products = artisan.getProducts();
-        StringBuilder builder = new StringBuilder();
-        if (artisan.products.isEmpty())
-            return Result.error("There's nothing in the machine-unless you're trying to process thin air");
-        if (products.isEmpty())
-            return Result.error("Hold tight! The machine’s still working on it.");
-        for (ArtisanProduct product : products) {
-            MyGame.getCurrentPlayer().getBackPack().addToInventory(product, 1);
-            builder.append("added " + product.getName() + " to your inventory");
-            artisan.products.remove(product);
-        }
-        return Result.success(builder.toString());
-    }
+//    public Result artisanGet(Matcher m) {
+//        String args = m.group("artisanName");
+//        ArtisanType artisan = ArtisanType.getArtisan(args);
+//        if (artisan == null)
+//            return Result.error("That machine doesn’t seem to exist. Are you sure it’s real?");
+//        List<ArtisanProduct> products = artisan.getProducts();
+//        StringBuilder builder = new StringBuilder();
+//        if (artisan.products.isEmpty())
+//            return Result.error("There's nothing in the machine-unless you're trying to process thin air");
+//        if (products.isEmpty())
+//            return Result.error("Hold tight! The machine’s still working on it.");
+//        for (ArtisanProduct product : products) {
+//            MyGame.getCurrentPlayer().getBackPack().addToInventory(product, 1);
+//            builder.append("added " + product.getName() + " to your inventory");
+//            artisan.products.remove(product);
+//        }
+//        return Result.success(builder.toString());
+//    }
 
     public Result cheatAddMoney(int amount) {
         Player player = MyGame.getCurrentPlayer();
@@ -1373,6 +1373,10 @@ public class GameMenuController extends MenuController {
         } else if((matcher = GameMenuCommands.EnergySetCC.getMatcher(command)) != null) {
             int value = Integer.parseInt(matcher.group("value"));
             return setEnergy(value);
+        }
+        else if ((matcher = GameMenuCommands.CheatAddMoney.getMatcher(command)) != null) {
+            int amount = Integer.parseInt(matcher.group("count"));
+            return cheatAddMoney(amount);
         }
         return new Result(false, "Invalid command.");
     }

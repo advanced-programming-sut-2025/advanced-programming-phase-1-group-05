@@ -37,13 +37,30 @@ public class Craft extends BasicItem implements Item {
     public boolean buildCraft() {
         Map<Item, Integer> ingredients = type.getIngredients();
         HashMap<Item, Integer> inventory = MyGame.getCurrentPlayer().getBackPack().getInventory();
-        for(Item item : ingredients.keySet()) {
-            if(!inventory.containsKey(item) ||
-                    (inventory.get(item) < ingredients.get(item))) return false;
+        for (Item requiredItem : ingredients.keySet()) {
+            boolean found = false;
+
+            for (Item invItem : inventory.keySet()) {
+                if (invItem.getName().equalsIgnoreCase(requiredItem.getName())) {
+                    if (inventory.get(invItem) >= ingredients.get(requiredItem)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!found) return false;
         }
         MyGame.getCurrentPlayer().increaseEnergy(-2);
-        for(Item item : ingredients.keySet()) {
-            MyGame.getCurrentPlayer().getBackPack().removeFromInventory(item, ingredients.get(item));
+        for(Item requiredItem : ingredients.keySet()) {
+            Item item = null;
+            for (Item invItem : inventory.keySet()) {
+                if (invItem.getName().equalsIgnoreCase(requiredItem.getName())){
+                    item = invItem;
+                    break;
+                }
+            }
+            MyGame.getCurrentPlayer().getBackPack().removeFromInventory(item, ingredients.get(requiredItem));
         }
         return true;
 
