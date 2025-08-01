@@ -26,6 +26,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.example.Main;
+import org.example.controllers.ChatController;
 import org.example.controllers.GameManager;
 import org.example.controllers.GameMenuController;
 import org.example.controllers.HomeMenuController;
@@ -169,6 +170,9 @@ public class GameScreen implements Screen {
     private float JOURNAL_X = 0;
     private float JOURNAL_Y = 0;
 
+    //chat
+    private ChatController chatController;
+
 
     public GameScreen(ArrayList<Player> playerList) {
         MyGame.setGameScreen(this);
@@ -184,6 +188,10 @@ public class GameScreen implements Screen {
         currentSeason = GameManager.getSeason();
         mapRenderer = new TileMapRenderer();
         mapRenderer.setSeason(currentSeason);
+
+        uiStage = new Stage(new ScreenViewport());
+
+        chatController = new ChatController(uiStage, skin, players, MyGame.getCurrentPlayer());
 
         Vector2 spawnPos = null;
         for (Player player : players) {
@@ -209,6 +217,9 @@ public class GameScreen implements Screen {
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
 
+        multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(uiStage);
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     private void tileOutline(Vector3 mouseWorld) {
@@ -1443,6 +1454,7 @@ public class GameScreen implements Screen {
         Drawable mailDrawable = new TextureRegionDrawable(new TextureRegion(mail));
         notificationButton = new ImageButton(mailDrawable);
         float padding = 70;
+        float padding2 = 120;
         float screenWidth = uiStage.getViewport().getScreenWidth();
         float screenHeight = uiStage.getViewport().getScreenHeight();
 
@@ -1473,6 +1485,30 @@ public class GameScreen implements Screen {
             }
         });
         uiStage.addActor(friendshipButton);
+
+        Texture chatTexture = GameAssetManager.getInstance().getOrLoadTexture("chat.png");
+        Drawable chatDrawable = new TextureRegionDrawable(new TextureRegion(chatTexture));
+        ImageButton chatButton = new ImageButton(chatDrawable);
+
+        float chatX = screenWidth - notificationButton.getWidth() - padding;
+        float chatY = screenHeight - notificationButton.getHeight() - padding2;
+
+        chatButton.setPosition(chatX, chatY);
+        chatButton.getImageCell().size(72, 56);
+        chatButton.setSize(72, 56);
+
+        chatButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Chat icon clicked!");
+                if (chatController != null) {
+                    chatController.toggleChatWindow();
+                }
+            }
+        });
+
+        uiStage.addActor(chatButton);
+
         forceViewportReset();
 
     }
@@ -2668,4 +2704,14 @@ public class GameScreen implements Screen {
         player.addAnimalHouse(building);
     }
 
+    //todo - chat - phase3
+    public void onNetworkMessageReceived(String type, String from, String to, String text) {
+        if (chatController == null) return;
+
+        if (type.equals("PUBLIC_CHAT")) {
+            chatController.receivePublicMessage(from, text);
+        } else if (type.equals("PRIVATE_CHAT")) {
+            chatController.receivePrivateMessage(from, text);
+        }
+    }
 }

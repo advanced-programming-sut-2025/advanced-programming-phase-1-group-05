@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import org.example.controllers.ChatController;
 import org.example.models.ChatMessage;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.List;
 
@@ -20,7 +20,6 @@ public class ChatView {
     private final ChatController controller;
 
     private Window chatWindow;
-    private ImageButton chatIcon;
     private SelectBox<String> targetSelect;
     private Table messageTable;
     private ScrollPane scrollPane;
@@ -31,17 +30,10 @@ public class ChatView {
         this.skin = skin;
         this.controller = controller;
 
-        // آیکون چت
-        Texture iconTexture = new Texture(Gdx.files.internal("chat.png"));
-        chatIcon = new ImageButton(new TextureRegionDrawable(new TextureRegion(iconTexture)));
-        chatIcon.setSize(48, 48);
-        chatIcon.setPosition(10, Gdx.graphics.getHeight() - chatIcon.getHeight() - 10);
-        stage.addActor(chatIcon);
-
-        // پنجره چت
+        // پنجره چت بسازیم
         chatWindow = new Window("Chat", skin);
         chatWindow.setSize(Gdx.graphics.getWidth() * 0.4f, Gdx.graphics.getHeight() * 0.3f);
-        chatWindow.setPosition(10, 60);
+        chatWindow.setPosition(20, Gdx.graphics.getHeight() - chatWindow.getHeight() - 80); // پایین بیاد
         chatWindow.setVisible(false);
 
         // SelectBox مقصد
@@ -50,34 +42,21 @@ public class ChatView {
         chatWindow.add(new Label("ارسال به:", skin)).pad(5);
         chatWindow.add(targetSelect).growX().pad(5).row();
 
-        // جدول پیام‌ها + اسکرول
+        // جدول پیام‌ها
         messageTable = new Table();
         messageTable.top().left();
         scrollPane = new ScrollPane(messageTable, skin);
-        scrollPane.setFadeScrollBars(false);
         chatWindow.add(scrollPane).colspan(2).grow().pad(5).row();
 
-        // فیلد متن + دکمه ارسال
+        // ورودی پیام + دکمه ارسال
         inputField = new TextField("", skin);
         inputField.setMessageText("پیام...");
         TextButton sendButton = new TextButton("ارسال", skin);
+
         chatWindow.add(inputField).growX().pad(5);
         chatWindow.add(sendButton).pad(5);
 
-        stage.addActor(chatWindow);
-
-        // رویداد کلیک آیکون
-        chatIcon.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                chatWindow.setVisible(!chatWindow.isVisible());
-                if (chatWindow.isVisible()) {
-                    stage.setKeyboardFocus(inputField);
-                }
-            }
-        });
-
-        // رویداد ارسال
+        // رویدادهای ارسال
         sendButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -85,13 +64,10 @@ public class ChatView {
             }
         });
 
-        inputField.setTextFieldListener((textField, c) -> {
-            if (c == '\r' || c == '\n') {
-                sendMessage();
-            }
+        inputField.setTextFieldListener((field, c) -> {
+            if (c == '\r' || c == '\n') sendMessage();
         });
 
-        // تغییر مقصد چت
         targetSelect.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
@@ -111,21 +87,12 @@ public class ChatView {
     public void refreshMessages(List<ChatMessage> messages) {
         messageTable.clear();
         for (ChatMessage msg : messages) {
-            String labelText = msg.getSenderName() + ": " + msg.getText();
-            Label label = new Label(labelText, skin);
+            Label label = new Label(msg.getSenderName() + ": " + msg.getText(), skin);
             label.setAlignment(Align.left);
             messageTable.add(label).left().row();
         }
         scrollPane.layout();
         scrollPane.setScrollPercentY(1f);
-    }
-
-    public String getTarget() {
-        return targetSelect.getSelected();
-    }
-
-    public Skin getSkin() {
-        return skin;
     }
 
     public boolean isVisible() {
@@ -139,10 +106,19 @@ public class ChatView {
             }
             chatWindow.setVisible(true);
             stage.setKeyboardFocus(inputField);
+            System.out.println("Chat window added and visible!");
         } else {
             chatWindow.remove();
             stage.unfocus(inputField);
+            System.out.println("Chat window removed!");
         }
     }
 
+    public Skin getSkin() {
+        return skin;
+    }
+
+    public String getTarget() {
+        return targetSelect.getSelected();
+    }
 }
