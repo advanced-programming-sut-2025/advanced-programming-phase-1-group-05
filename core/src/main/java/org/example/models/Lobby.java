@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class Lobby {
+    public static final int MAX_PLAYERS = 4;
+
     private String id;
     private String name;
     private boolean isPrivate;
@@ -35,9 +37,14 @@ public class Lobby {
     public Player getAdmin() { return admin; }
     public long getCreationTime() { return creationTime; }
 
-    public void addPlayer(Player player) {
+    public boolean addPlayer(Player player) {
+        if (players.size() >= MAX_PLAYERS) {
+            return false; // ظرفیت پر شده
+        }
         if (!players.contains(player)) players.add(player);
+        return true;
     }
+
 
     public void removePlayer(Player player) {
         players.remove(player);

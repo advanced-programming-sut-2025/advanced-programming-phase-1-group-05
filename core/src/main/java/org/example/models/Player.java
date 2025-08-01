@@ -89,16 +89,8 @@ public class Player {
         backPack.getInventory().put(new FishingPole(), 1);
 
         initializeAnimations();
-        //TODO fix new row
-//        backPack.getInventory().put(new Food(CookingRecipeType.FruitSalad), 1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.Blueberry),1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.Carrot),1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.Strawberry),1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.Radish),1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.Sunflower),1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.FairyRose),1);
-//        backPack.getInventory().put(new FruitAndVegetable(CropType.Artichoke),1);
-        backPack.addToInventory(CropType.Blueberry, 1);
+        backPack.addToInventory(CropType.HotPepper, 2);
+        backPack.addToInventory(FishType.Sardine, 2);
         backPack.addToInventory(CropType.Melon, 1);
         backPack.addToInventory(ForagingSeedType.CranberrySeeds,1);
         backPack.addToInventory(ForagingSeedType.StrawberrySeeds,1);
@@ -528,6 +520,7 @@ public class Player {
 
     public void setEating(boolean eating) {
         isEating = eating;
+        if(eating) MyGame.getGameScreen().startFoodBuff();
     }
 
     public Item getCurrentItem() {

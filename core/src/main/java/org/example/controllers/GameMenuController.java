@@ -1381,6 +1381,7 @@ public class GameMenuController extends MenuController {
         return new Result(false, "Invalid command.");
     }
 
+    //todo : lobby
     public List<Lobby> getActiveLobbies() {
         // پاک کردن لابی‌های قدیمی بدون پلیر
         long now = System.currentTimeMillis();
@@ -1414,7 +1415,9 @@ public class GameMenuController extends MenuController {
                 if (lobby.isPrivate() && (password == null || !lobby.getPassword().equals(password))) {
                     return false;
                 }
-                lobby.addPlayer(player);
+                if (!lobby.addPlayer(player)) {
+                    return false;
+                }
                 currentLobby = lobby;
                 return true;
             }

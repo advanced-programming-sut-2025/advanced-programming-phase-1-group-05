@@ -46,6 +46,7 @@ public enum CookingRecipeType implements Material, Item {
     private final int price;
     private final String texturePath;
     private final TextureRegion textureRegion;
+    private static final TextureRegion buffTextureRegion = new TextureRegion(new Texture("Stardew_Valley_Images-main/Buff/Max_Energy_Buff.png"));;
 
     CookingRecipeType(String name, Supplier<Map<Item, Integer>> ingredientsSupplier, int energy, boolean buff, String source, int price, String texturePath) {
         this.name = name;
@@ -94,6 +95,9 @@ public enum CookingRecipeType implements Material, Item {
     }
     public TextureRegion getTexture() {
         return textureRegion;
+    }
+    public static TextureRegion getBuffTexture() {
+        return buffTextureRegion;
     }
 }
 
