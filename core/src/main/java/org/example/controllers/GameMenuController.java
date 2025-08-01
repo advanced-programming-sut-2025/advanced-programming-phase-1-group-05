@@ -1411,7 +1411,9 @@ public class GameMenuController extends MenuController {
                 if (lobby.isPrivate() && (password == null || !lobby.getPassword().equals(password))) {
                     return false;
                 }
-                lobby.addPlayer(player);
+                if (!lobby.addPlayer(player)) {
+                    return false;
+                }
                 currentLobby = lobby;
                 return true;
             }

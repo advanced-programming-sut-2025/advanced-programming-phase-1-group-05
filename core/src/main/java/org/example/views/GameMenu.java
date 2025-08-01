@@ -425,7 +425,12 @@ public class GameMenu implements Screen {
                     showPasswordDialog(selectedLobby);
                 } else {
                     boolean ok = controller.joinLobby(selectedLobby.getId(), MyGame.getCurrentPlayer(), null);
-                    if (ok) updateLobbyDetail();
+                    if (ok) {
+                        updateLobbyDetail();
+                    } else {
+                        resultLabel.setText("⚠️ Lobby is full (max 4 players) or password is wrong!");
+                    }
+
                 }
             }
         });
