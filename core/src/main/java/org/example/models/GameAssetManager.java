@@ -12,6 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import org.example.models.Enums.AnimalType;
 import org.example.models.Enums.Direction;
+import org.example.models.Enums.Season;
+import org.example.models.Enums.Weather;
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -32,6 +35,11 @@ public class GameAssetManager {
     public static final TextureRegion toolSelection = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/tool selection.png"));
     public static final TextureRegion resultTexture = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/result.png"));
     public static final TextureRegion journalBg = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/journal page.png"));
+    private static final Texture clockSheet = new Texture("Stardew_Valley_Images-main/extra/PC Computer - Stardew Valley - Clock.png");
+    public static final TextureRegion clockTexture = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/clock.png"));
+    private static final HashMap<Season, TextureRegion> seasonIcons = new HashMap<>();
+    private static final HashMap<Weather, TextureRegion> weatherIcons = new HashMap<>();
+
     public Map<AnimalType, AnimalAnimations> animalAnimations = new HashMap<>();
     private GameAssetManager() {
         // Load skin from assets/skin/
@@ -46,7 +54,9 @@ public class GameAssetManager {
         loadSfx();
         loadNPCAvatars();
         loadAnimalAnimations();
+        loadClockSheet();
     }
+
 
     public static GameAssetManager getInstance() {
         if (instance == null)
@@ -180,6 +190,28 @@ public class GameAssetManager {
                 entry.getValue().play();
             }
         }
+    }
+
+    private void loadClockSheet() {
+        TextureRegion[][] gridIcons = TextureRegion.split(clockSheet,13,9);
+        seasonIcons.put(Season.SPRING, gridIcons[0][0]);
+        seasonIcons.put(Season.SUMMER, gridIcons[0][1]);
+        seasonIcons.put(Season.FALL, gridIcons[0][2]);
+        seasonIcons.put(Season.WINTER, gridIcons[0][3]);
+
+        weatherIcons.put(Weather.Sunny, gridIcons[1][3]);
+        weatherIcons.put(Weather.Rain, gridIcons[1][2]);
+        weatherIcons.put(Weather.Snow, gridIcons[2][1]);
+        weatherIcons.put(Weather.Storm, gridIcons[2][3]);
+
+    }
+
+    public static TextureRegion getSeasonIcon(Season season) {
+        return seasonIcons.get(season);
+    }
+
+    public static TextureRegion getWeatherIcon(Weather weather) {
+        return weatherIcons.get(weather);
     }
 
 }
