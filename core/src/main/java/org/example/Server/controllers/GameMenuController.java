@@ -7,6 +7,7 @@ import org.example.Client.DialogueManager;
 import org.example.Client.GameAssetManager;
 import org.example.Common.*;
 import org.example.Common.Enums.*;
+import org.example.Server.managers.LobbyManager;
 import org.example.Server.models.*;
 import org.example.Common.Tool.FishingPole;
 import org.example.Common.Tool.Hoe;
@@ -489,6 +490,123 @@ public class GameMenuController extends MenuController {
     }
 
 
+    public Result loadGame() {
+//        if (!currentUser.getUsername().equals(MyGame.getCurrentPlayer().getUsername())
+//                || !currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())) {
+//            for (int i = 0; i < selectedPlayers.size(); i++) {
+//                if (currentUser.getUsername().equals(selectedPlayers.get(i).getUsername())) {
+//                    canExitGame[i] = true;
+//                }
+//            }
+//        }
+        User.haveSavedGame = true;
+        if (User.haveSavedGame) {
+            DBController.loadAllUsers(); // یا UserDatabase.loadUsers();
+            UserDatabase.loadUsers();
+            DBController.loadGameState();
+            if (RegisterMenuController.currentUser != null) {
+                Player currentPlayer = MyGame.getPlayerByUsername(RegisterMenuController.currentUser.getUsername());
+                if (currentPlayer != null) {
+                    MyGame.setCurrentPlayer(currentPlayer);
+                    System.out.println("Current player set to: " + currentPlayer.getUsername());
+                } else {
+                    System.err.println("Could not find a player for the logged in user.");
+                }
+            }
+            return Result.success("Game loaded successfully :)");
+        }
+        return Result.error("There is no Game to continue!");
+    }
+
+    public Result newGame(String input) {
+        Pattern pattern = Pattern.compile(
+            "^game new(?: -u (?<username>[\\w-]+))" +
+                "(?: -u (?<username2>[\\w-]+))?" +
+                "(?: -u (?<username3>[\\w-]+))?" +
+                "(?<extra> -u [\\w-]+)*$"
+        );
+
+        Matcher matcher = pattern.matcher(input.trim());
+
+        if (!matcher.matches()) {
+            return Result.error("Invalid command format! Correct format: 'game new -u <username> [-u <username2>] [-u <username3>]'");
+        }
+        if (matcher.group("extra") != null) {
+            return Result.error("Maximum 3 usernames allowed!");
+        }
+
+        if (matcher.group("username") == null) {
+            return Result.error("At least one username must be provided!");
+        }
+
+        selectedPlayers = new ArrayList<>();
+        selectedPlayers.add(new Player(currentUser));
+
+        for (int i = 1; i <= 3; i++) {
+            String username = matcher.group("username" + (i == 1 ? "" : i));
+            if (username != null) {
+                User user = UserDatabase.getUserByUsername(username);
+                if (user == null) {
+                    return Result.error("User '" + username + "' not found!");
+                }
+                if (UserDatabase.isUserInGame(username)) {
+                    return Result.error("User '" + username + "' is already in another game!");
+                }
+                Player player = new Player(user);
+                selectedPlayers.add(player);
+                currentUser.addFriend(username);
+                user.incrementGamesPlayed();
+            }
+        }
+
+//        canChooseMap = true;
+        canExitGame = new boolean[selectedPlayers.size()];
+        Arrays.fill(canExitGame, false);
+
+        for (Player player : selectedPlayers) {
+            UserDatabase.setUserInGame(player.getUsername(), true);
+        }
+
+        MyGame.currentPlayerIndex = 0;
+        playerMapChoices.clear();
+        MyGame.getAllPlayers().addAll(selectedPlayers);
+        DBController.savePlayersToFile();
+
+        return Result.success("Now you can play Game:)");
+    }
+
+    public Result startGameIfReady() {
+        if (canChooseMap) {
+            return new Result(false, "Game already started or in progress.");
+        }
+        if (selectedPlayers == null || selectedPlayers.isEmpty()) {
+            return new Result(false, "At least 3 players are needed to start the game.");
+        }
+
+        if (selectedPlayers.size() < 3) {
+            return new Result(false, "At least 3 players are needed to start the game.");
+        }
+
+        canChooseMap = true;
+        return new Result(true, "All players added. Please choose your maps.");
+    }
+
+    public Result deleteGame() {
+        if (selectedPlayers.isEmpty()) {
+            return Result.error("No active game to delete!");
+        }
+        Result result = terminateGame();
+
+        if (result.isSuccess()) {
+            // پاک کردن فایل players.json
+            FileHandle file = Gdx.files.local("players.json");
+            if (file.exists()) {
+                file.writeString("", false);
+            }
+        }
+
+        return result;
+    }
 
     private boolean canWalk(int x, int y) {
         for (Player player : MyGame.getAllPlayers()) {
@@ -592,58 +710,30 @@ public class GameMenuController extends MenuController {
 
     //todo : lobby
     public List<Lobby> getActiveLobbies() {
-        // پاک کردن لابی‌های قدیمی بدون پلیر
-        long now = System.currentTimeMillis();
-        Iterator<Lobby> iterator = activeLobbies.iterator();
-        while (iterator.hasNext()) {
-            Lobby lobby = iterator.next();
-            if (lobby.isEmpty() ||
-                (lobby.getPlayers().size() == 1 && (now - lobby.getCreationTime() > 5 * 60 * 1000))) {
-                iterator.remove();
-            }
-        }
-
-        // فقط لابی‌های visible رو نشون بده
-        List<Lobby> visible = new ArrayList<>();
-        for (Lobby lobby : activeLobbies) {
-            if (lobby.isVisible()) visible.add(lobby);
-        }
-        return visible;
+        return LobbyManager.getActiveLobbies();
     }
 
     public Lobby createLobby(String name, boolean isPrivate, String password, boolean isVisible, Player creator) {
-        Lobby lobby = new Lobby(name, isPrivate, password, isVisible, creator);
-        activeLobbies.add(lobby);
-        currentLobby = lobby;
-        return lobby;
+        return LobbyManager.createLobby(name, isPrivate, password, isVisible, creator);
     }
 
-    public boolean joinLobby(String id, Player player, String password) {
-        for (Lobby lobby : activeLobbies) {
-            if (lobby.getId().equals(id)) {
-                if (lobby.isPrivate() && (password == null || !lobby.getPassword().equals(password))) {
-                    return false;
-                }
-                if (!lobby.addPlayer(player)) {
-                    return false;
-                }
-                currentLobby = lobby;
-                return true;
-            }
-        }
-        return false;
+    public boolean joinLobby(String lobbyId, Player player, String password) {
+        return LobbyManager.joinLobby(lobbyId, player, password);
     }
 
     public void leaveLobby(Player player) {
-        if (currentLobby != null) {
-            currentLobby.removePlayer(player);
-            if (currentLobby.isEmpty()) {
-                activeLobbies.remove(currentLobby);
-            }
-            currentLobby = null;
-        }
+        LobbyManager.leaveLobby(player);
     }
 
+    public Lobby getCurrentLobbyFor(Player player) {
+        // فقط برای راحتی UI اگر لازم داشت لابی فعلی رو بگیره
+        for (Lobby lobby : LobbyManager.getActiveLobbies()) {
+            if (lobby.getPlayers().contains(player)) {
+                return lobby;
+            }
+        }
+        return null;
+    }
 
     public Lobby getCurrentLobby() {
         return currentLobby;

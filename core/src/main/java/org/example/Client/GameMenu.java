@@ -1,4 +1,4 @@
-//package org.example.Client;
+package org.example.Client;
 //
 //import com.badlogic.gdx.Gdx;
 //import com.badlogic.gdx.Screen;
@@ -226,11 +226,8 @@
 //    @Override public void dispose() { stage.dispose(); }
 //}
 
-package org.example.views;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -238,12 +235,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import org.example.Main;
-import org.example.controllers.GameMenuController;
-import org.example.models.Lobby;
-import org.example.models.MyGame;
-import org.example.models.Player;
-import org.example.models.Result;
+import org.example.Common.Lobby;
+import org.example.Common.Player;
+import org.example.Common.Network.ResultResponse;
+import org.example.Server.controllers.GameMenuController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -292,7 +287,7 @@ public class GameMenu implements Screen {
 
         table.add(titleLabel).colspan(2).padBottom(15).row();
 
-        // سه ورودی بازیکنان قبلی
+        // سه ورودی بازیکنان
         for (int i = 1; i <= 3; i++) {
             TextField playerField = new TextField("", skin);
             playerFields.add(playerField);
@@ -322,83 +317,6 @@ public class GameMenu implements Screen {
         table.add(resultLabel).colspan(2).pad(5).width(400).row();
 
         // --------- Events ----------
-        addPlayersBtn.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                resultLabel.setText("");
-
-                usernames.clear();
-                for (TextField field : playerFields) {
-                    String username = field.getText().trim();
-                    if (username.isEmpty()) {
-                        resultLabel.setText("Please enter all 3 player names.");
-                        return;
-                    }
-                    usernames.add(username);
-                }
-
-                StringBuilder command = new StringBuilder("game new");
-                for (String username : usernames) {
-                    command.append(" -u ").append(username);
-                }
-
-                Result result = controller.newGame(command.toString());
-                resultLabel.setText(result.getMessage());
-            }
-        });
-
-        startGameBtn.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Result result = controller.startGameIfReady();
-                resultLabel.setText(result.getMessage());
-
-                if (result.isSuccess()) {
-                    List<String> usernames = new ArrayList<>();
-                    for (Player player : GameMenuController.selectedPlayers) {
-                        usernames.add(player.getUsername());
-                    }
-                    MenuNavigator.showMapSelectionScreen(usernames, skin, controller);
-                }
-            }
-        });
-
-        loadGameBtn.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                FileHandle file = Gdx.files.local("players.json");
-                if (file.exists() && file.length() > 0) {
-                    resultLabel.setText("Another player is already in a game!");
-                    return;
-                }
-
-                Result result = controller.loadGame();
-                resultLabel.setText(result.getMessage());
-            }
-        });
-
-        deleteGameBtn.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (GameMenuController.selectedPlayers.isEmpty()) {
-                    resultLabel.setText("No active game to delete!");
-                    return;
-                }
-                usernames.clear();
-                GameMenuController.selectedPlayers.clear();
-                Result deleteResult = controller.deleteGame();
-                resultLabel.setText(deleteResult.getMessage());
-            }
-        });
-
-        exitGameBtn.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                MenuNavigator.showMainMenu();
-            }
-        });
-
-        //todo: loby
         refreshLobbyBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -416,19 +334,18 @@ public class GameMenu implements Screen {
         joinLobbyBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                selectedLobby = (Lobby) lobbyList.getSelected();
+                selectedLobby = lobbyList.getSelected();
                 if (selectedLobby == null) return;
 
                 if (selectedLobby.isPrivate()) {
                     showPasswordDialog(selectedLobby);
                 } else {
-                    boolean ok = controller.joinLobby(selectedLobby.getId(), MyGame.getCurrentPlayer(), null);
+                    boolean ok = controller.joinLobby(selectedLobby.getId(), new Player(GameMenuController.currentUser), null);
                     if (ok) {
                         updateLobbyDetail();
                     } else {
                         resultLabel.setText("⚠️ Lobby is full (max 4 players) or password is wrong!");
                     }
-
                 }
             }
         });
@@ -436,7 +353,7 @@ public class GameMenu implements Screen {
         leaveLobbyBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                controller.leaveLobby(MyGame.getCurrentPlayer());
+                controller.leaveLobby(new Player(GameMenuController.currentUser));
                 selectedLobby = null;
                 refreshLobbies();
                 lobbyDetail.setText("");
@@ -467,11 +384,13 @@ public class GameMenu implements Screen {
             @Override
             protected void result(Object obj) {
                 if ((boolean) obj) {
-                    controller.createLobby(nameField.getText(),
+                    controller.createLobby(
+                        nameField.getText(),
                         privateBox.isChecked(),
                         privateBox.isChecked() ? passwordField.getText() : null,
                         visibleBox.isChecked(),
-                        MyGame.getCurrentPlayer());
+                        new Player(GameMenuController.currentUser)
+                    );
                     refreshLobbies();
                 }
             }
@@ -513,7 +432,11 @@ public class GameMenu implements Screen {
             @Override
             protected void result(Object obj) {
                 if ((boolean) obj) {
-                    boolean ok = controller.joinLobby(lobby.getId(), MyGame.getCurrentPlayer(), passwordField.getText());
+                    boolean ok = controller.joinLobby(
+                        lobby.getId(),
+                        new Player(GameMenuController.currentUser),
+                        passwordField.getText()
+                    );
                     if (ok) updateLobbyDetail();
                 }
             }
