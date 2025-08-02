@@ -1,0 +1,80 @@
+package org.example.Common.Tool;
+
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import org.example.Client.GameAssetManager;
+import org.example.Common.GameTile;
+import org.example.Common.Item;
+import org.example.Server.models.*;
+
+import org.example.Common.Enums.ItemLevel;
+import org.example.Common.Enums.TileType;
+import org.example.Server.models.Skills.Mining;
+import org.example.Server.models.Skills.Skill;
+
+public class Pickaxe implements Tool <ItemLevel> {
+    ItemLevel level = ItemLevel.Normal;
+
+    @Override
+    public String getName() {
+        return "Pickaxe";
+    }
+    @Override
+    public int getPrice() {
+        return 0;
+    }
+    @Override
+    public Result use(GameTile tile){
+        GameAssetManager.playSfx("use pickaxe");
+        Skill mining = MyGame.getCurrentPlayer().getMiningSkill();
+        int energyUsage = level.getEnergyUsage();
+
+        Item item = tile.getItemOnTile();
+        if(item == null && tile.getTileType() == TileType.Soil){
+            if(mining.isMaxLevel()) energyUsage --;
+            if(!reduceEnergy(energyUsage))
+                return new Result(false, "You don't have enough energy");
+            tile.setTileType(TileType.FarmFlat);
+        } else if(item == null && tile.getTileType() == TileType.Water){
+            return new Result(false, "You can't use the pickaxe on this tile");
+        } else if(item != null) {
+            if(mining.isMaxLevel()) energyUsage --;
+            if(!reduceEnergy(energyUsage))
+                return new Result(false, "You don't have enough energy");
+            if(item instanceof Mineral) {
+                ((Mining) mining).mine(tile, this);
+                return new Result(true, "Successfully mined a mineral");
+            } else if(item instanceof Craft) {
+                MyGame.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
+                tile.setItemOnTile(null);
+            }
+            else {
+                MyGame.getCurrentPlayer().getForagingSkill().forageItem(tile);
+            }
+        }
+
+        return new Result(true, "");
+    }
+
+    @Override
+    public boolean reduceEnergy(int amount){
+        if(amount < 0) amount = 0;
+        if(MyGame.getCurrentPlayer().getEnergy() - amount < 0)return false;
+        MyGame.getCurrentPlayer().increaseEnergy(-amount);
+        return true;
+    }
+    @Override
+    public ItemLevel getLevel() {
+        return level;
+    }
+    @Override
+    public void upgradeLevel(){
+        if (!level.isMaxLevel()) {
+            level = level.upgradeLevel();
+        }
+    }
+    @Override
+    public TextureRegion getTexture() {
+        return level.getToolTextureRegion(this);
+    }
+
+}

@@ -1,0 +1,67 @@
+package org.example.Server.models.Skills;
+
+import org.example.Common.Enums.CookingRecipeType;
+import org.example.Server.models.MyGame;
+import org.example.Common.GameTile;
+import org.example.Common.Tool.FishingPole;
+
+public class Fishing implements Skill {
+    int level = 0;
+    int capacity = 0;
+
+    public void fishing (GameTile tile, FishingPole pole) {
+        //TODO implement fishing
+        //if successful
+        increaseCapacity();
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+    public int getCapacity() {
+        return capacity;
+    }
+    @Override
+    public int getLevel() {
+        return level;
+    }
+    @Override
+    public boolean isMaxLevel() {
+        return level == 10;
+    }
+    @Override
+    public void setLevel(int level) {
+        this.level = level;
+    }
+    @Override
+    public void increaseLevel() {
+        if(level < 4) this.level ++;
+    }
+    @Override
+    public boolean canGoToNextLevel() {
+        if((level + 1) * 100 + 50 <= capacity) {
+            capacity -= (level + 1)*100 + 50;
+            increaseLevel();
+            return true;
+        }
+        return false;
+    }
+    @Override
+    public void increaseCapacity() {
+        this.capacity += 10;
+    }
+
+    @Override
+    public void handleLevelChangeTrophies(int level){
+        switch(level){
+            case 2: {
+                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.DishOTheSea);
+                break;
+            }
+            case 3: {
+                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.SeaformPudding);
+                break;
+            }
+        }
+    }
+}

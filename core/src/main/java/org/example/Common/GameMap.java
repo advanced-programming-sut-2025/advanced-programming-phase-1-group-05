@@ -1,0 +1,515 @@
+package org.example.Common;
+
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
+import org.example.Common.Enums.*;
+import org.example.Server.controllers.GameManager;
+import org.example.Server.models.*;
+import org.example.Server.models.Building.GreenHouse;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+
+public class GameMap {
+    public static final int MAP_WIDTH = 200;
+    public static final int MAP_HEIGHT = 200;
+    private static GameTile[][] map = new GameTile[MAP_HEIGHT][MAP_WIDTH];
+    private static final int TILE_SIZE = 64;
+    private static final int PLAYER_FARM_WIDTH = 70;
+    private static final int PLAYER_FARM_HEIGHT = 70;
+
+    ArrayList<FruitAndVegetable> plants = new ArrayList<>();
+    ArrayList<Tree> trees = new ArrayList<>();
+    GreenHouse greenHouse = new GreenHouse();
+
+    public ArrayList<FruitAndVegetable> getPlants() {
+        return plants;
+    }
+    public ArrayList<Tree> getTrees() {
+        return trees;
+    }
+    public void addPlant(FruitAndVegetable fruitAndVegetable) {
+        plants.add(fruitAndVegetable);
+    }
+    public void addTree(Tree tree) {
+        trees.add(tree);
+    }
+
+    //crow damage during the night with 25% probability
+    public Result crowDamage() {
+        System.out.println("caw caw mf");
+        //TODO nothing from greenhouse
+        ArrayList<FruitAndVegetable> plants = new ArrayList<>();
+        ArrayList<Tree> trees = new ArrayList<>();
+        for(int i = 0; i < map.length; i++) {
+            for(int j = 0; j < map[0].length; j++) {
+                if(map[j][i].getItemOnTile()!=null) {
+                    if(map[j][i].getItemOnTile() instanceof FruitAndVegetable) {
+                        plants.add((FruitAndVegetable) map[j][i].getItemOnTile());
+                    } else if(map[j][i].getItemOnTile() instanceof Tree) {
+                        trees.add((Tree) map[j][i].getItemOnTile());
+                    }
+                }
+            }
+        }
+
+        int groupOf16 = (plants.size() + trees.size()) / 16;
+        Random random = new Random();
+        for (int i = 0; i < groupOf16; i++) {
+            if (random.nextDouble() < 0.25) {
+                boolean targetPlant = random.nextBoolean();
+
+                if (targetPlant && !plants.isEmpty()) {
+                    int index = random.nextInt(plants.size());
+                    FruitAndVegetable fruitAndVegetable = plants.get(index);
+                    if(fruitAndVegetable.isProtectedByScareCrow())
+                        return new Result(false, "Your plant was protected by scare crow.");
+                    GameTile tile = getTile(fruitAndVegetable.getCoordinates().getKey(),
+                            fruitAndVegetable.getCoordinates().getValue());
+                    if(tile.getTileType() != null && tile.getTileType().equals(TileType.GreenHouse))
+                        return new Result(true, "Your plant was protected in the green house.");
+                    tile.setItemOnTile(new Animal("Crow", AnimalType.CROW, MyGame.getCurrentPlayer()));
+                    return new Result(true, "A crow destroyed your plant during the night");
+                } else if (targetPlant && !trees.isEmpty()) {
+                    int index = random.nextInt(trees.size());
+                    Tree tree = trees.get(index);
+                    if(tree.isProtectedByScareCrow()) return new Result(false,"The tree was protected by scare crow.");
+                    tree.setFruitGrowthCounter(0);
+                   return new Result(true, "A crow destroyed your tree during the night");
+                }
+            }
+        }
+        return new Result(false, "");
+    }
+
+    //set a random foraging item on some tiles after the end of each day
+    public void setForagingItems() {
+        int totalTiles = map.length * map[0].length;
+        Random random = new Random();
+        if (random.nextInt(2) == 0) {
+            int chosen = random.nextInt(totalTiles);
+            int row = chosen / map[0].length;
+            int col = chosen % map[0].length;
+
+            GameTile tile = map[row][col];
+            Item item;
+            if (tile != null && tile.getItemOnTile() == null) {
+                if (chosen % 5 == 0) {
+                    ForagingTreeSourceType type = ForagingTreeSourceType.getRandomForagingTreeType(GameManager.getSeason());
+                    item = new ForagingItem(type, type.getName(), type.getPrice());
+                    tile.setItemOnTile(item);
+                } else if(chosen % 5 == 1) {
+                    ForagingCrop type = ForagingCrop.getRandomForagingCrop(GameManager.getSeason());
+                    item = new ForagingItem(type, type.getName(), type.getPrice());
+                    tile.setItemOnTile(item);
+                } else if(chosen % 5 == 2) {
+                    item = MineralType.Wood;
+                    tile.setItemOnTile(item);
+                } else if(chosen % 5 == 3){
+                    item = MineralType.Fiber;
+                    tile.setItemOnTile(item);
+                } else {
+                    item = MineralType.Stone;
+                    tile.setItemOnTile(item);
+                }
+            }
+        }
+    }
+
+    //spawn foraging minerals
+    public void setForagingMinerals() {
+        Random random = new Random();
+
+        if (random.nextInt(25) == 0) { // 4% chance
+            List<GameTile> mineralTiles = new ArrayList<>();
+
+            for (int row = 0; row < map.length; row++) {
+                for (int col = 0; col < map[0].length; col++) {
+                    GameTile tile = map[row][col];
+                    if (tile != null && tile.getTileType() == TileType.Mine && tile.getItemOnTile() == null) {
+                        mineralTiles.add(tile);
+                    }
+                }
+            }
+
+            if (!mineralTiles.isEmpty()) {
+                GameTile chosenTile = mineralTiles.get(random.nextInt(mineralTiles.size()));
+                MineralType mineralType = MineralType.getRandomMineralType();
+                chosenTile.setItemOnTile(new Mineral(mineralType));
+            }
+        }
+    }
+
+    public void dryTiles(){
+        for (int row = 0; row < map.length; row++) {
+            for (int col = 0; col < map[0].length; col++) {
+                GameTile tile = map[row][col];
+                if(tile.getTileType() == TileType.WateredSoil) tile.setTileType(TileType.Soil);
+            }
+        }
+    }
+    public void growPlants(){
+        for (int row = 0; row < map.length; row++) {
+            for (int col = 0; col < map[0].length; col++) {
+                GameTile tile = map[row][col];
+                if (tile == null) continue;
+                if (tile.getItemOnTile() != null) {
+                    Item item = tile.getItemOnTile();
+                    if (item instanceof FruitAndVegetable) {
+                        FruitAndVegetable plant = (FruitAndVegetable) item;
+                        if (plant.isAlive()) plant.grow();
+                        else tile.setItemOnTile(null);
+                    } else if (item instanceof Tree) {
+                        Tree tree = (Tree) item;
+                        tree.growTree();
+                    }
+                }
+            }
+        }
+        dryTiles();
+    }
+    public GameMap() {
+        initEmptyMap(TileType.Flat);
+        generateFarm(0, 0, 30, 30, 1);          // Farm A
+        generateFarm(0, 70, 30, 30, 2);         // Farm B
+        generateFarm(70, 0, 30, 30, 3);         // Farm C
+        generateFarm(70, 70, 30, 30, 4);        // Farm D
+
+    }
+
+    public static void generatePlaceOfPlayer(int farmNum) {
+        System.out.println(farmNum);
+        int startX, startY;
+
+        switch (farmNum) {
+            case 1:
+                startX = 5;
+                startY = 5;
+                break;
+            case 2:
+                startX = 95;
+                startY = 5;
+                break;
+            case 3:
+                startX = 5;
+                startY = 95;
+                break;
+            case 4:
+                startX = 95;
+                startY = 95;
+                break;
+            default:
+                startX = 50;
+                startY = 50;
+                break;
+        }
+
+        MyGame.getCurrentPlayer().setCoordinate(startX, startY);
+
+        GameTile playerTile = getTile(startX, startY);
+        if (playerTile != null) {
+            playerTile.occupy();
+        }
+    }
+
+    private void placeRandomDecorations(int startX, int startY, int width, int height,
+                                        int cropCount, int stoneCount,
+                                        List<Rectangle> occupiedAreas, Random random) {
+        int placedTrees = 0;
+        int placedStones = 0;
+        int maxAttempts = (cropCount + stoneCount) * 2;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+            if (placedTrees >= cropCount && placedStones >= stoneCount) {
+                break;
+            }
+
+            int x = startX + random.nextInt(height);
+            int y = startY + random.nextInt(width);
+
+            if (!isInBounds(x, y)) {
+                continue;
+            }
+
+            GameTile tile = getTile(x, y);
+            if (tile == null || tile.getTileType() != TileType.Soil) {
+                continue;
+            }
+
+            Rectangle point = new Rectangle(x, y, 1, 1);
+            if (isAreaOccupied(point, occupiedAreas)) {
+                continue;
+            }
+            setRandomDecoration(tile);
+        }
+
+    }
+
+    public void setRandomDecoration(GameTile tile){
+        Random random = new Random();
+        int x = random.nextInt(100);
+        if(tile.getTileType() == TileType.Mine && tile.getItemOnTile() == null) {
+            tile.setItemOnTile(new Mineral(MineralType.getRandomMineralType()));
+        } else if (tile.getItemOnTile() == null) {
+            ForagingCrop type = ForagingCrop.getRandomForagingCrop(GameManager.getSeason());
+            TreeType type1 = TreeType.getRandomTreeType(GameManager.getSeason());
+            Tree newTree = new Tree(type1);
+            newTree.setFullyGrown();
+            newTree.setFullyGrown();
+            if(x%4 == 0) tile.setItemOnTile(new ForagingItem(type, type.getName(), type.getPrice()));
+            else if(x%4 == 1) tile.setItemOnTile(newTree);
+            else if(x%4 == 2) tile.setItemOnTile(MineralType.Wood);
+            else tile.setItemOnTile(MineralType.Stone);
+        }
+    }
+
+    private void placeRandomMine(int startX, int startY, int width, int height,
+                                 List<Rectangle> occupiedAreas, Random random) {
+        int maxAttempts = 100;
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+            int x = startX + random.nextInt(height - 3);
+            int y = startY + random.nextInt(width - 1);
+
+            Rectangle mineArea = new Rectangle(x, y, 2, 4);
+
+            if (!isAreaOccupied(mineArea, occupiedAreas) && isAreaValid(mineArea, TileType.Mine)) {
+                setTile(x, y, new GameTile(x, y, TileType.Mine));
+                setTile(x, y+1, new GameTile(x, y+1, TileType.Mine));
+                setTile(x+1, y, new GameTile(x+1, y, TileType.Mine));
+                setTile(x+1, y+1, new GameTile(x+1, y+1, TileType.Mine));
+                setTile(x+2, y, new GameTile(x+2, y, TileType.Mine));
+                setTile(x+3, y, new GameTile(x+3, y, TileType.Mine));
+
+                occupiedAreas.add(mineArea);
+                return;
+            }
+        }
+        System.out.println("Warning: Could not place mine");
+    }
+
+    private boolean isAreaOccupied(Rectangle area, List<Rectangle> occupiedAreas) {
+        for (Rectangle rect : occupiedAreas) {
+            if (area.intersects(rect)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isAreaValid(Rectangle area, TileType type) {
+        for (int i = area.x; i < area.x + area.height; i++) {
+            for (int j = area.y; j < area.y + area.width; j++) {
+                GameTile tile = getTile(i, j);
+                if (tile == null || tile.getTileType() != TileType.Soil) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean insideRect(int i, int j, int x, int y, int w, int h) {
+        return i >= x && i < x + h && j >= y && j < y + w;
+    }
+
+    public void initEmptyMap(TileType defaultType) {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                map[i][j] = new GameTile(i + 1, j + 1, defaultType);
+            }
+        }
+    }
+
+    public static GameTile getTile(int x, int y) {
+        if (isInBounds(x, y)) {
+            return map[x][y];
+        }
+        return null;
+    }
+
+    public void setTile(int x, int y, GameTile tile) {
+        if (isInBounds(x, y)) {
+            map[x][y] = tile;
+        }
+    }
+
+    public static boolean isInBounds(int x, int y) {
+        return x >= 0 && y >= 0 && x < map.length && y < map[0].length;
+    }
+    public void printFullMap() {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                System.out.print(map[i][j].toString() + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public void printMapSection1(int centerX, int centerY, int size) {
+        int half = size / 2;
+        for (int i = 0; i < centerX - half; i++) {
+            for (int j = 0; j < centerY - half; j++) {
+                if (isInBounds(i, j)) {
+                    System.out.print(getTile(i, j).toString() + " ");
+                } else {
+                    System.out.print("⬛ ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public void printMapSection2(int centerX, int centerY, int size) {
+        int half = size / 2;
+        for (int i = centerX - half; i <= centerX + half; i++) {
+            for (int j = 0; j < centerY - half; j++) {
+                if (isInBounds(i, j)) {
+                    System.out.print(getTile(i, j).toString() + " ");
+                } else {
+                    System.out.print("⬛ ");
+                }
+            }
+            System.out.println();
+        }
+    }
+    public void printMapSection3(int centerX, int centerY, int size) {
+        int half = size / 2;
+        for (int i = 0; i < centerX - half; i++) {
+            for (int j = centerY - half; j <= centerY + half; j++) {
+                if (isInBounds(i, j)) {
+                    System.out.print(getTile(i, j).toString() + " ");
+                } else {
+                    System.out.print("⬛ ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public void printMapSection4(int centerX, int centerY, int size) {
+        int half = size / 2;
+        for (int i = centerX - half; i <= centerX + half; i++) {
+            for (int j = centerY - half; j <= centerY + half; j++) {
+                if (isInBounds(i, j)) {
+                    System.out.print(getTile(i, j).toString() + " ");
+                } else {
+                    System.out.print("⬛ ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    private void generateFarm(int startX, int startY, int width, int height, int farmType) {
+        for (int i = startX; i < startX + height; i++) {
+            for (int j = startY; j < startY + width; j++) {
+                if (isInBounds(i, j)) {
+                    setTile(i, j, new GameTile(i, j, TileType.FarmFlat));
+                    //GameTile tile = getTile(i, j);
+                    //tile.setItemOnTile(new FruitAndVegetable(CropType.BlueJazz));
+                }
+            }
+        }
+
+
+        switch (farmType) {
+            case 1: // مزرعه نوع 1
+                placeFixedFeature(startX+20, startY+15, 6, 5, TileType.GreenHouse, "greenhouse");
+                placeFixedFeature(startX+1, startY+1, 3, 2, TileType.Mine, "mine");
+                placeFixedFeature(startX+5, startY+5, 3, 2, TileType.Water, "lake");
+                placeFixedFeature(startX+10, startY+10, 4, 4, TileType.House, "building");
+                break;
+
+            case 2: // مزرعه نوع 2
+                placeFixedFeature(startX+14, startY+15, 6, 5, TileType.GreenHouse, "greenhouse");
+                placeFixedFeature(startX+20, startY+21, 3, 2, TileType.Water, "lake");
+                placeFixedFeature(startX+4, startY+4, 3, 2, TileType.Mine, "mine");
+                placeFixedFeature(startX+10, startY+10, 4, 4, TileType.House, "building");
+                break;
+
+            case 3: // مزرعه نوع 3
+                placeFixedFeature(startX+20, startY+15, 6, 5, TileType.GreenHouse, "greenhouse");
+                placeFixedFeature(startX+2, startY+2, 3, 2, TileType.Mine, "mine");
+                placeFixedFeature(startX+10, startY+11, 3, 2, TileType.Water, "lake");
+                placeFixedFeature(startX+15, startY+20, 4, 4, TileType.House, "building");
+                break;
+
+            case 4: // مزرعه نوع 4
+                placeFixedFeature(startX+10, startY+5, 6, 5, TileType.GreenHouse, "greenhouse");
+                placeFixedFeature(startX+4, startY+2, 3, 2, TileType.Mine, "mine");
+                placeFixedFeature(startX+15, startY+11, 3, 2, TileType.Water, "lake");
+                placeFixedFeature(startX+19, startY+20, 4, 4, TileType.House, "building");
+                break;
+        }
+
+
+        placeRandomDecorations(startX, startY, width, height, 15, 10, new ArrayList<>(), new Random());
+    }
+
+    private void placeFixedFeature(int startX, int startY, int width, int height,
+                                   TileType type, String featureName) {
+        for (int i = startX; i < startX + height; i++) {
+            for (int j = startY; j < startY + width; j++) {
+                if (isInBounds(i, j)) {
+                    setTile(i, j, new GameTile(i, j, type));
+                }
+            }
+        }
+    }
+
+    public String whereAmI() {
+        String location ="Home";
+        //TODO implement
+        return location;
+    }
+
+    public void render(SpriteBatch batch, OrthographicCamera camera) {
+        float camX = camera.position.x;
+        float camY = camera.position.y;
+        float halfW = camera.viewportWidth / 2;
+        float halfH = camera.viewportHeight / 2;
+
+        int startX = MathUtils.floor((camX - halfW) / TILE_SIZE);
+        int startY = MathUtils.floor((camY - halfH) / TILE_SIZE);
+        int endX = MathUtils.ceil((camX + halfW) / TILE_SIZE);
+        int endY = MathUtils.ceil((camY + halfH) / TILE_SIZE);
+
+        startX = MathUtils.clamp(startX, 0, MAP_WIDTH - 1);
+        startY = MathUtils.clamp(startY, 0, MAP_HEIGHT - 1);
+        endX = MathUtils.clamp(endX, 0, MAP_WIDTH - 1);
+        endY = MathUtils.clamp(endY, 0, MAP_HEIGHT - 1);
+
+        for (int y = startY; y <= endY; y++) {
+            for (int x = startX; x <= endX; x++) {
+                GameTile tile = getTile(x, y);
+                if (tile == null) continue;
+
+                TileType type = tile.getTileType();
+                if (type == null) continue;
+
+                Texture tileTexture = type.getTexture();
+                if (tileTexture == null) continue;
+
+                // draw the tile
+                batch.draw(tileTexture, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+
+                // draw item on tile
+                Item item = tile.getItemOnTile();
+                if (item != null && item.getTexture() != null) {
+                    TextureRegion itemTex = item.getTexture();
+                    float scale = (float) TILE_SIZE / itemTex.getRegionHeight();
+                    batch.draw(itemTex, x * TILE_SIZE, y * TILE_SIZE,
+                        itemTex.getRegionWidth() * scale, TILE_SIZE);
+                }
+            }
+        }
+    }
+
+
+}

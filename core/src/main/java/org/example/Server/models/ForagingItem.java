@@ -1,0 +1,28 @@
+package org.example.Server.models;
+
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import org.example.Common.Item;
+
+public class ForagingItem implements Item {
+    private final String name;
+    private final int price;
+    private final Item material;
+
+    public ForagingItem(Item material, String name, int price) {
+        this.material = material;
+        this.name = name;
+        this.price = price;
+    }
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public int getPrice() {
+        return price;
+    }
+    public TextureRegion getTexture() {
+        return material.getTexture();
+    }
+}

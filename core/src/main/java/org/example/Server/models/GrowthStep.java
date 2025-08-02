@@ -1,4 +1,4 @@
-package org.example;
+package org.example.Server.models;
 
 public class GrowthStep {
     private int days;

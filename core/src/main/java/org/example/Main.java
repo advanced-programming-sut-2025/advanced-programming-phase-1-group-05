@@ -1,27 +1,28 @@
-// Main.java
+
 package org.example;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import org.example.controllers.DBController;
-import org.example.controllers.RegisterMenuController;
-import org.example.models.*;
-import org.example.models.Enums.AnimalType;
-import org.example.models.Enums.FishType;
-import org.example.models.Tool.FishingPole;
-import org.example.views.*;
+import org.example.Client.ClientNetworkManager;
+import org.example.Client.MenuNavigator;
+import org.example.Server.controllers.DBController;
+import org.example.Server.controllers.RegisterMenuController;
+import org.example.Server.models.MyGame;
+import org.example.Common.Player;
+import org.example.Common.User;
+import org.example.Server.models.UserDatabase;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 public class Main extends Game {
     public static SpriteBatch batch;
     private Skin skin;
     private static Main main;
+    public static ClientNetworkManager networkManager;
 
     public static Main getMain() {
         return main;
@@ -41,9 +42,13 @@ public class Main extends Game {
         batch = new SpriteBatch();
         skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
         MenuNavigator.init(this, skin);
+        try {
+            networkManager = new ClientNetworkManager();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         checkAutoLogin();
        MenuNavigator.showMainMenu();
-        //setScreen(new TestScreen());
     }
 
     public static void checkAutoLogin() {

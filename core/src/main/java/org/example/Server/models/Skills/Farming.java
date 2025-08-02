@@ -1,0 +1,167 @@
+package org.example.Server.models.Skills;
+
+import org.example.Common.Enums.*;
+import org.example.Common.GameTile;
+import org.example.Common.Item;
+import org.example.Common.TimeAndDate;
+import org.example.Server.models.*;
+import org.example.Common.Tool.Hoe;
+
+import java.util.*;
+
+public class Farming implements Skill{
+    int level = 0;
+    int capacity = 0;
+
+    public void plowTile(GameTile tile, Hoe hoe) {
+        tile.setTileType(TileType.Soil);
+    }
+
+    //plant seed
+    public boolean plantSeed(String seed, GameTile tile) {
+        CropType cropType = CropType.getSeedType(seed);
+        TreeType treeType = TreeType.getSeedType(seed);
+        if(seed.equals("Mixed Seeds")) {
+            FruitAndVegetable newCrop = mixedSeedPlant();
+            tile.setItemOnTile(newCrop);
+            newCrop.setCoordinates(new AbstractMap.SimpleEntry<>(tile.getX(), tile.getY()));
+            //MyGame.getCurrentPlayer().getFarm().addCrop(newCrop);
+            MyGame.getGameMap().addPlant(newCrop);
+            //can become giant
+            Result result = newCrop.expandToGiant(tile);
+            return true;
+        }
+        if(cropType != null) {
+            FruitAndVegetable crop = new FruitAndVegetable(cropType);
+            tile.setItemOnTile(crop);
+            crop.setCoordinates(new AbstractMap.SimpleEntry<>(tile.getX(), tile.getY()));
+           // MyGame.getCurrentPlayer().getFarm().addCrop(crop);
+            MyGame.getGameMap().addPlant(crop);
+            if(tile.hasBeenFertilized()) {
+                crop.fertilize(tile.getFertilizer());
+            }
+            Result result = crop.expandToGiant(tile);
+            return true;
+        } else if (treeType != null) {
+            Tree tree = new Tree(treeType);
+            tile.setItemOnTile(tree);
+            //MyGame.getCurrentPlayer().getFarm().addTree(tree);
+            MyGame.getGameMap().addTree(tree);
+            tree.setCoordinates(new AbstractMap.SimpleEntry<>(tile.getX(), tile.getY()));
+            return true;
+        }
+        return false;
+    }
+
+    //mixed seed
+    public FruitAndVegetable mixedSeedPlant(){
+        Season currentSeason = new TimeAndDate().getCurrentSeason();
+        List<CropType> possiblePlants = PossibleSeed.getPossibleSeeds(currentSeason);
+
+        Random random = new Random();
+        CropType selectedType = possiblePlants.get(random.nextInt(possiblePlants.size()));
+        return new FruitAndVegetable(selectedType);
+    }
+
+    //fertilize crop
+    public boolean fertilizeCrop(GameTile tile, String fertilizer) {
+        HashMap<Item, Integer> items = MyGame.getCurrentPlayer().getBackPack().getInventory();
+        for(Item item : items.keySet()) {
+            if(item.getName().equals(fertilizer)) {
+              //  FruitAndVegetable fruit = Game.getGameMap().getPlantedFruit(coordinantes);
+                // idk the details
+               // fruit.fertilize();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //water crop
+    public void waterCrop(FruitAndVegetable crop) {
+        crop.waterCrop();
+    }
+
+    //harvest crop
+    public void harvestCrop(GameTile tile) {
+        Item item = tile.getItemOnTile();
+        if(item instanceof FruitAndVegetable) {
+            ((FruitAndVegetable) item).setHarvested(true);
+            if (((FruitAndVegetable) item).isOneTime()) {
+                MyGame.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
+                tile.setItemOnTile(null);
+            } else {
+                FruitAndVegetable fruit = new FruitAndVegetable(((FruitAndVegetable)item).getType());
+                fruit.setFruit();
+                MyGame.getCurrentPlayer().getBackPack().addToInventory(fruit, 1);
+                ((FruitAndVegetable)item).harvest();
+            }
+        } else if(item instanceof Tree) {
+            String fruitName = ((Tree) item).getTreeType().getFruit();
+            int fruitPrice = ((Tree) item).getTreeType().getFruitPrice();
+            ForagingItem fruit = new ForagingItem(ForagingCrop.fromString(fruitName), fruitName, fruitPrice);
+            Random rand = new Random();
+            int randomNum = rand.nextInt(5);
+            MyGame.getCurrentPlayer().getBackPack().addToInventory(fruit, randomNum);
+            ((Tree)item).harvestFruit();
+        }
+        increaseCapacity();
+    }
+
+
+    @Override
+    public int getLevel() {
+        return level;
+    }
+    @Override
+    public boolean isMaxLevel() {
+        return level == 10;
+    }
+    @Override
+    public void setLevel(int level) {
+        this.level = level;
+    }
+    @Override
+    public void increaseLevel() {
+        if(level < 4) this.level ++;
+        handleLevelChangeTrophies(level);
+    }
+    @Override
+    public boolean canGoToNextLevel() {
+        if((level + 1) * 100 + 50 <= capacity) {
+            capacity -= (level + 1)*100 + 50;
+            increaseLevel();
+            return true;
+        }
+        return false;
+    }
+    @Override
+    public void increaseCapacity() {
+        this.capacity += 5;
+    }
+    @Override
+    public void handleLevelChangeTrophies(int level){
+        switch(level) {
+            case 1: {
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Sprinkler);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.BeeHouse);
+                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(CookingRecipeType.FarmersLunch);
+                break;
+            }
+            case 2: {
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.QualitySprinkler);
+                //MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.DeluxeScareCrow);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.CheesePress);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.PreservesJar);
+                break;
+            }
+            case 3: {
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.IridiumSprinkler);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Keg);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Loom);
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.OilMaker);
+                break;
+            }
+        }
+    }
+}
