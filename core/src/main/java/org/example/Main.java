@@ -42,8 +42,8 @@ public class Main extends Game {
         skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
         MenuNavigator.init(this, skin);
         checkAutoLogin();
-        MenuNavigator.showMainMenu();
-       //setScreen(new FishingMiniGame(null , new FishingPole(), FishType.CrimsonFish));
+       MenuNavigator.showMainMenu();
+        //setScreen(new TestScreen());
     }
 
     public static void checkAutoLogin() {

@@ -18,9 +18,11 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -46,6 +48,7 @@ import static org.example.models.GameMap.MAP_HEIGHT;
 import static org.example.models.GameMap.MAP_WIDTH;
 
 public class GameScreen implements Screen {
+    Table dialogueTable;
     private ShapeRenderer shapeRenderer;
     GameMenuController controller;
     HomeMenuController homeMenuController;
@@ -670,25 +673,30 @@ public class GameScreen implements Screen {
             showResult = true;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            GameAssetManager.playSfx("open page");
-            isInvenotryOpen = !isInvenotryOpen;
-            isCraftOpen = false;
-            isSkillSetOpen = false;
-            isToolSelectionOpen = false;
-            isCookingOpen = false;
-            isJournalOpen = false;
-            if (isInvenotryOpen) {
-                TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
-                    .getLevel().getInventoryTexture();
-                float scale = 0.5f;
-                float scaledWidth = inventory.getRegionWidth() * scale;
-                float scaledHeight = inventory.getRegionHeight() * scale;
-                INVENTORY_X = camera.position.x - scaledWidth / 2f;
-                INVENTORY_Y = camera.position.y - scaledHeight / 2f;
+            if (dialogueTable.isVisible()) {
+                dialogueTable.setVisible(false);
+            }
+            else {
+                GameAssetManager.playSfx("open page");
+                isInvenotryOpen = !isInvenotryOpen;
+                isCraftOpen = false;
+                isSkillSetOpen = false;
+                isToolSelectionOpen = false;
+                isCookingOpen = false;
+                isJournalOpen = false;
+                if (isInvenotryOpen) {
+                    TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
+                        .getLevel().getInventoryTexture();
+                    float scale = 0.5f;
+                    float scaledWidth = inventory.getRegionWidth() * scale;
+                    float scaledHeight = inventory.getRegionHeight() * scale;
+                    INVENTORY_X = camera.position.x - scaledWidth / 2f;
+                    INVENTORY_Y = camera.position.y - scaledHeight / 2f;
 
-                skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
+                    skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
 
-                updateInventorySlots(INVENTORY_X, INVENTORY_Y);
+                    updateInventorySlots(INVENTORY_X, INVENTORY_Y);
+                }
             }
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             GameAssetManager.playSfx("open page");
@@ -1441,6 +1449,9 @@ public class GameScreen implements Screen {
         npcMenuTable.setVisible(false);
         npcMenuTable.setFillParent(true);
         uiStage.addActor(npcMenuTable);
+        dialogueTable = new Table();
+        dialogueTable.setFillParent(true);
+        uiStage.addActor(dialogueTable);
 
 
         for (NpcActor npc : NPCs) {
@@ -1451,6 +1462,13 @@ public class GameScreen implements Screen {
                     if (button == Input.Buttons.RIGHT) {
                         showNpcMenu(npc);
                         return true;
+                    }
+                    else if (button == Input.Buttons.LEFT) {
+                        if (npc.isDialogueReady()) {
+                            showNpcDialogue(npc);
+                            System.out.println("clicked");
+                            return true;
+                        }
                     }
                     return false;
                 }
@@ -1499,6 +1517,12 @@ public class GameScreen implements Screen {
         });
         uiStage.addActor(friendshipButton);
         forceViewportReset();
+//        Player player = MyGame.getCurrentPlayer();
+//        AnimalHouse house  = new AnimalHouse(EnclosureType.COOP, AnimalHouseLevel.Big, 500, 500, GameAssetManager.getInstance().getItemTexture("Coop"));
+//        player.addAnimalHouse(house);
+//        Animal animal = new Animal("parastoo", AnimalType.CHICKEN, player);
+//        house.addAnimal(animal);
+//        addAnimalActor(new AnimalActor(animal));
 
     }
 
@@ -1546,6 +1570,50 @@ public class GameScreen implements Screen {
         return true;
     }
 
+    private void showNpcDialogue(NpcActor npcActor) {
+        Texture dialogueBoxTexture = GameAssetManager.getInstance().getOrLoadTexture("NPCs/dialogueTemplate.png");
+        dialogueBoxTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        NinePatch ninePatch = new NinePatch(dialogueBoxTexture, 16, 16, 16, 16);
+        NinePatchDrawable dialogueBackground = new NinePatchDrawable(ninePatch);
+
+        Skin skin = GameAssetManager.getSkin();
+        String message = npcActor.getMessage();
+        if (message == null) return;
+        dialogueTable.clear();
+        dialogueTable.setVisible(true);
+        dialogueTable.pad(20);
+        dialogueTable.setBackground(dialogueBackground);
+        Label dialogueText = new Label(message, skin);
+        dialogueText.setWrap(true);
+        dialogueText.setFontScale(2f);
+        dialogueText.setColor(86f / 225f, 22f / 225f, 12f / 225f, 1);
+        dialogueText.setWidth(8000);
+
+        String NpcName = npcActor.getNpc().getName();
+        Texture tex = GameAssetManager.getInstance().getOrLoadTexture("NPCs/" + NpcName + "/avatar.png");
+        TextureRegionDrawable avatarDrawable = new TextureRegionDrawable(new TextureRegion(tex));
+        Image npcAvatar = new Image(avatarDrawable);
+
+
+        Label npcNameLabel = new Label(NpcName, skin);
+        npcNameLabel.setFontScale(2f);
+        npcNameLabel.setColor(86f / 225f, 22f / 225f, 12f / 225f, 1);
+        VerticalGroup rightGroup = new VerticalGroup();
+        rightGroup.space(100);
+        npcAvatar.setScaling(Scaling.stretch);
+
+        Container<Image> avatarContainer = new Container<>(npcAvatar);
+        avatarContainer.size(400, 400);
+        avatarContainer.fill();
+
+        rightGroup.addActor(avatarContainer);
+        rightGroup.addActor(npcNameLabel);
+        rightGroup.center();
+
+
+        dialogueTable.add(dialogueText).expand().left().width(1500).padLeft(200);
+        dialogueTable.add(rightGroup).padTop(650).padRight(100).width(1000).height(1000);
+    }
     private void showNotifications() {
         notificationTable.clear();
         notificationTable.setVisible(true);
@@ -1874,7 +1942,7 @@ public class GameScreen implements Screen {
         TextButton hugButton = new TextButton("hug " + player.getName(), skin);
         innerPanel.add(hugButton).fillX();
         innerPanel.row();
-        hugButton.setDisabled(!MyGame.getCurrentPlayer().canHug(player));
+        //hugButton.setDisabled(!MyGame.getCurrentPlayer().canHug(player));
         if (hugButton.isDisabled()) {
             hugButton.setTouchable(Touchable.disabled);
             hugButton.setColor(Color.DARK_GRAY);

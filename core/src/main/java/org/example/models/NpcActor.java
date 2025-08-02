@@ -29,6 +29,8 @@ public class NpcActor extends Actor {
     private boolean dialogueReady = false;
     private final int dialogueTime;
     private  boolean walking = true;
+
+
     public NpcActor (NPC npc) {
         this.npc = npc;
         Texture npcTexture = new Texture("NPCs/" + npc.getName().toLowerCase() + "/walkdown1.png");
@@ -53,7 +55,7 @@ public class NpcActor extends Actor {
 
     @Override
     public void act(float delta) {
-        if (GameManager.getGameClock().hour >= dialogueTime) {
+        if (GameManager.getGameClock().hour >= dialogueTime && !npc.dialogueForToday) {
             dialogueReady = true;
             exclamationImage.setVisible(true);
         }
@@ -125,4 +127,20 @@ public class NpcActor extends Actor {
     public void setWalking(boolean walking) {
         this.walking = walking;
     }
+
+    public boolean isDialogueReady() {
+        return dialogueReady;
+    }
+
+    public String getMessage() {
+        String message = null;
+         if (dialogueReady) {
+             message = DialogueManager.getNpcDialogue(npc.getName(), MyGame.getCurrentWeather().name());
+             npc.dialogueForToday = true;
+         }
+         dialogueReady = false;
+         return message;
+    }
+
+
 }

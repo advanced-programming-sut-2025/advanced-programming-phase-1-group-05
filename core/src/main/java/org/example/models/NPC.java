@@ -13,7 +13,7 @@ public class NPC {
     private Map<Player, Integer> friendshipPoints = new HashMap<>();
     private final List<String> favorites = new ArrayList<>();
     List<Mission> missions = new ArrayList<>();
-
+    protected boolean dialogueForToday = false;
     private final int daysToUnlockThirdQuest;
     public NPC(String name, List<String> favorites, List<Mission> missionList) {
         this.name = name;
@@ -155,5 +155,8 @@ public class NPC {
     }
 
 
+   public void setDialogueForToday(boolean dialogueForToday) {
+        this.dialogueForToday = dialogueForToday;
+    }
 
 }

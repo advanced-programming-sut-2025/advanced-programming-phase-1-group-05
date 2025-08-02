@@ -18,6 +18,9 @@ public class GameManager {
         giveBackSoldItemGolds();
         getAnimalProducts();
         manageWeather();
+        for (NPC npc : MyGame.getAllNPCs()) {
+            npc.setDialogueForToday(false);
+        }
     }
 
     public static void manageWeather() {
