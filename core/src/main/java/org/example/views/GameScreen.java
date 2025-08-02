@@ -817,15 +817,40 @@ public class GameScreen implements Screen {
     }
 
     private void drawHUD() {
-        float x = camera.position.x + camera.viewportWidth / 2 - 300;
-        float y = camera.position.y + camera.viewportHeight / 2 - 20;
+        float baseX = camera.position.x + camera.viewportWidth / 2 - 300;
+        float baseY = camera.position.y + camera.viewportHeight / 2 - 150;
 
-        font.draw(batch, "Gold: " + MyGame.getCurrentPlayer().getGold(), x, y);
-        font.draw(batch, "Time: " + String.format("%02d:%02d", GameManager.getCurrentHour(), GameManager.getGameClock().getMinute()), x, y - 30);
-        font.draw(batch, "Season: " + currentSeason.toString(), x, y - 60);
-        font.draw(batch, "Weather: " + MyGame.currentWeather, x, y - 90);
-        font.draw(batch, GameManager.getDayOfTheWeek() + ", Day " + GameManager.getDay(), x, y - 120);
+        Player player = MyGame.getCurrentPlayer();
+        int hour = GameManager.getCurrentHour();
+        int minute = GameManager.getGameClock().getMinute();
+        int day = GameManager.getDay();
+        String dayOfWeek = GameManager.getDayOfTheWeek();
+
+        Season currentSeason = GameManager.getSeason();
+        Weather currentWeather = MyGame.currentWeather;
+
+        TextureRegion clockFace = GameAssetManager.clockTexture;
+        TextureRegion seasonIcon = GameAssetManager.getSeasonIcon(currentSeason);
+        TextureRegion weatherIcon = GameAssetManager.getWeatherIcon(currentWeather);
+
+        float seasonIconWidth = seasonIcon.getRegionWidth();
+        float seasonIconHeight = seasonIcon.getRegionHeight();
+        float weatherIconWidth = weatherIcon.getRegionWidth();
+        float weatherIconHeight = weatherIcon.getRegionHeight();
+
+        font.setColor(92 / 255f, 64 / 255f, 33 / 255f, 1f);
+        batch.draw(clockFace, baseX, baseY - 100f, clockFace.getRegionWidth()*4, clockFace.getRegionHeight()*4);
+
+        font.draw(batch,  String.valueOf(player.getGold()), baseX + 70, baseY - 60f);
+
+        font.draw(batch, String.format("%02d:%02d", hour, minute), baseX + 140f, baseY + 20f);
+
+        batch.draw(seasonIcon, baseX + 115f, baseY + 33f, seasonIconWidth*4, seasonIconHeight*4);
+        batch.draw(weatherIcon, baseX + 205f, baseY + 33f, weatherIconWidth*4, weatherIconHeight*4);
+        font.draw(batch, dayOfWeek + " ." + day, baseX + 110f, baseY + 115f);
+        font.setColor(Color.BLACK);
     }
+
 
     private void applyLightingOverlay() {
         int hour = GameManager.getCurrentHour();
@@ -976,16 +1001,23 @@ public class GameScreen implements Screen {
             }
         }
 
-        float add = 0;
-        for (Map.Entry<Mission, NPC> quest : quests.entrySet()) { //test later
-            float x = JOURNAL_X;
-            float y = JOURNAL_Y - add;
-            font.draw(batch, quest.getKey().getTitle(), x, y);
-            font.draw(batch, quest.getValue().getName(), x, y + 5);
-            add += 20f;
-        }
-        batch.end();
+        float padding = 20f;
+        float lineHeight = font.getLineHeight() + 6f;
+        float entryHeight = lineHeight * 2 + padding;
+        float textX = JOURNAL_X + 30f;
+        float startY = JOURNAL_Y + drawHeight - 100f;
 
+        int index = 0;
+        for (Map.Entry<Mission, NPC> quest : quests.entrySet()) {
+            float entryY = startY - index * entryHeight;
+
+            font.draw(batch, "* " + quest.getKey().getTitle(), textX, entryY);
+            font.draw(batch, quest.getValue().getName(), textX + 20f, entryY - lineHeight);
+
+            index++;
+        }
+
+        batch.end();
     }
 
     public void showCookingPage(SpriteBatch batch) {
@@ -1489,7 +1521,7 @@ public class GameScreen implements Screen {
         float screenWidth = uiStage.getViewport().getScreenWidth();
         float screenHeight = uiStage.getViewport().getScreenHeight();
 
-        float x = screenWidth - notificationButton.getWidth() - padding;
+        float x = padding - 10f;
         float y = screenHeight - notificationButton.getHeight() - padding;
 
 
