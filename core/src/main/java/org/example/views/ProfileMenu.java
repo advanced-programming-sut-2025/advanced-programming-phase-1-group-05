@@ -6,9 +6,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.controllers.ProfileMenuController;
@@ -22,14 +24,21 @@ public class ProfileMenu implements Screen {
     private ProfileMenuController controller;
     private Texture avatarTexture;
 
-    // UI components
     private TextField usernameField, nicknameField, emailField, oldPasswordField, newPasswordField;
     private Label genderLabel, infoLabel, resultLabel;
+    private String[] avatarOptions;
 
     public ProfileMenu(Skin skin, ProfileMenuController controller) {
         this.skin = skin;
         this.controller = controller;
         this.stage = new Stage(new ScreenViewport());
+        this.avatarOptions = new String[]{
+            "NPCs/abigail/avatar.png",
+            "NPCs/harvey/avatar.png",
+            "NPCs/leah/avatar.png",
+            "NPCs/robin/avatar.png",
+            "NPCs/sebastian/avatar.png"
+        };
     }
 
     @Override
@@ -49,23 +58,14 @@ public class ProfileMenu implements Screen {
         table.setFillParent(true);
         table.center();
         stage.addActor(table);
-//        String avatarPath = "assets/NPCs/sebastian/avatar.png";
-//        if (currentUser.getGender().equals("Male")) {
-//            avatarPath = "assets/NPCs/sebastian/avatar.png";
-//        } else {
-//            avatarPath = "assets/NPCs/sebastian/avatar.png";
-//        }
-        String path = "NPCs/sebastian/avatar.png";
-        if (Gdx.files.internal(path).exists()) {
-            avatarTexture = new Texture(Gdx.files.internal(path));
-        } else {
-            avatarTexture = new Texture(Gdx.files.internal("default.png"));
+
+        String currentAvatar = currentUser.getAvatarTexturePath() != null ? currentUser.getAvatarTexturePath() : "NPCs/sebastian/avatar.png";
+        if (!Gdx.files.internal(currentAvatar).exists()) {
+            currentAvatar = "NPCs/sebastian/avatar.png";
         }
 
-
-        avatarTexture = new Texture(Gdx.files.internal(path));
+        avatarTexture = new Texture(Gdx.files.internal(currentAvatar));
         Image avatarImage = new Image(avatarTexture);
-
 
         usernameField = new TextField("", skin);
         nicknameField = new TextField("", skin);
@@ -95,6 +95,38 @@ public class ProfileMenu implements Screen {
         avatarImage.setName("avatarImage");
         table.add(avatarImage).size(80, 80).colspan(2).padBottom(10).row();
         table.add(new Label("Profile Menu", skin, "title")).colspan(2).padBottom(15).row();
+
+        Label chooseAvatarLabel = new Label("Choose New Avatar:", skin);
+        table.add(chooseAvatarLabel).colspan(2).padBottom(5).row();
+
+        Table avatarGrid = new Table();
+        ScrollPane avatarScroll = new ScrollPane(avatarGrid, skin);
+        avatarScroll.setFadeScrollBars(false);
+        avatarScroll.setScrollingDisabled(true, false);
+
+        for (int i = 0; i < avatarOptions.length; i++) {
+            final String avatarFile = avatarOptions[i];
+            if (!Gdx.files.internal(avatarFile).exists()) continue;
+
+            final Texture previewTexture = new Texture(Gdx.files.internal(avatarFile));
+            final Image avatarOption = new Image(previewTexture);
+            avatarOption.setSize(64, 64);
+            avatarOption.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (avatarTexture != null) avatarTexture.dispose();
+                    avatarTexture = new Texture(Gdx.files.internal(avatarFile));
+                    avatarImage.setDrawable(new Image(avatarTexture).getDrawable());
+
+                    controller.handleProfileCommand("change avatar -a " + avatarFile);
+                }
+            });
+
+            avatarGrid.add(avatarOption).size(64, 64).pad(5);
+            if ((i + 1) % 5 == 0) avatarGrid.row();
+        }
+
+        table.add(avatarScroll).height(160).width(300).colspan(2).padBottom(10).row();
 
         table.add(new Label("Username:", skin)).pad(5);
         table.add(usernameField).width(250).pad(5).row();
@@ -126,7 +158,6 @@ public class ProfileMenu implements Screen {
         stage.addActor(scrollPane);
         showUserInfo();
 
-        // Listeners
         updateUsernameBtn.addListener(new ChangeListener() {
             @Override public void changed(ChangeEvent event, Actor actor) {
                 String cmd = "change username -u " + usernameField.getText();
@@ -191,5 +222,8 @@ public class ProfileMenu implements Screen {
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}
-    @Override public void dispose() { stage.dispose(); }
+    @Override public void dispose() {
+        stage.dispose();
+        if (avatarTexture != null) avatarTexture.dispose();
+    }
 }

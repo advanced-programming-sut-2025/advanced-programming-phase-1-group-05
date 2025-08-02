@@ -12,6 +12,7 @@ public class User {
     String ans;
     private int gamesPlayed;
     String plainPassword;
+    String avatarTexturePath;
 
     private String securityQuestion;
     String securityAnswer;
@@ -95,6 +96,12 @@ public class User {
         return gamesPlayed;
     }
 
+    public void setAvatarTexturePath(String avatarTexturePath) {
+        this.avatarTexturePath = avatarTexturePath;
+    }
+    public String getAvatarTexturePath() {
+        return avatarTexturePath;
+    }
     public void incrementGamesPlayed() {
         this.gamesPlayed++;
     }
