@@ -18,7 +18,7 @@ public class ClientHandler implements Runnable {
 
             while (true) {
                 Object message = in.readObject();
-                PacketHandler.handle(message, out);
+                //PacketHandler.handle(message, out);
             }
         } catch (Exception e) {
             System.out.println("Client disconnected: " + e.getMessage());

@@ -9,16 +9,10 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
@@ -29,9 +23,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import org.example.Common.*;
 import org.example.Common.Enums.*;
 import org.example.Main;
-import org.example.Server.controllers.GameManager;
-import org.example.Server.controllers.GameMenuController;
-import org.example.Server.controllers.HomeMenuController;
+import org.example.Server.controllers.*;
 import org.example.Server.models.*;
 import org.example.Server.models.Building.AnimalHouse;
 import org.example.Common.Tool.BackPack;
@@ -55,7 +47,7 @@ public class GameScreen implements Screen {
     Table missionListTable, animalMenuTable, notificationTable, giftMenuTable, giftHistoryTable, rateTable,
         playerMenuTable, artisanMenuTable, npcMenuTable, friendshipMenuTable;
     Skin skin;
-    ImageButton notificationButton, friendshipButton;
+    ImageButton notificationButton, friendshipButton, tradingButton;
     Viewport viewport;
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -176,6 +168,11 @@ public class GameScreen implements Screen {
     private float JOURNAL_X = 0;
     private float JOURNAL_Y = 0;
 
+    //trading stuff
+    private TradeMenu tradeMenu;
+    private boolean tradeMenuOpen = false;
+
+
     Player player;
 
 
@@ -295,7 +292,7 @@ public class GameScreen implements Screen {
 
 
         if (Main.networkManager != null) {
-            Main.networkManager.sendPlayerPosition(player.getUsername(), player.getXX(), player.getYY());
+           // Main.networkManager.sendPlayerPosition(player.getUsername(), player.getXX(), player.getYY());
         }
         Season newSeason = GameManager.getSeason();
         if (!newSeason.equals(currentSeason)) {
@@ -1486,7 +1483,6 @@ public class GameScreen implements Screen {
         dialogueTable.setFillParent(true);
         uiStage.addActor(dialogueTable);
 
-
         for (NpcActor npc : NPCs) {
             stage.addActor(npc);
             npc.addListener(new InputListener() {
@@ -1519,7 +1515,6 @@ public class GameScreen implements Screen {
         Drawable mailDrawable = new TextureRegionDrawable(new TextureRegion(mail));
         notificationButton = new ImageButton(mailDrawable);
         float padding = 70;
-        float screenWidth = uiStage.getViewport().getScreenWidth();
         float screenHeight = uiStage.getViewport().getScreenHeight();
 
         float x = padding - 10f;
@@ -1549,6 +1544,36 @@ public class GameScreen implements Screen {
             }
         });
         uiStage.addActor(friendshipButton);
+
+        Texture tradingTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/trading.png");
+        Drawable tradingDrawable = new TextureRegionDrawable(new TextureRegion(tradingTexture));
+        tradingButton = new ImageButton(tradingDrawable);
+        tradingButton.setPosition(x, y - 160);
+        tradingButton.getImageCell().size(70, 60);
+        tradingButton.setSize(70, 60);
+        tradingButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                if (!tradeMenuOpen) {
+                    tradeMenu = new TradeMenu(new TradingController(), new MenuController(), skin);
+                    tradeMenu.pack();
+                    tradeMenu.setPosition(
+                        camera.position.x - tradeMenu.getWidth() / 2f,
+                        camera.position.y - tradeMenu.getHeight() / 2f
+                    );
+                    stage.addActor(tradeMenu);
+                    tradeMenuOpen = true;
+
+                    // window removal
+                    tradeMenu.addListener(new ChangeListener() {
+                        @Override
+                        public void changed(ChangeEvent event, Actor actor) {
+                            tradeMenuOpen = false;
+                        }
+                    });
+                }
+            }
+        });
+
         forceViewportReset();
 //        Player player = MyGame.getCurrentPlayer();
 //        AnimalHouse house  = new AnimalHouse(EnclosureType.COOP, AnimalHouseLevel.Big, 500, 500, GameAssetManager.getInstance().getItemTexture("Coop"));

@@ -39,6 +39,7 @@ public class GameAssetManager {
     public static final TextureRegion journalBg = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/journal page.png"));
     private static final Texture clockSheet = new Texture("Stardew_Valley_Images-main/extra/PC Computer - Stardew Valley - Clock.png");
     public static final TextureRegion clockTexture = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/clock.png"));
+    public static final Texture menuBg = new Texture("Animals/MenuBackground2.png");
     public static final Texture backGround = new Texture("backgrounds/login_bg.png");
     private static final HashMap<Season, TextureRegion> seasonIcons = new HashMap<>();
     private static final HashMap<Weather, TextureRegion> weatherIcons = new HashMap<>();
