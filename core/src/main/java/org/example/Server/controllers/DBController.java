@@ -269,7 +269,7 @@ public class DBController {
             Gson gson = new Gson();
             JsonArray playersArray = JsonParser.parseString(json).getAsJsonArray();
 
-            MyGame.getAllPlayers().clear(); // پاکسازی لیست قبلی
+            //MyGame.getAllPlayers().clear(); // پاکسازی لیست قبلی
 
             for (JsonElement element : playersArray) {
                 JsonObject playerObj = element.getAsJsonObject();

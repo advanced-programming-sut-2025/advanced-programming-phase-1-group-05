@@ -1516,6 +1516,7 @@ public class GameScreen implements Screen {
         notificationButton = new ImageButton(mailDrawable);
         float padding = 70;
         float screenHeight = uiStage.getViewport().getScreenHeight();
+        float screenWidth = uiStage.getViewport().getScreenWidth();
 
         float x = padding - 10f;
         float y = screenHeight - notificationButton.getHeight() - padding;
@@ -1545,21 +1546,19 @@ public class GameScreen implements Screen {
         });
         uiStage.addActor(friendshipButton);
 
-        Texture tradingTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/trading.png");
+        Texture tradingTexture = GameAssetManager.tradingButton;
         Drawable tradingDrawable = new TextureRegionDrawable(new TextureRegion(tradingTexture));
         tradingButton = new ImageButton(tradingDrawable);
-        tradingButton.setPosition(x, y - 160);
-        tradingButton.getImageCell().size(70, 60);
-        tradingButton.setSize(70, 60);
+        tradingButton.setPosition(x - 10f, y - 190f);
+        tradingButton.getImageCell().size(100, 90);
+        tradingButton.setSize(100, 90);
         tradingButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 if (!tradeMenuOpen) {
                     tradeMenu = new TradeMenu(new TradingController(), new MenuController(), skin);
                     tradeMenu.pack();
-                    tradeMenu.setPosition(
-                        camera.position.x - tradeMenu.getWidth() / 2f,
-                        camera.position.y - tradeMenu.getHeight() / 2f
-                    );
+
+//                    tradeMenu.setPosition();
                     stage.addActor(tradeMenu);
                     tradeMenuOpen = true;
 
@@ -1573,6 +1572,7 @@ public class GameScreen implements Screen {
                 }
             }
         });
+        uiStage.addActor(tradingButton);
 
         forceViewportReset();
 //        Player player = MyGame.getCurrentPlayer();

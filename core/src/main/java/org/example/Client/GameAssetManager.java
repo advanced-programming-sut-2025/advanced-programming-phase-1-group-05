@@ -39,6 +39,7 @@ public class GameAssetManager {
     public static final TextureRegion journalBg = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/journal page.png"));
     private static final Texture clockSheet = new Texture("Stardew_Valley_Images-main/extra/PC Computer - Stardew Valley - Clock.png");
     public static final TextureRegion clockTexture = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/clock.png"));
+    public static final Texture tradingButton = new Texture("ui/trading.png");
     public static final Texture menuBg = new Texture("Animals/MenuBackground2.png");
     public static final Texture backGround = new Texture("backgrounds/login_bg.png");
     private static final HashMap<Season, TextureRegion> seasonIcons = new HashMap<>();
@@ -97,7 +98,7 @@ public class GameAssetManager {
         Texture duckTextureSheet = getOrLoadTexture("Animals/duck/sheet.png");
         Texture chickenTextureSheet = getOrLoadTexture("Animals/chicken/sheet.png");
         Texture rabbitTextureSheet = getOrLoadTexture("Animals/rabbit/sheet.png");
-        Texture dinosaurTextureSheet = getOrLoadTexture("Animals/dinosaur/sheet.png");
+        //Texture dinosaurTextureSheet = getOrLoadTexture("Animals/dinosaur/sheet.png");
         Texture cowTextureSheet = getOrLoadTexture("Animals/cow/sheet.png");
         Texture goatTextureSheet = getOrLoadTexture("Animals/goat/sheet.png");
         Texture sheepTextureSheet = getOrLoadTexture("Animals/sheep/sheet.png");
@@ -106,7 +107,7 @@ public class GameAssetManager {
         animalAnimations.put(AnimalType.DUCK, buildDuckAnimation(duckTextureSheet));
         animalAnimations.put(AnimalType.CHICKEN, buildChickenAnimation(chickenTextureSheet));
         animalAnimations.put(AnimalType.RABBIT, buildRabbitAnimation(rabbitTextureSheet));
-        animalAnimations.put(AnimalType.DINOSAUR, buildDinosaurAnimation(dinosaurTextureSheet));
+       // animalAnimations.put(AnimalType.DINOSAUR, buildDinosaurAnimation(dinosaurTextureSheet));
         animalAnimations.put(AnimalType.COW, buildBarnAnimalAnimation(cowTextureSheet));
         animalAnimations.put(AnimalType.GOAT, buildBarnAnimalAnimation(goatTextureSheet));
         animalAnimations.put(AnimalType.SHEEP, buildBarnAnimalAnimation(sheepTextureSheet));
