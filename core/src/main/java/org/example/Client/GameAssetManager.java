@@ -96,19 +96,33 @@ public class GameAssetManager {
         Texture duckTextureSheet = getOrLoadTexture("Animals/duck/sheet.png");
         Texture chickenTextureSheet = getOrLoadTexture("Animals/chicken/sheet.png");
         Texture rabbitTextureSheet = getOrLoadTexture("Animals/rabbit/sheet.png");
+        Texture dinosaurTextureSheet = getOrLoadTexture("Animals/dinosaur/sheet.png");
+        Texture cowTextureSheet = getOrLoadTexture("Animals/cow/sheet.png");
+        Texture goatTextureSheet = getOrLoadTexture("Animals/goat/sheet.png");
+        Texture sheepTextureSheet = getOrLoadTexture("Animals/sheep/sheet.png");
+        Texture pigTextureSheet = getOrLoadTexture("Animals/pig/sheet.png");
 
-
-        //animalAnimations.put(AnimalType.DUCK, buildDuckAnimation(duckTextureSheet));
+        animalAnimations.put(AnimalType.DUCK, buildDuckAnimation(duckTextureSheet));
         animalAnimations.put(AnimalType.CHICKEN, buildChickenAnimation(chickenTextureSheet));
+        animalAnimations.put(AnimalType.RABBIT, buildRabbitAnimation(rabbitTextureSheet));
+        animalAnimations.put(AnimalType.DINOSAUR, buildDinosaurAnimation(dinosaurTextureSheet));
+        animalAnimations.put(AnimalType.COW, buildBarnAnimalAnimation(cowTextureSheet));
+        animalAnimations.put(AnimalType.GOAT, buildBarnAnimalAnimation(goatTextureSheet));
+        animalAnimations.put(AnimalType.SHEEP, buildBarnAnimalAnimation(sheepTextureSheet));
+        animalAnimations.put(AnimalType.PIG, buildBarnAnimalAnimation(pigTextureSheet));
+
     }
 
-//    private AnimalAnimations buildDuckAnimation(Texture textureSheet) {
-//        TextureRegion[][] regions = TextureRegion.split(textureSheet, 16, 16);
-//        Animation<TextureRegion> idle = new Animation<>(0.3f, regions[0]);
-//        Animation<TextureRegion> walk = new Animation<>(0.2f, regions[1]);
-//        Animation<TextureRegion> eat = new Animation<>(0.4f, regions[2]);
-//        return new AnimalAnimations(idle, walk, eat);
-//    }
+    private AnimalAnimations buildDuckAnimation(Texture textureSheet) {
+        TextureRegion[][] regions = TextureRegion.split(textureSheet, 16, 16);
+        Animation<TextureRegion> walkLeft = new Animation<>(0.2f, regions[0]);
+        Animation<TextureRegion> walkRight = new Animation<>(0.2f, regions[1]);
+        Animation<TextureRegion> walkUp = new Animation<>(0.2f, regions[7]);
+        Animation<TextureRegion> walkDown = new Animation<>(0.2f, regions[9]);
+        Animation<TextureRegion> petting = new Animation<>(0.2f, regions[10]);
+        Animation<TextureRegion> eating = new Animation<>(0.2f, regions[5]);
+        return new AnimalAnimations(walkDown, walkRight, walkLeft, walkUp, petting, eating);
+    }
 
     private AnimalAnimations buildChickenAnimation(Texture textureSheet) {
         TextureRegion[][] regions = TextureRegion.split(textureSheet, 16, 16);
@@ -121,6 +135,49 @@ public class GameAssetManager {
         Animation<TextureRegion> eating = new Animation<>(0.2f, regions[6]);
         return new AnimalAnimations(walkDown, walkRight, walkUp, walkLeft, petting,eating);
     }
+
+    private AnimalAnimations buildRabbitAnimation(Texture textureSheet) {
+        TextureRegion[][] regions = TextureRegion.split(textureSheet, 16, 16);
+        Animation<TextureRegion> walkDown = new Animation<>(0.2f, regions[0]);
+        Animation<TextureRegion> walkRight = new Animation<>(0.2f, regions[1]);
+        Animation<TextureRegion> walkUp = new Animation<>(0.2f, regions[2]);
+        Animation<TextureRegion> walkLeft = new Animation<>(0.2f, regions[3]);
+        TextureRegion[] pettingRegions = {regions[4][0], regions[4][1]};
+        Animation<TextureRegion> petting = new Animation<>(0.2f, pettingRegions);
+        Animation<TextureRegion> eating = new Animation<>(0.2f, regions[5]);
+        return new AnimalAnimations(walkDown, walkRight, walkLeft, walkUp, petting, eating);
+    }
+
+    private AnimalAnimations buildBarnAnimalAnimation(Texture textureSheet) {
+        TextureRegion[][] regions = TextureRegion.split(textureSheet, 32, 32);;
+        Animation<TextureRegion> walkDown = new Animation<>(0.2f, regions[0]);
+        Animation<TextureRegion> walkRight = new Animation<>(0.2f, regions[1]);
+        Animation<TextureRegion> walkUp = new Animation<>(0.2f, regions[2]);
+        Animation<TextureRegion> eating = new Animation<>(0.2f, regions[4]);
+        TextureRegion[] rightFrames = walkRight.getKeyFrames();
+        TextureRegion[] leftFrames = new TextureRegion[rightFrames.length];
+
+        for (int i = 0; i < rightFrames.length; i++) {
+            leftFrames[i] = new TextureRegion(rightFrames[i]);
+            leftFrames[i].flip(true, false);
+        }
+        Animation<TextureRegion> walkLeft = new Animation<>(0.2f, leftFrames);
+        return new AnimalAnimations(walkDown, walkRight, walkLeft, walkUp, walkDown, eating);
+    }
+
+    private AnimalAnimations buildDinosaurAnimation(Texture textureSheet) {
+        TextureRegion[][] regions = TextureRegion.split(textureSheet, 16, 16);
+        Animation<TextureRegion> walkDown = new Animation<>(0.2f, regions[0]);
+        Animation<TextureRegion> walkRight = new Animation<>(0.2f, regions[1]);
+        Animation<TextureRegion> walkUp = new Animation<>(0.2f, regions[2]);
+        Animation<TextureRegion> walkLeft = new Animation<>(0.2f, regions[3]);
+        TextureRegion[] pettingRegions = {regions[4][2], regions[4][3]};
+        Animation<TextureRegion> petting = new Animation<>(0.2f, pettingRegions);
+        Animation<TextureRegion> eating = new Animation<>(0.2f, regions[6]);
+
+        return new AnimalAnimations(walkDown, walkRight, walkLeft, walkUp, walkDown, eating);
+    }
+
     public Animation<TextureRegion> getNPCWalkingAnimation(NPC npc, Direction direction) {
         Array<TextureRegion> frames = new Array<>();
 

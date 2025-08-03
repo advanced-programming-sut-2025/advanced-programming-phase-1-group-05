@@ -212,6 +212,14 @@ public class StoreView implements Screen {
                         player.addGold(- item.getPrice());
                         Main.getMain().setScreen(previousScreen);
                     }
+                    if (item.getName().contains("Coop")) {
+                        Texture tex  = GameAssetManager.getInstance().getItemTexture(item.getName());
+                        AnimalHouseLevel level = AnimalHouseLevel.fromString(item.getName());
+                        previousScreen.enterBuildMode(tex, EnclosureType.COOP, level);
+                        Player player = MyGame.getCurrentPlayer();
+                        player.addGold(-item.getPrice());
+                        Main.getMain().setScreen(previousScreen);
+                    }
 
                     qty++;
                     if (item.getRemainingForToday() < qty && item.getRemainingForToday() > 0) {

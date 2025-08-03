@@ -1,7 +1,7 @@
 package org.example.Common.Enums;
 
 public enum AnimalType {
-    CHICKEN, DUCK, RABBIT, // Coop animals
+    CHICKEN, DUCK, RABBIT, DINOSAUR, // Coop animals
     COW, GOAT, SHEEP, PIG, // Barn animals
     CROW; //this mf
 
