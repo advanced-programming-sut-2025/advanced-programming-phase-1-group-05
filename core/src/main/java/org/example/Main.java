@@ -18,6 +18,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+
 public class Main extends Game {
     public static SpriteBatch batch;
     private Skin skin;
@@ -43,9 +44,11 @@ public class Main extends Game {
         skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
         MenuNavigator.init(this, skin);
         try {
-            networkManager = new ClientNetworkManager();
+            networkManager = new ClientNetworkManager("localhost", 54555);
+            System.out.println("✅ Connected to server");
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("❌ Cannot connect to server");
         }
         checkAutoLogin();
        MenuNavigator.showMainMenu();

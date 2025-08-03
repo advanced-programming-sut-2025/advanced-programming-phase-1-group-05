@@ -7,6 +7,7 @@ import org.example.Client.DialogueManager;
 import org.example.Client.GameAssetManager;
 import org.example.Common.*;
 import org.example.Common.Enums.*;
+import org.example.Server.managers.LobbyManager;
 import org.example.Server.models.*;
 import org.example.Common.Tool.FishingPole;
 import org.example.Common.Tool.Hoe;
@@ -47,12 +48,482 @@ public class GameMenuController extends MenuController {
     private static List<Lobby> activeLobbies = new ArrayList<>();
     private Lobby currentLobby = null;
 
+    public Result submitAllMapSelections(Map<String, String> selections) {
+        Set<String> chosenMaps = new HashSet<>(selections.values());
+
+        if (chosenMaps.size() < selections.size()) {
+            return Result.error("Each player must choose a unique map!");
+        }
+
+        playerMapSelections.clear();
+        playerMapSelections.putAll(selections);
+
+        for (Player player : selectedPlayers) {
+            String mapName = selections.get(player.getUsername());
+            if (mapName == null) return Result.error("Missing map for player: " + player.getUsername());
+
+            int mapNum;
+            switch (mapName.toLowerCase()) {
+                case "map1": mapNum = 1; break;
+                case "map2": mapNum = 2; break;
+                case "map3": mapNum = 3; break;
+                case "map4": mapNum = 4; break;
+                default: return Result.error("Invalid map: " + mapName);
+            }
+
+            player.setMapNum(mapNum);
+        }
+
+        // ست کردن بازیکن فعلی
+        for (Player player : selectedPlayers) {
+            if (player.getUsername().equals(currentUser.getUsername())) {
+                MyGame.setCurrentPlayer(player);
+                break;
+            }
+        }
+
+        MyGame.getAllPlayers().clear();
+        MyGame.getAllPlayers().addAll(selectedPlayers);
+
+        return MyGame.startTheGame();
+    }
+
+    public static String getMapForPlayer(String username) {
+        return playerMapSelections.get(username);
+    }
+
+    public Result nextTurn() {
+//        MyGame game = activeGames.get(currentUser.getUsername());
+//        if (game == null) {
+//            return Result.error("There is no active game.");
+//        }
+//        pendingGame = game;
+
+        MyGame.getCurrentPlayer().increaseEnergy(-50);
+
+        MyGame.advanceToNextPlayer();
+
+        if (!MyGame.getCurrentPlayer().isEnergyUnlimited()) {
+            MyGame.getCurrentPlayer().resetEnergy();
+        }
+
+        return Result.success("Now it's " + MyGame.getCurrentPlayer().getUsername() + "'s turn.");
+    }
+
+    private Result terminateGame() {
+        try {
+            pendingGame = null;
+            activeGames.values().removeIf(game ->
+                    selectedPlayers.contains(currentUser));
+
+            for (Player player : selectedPlayers) {
+                UserDatabase.setUserInGame(player.getUsername(), false);
+            }
+
+            selectedPlayers.clear();
+            canChooseMap = false;
+            MyGame.currentPlayerIndex = 0;
+            canDeleteGame = false;
+
+            MyGame.getAllPlayers().clear();
+
+            return Result.success("Game deleted successfully!");
+        } catch (Exception e) {
+            return Result.error("Error deleting game: " + e.getMessage());
+        }
+    }
+
+    //cheat code set energy
+    public Result setEnergy(int value) {
+        MyGame.getCurrentPlayer().setEnergy(value);
+        return new Result(true, "** your energy got increased by " + value + " **");
+    }
+
+    public Result feedHay(Animal animal) {
+        Player player = MyGame.getCurrentPlayer();
+        Item hay = MyGame.getDatabase().getItem("Hay");
+        if (player.getItemQuantity(hay) < 1)
+            return Result.error("you don't have enough hay");
+        animal.setFeedingStatus(true);
+        player.getBackPack().removeFromInventory(hay, 1);
+        animal.adjustFriendshipPoints(8);
+        return Result.success("You offer food. The animal accepts. A bond is forged through snacks.");
+
+    }
+
+    public Result collectProduce(Animal animal) {
+        if (animal == null)
+            return Result.error("Selected animal doesn't exist or isn't yours");
+        List<Product> products = animal.getUnCollectedProducts();
+        if (products.isEmpty()) return Result.error("no uncollected products found");
+        for (Product product : products) {
+            MyGame.getCurrentPlayer().getBackPack().addToInventory(product, 1);
+        }
+        products.clear();
+        animal.adjustFriendshipPoints(5);
+        return new Result(true, "collected successfully");
+
+    }
+
+    public Result sellAnimal(AnimalActor animalActor) {
+        Animal animal = animalActor.getAnimal();
+        String animalName = animal.getName();
+        int basePrice = MyGame.getDatabase().getItem(animal.getType().name()).getPrice();
+        int price = (int) (basePrice * (((double) animal.getFriendshipPoints() / 1000) + 0.3));
+        Player player = MyGame.getCurrentPlayer();
+        player.addGold(price);
+        player.removeAnimal(animal);
+        view.removeAnimalActor(animalActor);
+        return Result.success( animalName +" looked back one last time before leaving… but you were already gone.");
+    }
+
+    public FishType getRandomFish(FishingPole pole) {
+        Player player = MyGame.getCurrentPlayer();
+        int fishingLevel = player.getFishingSkill().getLevel();
+        FishType caughtFish = FishType.getRandomFish(GameManager.getSeason(), fishingLevel);
+        return caughtFish;
+    }
+
+    public Result cheatAddMoney(int amount) {
+        Player player = MyGame.getCurrentPlayer();
+        player.addGold(amount);
+        return Result.success("added " + amount + " gold");
+    }
+
+    public Result talkToPlayer(Player targetPlayer, String message) {
+        Player currentPlayer = MyGame.getCurrentPlayer();
+
+        if (targetPlayer == null) return new Result(false, "Hmmm... either they moved away, or they never existed!");
+        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 100 || Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 100)
+            return new Result(false, "You can't have a heart-to-heart with someone who's miles away!");
+        //MyGame.addMessage(new Message(currentPlayer, targetPlayer, message));
+        currentPlayer.changeFriendshipXP(20, targetPlayer);
+        if (currentPlayer.isMarriedTo(targetPlayer)) {
+            currentPlayer.increaseEnergy(50);
+        }
+        targetPlayer.addNotification(currentPlayer.getName() + " says: \"" + message + "\" to you!");
+        return new Result(true, "");
+    }
+
+
+    public Result giftPlayer(Player targetPlayer, Item item, int amount) {
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        if (Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 100 ||
+                Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 100)
+            return Result.error("You can't just throw gifts across the valley... get closer first!");
+        if (currentPlayer.getItemQuantity(item) < amount)
+            return Result.error("You hold out your gift... and reality holds out a calculator.");
+        if (currentPlayer.getFriendshipLevel(targetPlayer) < 1)
+            return Result.error("Maybe get to know them a little better before tossing gifts their way?");
+
+        currentPlayer.getBackPack().getInventory().remove(item, amount);
+        targetPlayer.getBackPack().getInventory().put(item, amount);
+        MyGame.addGift(new Gift(currentPlayer, targetPlayer, item, amount));
+        targetPlayer.addNotification(targetPlayer.getName() +
+                "! You've been gifted! Hope it's not rocks again.");
+        return new Result(true, "You handed over the gift with a smile. Let's hope they like it!");
+    }
+    public Result rateTheGift(Gift gift, int rating) {
+
+        if (rating < 1 || rating > 5)
+            return new Result(false, "enter a number between 1 to 5.");
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        if (gift == null || !gift.getReceiver().equals(currentPlayer))
+            return new Result(false,
+                    "You stare into your empty hands and give it a " + rating + ". Interesting.");
+        Player targetPlayer = gift.getSender();
+        currentPlayer.changeFriendshipXP(((rating - 3) * 30 + 15), targetPlayer);
+        gift.setRating(rating);
+        return new Result(true, "rated successfully!");
+    }
+
+    public List<Gift> getReceivedGifts(Player otherPlayer) {
+        Player player = MyGame.getCurrentPlayer();
+        List<Gift> receivedGifts = new ArrayList<>();
+        for (Gift gift : MyGame.getAllGifts()) {
+            System.out.println("checking " + gift.getItem());
+            if (gift.getSender().equals(otherPlayer) && gift.getReceiver().equals(player)) {
+                receivedGifts.add(gift);
+                System.out.println("recieved");
+            }
+        }
+        return receivedGifts;
+    }
+
+    public List<Gift> getSentGifts(Player otherPlayer) {
+        Player player = MyGame.getCurrentPlayer();
+        List<Gift> sentGifts = new ArrayList<>();
+        for (Gift gift : MyGame.getAllGifts()) {
+            System.out.println("checking " + gift.getItem());
+            System.out.println("actual sender : " + gift.getSender().getUsername() + " expecting sender : " + player.getUsername());
+            if (gift.getSender().equals(player) && gift.getReceiver().equals(otherPlayer)) {
+                sentGifts.add(gift);
+                System.out.println("sent");
+            }
+        }
+        return sentGifts;
+    }
+
+    public Result giveBouquet(Player targetPlayer){
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        Item bouquet = MyGame.getDatabase().getItem("bouquet");
+        if (targetPlayer == null)
+            return Result.error("Bouquet in hand, heart full of hope... too bad that player doesn't even exist.");
+//        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 1 ||
+//                Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 1)
+//            return Result.error
+//                    ("You wave the bouquet around like a romantic maniac, but there's no one nearby to impress");
+        if (!currentPlayer.canGiveBouquet(targetPlayer))
+            return Result.error("You try to hand over the bouquet-they smile politely and change the subject");
+        if (currentPlayer.getItemQuantity(bouquet) < 1)
+            return Result.error("You reach for the bouquet... but your inventory says 'not today, Romeo'.");
+        currentPlayer.getBackPack().getInventory().remove(bouquet, 1);
+        targetPlayer.getBackPack().getInventory().put(bouquet, 1);
+        targetPlayer.changeLevel(currentPlayer, 3);
+        return new Result(true,
+                "They accepted the bouquet! Quick, act cool before your face turns red.");
+    }
+
+    public Result askMarriage(Player targetPlayer) {
+        Item ring = MyGame.getDatabase().getItem("Wedding Ring");
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        if (targetPlayer == null) return new Result(false,
+                "Imaginary partners don't make great spouses.");
+        if (Math.abs(currentPlayer.getXX() - targetPlayer.getXX()) > 100 ||
+                Math.abs(currentPlayer.getYY() - targetPlayer.getYY()) > 100)
+            return new Result(false, "Your love might be strong, but your range isn't. Get closer!");
+        if (ring == null || currentPlayer.getItemQuantity(ring) == 0)
+            return new Result(false, "You reach for the ring... but your pockets are full of nothing");
+        if (!currentPlayer.canAskMarriage(targetPlayer))
+            return new Result(false, "Slow down, lovebird-you're still just friendly acquaintances");
+        if (!currentPlayer.getGender().equalsIgnoreCase("male"))
+            return new Result(false,
+                    "Only the boys can propose... for now. Rules of the valley, not mine!");
+
+        currentPlayer.proposed(targetPlayer);
+        return new Result(true, "Now we wait...");
+    }
+
+    public Result giftNPC(NPC npc, Item item) {
+        Player player = MyGame.getCurrentPlayer();
+        String itemName = item.getName();
+        if (item instanceof Tool<?>)
+            return new Result(false,
+                    "Gifting your old tools? What’s next-handing out used socks?");
+        lastNPC = npc;
+        if (npc.isFavorite(itemName)) {
+            npc.addFriendShipPoints(player, 200);
+            return new Result(true,
+                    "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
+        }
+        player.getBackPack().removeFromInventory(item, 1);
+        npc.addFriendShipPoints(player, 50);
+        return new Result(true, "Oh, a " + itemName + " ? Thanks, " + player.getName());
+    }
+
+    //plant seed on a specific tile
+    public Result plantSeed(Item item, GameTile tile) {
+        //errors
+//        if (tile == null) return new Result(false, "Tile not found");
+//        if (tile.getX() == MyGame.getCurrentPlayer().getCoordinate().getKey() && tile.getY() == MyGame.getCurrentPlayer().getCoordinate().getValue()) {
+//            return new Result(false, "You stare at your boots. The boots stare back. Nothing grows.");
+//        }
+        if(item instanceof FruitAndVegetable || item instanceof Tree) {
+            return new Result(false,"");
+        }
+        String seed = item.getName();
+        boolean successful = MyGame.getCurrentPlayer().getFarmingSkill().plantSeed(seed, tile);
+        if (successful) {
+            if (tile.getTileType() != TileType.Soil)
+                return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
+            if (!tile.isTileValidForPlanting()) return new Result(false,
+                "You can't plant cause the tile is occupied!");
+            MyGame.getCurrentPlayer().getBackPack().removeFromInventory(
+                    MyGame.getCurrentPlayer().getBackPack().getFromInventory(seed), 1
+            );
+            return new Result(true, "Successfully planted " + seed);
+        } else if (MyGame.getCurrentPlayer().getBackPack().getFromInventory(seed) == null)
+            return new Result(false, "You don't have that seed in your inventory!");
+        return new Result(false, "That's not a valid seed!");
+    }
+
+    //fertilize crop
+    public Result fertilizeCrop(String fertilizer, GameTile tile) {
+        Item item = tile.getItemOnTile();
+        if (item == null && tile.getTileType() == TileType.Soil) {
+            tile.fertilze(fertilizer);
+            return new Result(true, "Fertilized tile successfully!");
+        } else if (item instanceof FruitAndVegetable) {
+            FruitAndVegetable fruit = (FruitAndVegetable) item;
+            if (fruit.getAge() == 0) {
+                boolean successful = MyGame.getCurrentPlayer().getFarmingSkill().fertilizeCrop(tile, fertilizer);
+                if (successful) return new Result(true, "Successfully fertilized with " + fertilizer);
+                else return new Result(false, "You don't have that kind of fertilizer");
+            } else return new Result(false, "You can only fertilize tile before or the day of planting!");
+        } else return new Result(false, "Can't fertilize this tile");
+    }
+
+    //place item on ground
+    public Result placeItem(Item item, GameTile tile) {
+        if (tile.getItemOnTile() != null)
+            return new Result(false, "The tile is already occupied.");
+        tile.setItemOnTile(item);
+        MyGame.getCurrentPlayer().getBackPack().removeFromInventory(tile.getItemOnTile(), 1);
+        return new Result(true, "Item placed successfully");
+    }
+
+    //add item cheat code
+    public Result addItemCheatCode(String name, int count) {
+        Item item = null;
+        if (MyGame.getDatabase().getItem(name) != null) item = MyGame.getDatabase().getItem(name);
+        else if (CropType.fromString(name) != null) item = CropType.fromString(name);
+        else if (ForagingTreeSourceType.fromString(name) != null) item = ForagingTreeSourceType.fromString(name);
+        else if (ForagingCrop.fromString(name) != null) item = ForagingCrop.fromString(name);
+        else if (ForagingSeedType.fromString(name) != null) item = ForagingSeedType.fromString(name);
+            //else if(CraftType.fromString(name) != null) item = CraftType.fromString(name);
+            // else if(CookingRecipeType.fromString(name) != null) item = CookingRecipeType.fromString(name);
+        else if (FishType.fromString(name) != null) item = FishType.fromString(name);
+        else if (MineralType.fromString(name) != null) item = MineralType.fromString(name);
+
+        if (item == null) return new Result(false, "** No item with that name exists **");
+        if (count <= 0) return new Result(false, "** Not a valid count **");
+        if (item.getName().contains("Pack")) {
+            if (item.getName().equals("Large Pack")) {
+                MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Big);
+            } else if (item.getName().equals("Deluxe Pack")) {
+                MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Deluxe);
+            }
+            return new Result(true, "Upgraded successfully");
+            //change trash can
+        } else if (item.getName().contains("Trash Can")) {
+            if (item.getName().equals("Copper Trash Can")) {
+                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Brass);
+            } else if (item.getName().equals("Steel Trash Can")) {
+                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iron);
+            } else if (item.getName().equals("Gold Trash Can")) {
+                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Gold);
+            } else if (item.getName().equals("Iridium Trash Can")) {
+                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iridium);
+            }
+            return new Result(true, "Upgraded successfully");
+            //add craft recipes to learnt recipes
+        } else if (item.getName().contains("Recipe")) {
+            if (item.getName().equals("Dehydrator Recipe")) {
+                //MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
+            } else if (item.getName().equals("Grass Starter Recipe")) {
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
+            } else if (item.getName().equals("Fish Smoker Recipe")) {
+                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
+            } else {
+                String recipeName = item.getName().replace("Recipe", "").trim();
+                CookingRecipeType type = CookingRecipeType.fromString(recipeName);
+                System.out.println(type);
+                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
+            }
+            return new Result(true, "Recipe added successfully");
+        }
+        MyGame.getCurrentPlayer().getBackPack().addToInventory(item, count);
+        return new Result(true, "** " + count + " of " + name + " added to your inventory **");
+
+    }
+
+    private String capitalize(String str) {
+        if (str == null || str.isEmpty()) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    public Result cheatWeatherSet(String input) {
+        try {
+            String[] tokens = input.trim().split("\\s+");
+            if (tokens.length != 4) {
+                return Result.error("Invalid format. Usage: cheat weather set <Type>");
+            }
+
+            String weatherType = tokens[3];
+
+            Weather newWeather;
+            try {
+                newWeather = Weather.valueOf(weatherType.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return Result.error("Invalid weather type. Valid types: SUNNY, RAIN, STORM, SNOW");
+            }
+
+            MyGame.currentWeather = newWeather;
+
+            MyGame.setForecastedWeather(newWeather);
+
+            return Result.success("Weather changed to: " + newWeather);
+
+        } catch (Exception e) {
+            return Result.error("Error while setting weather: " + e.getMessage());
+        }
+    }
+
+    public Result eatFood(Item food) {
+        if (food instanceof Food) {
+            GameAssetManager.playSfx("eat");
+            int energy = ((Food) food).getEnergy();
+            if(((Food) food).getRecipeType().Buff()) MyGame.getCurrentPlayer().setEnergy(200);
+            else MyGame.getCurrentPlayer().increaseEnergy(energy);
+            MyGame.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
+            MyGame.getCurrentPlayer().setCurrentItem(null);
+            return new Result(true, "You consumed the food successfully!");
+        }
+        else if (food instanceof  Product && ((Product) food).getDescription().equalsIgnoreCase("fish")) {
+            GameAssetManager.playSfx("eat");
+            MyGame.getCurrentPlayer().increaseEnergy(100);
+            MyGame.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
+            MyGame.getCurrentPlayer().setCurrentItem(null);
+            return new Result(true, "You consumed the fish successfully!");
+        }else return new Result(false, "That's...not edible.");
+    }
+
+    private static class Node {
+        int x, y;
+        Node parent;
+
+        public Node(int x, int y, Node parent) {
+            this.x = x;
+            this.y = y;
+            this.parent = parent;
+        }
+    }
+
+
+    public Result loadGame() {
+//        if (!currentUser.getUsername().equals(MyGame.getCurrentPlayer().getUsername())
+//                || !currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())) {
+//            for (int i = 0; i < selectedPlayers.size(); i++) {
+//                if (currentUser.getUsername().equals(selectedPlayers.get(i).getUsername())) {
+//                    canExitGame[i] = true;
+//                }
+//            }
+//        }
+        User.haveSavedGame = true;
+        if (User.haveSavedGame) {
+            DBController.loadAllUsers(); // یا UserDatabase.loadUsers();
+            UserDatabase.loadUsers();
+            DBController.loadGameState();
+            if (RegisterMenuController.currentUser != null) {
+                Player currentPlayer = MyGame.getPlayerByUsername(RegisterMenuController.currentUser.getUsername());
+                if (currentPlayer != null) {
+                    MyGame.setCurrentPlayer(currentPlayer);
+                    System.out.println("Current player set to: " + currentPlayer.getUsername());
+                } else {
+                    System.err.println("Could not find a player for the logged in user.");
+                }
+            }
+            return Result.success("Game loaded successfully :)");
+        }
+        return Result.error("There is no Game to continue!");
+    }
+
     public Result newGame(String input) {
         Pattern pattern = Pattern.compile(
-                "^game new(?: -u (?<username>[\\w-]+))" +
-                        "(?: -u (?<username2>[\\w-]+))?" +
-                        "(?: -u (?<username3>[\\w-]+))?" +
-                        "(?<extra> -u [\\w-]+)*$"
+            "^game new(?: -u (?<username>[\\w-]+))" +
+                "(?: -u (?<username2>[\\w-]+))?" +
+                "(?: -u (?<username3>[\\w-]+))?" +
+                "(?<extra> -u [\\w-]+)*$"
         );
 
         Matcher matcher = pattern.matcher(input.trim());
@@ -120,156 +591,6 @@ public class GameMenuController extends MenuController {
         return new Result(true, "All players added. Please choose your maps.");
     }
 
-    public Result submitAllMapSelections(Map<String, String> selections) {
-        Set<String> chosenMaps = new HashSet<>(selections.values());
-
-        if (chosenMaps.size() < selections.size()) {
-            return Result.error("Each player must choose a unique map!");
-        }
-
-        playerMapSelections.clear();
-        playerMapSelections.putAll(selections);
-
-        for (Player player : selectedPlayers) {
-            String mapName = selections.get(player.getUsername());
-            if (mapName == null) return Result.error("Missing map for player: " + player.getUsername());
-
-            int mapNum;
-            switch (mapName.toLowerCase()) {
-                case "map1": mapNum = 1; break;
-                case "map2": mapNum = 2; break;
-                case "map3": mapNum = 3; break;
-                case "map4": mapNum = 4; break;
-                default: return Result.error("Invalid map: " + mapName);
-            }
-
-            player.setMapNum(mapNum);
-        }
-
-        // ست کردن بازیکن فعلی
-        for (Player player : selectedPlayers) {
-            if (player.getUsername().equals(currentUser.getUsername())) {
-                MyGame.setCurrentPlayer(player);
-                break;
-            }
-        }
-
-        MyGame.getAllPlayers().clear();
-        MyGame.getAllPlayers().addAll(selectedPlayers);
-
-        return MyGame.startTheGame();
-    }
-
-    public static String getMapForPlayer(String username) {
-        return playerMapSelections.get(username);
-    }
-
-
-    public Result chooseMap(String input) {
-        if (!canChooseMap) {
-            return Result.error("Not in map selection phase!");
-        }
-        Pattern pattern = Pattern.compile("^game map (?<mapNumber>[1-4])$");
-        Matcher matcher = pattern.matcher(input);
-        if (!matcher.find()) {
-            return Result.error("Map num must be 1-4!");
-        }
-        int mapNumber = Integer.parseInt(matcher.group("mapNumber"));
-
-        Player currentPlayer = selectedPlayers.get(MyGame.currentPlayerIndex);
-        currentPlayer.setMapNum(mapNumber);
-
-        MyGame.setCurrentPlayer(selectedPlayers.get(MyGame.currentPlayerIndex));
-        playerMapChoices.put(MyGame.currentPlayerIndex, mapNumber);
-
-        MyGame.currentPlayerIndex++;
-        if (MyGame.currentPlayerIndex < selectedPlayers.size()) {
-            return Result.success("Player " + selectedPlayers.get(MyGame.currentPlayerIndex).getUsername() +
-                    ", please choose your map (1-4):");
-        } else {
-            canChooseMap = false;
-            pendingGame = new MyGame();
-            Result startResult = MyGame.startTheGame();
-            if (startResult.isSuccess()) {
-//                activeGames.put(currentUser.getUsername(), pendingGame);
-                for (Player player : selectedPlayers) {
-                    activeGames.put(player.getUsername(), pendingGame);
-                }
-                MyGame.setCurrentPlayer(selectedPlayers.get(0));
-            }
-            MyGame.setCurrentPlayer(selectedPlayers.get(0));
-            return startResult;
-        }
-    }
-
-
-    public Result loadGame() {
-//        if (!currentUser.getUsername().equals(MyGame.getCurrentPlayer().getUsername())
-//                || !currentUser.getUsername().equals(selectedPlayers.get(0).getUsername())) {
-//            for (int i = 0; i < selectedPlayers.size(); i++) {
-//                if (currentUser.getUsername().equals(selectedPlayers.get(i).getUsername())) {
-//                    canExitGame[i] = true;
-//                }
-//            }
-//        }
-        User.haveSavedGame = true;
-        if (User.haveSavedGame) {
-            DBController.loadAllUsers(); // یا UserDatabase.loadUsers();
-            UserDatabase.loadUsers();
-            DBController.loadGameState();
-            if (RegisterMenuController.currentUser != null) {
-                Player currentPlayer = MyGame.getPlayerByUsername(RegisterMenuController.currentUser.getUsername());
-                if (currentPlayer != null) {
-                    MyGame.setCurrentPlayer(currentPlayer);
-                    System.out.println("Current player set to: " + currentPlayer.getUsername());
-                } else {
-                    System.err.println("Could not find a player for the logged in user.");
-                }
-            }
-            return Result.success("Game loaded successfully :)");
-        }
-        return Result.error("There is no Game to continue!");
-    }
-
-    public Result exitGame() {
-        boolean done = false;
-        for (int i = 0; i < selectedPlayers.size(); i++) {
-            if (currentUser.getUsername().equals(selectedPlayers.get(i).getUsername())) {
-                if (canExitGame[i]) {
-                    done = true;
-                }
-            }
-        }
-        if (currentUser.getUsername().equals(MyGame.getCurrentPlayer().getUsername()) ||
-                currentUser.getUsername().equals(selectedPlayers.get(0).getUsername()) || done) {
-            pendingGame = null;
-//            canLoadGame = true;
-            DBController.saveGameState();
-            return Result.success("Exited Game successfully!");
-        }
-        return Result.error("You can't exit the game!");
-    }
-
-
-    public Result nextTurn() {
-//        MyGame game = activeGames.get(currentUser.getUsername());
-//        if (game == null) {
-//            return Result.error("There is no active game.");
-//        }
-//        pendingGame = game;
-
-        MyGame.getCurrentPlayer().increaseEnergy(-50);
-
-        MyGame.advanceToNextPlayer();
-
-        if (!MyGame.getCurrentPlayer().isEnergyUnlimited()) {
-            MyGame.getCurrentPlayer().resetEnergy();
-        }
-
-        return Result.success("Now it's " + MyGame.getCurrentPlayer().getUsername() + "'s turn.");
-    }
-
-
     public Result deleteGame() {
         if (selectedPlayers.isEmpty()) {
             return Result.error("No active game to delete!");
@@ -286,977 +607,6 @@ public class GameMenuController extends MenuController {
 
         return result;
     }
-
-
-    private Result terminateGame() {
-        try {
-            pendingGame = null;
-            activeGames.values().removeIf(game ->
-                    selectedPlayers.contains(currentUser));
-
-            for (Player player : selectedPlayers) {
-                UserDatabase.setUserInGame(player.getUsername(), false);
-            }
-
-            selectedPlayers.clear();
-            canChooseMap = false;
-            MyGame.currentPlayerIndex = 0;
-            canDeleteGame = false;
-
-            MyGame.getAllPlayers().clear();
-
-            return Result.success("Game deleted successfully!");
-        } catch (Exception e) {
-            return Result.error("Error deleting game: " + e.getMessage());
-        }
-    }
-
-    //for showing current player's energy level
-    public Result showEnergy() {
-        return new Result(true, "energy :" + MyGame.getCurrentPlayer().getEnergy());
-    }
-
-    //cheat code set energy
-    public Result setEnergy(int value) {
-        MyGame.getCurrentPlayer().setEnergy(value);
-        return new Result(true, "** your energy got increased by " + value + " **");
-    }
-
-    //cheat code unlimited energy
-    public Result unlimitedEnergy() {
-        MyGame.getCurrentPlayer().setUnlimitedEnergy();
-        return new Result(true, "** your energy is unlimited now **");
-    }
-
-    //showing the items in inventory
-    public Result showInventory() {
-        HashMap<Item, Integer> items = MyGame.getCurrentPlayer().getBackPack().getInventory();
-        StringBuilder output = new StringBuilder();
-        if (items.isEmpty()) return new Result(false, "Inventory is empty");
-        for (Item item : items.keySet()) {
-            if (items.get(item) != 0)
-                output.append(items.get(item)).append(" of ")
-                        .append(item.getName())
-                        .append("\n");
-
-        }
-        return new Result(true, output.toString());
-
-    }
-
-    //removing from inventory
-    public Result removeFromInventory(String name, int quantity) {
-        MyGame.getCurrentPlayer().getTrashCan().removeFromInventory(name, quantity);
-        ItemLevel itemLevel = MyGame.getCurrentPlayer().getTrashCan().getLevel();
-        Item itemToRemove = null;
-        for(Item item : MyGame.getCurrentPlayer().getBackPack().getInventory().keySet()) {
-            if(item.getName().equals(name)) {
-                itemToRemove = item;
-            }
-        }
-        if (itemToRemove != null) {
-            int moneyAdded = (int) (itemToRemove.getPrice()*itemLevel.getTrashcanCoeff());
-            MyGame.getCurrentPlayer().addGold(moneyAdded);
-        }
-        return new Result(true, quantity + " of " + name + " was removed from inventory");
-    }
-
-    //equip a certain tool
-    public Result equipTool(String name) {
-        HashMap<Item, Integer> items = MyGame.getCurrentPlayer().getBackPack().getInventory();
-        for (Item item : items.keySet()) {
-            if (item.getName().equals(name)) {
-                items.put(item, items.get(item) - 1);
-                MyGame.getCurrentPlayer().setCurrentItem(item);
-                return new Result(true, "You're now equipped with " + item.getName());
-            }
-        }
-        return new Result(true, "You don't have that tool in your inventory");
-    }
-
-    //showing current tool
-    public Result showCurrentTool() {
-        Item currentItem = MyGame.getCurrentPlayer().getCurrentItem();
-        if (currentItem instanceof Tool) {
-            return new Result(true, "You are equipped with " + currentItem.getName());
-        } else {
-            return new Result(true, "You are not equipped with any tool");
-        }
-    }
-
-    //showing available tools
-    public Result showAvailableTools() {
-        boolean found = false;
-        StringBuilder output = new StringBuilder();
-        for (Item i : MyGame.getCurrentPlayer().getBackPack().getInventory().keySet()) {
-            if (i instanceof Tool) {
-                output.append("* ").append(i.getName()).append("\n");
-                found = true;
-            }
-        }
-        if (!found) return new Result(true, "You don't have any tools in your inventory");
-        return new Result(true, output.toString());
-    }
-
-    //show craft info
-    public Result showCraftInfo(String name) {
-        CropType cropType = CropType.fromString(name);
-        TreeType treeType = TreeType.fromString(name);
-        ForagingTreeSourceType foragingTreeSourceType = ForagingTreeSourceType.fromString(name);
-        ForagingCrop foragingCrop = ForagingCrop.fromString(name);
-        MineralType mineralType = MineralType.fromString(name);
-        if (cropType != null) return new Result(true, cropType.toString());
-        else if (treeType != null) return new Result(true, treeType.toString());
-        else if (foragingTreeSourceType != null) return new Result(true, foragingTreeSourceType.toString());
-        else if (foragingCrop != null) return new Result(true, foragingCrop.toString());
-        else if (mineralType != null) return new Result(true, mineralType.toString());
-
-        return new Result(true, "Couldn’t find the craft you're looking for");
-    }
-
-    public Result petAnimal(Matcher m) {
-        String animalName = m.group("animalName");
-        Animal animal = MyGame.getCurrentPlayer().getAnimal(animalName);
-        if (animal == null) {
-            return Result.error("animal doesn't exist or isn't yours");
-        }
-        Player currentPlayer = MyGame.getCurrentPlayer();
-        if (Math.abs(animal.getX() - currentPlayer.getXX()) > 100 ||
-                Math.abs(animal.getY() - currentPlayer.getYY()) > 100) {
-            return Result.error("You need to get closer to the animal. animal coordinates: " + animal.getX() + " " + animal.getY());
-        }
-        animal.adjustFriendshipPoints(15);
-        animal.setPetToday(true);
-        return Result.success("You gently pet "+ animal.getName() +". It seems happy and lets out a content sound.");
-    }
-
-    public Result cheatSetFriendship(Matcher m) {
-        String animalName = m.group("animalName");
-        int amount = Integer.parseInt(m.group("amount"));
-        Animal animal = MyGame.getCurrentPlayer().getAnimal(animalName);
-        if (animal == null) return Result.error("animal doesn't exist or isn't yours");
-        animal.setFriendshipPoints(amount);
-        return Result.success("Friendship boosted! Nothing says ‘bonding’ like a little… code magic. Your animal is now contractually obligated to adore you");
-    }
-
-    public Result printAnimalsInfo() {
-
-        Player player = MyGame.getCurrentPlayer();
-        List<Animal> animals = player.getAllAnimals();
-        StringBuilder output = new StringBuilder();
-        output.append("Your animals: ").append("\n");
-        for (Animal animal : animals) {
-            output.append(animal.getName()).append("\t").append(animal.getFriendshipPoints()).append("\n");
-        }
-        return Result.success(output.toString());
-    }
-
-    public Result shepherdAnimal(Matcher m) {
-        String animalName = m.group("animalName");
-        int x = Integer.parseInt(m.group("x"));
-        int y = Integer.parseInt(m.group("y"));
-        Player player = MyGame.getCurrentPlayer();
-        Animal animal = player.getAnimal(animalName);
-        if (animal == null) return Result.error("animal doesn't exist or isn't yours");
-        GameTile tile = MyGame.getGameMap().getTile(x, y);
-        if (tile == null || tile.isOccupied() || !player.getFarm().isInFarm(x , y)) {
-            return Result.error("invalid tile");
-        }
-        animal.setXY(x, y);
-        animal.shepherd();
-        animal.setFeedingStatus(true);
-        return Result.success( animal.getName()  +" follows your lead, trotting along obediently.");
-    }
-    public Result feedHay(Animal animal) {
-        Player player = MyGame.getCurrentPlayer();
-        Item hay = MyGame.getDatabase().getItem("Hay");
-        if (player.getItemQuantity(hay) < 1)
-            return Result.error("you don't have enough hay");
-        animal.setFeedingStatus(true);
-        player.getBackPack().removeFromInventory(hay, 1);
-        animal.adjustFriendshipPoints(8);
-        return Result.success("You offer food. The animal accepts. A bond is forged through snacks.");
-
-    }
-
-    public Result printUncollectedProduce() {
-        Player player = MyGame.getCurrentPlayer();
-        List<Animal> animals = player.getAllAnimals();
-        StringBuilder builder = new StringBuilder();
-        for (Animal animal : animals) {
-            for (Product product : animal.getUnCollectedProducts()) {
-                builder.append(animal.getType()).append(animal.getName()).append(" has produced ").append(product.getName()).append("\n");
-            }
-        }
-        return Result.success(builder.toString());
-    }
-
-    public Result collectProduce(Animal animal) {
-        if (animal == null)
-            return Result.error("Selected animal doesn't exist or isn't yours");
-        List<Product> products = animal.getUnCollectedProducts();
-        if (products.isEmpty()) return Result.error("no uncollected products found");
-        for (Product product : products) {
-            MyGame.getCurrentPlayer().getBackPack().addToInventory(product, 1);
-        }
-        products.clear();
-        animal.adjustFriendshipPoints(5);
-        return new Result(true, "collected successfully");
-
-    }
-
-    public Result sellAnimal(AnimalActor animalActor) {
-        Animal animal = animalActor.getAnimal();
-        String animalName = animal.getName();
-        int basePrice = MyGame.getDatabase().getItem(animal.getType().name()).getPrice();
-        int price = (int) (basePrice * (((double) animal.getFriendshipPoints() / 1000) + 0.3));
-        Player player = MyGame.getCurrentPlayer();
-        player.addGold(price);
-        player.removeAnimal(animal);
-        view.removeAnimalActor(animalActor);
-        return Result.success( animalName +" looked back one last time before leaving… but you were already gone.");
-    }
-
-    public FishType getRandomFish(FishingPole pole) {
-        Player player = MyGame.getCurrentPlayer();
-        int fishingLevel = player.getFishingSkill().getLevel();
-        FishType caughtFish = FishType.getRandomFish(GameManager.getSeason(), fishingLevel);
-        return caughtFish;
-    }
-//    public Result useArtisan(Matcher m) {
-//        String args = m.group("args");
-//        ArtisanType artisan = ArtisanType.getArtisan(args);
-//        if (artisan == null)
-//            return Result.error("That machine doesn’t seem to exist. Are you sure it’s real?");
-//
-//        Player player = MyGame.getCurrentPlayer();
-////        if (!player.getBackPack().hasThisCraft(artisan.getCraftType()))
-////            return Result.error("Nope, artisan machines don’t have Wi-Fi. Go stand next to it!");
-//        //if (artisan != null) artisan.useArtisan(args);
-//        return Result.success("");
-//    }
-
-//    public Result artisanGet(Matcher m) {
-//        String args = m.group("artisanName");
-//        ArtisanType artisan = ArtisanType.getArtisan(args);
-//        if (artisan == null)
-//            return Result.error("That machine doesn’t seem to exist. Are you sure it’s real?");
-//        List<ArtisanProduct> products = artisan.getProducts();
-//        StringBuilder builder = new StringBuilder();
-//        if (artisan.products.isEmpty())
-//            return Result.error("There's nothing in the machine-unless you're trying to process thin air");
-//        if (products.isEmpty())
-//            return Result.error("Hold tight! The machine’s still working on it.");
-//        for (ArtisanProduct product : products) {
-//            MyGame.getCurrentPlayer().getBackPack().addToInventory(product, 1);
-//            builder.append("added " + product.getName() + " to your inventory");
-//            artisan.products.remove(product);
-//        }
-//        return Result.success(builder.toString());
-//    }
-
-    public Result cheatAddMoney(int amount) {
-        Player player = MyGame.getCurrentPlayer();
-        player.addGold(amount);
-        return Result.success("added " + amount + " gold");
-    }
-
-    public Result showFriendshipLevels() {
-        StringBuilder builder = new StringBuilder();
-        Player currentPlayer = MyGame.getCurrentPlayer();
-        for (Player player : MyGame.getAllPlayers()) {
-            if (!player.equals(currentPlayer)) {
-                builder.append(player.getName()).append("\tfriendship level: ").append(currentPlayer.getFriendshipLevel(player));
-                builder.append("\t friendship points: ").append(currentPlayer.getFriendshipPoints(player)).append("\n");
-            }
-        }
-        return new Result(true, builder.toString());
-    }
-
-    public Result talkToPlayer(Player targetPlayer, String message) {
-        Player currentPlayer = MyGame.getCurrentPlayer();
-
-        if (targetPlayer == null) return new Result(false, "Hmmm... either they moved away, or they never existed!");
-        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 100 || Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 100)
-            return new Result(false, "You can't have a heart-to-heart with someone who's miles away!");
-        //MyGame.addMessage(new Message(currentPlayer, targetPlayer, message));
-        currentPlayer.changeFriendshipXP(20, targetPlayer);
-        if (currentPlayer.isMarriedTo(targetPlayer)) {
-            currentPlayer.increaseEnergy(50);
-        }
-        targetPlayer.addNotification(currentPlayer.getName() + " says: \"" + message + "\" to you!");
-        return new Result(true, "");
-    }
-
-    public Result talkHistory(String input) {
-        int uIndex = input.indexOf('u');
-        input = input.substring(uIndex + 1).trim();
-        Player player = MyGame.getPlayerByUsername(input);
-        if (player == null) return new Result(false,
-                "Talking to ghosts again? That player isn't real.");
-        List<Message> messages = MyGame.getMessages(player, MyGame.getCurrentPlayer());
-        if (messages.isEmpty()) return new Result(false,
-                "Looks like you two haven't broken the ice yet");
-
-        StringBuilder output = new StringBuilder();
-        output.append("Talk history with ").append(input).append("\n");
-        for (Message message : messages) {
-            output.append(message.getSender().getName()).append(": ").append(message.getMessage()).append("\n");
-        }
-        return new Result(true, output.toString());
-    }
-
-    public Result cheatAddFriendshipPoints(Matcher m) {
-        Player currentPlayer = MyGame.getCurrentPlayer();
-        Player targetPlayer = MyGame.getPlayerByUsername(m.group("username"));
-        if (targetPlayer == null) return Result.error("");
-        int amount = Integer.parseInt(m.group("amount"));
-        currentPlayer.changeFriendshipXP(amount, targetPlayer);
-        return Result.success("added " + amount + " friendship points to " + targetPlayer.getName());
-    }
-
-    public Result giftPlayer(Player targetPlayer, Item item, int amount) {
-        Player currentPlayer = MyGame.getCurrentPlayer();
-        if (Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 100 ||
-                Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 100)
-            return Result.error("You can't just throw gifts across the valley... get closer first!");
-        if (currentPlayer.getItemQuantity(item) < amount)
-            return Result.error("You hold out your gift... and reality holds out a calculator.");
-        if (currentPlayer.getFriendshipLevel(targetPlayer) < 1)
-            return Result.error("Maybe get to know them a little better before tossing gifts their way?");
-
-        currentPlayer.getBackPack().getInventory().remove(item, amount);
-        targetPlayer.getBackPack().getInventory().put(item, amount);
-        MyGame.addGift(new Gift(currentPlayer, targetPlayer, item, amount));
-        targetPlayer.addNotification(targetPlayer.getName() +
-                "! You've been gifted! Hope it's not rocks again.");
-        return new Result(true, "You handed over the gift with a smile. Let's hope they like it!");
-    }
-    public Result rateTheGift(Gift gift, int rating) {
-
-        if (rating < 1 || rating > 5)
-            return new Result(false, "enter a number between 1 to 5.");
-        Player currentPlayer = MyGame.getCurrentPlayer();
-        if (gift == null || !gift.getReceiver().equals(currentPlayer))
-            return new Result(false,
-                    "You stare into your empty hands and give it a " + rating + ". Interesting.");
-        Player targetPlayer = gift.getSender();
-        currentPlayer.changeFriendshipXP(((rating - 3) * 30 + 15), targetPlayer);
-        gift.setRating(rating);
-        return new Result(true, "rated successfully!");
-    }
-
-    public Result showGiftHistory(String username) {
-        StringBuilder output = new StringBuilder();
-        Player player = MyGame.getPlayerByUsername(username);
-        for (Gift gift : MyGame.getAllGifts()) {
-            if (gift.getSender().equals(player) || gift.getReceiver().equals(player)) {
-                output.append(gift.getSender().getName()).append(" gave ").append(gift.getReceiver().getName()).append(" ")
-                        .append(gift.getAmount()).append(" ").append(gift.getName()).append(" (s).\n");
-            }
-        }
-        return new Result(true, output.toString());
-    }
-
-    public List<Gift> getReceivedGifts(Player otherPlayer) {
-        Player player = MyGame.getCurrentPlayer();
-        List<Gift> receivedGifts = new ArrayList<>();
-        for (Gift gift : MyGame.getAllGifts()) {
-            System.out.println("checking " + gift.getItem());
-            if (gift.getSender().equals(otherPlayer) && gift.getReceiver().equals(player)) {
-                receivedGifts.add(gift);
-                System.out.println("recieved");
-            }
-        }
-        return receivedGifts;
-    }
-
-    public List<Gift> getSentGifts(Player otherPlayer) {
-        Player player = MyGame.getCurrentPlayer();
-        List<Gift> sentGifts = new ArrayList<>();
-        for (Gift gift : MyGame.getAllGifts()) {
-            System.out.println("checking " + gift.getItem());
-            System.out.println("actual sender : " + gift.getSender().getUsername() + " expecting sender : " + player.getUsername());
-            if (gift.getSender().equals(player) && gift.getReceiver().equals(otherPlayer)) {
-                sentGifts.add(gift);
-                System.out.println("sent");
-            }
-        }
-        return sentGifts;
-    }
-    public Result hugPlayer(String username) {
-        Player targetPlayer = MyGame.getPlayerByUsername(username);
-        Player currentPlayer = MyGame.getCurrentPlayer();
-        if (targetPlayer == null)
-            return new Result(false,
-                    "You open your arms wide... but there's no one by that name to recieve it");
-        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 100 ||
-                Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 100)
-            return new Result(false, "They're not here to catch your hug. Maybe next time!");
-        if (!currentPlayer.canHug(targetPlayer))
-            return Result.error("They awkwardly sidestep the hug. Friendship takes time, pal.");
-        currentPlayer.changeFriendshipXP(60, targetPlayer);
-        if (currentPlayer.isMarriedTo(targetPlayer)) {
-            currentPlayer.increaseEnergy(50);
-        }
-        return new Result(true, "You hugged them tight. Even the cows felt the love.");
-    }
-
-    public Result giveBouquet(Player targetPlayer){
-        Player currentPlayer = MyGame.getCurrentPlayer();
-        Item bouquet = MyGame.getDatabase().getItem("bouquet");
-        if (targetPlayer == null)
-            return Result.error("Bouquet in hand, heart full of hope... too bad that player doesn't even exist.");
-//        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 1 ||
-//                Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 1)
-//            return Result.error
-//                    ("You wave the bouquet around like a romantic maniac, but there's no one nearby to impress");
-        if (!currentPlayer.canGiveBouquet(targetPlayer))
-            return Result.error("You try to hand over the bouquet-they smile politely and change the subject");
-        if (currentPlayer.getItemQuantity(bouquet) < 1)
-            return Result.error("You reach for the bouquet... but your inventory says 'not today, Romeo'.");
-        currentPlayer.getBackPack().getInventory().remove(bouquet, 1);
-        targetPlayer.getBackPack().getInventory().put(bouquet, 1);
-        targetPlayer.changeLevel(currentPlayer, 3);
-        return new Result(true,
-                "They accepted the bouquet! Quick, act cool before your face turns red.");
-    }
-
-    public Result askMarriage(Player targetPlayer) {
-        Item ring = MyGame.getDatabase().getItem("Wedding Ring");
-        Player currentPlayer = MyGame.getCurrentPlayer();
-        if (targetPlayer == null) return new Result(false,
-                "Imaginary partners don't make great spouses.");
-        if (Math.abs(currentPlayer.getXX() - targetPlayer.getXX()) > 100 ||
-                Math.abs(currentPlayer.getYY() - targetPlayer.getYY()) > 100)
-            return new Result(false, "Your love might be strong, but your range isn't. Get closer!");
-        if (ring == null || currentPlayer.getItemQuantity(ring) == 0)
-            return new Result(false, "You reach for the ring... but your pockets are full of nothing");
-        if (!currentPlayer.canAskMarriage(targetPlayer))
-            return new Result(false, "Slow down, lovebird-you're still just friendly acquaintances");
-        if (!currentPlayer.getGender().equalsIgnoreCase("male"))
-            return new Result(false,
-                    "Only the boys can propose... for now. Rules of the valley, not mine!");
-
-        currentPlayer.proposed(targetPlayer);
-        return new Result(true, "Now we wait...");
-    }
-
-    public Result respondToProposal(String input) {
-        String[] parts = input.split("\\s+");
-        int uIndex = -1;
-        for (int i = 0; i < parts.length; i++) {
-            if (parts[i].equals("-u")) {
-                uIndex = i;
-                break;
-            }
-        }
-        String username = parts[uIndex + 1];
-        Player targetPlayer = MyGame.getPlayerByUsername(username);
-        Player currentPlayer = MyGame.getCurrentPlayer();
-        Item ring = MyGame.getDatabase().getItem("Wedding Ring");
-        if (targetPlayer == null)
-            return Result.error("");
-        if (input.contains("accept")) {
-            if (!targetPlayer.hasProposed(currentPlayer))
-                return Result.error("You dramatically accept... nothing. Nobody proposed, drama queen.");
-            currentPlayer.changeLevel(targetPlayer, 4);
-            currentPlayer.getBackPack().getInventory().put(ring, 1);
-            if (targetPlayer.getItemQuantity(ring) < 1)
-                return Result.error("You tried to accept, but their ring mysteriously disappeared. Awkward...");
-            targetPlayer.getBackPack().getInventory().remove(ring, 1);
-            currentPlayer.setSpouse(targetPlayer);
-            targetPlayer.setSpouse(currentPlayer);
-            return Result.success("You said yes! The wedding bells will ring soon.");
-        } else if (input.contains("reject")) {
-            if (!targetPlayer.hasProposed(currentPlayer))
-                return Result.error("That's a bold rejection for someone who hasn't been proposed to.");
-            currentPlayer.changeLevel(targetPlayer, 0);
-            targetPlayer.setProposalRejectionDaysLeft(7);
-            return Result.success("Well... that could’ve gone better.");
-        }
-        return new Result(true, "");
-    }
-
-    public Result NPCFriendshipLevels() {
-        StringBuilder builder = new StringBuilder();
-        Player currentPlayer = MyGame.getCurrentPlayer();
-        builder.append("friendship status with NPCs: ");
-        for (NPC npc : MyGame.getAllNPCs()) {
-            builder.append("\n").append(npc.getName()).append("\t")
-                    .append("friendship level: ").append(npc.getFriendshipLevel(currentPlayer))
-                    .append(" friendship points: ").append(npc.getFriendshipPoints(currentPlayer));
-        }
-        return new Result(true, builder.toString());
-    }
-
-    public Result meetNPC(String npcName) {
-        NPC npc = MyGame.getNPCByName(npcName);
-        Player player = MyGame.getCurrentPlayer();
-        if (npc == null) return new Result(false, "NPC not found");
-        if (Math.abs(player.getXX() - npc.getX()) > 1 || Math.abs(player.getYY() - npc.getY()) > 1)
-            return new Result(false,
-                    "You're talking to thin air. That NPC must be off doing NPC things.");
-        lastNPC = npc;
-        npc.addFriendShipPoints(player, 20);
-        return new Result(true, DialogueManager.getNpcDialogue(npcName, MyGame.getCurrentWeather().name()));
-    }
-
-    public Result giftNPC(NPC npc, Item item) {
-        Player player = MyGame.getCurrentPlayer();
-        String itemName = item.getName();
-        if (item instanceof Tool<?>)
-            return new Result(false,
-                    "Gifting your old tools? What’s next-handing out used socks?");
-        lastNPC = npc;
-        if (npc.isFavorite(itemName)) {
-            npc.addFriendShipPoints(player, 200);
-            return new Result(true,
-                    "Wow, " + player.getName() + ", you know me so well. this " + itemName + " is my favorite.");
-        }
-        player.getBackPack().removeFromInventory(item, 1);
-        npc.addFriendShipPoints(player, 50);
-        return new Result(true, "Oh, a " + itemName + " ? Thanks, " + player.getName());
-    }
-
-    public Result showAllQuests() {
-        Player player = MyGame.getCurrentPlayer();
-        StringBuilder output = new StringBuilder();
-        if (lastNPC == null) return Result.error("No NPC chosen");
-        output.append(lastNPC.getName()).append(" quests for you");
-        int index = 0;
-        for (Map.Entry<String, Integer> entry : lastNPC.getRequests().entrySet()) {
-            index++;
-            output.append("\n").append(index).append(". ")
-                    .append(entry.getValue()).append(" ").append(entry.getKey()).append("(s)");
-            if (index == lastNPC.getNumOfUnlockedQuests(player)) break;
-        }
-
-        return new Result(true, output.toString());
-
-    }
-
-    public Result finishQuest(String input) {
-        int iIndex = input.indexOf('-') + 1;
-        input = input.substring(iIndex + 1).trim();
-        int questIndex;
-        try {
-            questIndex = Integer.parseInt(input);
-        } catch (NumberFormatException e) {
-            return new Result(false, "Invalid quest index");
-        }
-        if (lastNPC == null) return Result.error("No NPC chosen");
-        Map.Entry<String, Integer> quest = lastNPC.getQuest(questIndex);
-        if (quest == null) return new Result(false, "Quest not found");
-        Player player = MyGame.getCurrentPlayer();
-        if (Math.abs(player.getXX() - lastNPC.getX()) > 100 || Math.abs(player.getYY() - lastNPC.getY()) > 100) {
-            return new Result(false,
-                    "You can't wrap this up from here. Get back to " + lastNPC.getName() + " first!");
-        }
-        if (lastNPC.isCompleted(questIndex)) {
-            return new Result(false,
-                    "Another farmer's already taken care of that one. Why not lend a hand elsewhere?");
-        }
-        Item item = MyGame.getDatabase().getItem(quest.getKey());
-        if (player.getItemQuantity(item) < quest.getValue()) {
-            return new Result(false,
-                    "Whoops! You're still a few shy of the total. Harvest more and pop back over!");
-        }
-        Map.Entry<String, Integer> reward = lastNPC.finishQuest(player, questIndex);
-        if (reward.getKey().equalsIgnoreCase("gold coin"))
-            player.addGold(reward.getValue());
-        return new Result(true,
-                "You got " + reward.getValue() + " " + reward.getKey() +
-                        "(s) from " + lastNPC.getName() + " for finishing this quest.");
-    }
-
-
-    //plant seed on a specific tile
-    public Result plantSeed(Item item, GameTile tile) {
-        //errors
-//        if (tile == null) return new Result(false, "Tile not found");
-//        if (tile.getX() == MyGame.getCurrentPlayer().getCoordinate().getKey() && tile.getY() == MyGame.getCurrentPlayer().getCoordinate().getValue()) {
-//            return new Result(false, "You stare at your boots. The boots stare back. Nothing grows.");
-//        }
-        if(item instanceof FruitAndVegetable || item instanceof Tree) {
-            return new Result(false,"");
-        }
-        String seed = item.getName();
-        boolean successful = MyGame.getCurrentPlayer().getFarmingSkill().plantSeed(seed, tile);
-        if (successful) {
-            if (tile.getTileType() != TileType.Soil)
-                return new Result(false, "Tile is not plowed! Use your hoe to plow the tile!");
-            if (!tile.isTileValidForPlanting()) return new Result(false,
-                "You can't plant cause the tile is occupied!");
-            MyGame.getCurrentPlayer().getBackPack().removeFromInventory(
-                    MyGame.getCurrentPlayer().getBackPack().getFromInventory(seed), 1
-            );
-            return new Result(true, "Successfully planted " + seed);
-        } else if (MyGame.getCurrentPlayer().getBackPack().getFromInventory(seed) == null)
-            return new Result(false, "You don't have that seed in your inventory!");
-        return new Result(false, "That's not a valid seed!");
-    }
-
-    //show the plant on a specific tile
-    public Result showPlant(Map.Entry<Integer, Integer> coordinates) {
-        GameMap map = MyGame.getGameMap();
-        GameTile tile = map.getTile(coordinates.getKey(), coordinates.getValue());
-        Item item = tile.getItemOnTile();
-        if (item == null) return new Result(false, "Nothing planted on this tile");
-        if (item instanceof FruitAndVegetable) {
-            FruitAndVegetable plant = (FruitAndVegetable) item;
-            StringBuilder output = new StringBuilder();
-            output.append("** plant information **\n")
-                    .append(plant.toString());
-            return new Result(true, output.toString());
-
-        } else if (item instanceof Tree) {
-            Tree tree = (Tree) item;
-            StringBuilder output = new StringBuilder();
-            output.append("** tree information **\n")
-                    .append(tree.toString());
-            return new Result(true, output.toString());
-        } else {
-            return new Result(false, "Nothing planted on this tile");
-        }
-    }
-
-    //fertilize crop
-    public Result fertilizeCrop(String fertilizer, GameTile tile) {
-        Item item = tile.getItemOnTile();
-        if (item == null && tile.getTileType() == TileType.Soil) {
-            tile.fertilze(fertilizer);
-            return new Result(true, "Fertilized tile successfully!");
-        } else if (item instanceof FruitAndVegetable) {
-            FruitAndVegetable fruit = (FruitAndVegetable) item;
-            if (fruit.getAge() == 0) {
-                boolean successful = MyGame.getCurrentPlayer().getFarmingSkill().fertilizeCrop(tile, fertilizer);
-                if (successful) return new Result(true, "Successfully fertilized with " + fertilizer);
-                else return new Result(false, "You don't have that kind of fertilizer");
-            } else return new Result(false, "You can only fertilize tile before or the day of planting!");
-        } else return new Result(false, "Can't fertilize this tile");
-    }
-
-    //how much water left
-    public Result howMuchWaterLeft() {
-        int waterLeft = MyGame.getCurrentPlayer().getWateringCan().getWaterlevel();
-        return new Result(true, waterLeft + " water units left in your watering can");
-    }
-
-
-    //place item on ground
-    public Result placeItem(Item item, GameTile tile) {
-        if (tile.getItemOnTile() != null)
-            return new Result(false, "The tile is already occupied.");
-        tile.setItemOnTile(item);
-        MyGame.getCurrentPlayer().getBackPack().removeFromInventory(tile.getItemOnTile(), 1);
-        return new Result(true, "Item placed successfully");
-    }
-
-    //get coordinates changes based on direction input
-    public int[] getDirections(String direction) {
-        int[] directions = new int[2];
-        if (direction.equals("up")) {
-            directions[1] = -1;
-            return directions;
-        } else if (direction.equals("down")) {
-            directions[1] = 1;
-            return directions;
-        } else if (direction.equals("left")) {
-            directions[0] = -1;
-            return directions;
-        } else if (direction.equals("right")) {
-            directions[0] = 1;
-            return directions;
-        } else if (direction.equals("up-right")) {
-            directions[0] = 1;
-            directions[1] = -1;
-            return directions;
-        } else if (direction.equals("up-left")) {
-            directions[0] = -1;
-            directions[1] = -1;
-            return directions;
-        } else if (direction.equals("down-right")) {
-            directions[0] = 1;
-            directions[1] = 1;
-            return directions;
-        } else if (direction.equals("down-left")) {
-            directions[0] = -1;
-            directions[1] = 1;
-            return directions;
-        }
-        return null;
-    }
-
-    //add item cheat code
-    public Result addItemCheatCode(String name, int count) {
-        Item item = null;
-        if (MyGame.getDatabase().getItem(name) != null) item = MyGame.getDatabase().getItem(name);
-        else if (CropType.fromString(name) != null) item = CropType.fromString(name);
-        else if (ForagingTreeSourceType.fromString(name) != null) item = ForagingTreeSourceType.fromString(name);
-        else if (ForagingCrop.fromString(name) != null) item = ForagingCrop.fromString(name);
-        else if (ForagingSeedType.fromString(name) != null) item = ForagingSeedType.fromString(name);
-            //else if(CraftType.fromString(name) != null) item = CraftType.fromString(name);
-            // else if(CookingRecipeType.fromString(name) != null) item = CookingRecipeType.fromString(name);
-        else if (FishType.fromString(name) != null) item = FishType.fromString(name);
-        else if (MineralType.fromString(name) != null) item = MineralType.fromString(name);
-
-        if (item == null) return new Result(false, "** No item with that name exists **");
-        if (count <= 0) return new Result(false, "** Not a valid count **");
-        if (item.getName().contains("Pack")) {
-            if (item.getName().equals("Large Pack")) {
-                MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Big);
-            } else if (item.getName().equals("Deluxe Pack")) {
-                MyGame.getCurrentPlayer().getBackPack().setBackPackType(BackPackType.Deluxe);
-            }
-            return new Result(true, "Upgraded successfully");
-            //change trash can
-        } else if (item.getName().contains("Trash Can")) {
-            if (item.getName().equals("Copper Trash Can")) {
-                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Brass);
-            } else if (item.getName().equals("Steel Trash Can")) {
-                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iron);
-            } else if (item.getName().equals("Gold Trash Can")) {
-                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Gold);
-            } else if (item.getName().equals("Iridium Trash Can")) {
-                MyGame.getCurrentPlayer().getTrashCan().setLevel(ItemLevel.Iridium);
-            }
-            return new Result(true, "Upgraded successfully");
-            //add craft recipes to learnt recipes
-        } else if (item.getName().contains("Recipe")) {
-            if (item.getName().equals("Dehydrator Recipe")) {
-                //MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.Dehydrator);
-            } else if (item.getName().equals("Grass Starter Recipe")) {
-                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.GrassStarter);
-            } else if (item.getName().equals("Fish Smoker Recipe")) {
-                MyGame.getCurrentPlayer().getBackPack().addLearntRecipe(CraftType.FishSmoker);
-            } else {
-                String recipeName = item.getName().replace("Recipe", "").trim();
-                CookingRecipeType type = CookingRecipeType.fromString(recipeName);
-                System.out.println(type);
-                MyGame.getCurrentPlayer().getBackPack().addLearntCookingRecipe(type);
-            }
-            return new Result(true, "Recipe added successfully");
-        }
-        MyGame.getCurrentPlayer().getBackPack().addToInventory(item, count);
-        return new Result(true, "** " + count + " of " + name + " added to your inventory **");
-
-    }
-
-    //plow tile
-    public Result plowTile(int x, int y) {
-        GameMap map = MyGame.getGameMap();
-        GameTile tile = map.getTile(x, y);
-        Item hoe = MyGame.getCurrentPlayer().getBackPack().getToolFromInventory("Hoe");
-        if (tile.getTileType().equals(TileType.Flat))
-            MyGame.getCurrentPlayer().getFarmingSkill().plowTile(tile, (Hoe) hoe);
-        return new Result(true, "Tile plowed successfully");
-    }
-
-
-    public Result showDatetime() {
-        int hour = GameManager.getCurrentHour();
-        int day = GameManager.getDay();
-        String season = GameManager.getSeason().name().toLowerCase();
-        return Result.success("Current date and time: Day " + day + " of " + capitalize(season) +
-                ", " + String.format("%02d:00", hour));
-    }
-
-    public Result showDate() {
-        int day = GameManager.getDay();
-        String season = GameManager.getSeason().name().toLowerCase();
-        return Result.success("Current date: Day " + day + " of " + capitalize(season));
-    }
-
-    public Result showTime() {
-        int hour = GameManager.getCurrentHour();
-        return Result.success("Current time: " + String.format("%02d:00", hour));
-    }
-
-    public Result showDayOfTheWeek() {
-        String dayOfWeek = GameManager.getDayOfTheWeek();
-        return Result.success("Today is: " + dayOfWeek);
-    }
-
-    private String capitalize(String str) {
-        if (str == null || str.isEmpty()) return str;
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
-    }
-
-    public Result showSeason() {
-        Season currentSeason = GameManager.getGameClock().getCurrentSeason();
-        return Result.success("Current season: " + currentSeason.name());
-    }
-
-
-    public Result showWeather() {
-        Weather currentWeather = MyGame.getCurrentWeather();
-        return Result.success("Current weather: " + currentWeather.toString());
-    }
-
-
-    public Result weatherForecast() {
-        Weather forecast = MyGame.getForecastedWeather();
-        return Result.success("Forecasted weather for tomorrow: " + forecast.toString());
-    }
-
-    public Result cheatWeatherSet(String input) {
-        try {
-            String[] tokens = input.trim().split("\\s+");
-            if (tokens.length != 4) {
-                return Result.error("Invalid format. Usage: cheat weather set <Type>");
-            }
-
-            String weatherType = tokens[3];
-
-            Weather newWeather;
-            try {
-                newWeather = Weather.valueOf(weatherType.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                return Result.error("Invalid weather type. Valid types: SUNNY, RAIN, STORM, SNOW");
-            }
-
-            MyGame.currentWeather = newWeather;
-
-            MyGame.setForecastedWeather(newWeather);
-
-            return Result.success("Weather changed to: " + newWeather);
-
-        } catch (Exception e) {
-            return Result.error("Error while setting weather: " + e.getMessage());
-        }
-    }
-
-
-    public Result printMap(Matcher matcher) {
-//        GameMap map = Game.getGameMap();
-
-        try {
-            if (matcher.group("x") != null && matcher.group("y") != null && matcher.group("size") != null) {
-                int x = Integer.parseInt(matcher.group("x"));
-                int y = Integer.parseInt(matcher.group("y"));
-                int size = Integer.parseInt(matcher.group("size"));
-
-                if (!map.isInBounds(x, y)) {
-                    return new Result(false, "Coordinates out of map bounds.");
-                }
-
-                System.out.println("Printing map section at (" + x + "," + y + ") with size " + size + ":");
-                map.printMapSection1(x, y, size);
-                map.printMapSection2(x, y, size);
-                map.printMapSection3(x, y, size);
-                map.printMapSection4(x, y, size);
-                return new Result(true, "Map section printed.");
-            } else {
-                System.out.println("Printing full map:");
-                map.printFullMap();
-                return new Result(true, "Full map printed.");
-            }
-        } catch (Exception e) {
-            return new Result(false, "Invalid input format for map printing.");
-        }
-    }
-
-    public Result eatFood(Item food) {
-        if (food instanceof Food) {
-            GameAssetManager.playSfx("eat");
-            int energy = ((Food) food).getEnergy();
-            if(((Food) food).getRecipeType().Buff()) MyGame.getCurrentPlayer().setEnergy(200);
-            else MyGame.getCurrentPlayer().increaseEnergy(energy);
-            MyGame.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
-            MyGame.getCurrentPlayer().setCurrentItem(null);
-            return new Result(true, "You consumed the food successfully!");
-        }
-        else if (food instanceof  Product && ((Product) food).getDescription().equalsIgnoreCase("fish")) {
-            GameAssetManager.playSfx("eat");
-            MyGame.getCurrentPlayer().increaseEnergy(100);
-            MyGame.getCurrentPlayer().getBackPack().removeFromInventory(food, 1);
-            MyGame.getCurrentPlayer().setCurrentItem(null);
-            return new Result(true, "You consumed the fish successfully!");
-        }else return new Result(false, "That's...not edible.");
-    }
-
-
-    public void helpReadingMap() {
-        System.out.println("Building :" + "🏠");
-        System.out.println("Lake :" + "🌊");
-        System.out.println("Soil :" + "🟫");
-        System.out.println("Flat :" + "🟩");
-        System.out.println("Tree :" + "\uD83C\uDF33");
-        System.out.println("Stone :" + "\uD83E\uDEA8");
-        System.out.println("Mine :" + "⛰\uFE0F");
-        System.out.println("Green House :" + "\uD83C\uDF38");
-        System.out.println("Cheat Thor :" + "O");
-    }
-
-
-    public Result cheatThor(Matcher matcher) {
-        int i = 0, j = 0;
-        boolean done = false;
-
-            if (matcher.group("x") != null && matcher.group("y") != null) {
-                int x = Integer.parseInt(matcher.group("x"));
-                int y = Integer.parseInt(matcher.group("y"));
-                i = x;
-                j = y;
-                //todo: اگر گلخانه بود تاثیر نداره
-                if (MyGame.getGameMap().getTile(x, y).getItemOnTile() instanceof Tree) {
-                    ((Tree) MyGame.getGameMap().getTile(x, y).getItemOnTile()).thunderEffect(GameMap.getTile(x, y));
-                }
-                if (MyGame.getGameMap().getTile(x, y).getTileType().equals(TileType.GreenHouse)) {
-                    return new Result(false, "Cheat Thor failed!");
-                } else MyGame.getGameMap().getTile(x, y).setTileType(TileType.CheatThor);
-            }
-
-        return new Result(true, "Cheat Thor in " + "(" + i + ", " + j + ")");
-    }
-
-    private List<Point> findShortestPath(int startX, int startY, int targetX, int targetY) {
-        Queue<Node> queue = new LinkedList<>();
-        boolean[][] visited = new boolean[GameMap.MAP_WIDTH][GameMap.MAP_HEIGHT];
-        int[][] directions = {{0,1}, {1,0}, {0,-1}, {-1,0}}; // راست، پایین، چپ، بالا
-
-        queue.add(new Node(startX, startY, null));
-        visited[startX][startY] = true;
-
-        while (!queue.isEmpty()) {
-            Node current = queue.poll();
-
-            //بررسی اینکه به مقصدمون رسیدیم یا نرسیدیم
-            if (current.x == targetX && current.y == targetY) {
-                return reconstructPath(current);
-            }
-
-            // بررسی خانه های اطراف
-            for (int[] dir : directions) {
-                int newX = current.x + dir[0];
-                int newY = current.y + dir[1];
-
-                if (MyGame.getGameMap().isInBounds(newX, newY) &&
-                        !visited[newX][newY] &&
-                        isWalkable(newX, newY)) {
-
-                    visited[newX][newY] = true;
-                    queue.add(new Node(newX, newY, current));
-                }
-            }
-        }
-
-        return Collections.emptyList();
-    }
-
-    private static class Node {
-        int x, y;
-        Node parent;
-
-        public Node(int x, int y, Node parent) {
-            this.x = x;
-            this.y = y;
-            this.parent = parent;
-        }
-    }
-
-
 
     private boolean canWalk(int x, int y) {
         for (Player player : MyGame.getAllPlayers()) {
@@ -1319,33 +669,6 @@ public class GameMenuController extends MenuController {
         return path.subList(1, path.size()); //delete start location
     }
 
-    //put back item in hand
-    public Result putBack(){
-        Item item = MyGame.getCurrentPlayer().getCurrentItem();
-        if(item == null) return new Result(false, "You don't have anything in hand!");
-        MyGame.getCurrentPlayer().getBackPack().addToInventory(item, 1);
-        return new Result(true, item.getName() + " is back in you inventory!");
-    }
-
-    //count turns the player makes when walking
-    private int countTurns(List<Point> path) {
-        if (path.size() < 2) return 0;
-
-        int turns = 0;
-        int prevDx = path.get(1).x - path.get(0).x;
-        int prevDy = path.get(1).y - path.get(0).y;
-
-        for (int i = 2; i < path.size(); i++) {
-            int dx = path.get(i).x - path.get(i - 1).x;
-            int dy = path.get(i).y - path.get(i - 1).y;
-            if (dx != prevDx || dy != prevDy) {
-                turns++;
-            }
-            prevDx = dx;
-            prevDy = dy;
-        }
-        return turns;
-    }
 
     //handle cheat codes TODO add yours!!
     public Result handleCheatCodes(String command) {
@@ -1387,58 +710,30 @@ public class GameMenuController extends MenuController {
 
     //todo : lobby
     public List<Lobby> getActiveLobbies() {
-        // پاک کردن لابی‌های قدیمی بدون پلیر
-        long now = System.currentTimeMillis();
-        Iterator<Lobby> iterator = activeLobbies.iterator();
-        while (iterator.hasNext()) {
-            Lobby lobby = iterator.next();
-            if (lobby.isEmpty() ||
-                (lobby.getPlayers().size() == 1 && (now - lobby.getCreationTime() > 5 * 60 * 1000))) {
-                iterator.remove();
-            }
-        }
-
-        // فقط لابی‌های visible رو نشون بده
-        List<Lobby> visible = new ArrayList<>();
-        for (Lobby lobby : activeLobbies) {
-            if (lobby.isVisible()) visible.add(lobby);
-        }
-        return visible;
+        return LobbyManager.getActiveLobbies();
     }
 
     public Lobby createLobby(String name, boolean isPrivate, String password, boolean isVisible, Player creator) {
-        Lobby lobby = new Lobby(name, isPrivate, password, isVisible, creator);
-        activeLobbies.add(lobby);
-        currentLobby = lobby;
-        return lobby;
+        return LobbyManager.createLobby(name, isPrivate, password, isVisible, creator);
     }
 
-    public boolean joinLobby(String id, Player player, String password) {
-        for (Lobby lobby : activeLobbies) {
-            if (lobby.getId().equals(id)) {
-                if (lobby.isPrivate() && (password == null || !lobby.getPassword().equals(password))) {
-                    return false;
-                }
-                if (!lobby.addPlayer(player)) {
-                    return false;
-                }
-                currentLobby = lobby;
-                return true;
-            }
-        }
-        return false;
+    public boolean joinLobby(String lobbyId, Player player, String password) {
+        return LobbyManager.joinLobby(lobbyId, player, password);
     }
 
     public void leaveLobby(Player player) {
-        if (currentLobby != null) {
-            currentLobby.removePlayer(player);
-            if (currentLobby.isEmpty()) {
-                activeLobbies.remove(currentLobby);
-            }
-            currentLobby = null;
-        }
+        LobbyManager.leaveLobby(player);
     }
 
+    public Lobby getCurrentLobbyFor(Player player) {
+        // فقط برای راحتی UI اگر لازم داشت لابی فعلی رو بگیره
+        for (Lobby lobby : LobbyManager.getActiveLobbies()) {
+            if (lobby.getPlayers().contains(player)) {
+                return lobby;
+            }
+        }
+        return null;
+    }
 
     public Lobby getCurrentLobby() {
         return currentLobby;
