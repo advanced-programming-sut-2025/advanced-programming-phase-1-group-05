@@ -13,6 +13,7 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("🔁 Client handler thread started");
         try {
             // ✨ اول OutputStream ساخته بشه
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());

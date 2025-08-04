@@ -65,6 +65,7 @@ public class ClientNetworkManager {
         try {
             out.writeObject(request);
             out.flush();
+            System.out.println("📤 Sending: " + request.getClass().getSimpleName());
             return in.readObject();
         } catch (Exception e) {
             System.err.println("❌ Error in sendAndReceive:");
