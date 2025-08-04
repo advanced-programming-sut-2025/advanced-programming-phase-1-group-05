@@ -23,7 +23,7 @@ public class Main extends Game {
     public static SpriteBatch batch;
     private Skin skin;
     private static Main main;
-    public static ClientNetworkManager networkManager;
+    public static ClientNetworkManager networkManager = new ClientNetworkManager();
 
     public static Main getMain() {
         return main;
@@ -44,7 +44,7 @@ public class Main extends Game {
         skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
         MenuNavigator.init(this, skin);
         try {
-            networkManager = new ClientNetworkManager("localhost", 54555);
+            //networkManager = new ClientNetworkManager("localhost", 54555);
             System.out.println("✅ Connected to server");
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,6 +109,9 @@ public class Main extends Game {
         return json.substring(startQuote + 1, endQuote);
     }
 
+    public static ClientNetworkManager getNetworkManager() {
+        return networkManager;
+    }
 
     @Override
     public void render() {

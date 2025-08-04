@@ -181,5 +181,13 @@ public class MyGame {
     public static void setForecastedWeather(Weather forecastedWeather) {
         MyGame.forecastedWeather = forecastedWeather;
     }
+    public static Player getPlayer(String username) {
+        for (Player player : players) {
+            if (player.getUsername().equals(username)) {
+                return player;
+            }
+        }
+        return null;
+    }
 
 }

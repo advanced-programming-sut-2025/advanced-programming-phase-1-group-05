@@ -11,8 +11,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import org.example.Common.Player;
+import org.example.Common.Request.TradeMessage;
+import org.example.Main;
 import org.example.Server.controllers.MenuController;
 import org.example.Server.controllers.TradingController;
+import org.example.Server.models.MyGame;
+import org.example.Server.models.Result;
+
 public class TradeMenu extends Table {
 
     private final TradingController tradingController;
@@ -65,7 +71,21 @@ public class TradeMenu extends Table {
                 confirmButton.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        // TODO implement
+                        TradeMessage msg = new TradeMessage();
+                        Result result;
+                        msg.fromPlayer = MyGame.getCurrentPlayer();
+                        String otherPlayerUsername = (String) usernameField.getText();
+                        Player otherPlayer = MyGame.getPlayer(otherPlayerUsername);
+                        if(otherPlayer == null) {
+                            result = new Result(false, "Player not found");
+                            MyGame.getGameScreen().latestResult = result;
+                            MyGame.getGameScreen().showResult = true;
+                            return;
+                        }
+                        msg.toPlayer = otherPlayer;
+
+                        Main.getNetworkManager().sendTradeRequest(msg);
+
                     }
                 });
                 addHoverEffect(confirmButton, Color.GREEN);

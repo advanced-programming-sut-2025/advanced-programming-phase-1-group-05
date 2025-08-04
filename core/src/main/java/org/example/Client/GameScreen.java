@@ -150,8 +150,8 @@ public class GameScreen implements Screen {
     private TextureRegion resultBg = GameAssetManager.resultTexture;
     private float resultTime = 0;
     private float resultDuration = 2f;
-    private boolean showResult = false;
-    private Result latestResult;
+    public boolean showResult = false;
+    public Result latestResult;
     private GlyphLayout layout = new GlyphLayout();
 
     //food buff stuff
@@ -171,7 +171,8 @@ public class GameScreen implements Screen {
     //trading stuff
     private TradeMenu tradeMenu;
     public boolean tradeMenuOpen = false;
-
+    ImageButton accept, reject;
+    boolean acceptedRequest;
 
     Player player;
 
@@ -1573,6 +1574,26 @@ public class GameScreen implements Screen {
                 }
             }
         });
+
+        Texture rejectTex = new Texture("closeButton.png");
+        Texture acceptTex = new Texture("ui/checkMark.png");
+        Drawable rejectDrawable = new TextureRegionDrawable(new TextureRegion(rejectTex));
+        Drawable acceptDrawable = new TextureRegionDrawable(new TextureRegion(acceptTex));
+        accept = new ImageButton(acceptDrawable);
+        accept.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                acceptedRequest = true;
+            }
+        });
+        reject = new ImageButton(rejectDrawable);
+        reject.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                acceptedRequest = false;
+            }
+        });
+
         uiStage.addActor(tradingButton);
 
         forceViewportReset();
@@ -2841,6 +2862,16 @@ public class GameScreen implements Screen {
         AnimalHouse building = new AnimalHouse(type, level, x, y, buildingPreviewTexture);
         Player player = MyGame.getCurrentPlayer();
         player.addAnimalHouse(building);
+    }
+
+    public boolean showTradingRequest(String playerName){
+        Table tradeRequestTable = new Table();
+        Label tradeLabel = new Label("Trade request by " + playerName, skin);
+        tradeRequestTable.add(tradeLabel);
+        tradeRequestTable.add(accept);
+        tradeRequestTable.add(reject);
+        uiStage.addActor(tradeRequestTable);
+        return acceptedRequest; //implement better
     }
 
 }

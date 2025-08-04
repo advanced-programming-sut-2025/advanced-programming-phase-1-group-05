@@ -1,41 +1,40 @@
 package org.example.Client;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
+import com.esotericsoftware.kryonet.Client;
+import org.example.Common.Enums.MessageType;
+import org.example.Common.Request.TradeMessage;
+import org.example.Server.models.MyGame;
+
+import java.io.IOException;
+
+import static com.esotericsoftware.kryonet.rmi.ObjectSpace.registerClasses;
 
 public class ClientNetworkManager {
-    private Socket socket;
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
+    private Client client;
+    private String username;
 
-    public ClientNetworkManager(String host, int port) throws Exception {
-        // اتصال به سرور
-        socket = new Socket(host, port);
-        out = new ObjectOutputStream(socket.getOutputStream());
-        in = new ObjectInputStream(socket.getInputStream());
-        System.out.println("✅ Connected to server: " + host + ":" + port);
-    }
-
-    // ارسال درخواست و دریافت پاسخ
-    public synchronized Object sendAndReceive(Object request) {
+    public ClientNetworkManager() {
+        client = new Client();
+        registerClasses(client.getKryo());
+        client.start();
         try {
-            out.writeObject(request);
-            out.flush();
-            return in.readObject();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // ارسال درخواست بدون نیاز به پاسخ
-    public synchronized void send(Object request) {
-        try {
-            out.writeObject(request);
-            out.flush();
-        } catch (Exception e) {
+            client.connect(5000, "localhost", 54555, 54777);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public void sendTradeRequest(TradeMessage msg) {
+        client.sendTCP(msg);
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    // setupListeners(), registerClasses(), etc.
 }

@@ -2,9 +2,16 @@ package org.example.Client;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Listener;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
+import org.example.Common.Enums.MessageType;
+import org.example.Common.Request.TradeMessage;
+import org.example.Common.Trade;
+import org.example.Server.models.MyGame;
+import org.example.Server.models.Result;
 
 import java.io.IOException;
+import java.sql.Connection;
 
 public class GameClient {
     public static void main(String[] args) throws IOException {
@@ -13,6 +20,8 @@ public class GameClient {
 
         Kryo kryo = client.getKryo();
         kryo.register(PlayerUpdate.class);
+        kryo.register(TradeMessage.class);
+        kryo.register(MessageType.class);
 
         client.connect(5000, "localhost", 54555, 54777);  // change "localhost" to your server's IP if on LAN
 
@@ -20,27 +29,47 @@ public class GameClient {
         PlayerUpdate update = new PlayerUpdate("friend-" + System.currentTimeMillis(), 0, 0);
         client.sendTCP(update);
 
-        // Listen for updates from server
-        client.addListener(new com.esotericsoftware.kryonet.Listener() {
-            public void received(com.esotericsoftware.kryonet.Connection connection, Object object) {
-                if (object instanceof PlayerUpdate) {
-                    PlayerUpdate u = (PlayerUpdate) object;
-                    System.out.println("Received update: " + u.playerId + " is at (" + u.x + ", " + u.y + ")");
+        client.addListener(new Listener() {
+            public void received(Connection c, Object object) {
+                if (!(object instanceof TradeMessage )) return;
+                TradeMessage msg = (TradeMessage) object;
+                switch (msg.type) {
+                    case REQUEST : {
+                        // show popup to accept/reject
+                        boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
+
+                        TradeMessage response = new TradeMessage();
+                        response.type = MessageType.RESPONSE;
+                        response.fromPlayer = msg.toPlayer;
+                        response.toPlayer = msg.fromPlayer;
+                        response.accepted = accepted;
+
+                        client.sendTCP(response);
+                    }
+                    case START : {
+//                      TODO implement starting trade screen
+                    }
+                    case REJECTED : {
+                        Result result = new Result(false, "Your trade request was rejected :(");
+                        MyGame.getGameScreen().showResult = true;
+                        MyGame.getGameScreen().latestResult = result;
+                    }
                 }
             }
         });
 
+
         // Example: move right every second
-        new Thread(() -> {
-            try {
-                while (true) {
-                    Thread.sleep(1000);
-                    update.x += 1;
-                    client.sendTCP(update);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+//        new Thread(() -> {
+//            try {
+//                while (true) {
+//                    Thread.sleep(1000);
+//                    update.x += 1;
+//                    client.sendTCP(update);
+//                }
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
     }
 }
