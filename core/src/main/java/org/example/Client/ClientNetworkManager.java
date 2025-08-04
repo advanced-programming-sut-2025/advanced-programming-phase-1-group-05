@@ -51,8 +51,13 @@ public class ClientNetworkManager {
 
     public ClientNetworkManager(String host, int port) throws Exception {
         socket = new Socket(host, port);
+
+        // ✅ مهم: flush بعد از ساخت output stream
         out = new ObjectOutputStream(socket.getOutputStream());
+        out.flush();
+
         in = new ObjectInputStream(socket.getInputStream());
+
         System.out.println("✅ Connected to server: " + host + ":" + port);
     }
 
@@ -62,6 +67,7 @@ public class ClientNetworkManager {
             out.flush();
             return in.readObject();
         } catch (Exception e) {
+            System.err.println("❌ Error in sendAndReceive:");
             e.printStackTrace();
             return null;
         }
@@ -72,6 +78,7 @@ public class ClientNetworkManager {
             out.writeObject(request);
             out.flush();
         } catch (Exception e) {
+            System.err.println("❌ Error in send:");
             e.printStackTrace();
         }
     }

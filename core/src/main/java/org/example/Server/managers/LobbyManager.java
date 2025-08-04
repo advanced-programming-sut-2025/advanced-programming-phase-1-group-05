@@ -11,7 +11,7 @@ public class LobbyManager {
     private static final List<Lobby> activeLobbies = new ArrayList<>();
 
     public static synchronized List<Lobby> getActiveLobbies() {
-        // قبل از برگشت، لابی‌های خالی رو حذف کن
+        System.out.println("Getting active lobbies!");
         Iterator<Lobby> iterator = activeLobbies.iterator();
         while (iterator.hasNext()) {
             if (iterator.next().isEmpty()) {

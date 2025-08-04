@@ -5,7 +5,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
-    private Socket socket;
+    private final Socket socket;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -13,16 +13,20 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        try (ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
+        try {
+            // ✨ اول OutputStream ساخته بشه
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.flush(); // مهم!
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 
             while (true) {
                 Object message = in.readObject();
-                PacketHandler.handle(message, out);
+                System.out.println("📨 Received from client: " + message.getClass().getSimpleName());
+                PacketHandler.handle(message, out); // 🎯 الآن باید کار کنه
             }
 
         } catch (Exception e) {
-            System.out.println("Client disconnected: " + e.getMessage());
+            System.out.println("❌ Client disconnected: " + e.getMessage());
         }
     }
 }
