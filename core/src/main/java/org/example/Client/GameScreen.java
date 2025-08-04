@@ -170,7 +170,7 @@ public class GameScreen implements Screen {
 
     //trading stuff
     private TradeMenu tradeMenu;
-    private boolean tradeMenuOpen = false;
+    public boolean tradeMenuOpen = false;
 
 
     Player player;
@@ -1557,7 +1557,8 @@ public class GameScreen implements Screen {
                 if (!tradeMenuOpen) {
                     tradeMenu = new TradeMenu(new TradingController(), new MenuController(), skin);
                     tradeMenu.pack();
-
+                    tradeMenu.setPosition(camera.position.x - tradeMenu.getWidth() / 2,
+                        camera.position.y - tradeMenu.getHeight() / 2);
 //                    tradeMenu.setPosition();
                     stage.addActor(tradeMenu);
                     tradeMenuOpen = true;

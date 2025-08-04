@@ -1,106 +1,108 @@
 package org.example.Client;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import org.example.Server.controllers.MenuController;
 import org.example.Server.controllers.TradingController;
-
-public class TradeMenu extends Window {
+public class TradeMenu extends Table {
 
     private final TradingController tradingController;
     private final MenuController menuController;
-
-    private TextField usernameField, itemField, amountField;
-    private SelectBox<String> tradeTypeSelect;
-    private Label resultLabel;
+    private final Label tradingMenuLabel, startTradingLabel, tradeHistoryLabel, closeLabel;
 
     public TradeMenu(TradingController tradingController, MenuController menuController, Skin skin) {
-        super("Trade Menu", skin);
-        Texture bgTexture = new Texture(Gdx.files.internal("Animals/MenuBackground2.png"));
-        Drawable background = new TextureRegionDrawable(new TextureRegion(bgTexture));
-        this.setBackground(background);
+        super(skin);
         this.tradingController = tradingController;
         this.menuController = menuController;
 
-        setMovable(true);
-        setResizable(false);
-        pad(20);
-        setupUI(skin);
+        Texture bgTexture = new Texture(Gdx.files.internal("Animals/MenuBackground2.png"));
+        Drawable background = new TextureRegionDrawable(new TextureRegion(bgTexture));
+        this.setBackground(background);
+
+        tradingMenuLabel = new Label("Trade Menu", skin, "title");
+        startTradingLabel = new Label("Start Trading", skin, "subtitle");
+        tradeHistoryLabel = new Label("Trade History", skin, "subtitle");
+        closeLabel = new Label("Close", skin, "subtitle");
+
+        pad(30);
+        defaults().pad(10).center().fillX().expandX();
+
+        setupUI();
+
+        setupListeners();
     }
 
-    private void setupUI(Skin skin) {
-        usernameField = new TextField("", skin);
-        itemField = new TextField("", skin);
-        amountField = new TextField("", skin);
-
-        tradeTypeSelect = new SelectBox<>(skin);
-        tradeTypeSelect.setItems("offer", "request");
-
-        TextButton tradeButton = new TextButton("Trade", skin);
-        TextButton listButton = new TextButton("List Trades", skin);
-        TextButton historyButton = new TextButton("Trade History", skin);
-        TextButton closeButton = new TextButton("Close", skin);
-
-        resultLabel = new Label("", skin);
-        resultLabel.setWrap(true);
-
-
-        add(new Label("Username:", skin)).left();
-        add(usernameField).width(150).row();
-
-        add(new Label("Item:", skin)).left();
-        add(itemField).width(150).row();
-
-        add(new Label("Amount:", skin)).left();
-        add(amountField).width(150).row();
-
-        add(new Label("Type:", skin)).left();
-        add(tradeTypeSelect).width(150).row();
-
-        add(tradeButton).colspan(2).padTop(10).row();
-        add(listButton).colspan(2).padTop(5).row();
-        add(historyButton).colspan(2).padTop(5).row();
-        add(closeButton).colspan(2).padTop(10).row();
-        add(resultLabel).colspan(2).padTop(15).width(250).row();
-
-        setupListeners(tradeButton, listButton, historyButton, closeButton);
-        pack();
+    private void setupUI() {
+        this.add(tradingMenuLabel).row();
+        this.add(startTradingLabel).row();
+        this.add(tradeHistoryLabel).row();
+        this.add(closeLabel).row();
     }
 
-    private void setupListeners(TextButton tradeButton, TextButton listButton,
-                                TextButton historyButton, TextButton closeButton) {
-        tradeButton.addListener(new ClickListener() {
+    private void setupListeners() {
+        addHoverEffect(startTradingLabel, Color.GREEN);
+        addHoverEffect(tradeHistoryLabel, Color.GREEN);
+        addHoverEffect(closeLabel, Color.GREEN);
+
+        startTradingLabel.addListener(new ClickListener() {
+            @Override
             public void clicked(InputEvent event, float x, float y) {
-                String input = String.format("trade -u %s -t %s -i %s -a %s",
-                    usernameField.getText(),
-                    tradeTypeSelect.getSelected(),
-                    itemField.getText(),
-                    amountField.getText());
-                resultLabel.setText(tradingController.trade(input).getMessage());
+                clear();
+
+                Label enterNameLabel = new Label("Enter other player's username:", getSkin());
+                TextField usernameField = new TextField("", getSkin());
+
+                Label confirmButton = new Label("Send Trade Request", getSkin(), "subtitle");
+                confirmButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        // TODO implement
+                    }
+                });
+                addHoverEffect(confirmButton, Color.GREEN);
+
+                add(enterNameLabel).center().pad(10).row();
+                add(usernameField).center().width(200).pad(10).row();
+                add(confirmButton).center().pad(10).row();
             }
         });
 
-        listButton.addListener(new ClickListener() {
+
+        tradeHistoryLabel.addListener(new ClickListener() {
+            @Override
             public void clicked(InputEvent event, float x, float y) {
-               // resultLabel.setText(tradingController.showTradeList());
+                // TODO implement
             }
         });
 
-        historyButton.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-                //resultLabel.setText(tradingController.printTradeHistory());
-            }
-        });
-
-        closeButton.addListener(new ClickListener() {
+        closeLabel.addListener(new ClickListener() {
+            @Override
             public void clicked(InputEvent event, float x, float y) {
                 remove();
+            }
+        });
+    }
+
+    private void addHoverEffect(final Label label, final Color hoverColor) {
+        final Color originalColor = label.getColor().cpy();
+        label.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                label.setColor(hoverColor);
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                label.setColor(originalColor);
             }
         });
     }
