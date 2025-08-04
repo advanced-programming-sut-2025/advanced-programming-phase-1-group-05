@@ -185,7 +185,7 @@ public class GameScreen implements Screen {
         camera.setToOrtho(false);
         batch = new SpriteBatch();
         players = playerList;
-        controller = new GameMenuController(this);
+        controller = new GameMenuController(Main.currentUser , Main.getNetworkManager());
         homeMenuController = new HomeMenuController();
         cheatCodeWindow = new CheatCodeWindow(camera, Gdx.input.getInputProcessor());
         shapeRenderer = new ShapeRenderer();

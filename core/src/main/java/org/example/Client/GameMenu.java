@@ -238,6 +238,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Common.Lobby;
 import org.example.Common.Player;
 import org.example.Common.Network.ResultResponse;
+import org.example.Main;
 import org.example.Server.controllers.GameMenuController;
 
 import java.util.ArrayList;
@@ -257,6 +258,7 @@ public class GameMenu implements Screen {
     private com.badlogic.gdx.scenes.scene2d.ui.List<Lobby> lobbyList;
     private Lobby selectedLobby;
     private Label lobbyDetail;
+    private TextField joinIdField;
 
     public GameMenu(Skin skin, GameMenuController controller) {
         this.skin = skin;
@@ -305,13 +307,22 @@ public class GameMenu implements Screen {
         ScrollPane scrollPane = new ScrollPane(lobbyList, skin);
         lobbyDetail = new Label("", skin);
 
-        table.add(new Label("Lobbies:", skin)).colspan(2).padTop(10).row();
-        table.add(scrollPane).width(300).height(150).colspan(2).pad(5).row();
+        table.add(new Label("Lobbies:", skin)).colspan(4).padTop(10).row();
+        table.add(scrollPane).width(300).height(150).colspan(4).pad(5).row();
+
         table.add(refreshLobbyBtn).pad(5);
-        table.add(createLobbyBtn).pad(5).row();
+        table.add(createLobbyBtn).pad(5);
         table.add(joinLobbyBtn).pad(5);
         table.add(leaveLobbyBtn).pad(5).row();
-        table.add(lobbyDetail).colspan(2).pad(10).row();
+
+        joinIdField = new TextField("", skin);
+        joinIdField.setMessageText("Lobby ID");
+        TextButton joinByIdBtn = new TextButton("Join by ID", skin);
+
+        table.add(joinIdField).width(150).pad(5);
+        table.add(joinByIdBtn).pad(5).colspan(3).left().row();
+
+        table.add(lobbyDetail).colspan(4).pad(10).row();
 
         table.add(exitGameBtn).colspan(2).pad(5).row();
         table.add(resultLabel).colspan(2).pad(5).width(400).row();
@@ -349,6 +360,46 @@ public class GameMenu implements Screen {
                 }
             }
         });
+
+        joinByIdBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                String id = joinIdField.getText().trim();
+                if (id.isEmpty()) {
+                    resultLabel.setText("Please enter a lobby ID.");
+                    return;
+                }
+
+                Lobby target = null;
+                for (Lobby lobby : currentLobbies) {
+                    if (lobby.getId().equalsIgnoreCase(id)) {
+                        target = lobby;
+                        break;
+                    }
+                }
+
+                if (target == null) {
+                    // اگر لابی visible نیست ولی ID درست باشه، سرور تشخیص میده
+                    // فرض می‌کنیم ممکنه private هم باشه و رمز بخواد
+                    selectedLobby = new Lobby("Unknown", false, null, false, new Player(Main.currentUser));
+                    selectedLobby = new Lobby(id, false, null, false, new Player(Main.currentUser)); // فقط ID می‌خوایم
+                    showPasswordDialog(selectedLobby);
+                } else {
+                    selectedLobby = target;
+                    if (selectedLobby.isPrivate()) {
+                        showPasswordDialog(selectedLobby);
+                    } else {
+                        boolean ok = controller.joinLobby(selectedLobby.getId(), new Player(Main.currentUser), null);
+                        if (ok) {
+                            updateLobbyDetail();
+                        } else {
+                            resultLabel.setText("⚠️ Could not join lobby!");
+                        }
+                    }
+                }
+            }
+        });
+
 
         leaveLobbyBtn.addListener(new ChangeListener() {
             @Override
@@ -389,7 +440,7 @@ public class GameMenu implements Screen {
                         privateBox.isChecked(),
                         privateBox.isChecked() ? passwordField.getText() : null,
                         visibleBox.isChecked(),
-                        new Player(GameMenuController.currentUser)
+                        new Player(Main.currentUser)
                     );
                     refreshLobbies();
                 }
@@ -432,9 +483,8 @@ public class GameMenu implements Screen {
             @Override
             protected void result(Object obj) {
                 if ((boolean) obj) {
-                    boolean ok = controller.joinLobby(
-                        lobby.getId(),
-                        new Player(GameMenuController.currentUser),
+                    boolean ok = controller.joinLobby(lobby.getId(),
+                        new Player(Main.currentUser),
                         passwordField.getText()
                     );
                     if (ok) updateLobbyDetail();

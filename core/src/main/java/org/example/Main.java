@@ -189,7 +189,7 @@ public class Main extends Game {
         UserDatabase.loadUsers();
         File file = new File("currentuser.json");
 
-        if (!file.exists()) {
+        if (file == null || !file.exists() || file.length() == 0) {
             MenuNavigator.showLoginMenu();
             return;
         }

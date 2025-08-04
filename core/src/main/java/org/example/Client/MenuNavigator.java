@@ -83,6 +83,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.example.Common.Player;
 import org.example.Main;
 import org.example.Server.controllers.GameMenuController;
+import org.example.Server.controllers.RegisterMenuController;
 
 import java.util.ArrayList;
 import java.util.List;

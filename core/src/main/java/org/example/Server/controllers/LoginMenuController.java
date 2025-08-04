@@ -152,6 +152,7 @@
 
 package org.example.Server.controllers;
 
+import org.example.Main;
 import org.example.Server.models.Result;
 import org.example.Common.User;
 import org.example.Server.models.UserDatabase;
@@ -189,6 +190,7 @@ public class LoginMenuController {
 
         this.currentUser = user;
         RegisterMenuController.currentUser = user;
+        Main.currentUser = user;
         return new Result(true, "Logged in successfully!");
     }
 

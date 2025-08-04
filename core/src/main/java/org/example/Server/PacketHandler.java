@@ -9,6 +9,8 @@ import java.io.ObjectOutputStream;
 public class PacketHandler {
 
     public static void handle(Object message, ObjectOutputStream out) {
+        System.out.println("👉 Received: " + message.getClass().getSimpleName());
+
         try {
             // ---- درخواست لیست لابی‌ها ----
             if (message instanceof GetLobbiesRequest) {

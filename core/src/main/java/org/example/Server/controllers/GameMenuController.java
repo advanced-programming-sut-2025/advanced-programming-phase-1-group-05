@@ -2,17 +2,15 @@ package org.example.Server.controllers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import org.example.Client.AnimalActor;
-import org.example.Client.DialogueManager;
-import org.example.Client.GameAssetManager;
+import org.example.Client.*;
 import org.example.Common.*;
 import org.example.Common.Enums.*;
+import org.example.Common.Network.*;
 import org.example.Server.managers.LobbyManager;
 import org.example.Server.models.*;
 import org.example.Common.Tool.FishingPole;
 import org.example.Common.Tool.Hoe;
 import org.example.Common.Tool.Tool;
-import org.example.Client.GameScreen;
 
 import java.awt.*;
 import java.util.*;
@@ -35,13 +33,17 @@ public class GameMenuController extends MenuController {
     private static final Map<String, String> playerMapSelections = new HashMap<>();
     private GameScreen view;
     public static boolean canCheatThor = false;
+    private final ClientNetworkManager connection;
+
+    public GameMenuController(User currentUser, ClientNetworkManager connection) {
+        GameMenuController.currentUser = currentUser;
+        this.connection = connection;
+    }
 
     public GameMenuController(User currentUser) {
-        GameMenuController.currentUser = currentUser;
+        this(currentUser, null);
     }
-    public GameMenuController(GameScreen screen) {
-        view = screen;
-    }
+
     private NPC lastNPC = null;
 
     //LOBBY
@@ -710,24 +712,47 @@ public class GameMenuController extends MenuController {
 
     //todo : lobby
     public List<Lobby> getActiveLobbies() {
+        if (connection != null) {
+            Object response = connection.sendAndReceive(new GetLobbiesRequest());
+            if (response instanceof LobbyListResponse) {
+                LobbyListResponse res = (LobbyListResponse) response;
+                return res.lobbies;
+            }
+            return new ArrayList<>();
+        }
         return LobbyManager.getActiveLobbies();
     }
 
     public Lobby createLobby(String name, boolean isPrivate, String password, boolean isVisible, Player creator) {
+        if (connection != null) {
+            Object response = connection.sendAndReceive(new CreateLobbyRequest(name, isPrivate, password, isVisible, creator));
+            return new Lobby(name, isPrivate, password, isVisible, creator); // locally return for UI update
+        }
         return LobbyManager.createLobby(name, isPrivate, password, isVisible, creator);
     }
 
     public boolean joinLobby(String lobbyId, Player player, String password) {
+        if (connection != null) {
+            Object response = connection.sendAndReceive(new JoinLobbyRequest(lobbyId, player, password));
+            if (response instanceof ResultResponse) {
+                ResultResponse res = (ResultResponse) response;
+                return res.success;
+            }
+            return false;
+        }
         return LobbyManager.joinLobby(lobbyId, player, password);
     }
 
     public void leaveLobby(Player player) {
-        LobbyManager.leaveLobby(player);
+        if (connection != null) {
+            connection.sendAndReceive(new LeaveLobbyRequest(player));
+        } else {
+            LobbyManager.leaveLobby(player);
+        }
     }
 
     public Lobby getCurrentLobbyFor(Player player) {
-        // فقط برای راحتی UI اگر لازم داشت لابی فعلی رو بگیره
-        for (Lobby lobby : LobbyManager.getActiveLobbies()) {
+        for (Lobby lobby : getActiveLobbies()) {
             if (lobby.getPlayers().contains(player)) {
                 return lobby;
             }
@@ -736,6 +761,6 @@ public class GameMenuController extends MenuController {
     }
 
     public Lobby getCurrentLobby() {
-        return currentLobby;
+        return getCurrentLobbyFor(new Player(currentUser));
     }
 }
