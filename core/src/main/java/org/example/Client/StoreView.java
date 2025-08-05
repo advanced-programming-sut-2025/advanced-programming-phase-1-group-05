@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Common.Player;
 import org.example.Common.Product;
 import org.example.Main;
+import org.example.Server.Packets.PurchaseRequest;
 import org.example.Server.controllers.StoreController;
 import org.example.Server.models.*;
 import org.example.Common.Enums.AnimalHouseLevel;
@@ -91,7 +92,12 @@ public class StoreView implements Screen {
                 Result result = StoreController.getInstance().purchase(quantities, previousScreen);
                 if (result.isSuccess()) banner.showMessage(result.getMessage(), Color.GREEN, 5);
                 else banner.showMessage(result.getMessage(), Color.RED, 5);
-                Main.getMain().setScreen(previousScreen);
+                if (result.isSuccess()){
+                    PurchaseRequest req = new PurchaseRequest();
+                    req.player = MyGame.getCurrentPlayer();
+                    req.items.putAll(toPurchase);
+                    Main.getMain().getNetworkManager().getClient().sendTCP(req);
+                }
             }
         });
         filterButton.addListener(new ClickListener() {
@@ -152,7 +158,7 @@ public class StoreView implements Screen {
 
 
 
-    private void rebuildItemList(List<Product> products) {
+    public void rebuildItemList(List<Product> products) {
         itemTable.clear();
         for (Product item : products) {
             if (item.getName().contains("Tool")) continue;

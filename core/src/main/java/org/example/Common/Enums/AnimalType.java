@@ -13,18 +13,4 @@ public enum AnimalType {
         }
         return null;
     }
-
-    @Override
-    public String toString() {
-        switch (this) {
-            case CHICKEN: return "🐔";
-            case DUCK: return "🦆";
-            case RABBIT: return "🐰";
-            case COW: return "🐮";
-            case GOAT: return "🐐";
-            case SHEEP: return "🐑";
-            case PIG: return "🐷";
-        }
-        return "😃";
-    }
 }

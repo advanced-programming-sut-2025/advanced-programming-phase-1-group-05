@@ -149,8 +149,8 @@ public class Main extends Game {
     public static SpriteBatch batch;
     private Skin skin;
     private static Main main;
-    public static ClientNetworkManager networkManager;
-    public static GameClient gameClient;
+    public ClientNetworkManager networkManager;
+    public GameClient gameClient;
     public static User currentUser;
 
     public static Main getMain() {
@@ -174,14 +174,7 @@ public class Main extends Game {
 
         MenuNavigator.init(this, skin);
 
-        try {
-            networkManager = new ClientNetworkManager("localhost", 54555);
-            System.out.println("✅ Connected to server");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("❌ Cannot connect to server");
-        }
-
+        networkManager = new ClientNetworkManager();
         checkAutoLogin();
 
         MenuNavigator.showMainMenu();
@@ -245,7 +238,7 @@ public class Main extends Game {
         return json.substring(startQuote + 1, endQuote);
     }
 
-    public static ClientNetworkManager getNetworkManager() {
+    public ClientNetworkManager getNetworkManager() {
         return networkManager;
     }
 

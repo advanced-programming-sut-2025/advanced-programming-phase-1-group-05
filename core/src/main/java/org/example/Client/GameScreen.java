@@ -293,7 +293,7 @@ public class GameScreen implements Screen {
         if (!cheatCodeWindow.isVisible() && !messageMode) handleInput(delta);
 
 
-        if (Main.networkManager != null) {
+        if (Main.getMain().networkManager != null) {
            // Main.networkManager.sendPlayerPosition(player.getUsername(), player.getXX(), player.getYY());
         }
         Season newSeason = GameManager.getSeason();

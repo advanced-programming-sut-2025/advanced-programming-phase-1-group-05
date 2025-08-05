@@ -134,7 +134,7 @@ public class MenuNavigator {
     }
 
     public static void showGameMenu() {
-        if (Main.networkManager == null || Main.currentUser == null) {
+        if (Main.getMain().networkManager == null || Main.currentUser == null) {
             System.out.println("⚠️ Cannot open GameMenu: user or network not initialized.");
             return;
         }
@@ -144,7 +144,7 @@ public class MenuNavigator {
 //        gameMenuScreen = new GameMenu(sharedSkin, controller);
         gameMenuScreen = new GameMenu(
             sharedSkin,
-            new GameMenuController(RegisterMenuController.currentUser, Main.getNetworkManager())
+            new GameMenuController(RegisterMenuController.currentUser, Main.getMain().getNetworkManager())
         );
         game.setScreen(gameMenuScreen);
     }

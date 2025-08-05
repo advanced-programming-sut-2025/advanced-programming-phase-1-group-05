@@ -6,10 +6,14 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.Enums.MessageType;
+import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
 import org.example.Server.Packets.MovePacket;
 import org.example.Server.Packets.PositionUpdate;
+import org.example.Server.Packets.PurchaseRequest;
+import org.example.Server.Packets.StoreUpdatePacket;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,45 +31,61 @@ public class ServerMain {
         kryo.register(PositionUpdate.class);
         kryo.register(TradeMessage.class);
         kryo.register(MessageType.class);
+        kryo.register(StoreUpdatePacket.class);
+        kryo.register(PurchaseRequest.class);
 
         server.addListener(new Listener() {
             public void received(Connection c, Object object) {
-                if (!(object instanceof TradeMessage)) return;
-
-                TradeMessage msg = (TradeMessage) object;
-                switch (msg.type) {
-                    case REQUEST: {
-                        Connection target = getConnectionByName(msg.toPlayer.getUsername());
-                        if (target != null) {
-                            target.sendTCP(msg);
-                        }
-                        break;
-                    }
-
-                    case RESPONSE: {
-                        Connection initiator = getConnectionByName(msg.toPlayer.getUsername());
-                        if (initiator != null) {
-                            if (msg.accepted) {
-                                TradeMessage start = new TradeMessage();
-                                start.type = MessageType.START;
-                                start.fromPlayer = msg.fromPlayer;
-                                start.toPlayer = msg.toPlayer;
-
-                                initiator.sendTCP(start);
-                                c.sendTCP(start);
-                            } else {
-                                TradeMessage rejected = new TradeMessage();
-                                rejected.type = MessageType.REJECTED;
-                                rejected.fromPlayer = msg.fromPlayer;
-                                rejected.toPlayer = msg.toPlayer;
-
-                                initiator.sendTCP(rejected);
+                if (object instanceof TradeMessage){
+                    TradeMessage msg = (TradeMessage) object;
+                    switch (msg.type) {
+                        case REQUEST: {
+                            Connection target = getConnectionByName(msg.toPlayer.getUsername());
+                            if (target != null) {
+                                target.sendTCP(msg);
                             }
+                            break;
                         }
-                        break;
+
+                        case RESPONSE: {
+                            Connection initiator = getConnectionByName(msg.toPlayer.getUsername());
+                            if (initiator != null) {
+                                if (msg.accepted) {
+                                    TradeMessage start = new TradeMessage();
+                                    start.type = MessageType.START;
+                                    start.fromPlayer = msg.fromPlayer;
+                                    start.toPlayer = msg.toPlayer;
+
+                                    initiator.sendTCP(start);
+                                    c.sendTCP(start);
+                                } else {
+                                    TradeMessage rejected = new TradeMessage();
+                                    rejected.type = MessageType.REJECTED;
+                                    rejected.fromPlayer = msg.fromPlayer;
+                                    rejected.toPlayer = msg.toPlayer;
+
+                                    initiator.sendTCP(rejected);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+                else if (object instanceof PurchaseRequest) {
+                    PurchaseRequest request = (PurchaseRequest) object;
+                    synchronized (gameState) {
+                        StoreUpdatePacket updatePacket = new StoreUpdatePacket();
+                        updatePacket.products = new ArrayList<>();
+                        for (Map.Entry<Product, Integer> entry : request.items.entrySet()) {
+                            updatePacket.products.add(entry.getKey());
+                        }
+                        updatePacket.store = request.store;
+
+                        server.sendToAllTCP(updatePacket);
                     }
                 }
             }
+
                 private Connection getConnectionByName(String playerName) {
                     return playerConnections.get(playerName);
                 }
