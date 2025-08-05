@@ -1,6 +1,8 @@
 package org.example.Server.models.Skills;
 
-public class Crafting implements Skill{
+import java.io.Serializable;
+
+public class Crafting implements Skill, Serializable {
     int level = 0;
     int capacity = 0;
 

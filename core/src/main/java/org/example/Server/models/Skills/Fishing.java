@@ -5,7 +5,9 @@ import org.example.Server.models.MyGame;
 import org.example.Common.GameTile;
 import org.example.Common.Tool.FishingPole;
 
-public class Fishing implements Skill {
+import java.io.Serializable;
+
+public class Fishing implements Skill , Serializable {
     int level = 0;
     int capacity = 0;
 

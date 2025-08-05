@@ -9,7 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import org.example.Client.GameAssetManager;
 import org.example.Common.Enums.FishType;
 
-public class Fish extends Actor {
+import java.io.Serializable;
+
+public class Fish extends Actor implements Serializable {
     TextureRegion frame;
     FishType type;
     private float targetY;

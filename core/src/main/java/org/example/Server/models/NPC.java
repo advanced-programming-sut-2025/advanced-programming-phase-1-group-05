@@ -4,9 +4,10 @@ import org.example.Common.Item;
 import org.example.Common.Mission;
 import org.example.Common.Player;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class NPC {
+public class NPC  implements Serializable {
     float x, y;
     private final String name;
     private Map<Player, Integer> friendshipPoints = new HashMap<>();

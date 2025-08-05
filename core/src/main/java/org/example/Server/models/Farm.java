@@ -8,11 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import org.example.Client.GameAssetManager;
 import org.example.Common.Player;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Farm {
+public class Farm  implements Serializable {
     private List<String> owner = new ArrayList<>();
     private HashMap<Food, Integer> refrigeratedFoods = new HashMap<>();
     private final ArrayList<FruitAndVegetable> crops = new ArrayList<>();

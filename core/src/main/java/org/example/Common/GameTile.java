@@ -4,7 +4,9 @@ import org.example.Server.models.*;
 import org.example.Common.Enums.BuildingType;
 import org.example.Common.Enums.TileType;
 
-public class GameTile {
+import java.io.Serializable;
+
+public class GameTile  implements Serializable {
     private int x, y;
     private TileType tileType;
     private boolean isAnchor;

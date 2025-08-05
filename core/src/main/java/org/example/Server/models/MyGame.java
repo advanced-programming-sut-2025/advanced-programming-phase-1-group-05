@@ -6,9 +6,10 @@ import org.example.Common.Enums.Season;
 import org.example.Common.Enums.Weather;
 import org.example.Client.GameScreen;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class MyGame {
+public class MyGame implements Serializable {
     private static Scanner scanner = new Scanner(System.in);
     private static Player currentPlayer;
     private static GameMap gameMap = new GameMap();

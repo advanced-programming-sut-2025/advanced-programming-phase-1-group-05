@@ -7,9 +7,10 @@ import org.example.Common.TimeAndDate;
 import org.example.Server.models.*;
 import org.example.Common.Tool.Hoe;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Farming implements Skill{
+public class Farming implements Skill , Serializable {
     int level = 0;
     int capacity = 0;
 

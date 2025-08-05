@@ -5,7 +5,9 @@ import org.example.Client.GameAssetManager;
 import org.example.Common.Enums.ItemLevel;
 import org.example.Common.Enums.Material;
 
-public class BasicItem implements Item {
+import java.io.Serializable;
+
+public class BasicItem implements Item , Serializable {
     private String name;
     private int price;
     private ItemLevel level;

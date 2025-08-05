@@ -141,7 +141,11 @@ public class MenuNavigator {
 
         Player player = new Player(Main.currentUser);
         GameMenuController controller = new GameMenuController(Main.currentUser);
-        gameMenuScreen = new GameMenu(sharedSkin, controller);
+//        gameMenuScreen = new GameMenu(sharedSkin, controller);
+        gameMenuScreen = new GameMenu(
+            sharedSkin,
+            new GameMenuController(RegisterMenuController.currentUser, Main.getNetworkManager())
+        );
         game.setScreen(gameMenuScreen);
     }
 

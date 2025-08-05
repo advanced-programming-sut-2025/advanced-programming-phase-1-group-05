@@ -2,7 +2,9 @@ package org.example.Server.models.Building;
 
 import org.example.Common.Enums.BuildingType;
 
-public class Building {
+import java.io.Serializable;
+
+public class Building implements Serializable {
     BuildingType type;
 
 

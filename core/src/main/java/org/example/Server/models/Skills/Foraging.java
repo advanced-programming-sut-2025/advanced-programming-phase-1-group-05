@@ -6,7 +6,9 @@ import org.example.Server.models.MyGame;
 import org.example.Common.GameTile;
 import org.example.Common.Item;
 
-public class Foraging implements Skill{
+import java.io.Serializable;
+
+public class Foraging implements Skill , Serializable {
     int level = 0;
     int capacity = 0;
 

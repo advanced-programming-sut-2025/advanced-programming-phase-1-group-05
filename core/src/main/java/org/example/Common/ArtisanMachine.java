@@ -7,9 +7,10 @@ import org.example.Client.GameAssetManager;
 import org.example.Common.Enums.ArtisanType;
 import org.example.Server.models.Result;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ArtisanMachine extends Actor {
+public class ArtisanMachine extends Actor implements Serializable {
     private TextureRegion textureNormal;
     private TextureRegion textureReady;
     ArtisanType type;

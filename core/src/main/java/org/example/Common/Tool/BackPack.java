@@ -9,11 +9,12 @@ import org.example.Common.Enums.BackPackType;
 import org.example.Common.Enums.CookingRecipeType;
 import org.example.Common.Enums.CraftType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BackPack implements Tool <BackPackType>{
+public class BackPack implements Tool <BackPackType> , Serializable {
     BackPackType level = BackPackType.Normal;
     private final HashMap<Item, Integer> inventory = new HashMap<>();
     private final HashMap<Item, Integer> foragingItems = new HashMap<>();

@@ -7,10 +7,11 @@ import org.example.Common.Enums.AnimalHouseLevel;
 import org.example.Common.Enums.EnclosureType;
 import org.example.Common.Enums.BuildingType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnimalHouse extends Building{
+public class AnimalHouse extends Building implements Serializable {
     private EnclosureType Type; // coop or barn
     private AnimalHouseLevel level;
     private List<Animal> animals = new ArrayList<Animal>();

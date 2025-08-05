@@ -10,7 +10,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import org.example.Client.GameAssetManager;
 
-public class FishBar extends Actor {
+import java.io.Serializable;
+
+public class FishBar extends Actor implements Serializable {
     private float speed = 100;
     private float barY = 500;
     private float barHeight = 200;

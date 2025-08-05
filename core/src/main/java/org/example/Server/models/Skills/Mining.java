@@ -8,7 +8,9 @@ import org.example.Common.Enums.CraftType;
 import org.example.Common.Enums.MineralType;
 import org.example.Common.Tool.Pickaxe;
 
-public class Mining implements Skill{
+import java.io.Serializable;
+
+public class Mining implements Skill , Serializable {
     int level = 0;
     int capacity = 0;
 

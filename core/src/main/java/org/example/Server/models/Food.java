@@ -4,9 +4,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.Common.Item;
 import org.example.Common.Enums.CookingRecipeType;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class Food implements Item {
+public class Food implements Item , Serializable {
     private CookingRecipeType recipeType;
 
 

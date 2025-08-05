@@ -4,7 +4,9 @@ import org.example.Server.models.Food;
 import org.example.Common.Item;
 import org.example.Server.models.MyGame;
 
-public class Cooking implements Skill{
+import java.io.Serializable;
+
+public class Cooking implements Skill, Serializable {
     int level = 0;
     int capacity = 0;
 

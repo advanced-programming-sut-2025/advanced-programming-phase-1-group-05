@@ -3,7 +3,9 @@ package org.example.Server.models;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class AnimalAnimations {
+import java.io.Serializable;
+
+public class AnimalAnimations implements Serializable {
     //Animation<TextureRegion> idle;
     public Animation<TextureRegion> walk_down;
     public Animation<TextureRegion> walk_right;

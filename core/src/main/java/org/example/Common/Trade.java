@@ -1,6 +1,8 @@
 package org.example.Common;
 
-public class Trade {
+import java.io.Serializable;
+
+public class Trade implements Serializable {
     private final int id;
     private static int tradesCount = 0;
     private final Player player; // who initiated the trade

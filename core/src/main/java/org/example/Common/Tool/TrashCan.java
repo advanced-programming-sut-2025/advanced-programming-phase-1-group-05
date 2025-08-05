@@ -7,7 +7,9 @@ import org.example.Server.models.MyGame;
 import org.example.Server.models.Result;
 import org.example.Common.Enums.ItemLevel;
 
-public class TrashCan implements Tool <ItemLevel> {
+import java.io.Serializable;
+
+public class TrashCan implements Tool <ItemLevel> , Serializable {
     ItemLevel level = ItemLevel.Normal;
 
     public void removeFromInventory(String name, int quantity){

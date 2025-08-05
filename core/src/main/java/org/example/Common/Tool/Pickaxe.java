@@ -11,7 +11,9 @@ import org.example.Common.Enums.TileType;
 import org.example.Server.models.Skills.Mining;
 import org.example.Server.models.Skills.Skill;
 
-public class Pickaxe implements Tool <ItemLevel> {
+import java.io.Serializable;
+
+public class Pickaxe implements Tool <ItemLevel> , Serializable {
     ItemLevel level = ItemLevel.Normal;
 
     @Override

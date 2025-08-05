@@ -9,12 +9,14 @@ import org.example.Common.Mission;
 import org.example.Common.Product;
 import org.example.Common.Enums.BuildingType;
 import org.example.Common.Enums.Season;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Database {
+public class Database implements Serializable {
     public ArrayList<Item> itemDatabase = new ArrayList<>();
     ArrayList<Craft> craftingRecipeDatabase = new ArrayList<>();
     List<Store> stores = new ArrayList<>();
