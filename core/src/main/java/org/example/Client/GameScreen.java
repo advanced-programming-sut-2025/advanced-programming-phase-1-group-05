@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.example.Common.*;
 import org.example.Common.Enums.*;
+import org.example.Common.Request.TradeMessage;
 import org.example.Main;
 import org.example.Server.controllers.*;
 import org.example.Server.models.*;
@@ -2873,5 +2874,7 @@ public class GameScreen implements Screen {
         uiStage.addActor(tradeRequestTable);
         return acceptedRequest; //implement better
     }
+
+
 
 }

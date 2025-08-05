@@ -173,4 +173,9 @@ public class TradingController {
     }
 
 
+    public void sendOffer(Player fromPlayer, Player toPlayer, Item offerItem, Item requestItem, int offerAmount, int requestAmount) {
+        Trade trade = new Trade(fromPlayer, toPlayer, "request", offerItem, offerAmount, 0, requestItem, requestAmount );
+        trades.add(trade);
+
+    }
 }

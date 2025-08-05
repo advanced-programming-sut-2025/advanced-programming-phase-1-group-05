@@ -84,7 +84,7 @@ public class TradeMenu extends Table {
                         }
                         msg.toPlayer = otherPlayer;
 
-//                        Main.getNetworkManager().sendTradeRequest(msg);
+                        Main.gameClient.sendTradeRequest(msg); //idk?
 
                     }
                 });

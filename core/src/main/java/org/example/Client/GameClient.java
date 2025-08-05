@@ -14,8 +14,9 @@ import java.io.IOException;
 import java.sql.Connection;
 
 public class GameClient {
+    static Client client;
     public static void main(String[] args) throws IOException {
-        Client client = new Client();
+        client = new Client();
         client.start();
 
         Kryo kryo = client.getKryo();
@@ -31,11 +32,11 @@ public class GameClient {
 
         client.addListener(new Listener() {
             public void received(Connection c, Object object) {
-                if (!(object instanceof TradeMessage )) return;
+                if (!(object instanceof TradeMessage)) return;
                 TradeMessage msg = (TradeMessage) object;
+
                 switch (msg.type) {
-                    case REQUEST : {
-                        // show popup to accept/reject
+                    case REQUEST: {
                         boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
 
                         TradeMessage response = new TradeMessage();
@@ -45,18 +46,24 @@ public class GameClient {
                         response.accepted = accepted;
 
                         client.sendTCP(response);
+                        break;
                     }
-                    case START : {
-//                      TODO implement starting trade screen
+
+                    case START: {
+                      //  MyGame.getGameScreen().startTradingWith(msg.toPlayer.getUsername());
+                        break;
                     }
-                    case REJECTED : {
+
+                    case REJECTED: {
                         Result result = new Result(false, "Your trade request was rejected :(");
                         MyGame.getGameScreen().showResult = true;
                         MyGame.getGameScreen().latestResult = result;
+                        break;
                     }
                 }
             }
         });
+
 
 
         // Example: move right every second
@@ -71,5 +78,9 @@ public class GameClient {
 //                e.printStackTrace();
 //            }
 //        }).start();
+    }
+
+    public void sendTradeRequest(TradeMessage msg) {
+        client.sendTCP(msg);
     }
 }

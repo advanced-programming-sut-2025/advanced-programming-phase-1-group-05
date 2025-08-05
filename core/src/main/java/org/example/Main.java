@@ -132,6 +132,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.example.Client.ClientNetworkManager;
+import org.example.Client.GameClient;
 import org.example.Client.MenuNavigator;
 import org.example.Common.Player;
 import org.example.Common.User;
@@ -149,6 +150,7 @@ public class Main extends Game {
     private Skin skin;
     private static Main main;
     public static ClientNetworkManager networkManager;
+    public static GameClient gameClient;
     public static User currentUser;
 
     public static Main getMain() {
@@ -166,6 +168,7 @@ public class Main extends Game {
     @Override
     public void create() {
         main = this;
+        gameClient = new GameClient();
         batch = new SpriteBatch();
         skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
 
