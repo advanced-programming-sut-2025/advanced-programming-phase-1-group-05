@@ -8,7 +8,9 @@ import org.example.Server.models.*;
 import org.example.Common.Enums.ItemLevel;
 import org.example.Common.Enums.TileType;
 
-public class Hoe implements Tool <ItemLevel> {
+import java.io.Serializable;
+
+public class Hoe implements Tool <ItemLevel> , Serializable {
     ItemLevel level = ItemLevel.Normal;
 
     @Override

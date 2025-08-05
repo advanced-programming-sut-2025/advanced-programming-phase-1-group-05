@@ -6,7 +6,9 @@ import org.example.Server.models.MyGame;
 import org.example.Common.GameTile;
 import org.example.Server.models.Result;
 
-public class FishingPole implements Tool<FishingPoleType> {
+import java.io.Serializable;
+
+public class FishingPole implements Tool<FishingPoleType> , Serializable {
     FishingPoleType level = FishingPoleType.Training;
 
     @Override

@@ -7,12 +7,13 @@ import org.example.Common.Enums.BuildingType;
 import org.example.Common.Enums.ItemLevel;
 import org.example.Common.Enums.Season;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Product implements Item {
+public class Product implements Item , Serializable {
     private final String name;
     private final int price;
     private final int limit;

@@ -10,12 +10,14 @@ import org.example.GrowthStep;
 import org.example.Common.Enums.ForagingCrop;
 import org.example.Common.Enums.MineralType;
 import org.example.Common.Enums.TreeType;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class Tree implements Item {
+public class Tree implements Item , Serializable {
     private final TreeType treeType;
     private Map.Entry<Integer, Integer> coordinates;
     private boolean fullyGrown;

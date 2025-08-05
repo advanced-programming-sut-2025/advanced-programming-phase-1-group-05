@@ -9,10 +9,11 @@ import org.example.Common.User;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class UserDatabase {
+public class UserDatabase implements Serializable {
     private static final String USER_FILE = "users.json";
     private static final List<User> users = new ArrayList<>();
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();

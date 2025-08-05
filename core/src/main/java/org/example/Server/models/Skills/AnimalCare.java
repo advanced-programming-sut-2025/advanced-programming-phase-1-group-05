@@ -2,10 +2,11 @@ package org.example.Server.models.Skills;
 
 import org.example.Server.models.Animal;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class AnimalCare implements Skill{
+public class AnimalCare implements Skill , Serializable {
     int level = 0;
     int capacity = 0;
     private Map<String, List<Animal>> enclosures;

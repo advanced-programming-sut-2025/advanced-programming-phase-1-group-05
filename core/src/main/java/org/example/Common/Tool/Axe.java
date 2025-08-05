@@ -11,7 +11,9 @@ import org.example.Common.Enums.ItemLevel;
 import org.example.Common.Enums.TileType;
 import org.example.Server.models.Skills.Skill;
 
-public class Axe implements Tool <ItemLevel>{
+import java.io.Serializable;
+
+public class Axe implements Tool <ItemLevel> , Serializable {
     ItemLevel level = ItemLevel.Normal;
     Database database = new Database();
 

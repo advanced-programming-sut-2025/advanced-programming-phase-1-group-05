@@ -7,7 +7,9 @@ import org.example.Common.Item;
 import org.example.Server.models.*;
 import org.example.Common.Enums.ItemLevel;
 
-public class Scythe implements Tool<ItemLevel> {
+import java.io.Serializable;
+
+public class Scythe implements Tool<ItemLevel> , Serializable {
     ItemLevel level = ItemLevel.Normal;
     Database database = new Database();
     @Override

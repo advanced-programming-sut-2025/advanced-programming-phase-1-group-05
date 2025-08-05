@@ -9,12 +9,13 @@ import org.example.Common.Enums.AnimalType;
 import org.example.Common.Enums.EnclosureType;
 import org.example.Common.Enums.ItemLevel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class Animal implements Item {
+public class Animal implements Item , Serializable {
     public enum State {
         IDLE,
         EATING,

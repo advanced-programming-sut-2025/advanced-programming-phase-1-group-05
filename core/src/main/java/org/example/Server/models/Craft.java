@@ -8,11 +8,12 @@ import org.example.Common.Item;
 import org.example.Common.Enums.CraftType;
 import org.example.Common.Enums.MineralType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Craft extends BasicItem implements Item {
+public class Craft extends BasicItem implements Item , Serializable {
     private Map.Entry<Integer,Integer> coordinates;
     private final CraftType type;
 

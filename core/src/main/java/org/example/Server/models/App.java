@@ -3,10 +3,11 @@ package org.example.Server.models;
 import org.example.Common.Player;
 import org.example.Common.User;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class App {
+public class App implements Serializable {
     private static HashMap<String, User> users = new HashMap<>();
     private static Player currentPlayer = null;
     public static User currentUser;

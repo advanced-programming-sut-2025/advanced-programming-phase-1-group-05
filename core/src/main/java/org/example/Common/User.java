@@ -1,9 +1,10 @@
 package org.example.Common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User {
+public class User implements Serializable {
     public String username;
     public String password;
     public String nickName;

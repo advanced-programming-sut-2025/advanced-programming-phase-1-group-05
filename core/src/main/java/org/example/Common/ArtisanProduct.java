@@ -5,10 +5,11 @@ import org.example.Client.GameAssetManager;
 import org.example.Server.controllers.GameManager;
 import org.example.Server.models.MyGame;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class ArtisanProduct extends Product implements Item {
+public class ArtisanProduct extends Product implements Item , Serializable {
     private final String name;
     private final int energy;
     private final int processingHours;

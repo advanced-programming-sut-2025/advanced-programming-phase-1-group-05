@@ -7,10 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import org.example.Client.GameAssetManager;
 import org.example.Common.Product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Store extends Actor {
+public class Store extends Actor implements Serializable {
     String storeName;
     List<Product> products = new ArrayList<>();
     int openingTime, closingTime;

@@ -1,6 +1,8 @@
 package org.example.Common;
 
-public class Gift {
+import java.io.Serializable;
+
+public class Gift implements Serializable {
     Player sender;
     Player receiver;
     Item item;

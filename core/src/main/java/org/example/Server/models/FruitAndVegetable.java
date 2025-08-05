@@ -8,9 +8,10 @@ import org.example.GrowthStep;
 import org.example.Common.Enums.CropType;
 import org.example.Common.Enums.Season;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class FruitAndVegetable implements Item {
+public class FruitAndVegetable implements Item , Serializable {
     private Map.Entry<Integer,Integer> coordinates;
     private final CropType type;
     private boolean protectedByScareCrow;

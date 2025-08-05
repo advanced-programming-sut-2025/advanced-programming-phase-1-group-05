@@ -1,9 +1,10 @@
 package org.example.Common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mission {
+public class Mission implements Serializable {
     public enum Status {
         LOCKED,
         NOT_STARTED,

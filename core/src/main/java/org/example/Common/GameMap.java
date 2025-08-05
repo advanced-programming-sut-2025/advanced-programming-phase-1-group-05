@@ -11,12 +11,13 @@ import org.example.Server.models.*;
 import org.example.Server.models.Building.GreenHouse;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 
-public class GameMap {
+public class GameMap implements Serializable {
     public static final int MAP_WIDTH = 200;
     public static final int MAP_HEIGHT = 200;
     private static GameTile[][] map = new GameTile[MAP_HEIGHT][MAP_WIDTH];

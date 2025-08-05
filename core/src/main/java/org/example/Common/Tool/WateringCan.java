@@ -10,7 +10,9 @@ import org.example.Common.Enums.ItemLevel;
 import org.example.Common.Enums.TileType;
 import org.example.Server.models.Skills.Farming;
 
-public class WateringCan implements Tool<ItemLevel> {
+import java.io.Serializable;
+
+public class WateringCan implements Tool<ItemLevel> , Serializable {
     ItemLevel level = ItemLevel.Normal;
     int waterlevel = level.getWateringcanCapacity();
 

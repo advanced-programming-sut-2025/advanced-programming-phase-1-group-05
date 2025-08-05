@@ -1,6 +1,8 @@
 package org.example.Common;
 
-public class InventorySlot {
+import java.io.Serializable;
+
+public class InventorySlot   implements Serializable {
     public float x,y;
     public Item item;
     public int count;

@@ -3,7 +3,9 @@ package org.example.Server.models;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.Common.Item;
 
-public class ForagingItem implements Item {
+import java.io.Serializable;
+
+public class ForagingItem implements Item , Serializable {
     private final String name;
     private final int price;
     private final Item material;

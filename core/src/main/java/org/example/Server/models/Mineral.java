@@ -4,7 +4,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.Common.Item;
 import org.example.Common.Enums.MineralType;
 
-public class Mineral implements Item {
+import java.io.Serializable;
+
+public class Mineral implements Item , Serializable {
     private MineralType mineralType;
     private String name;
     private int price;

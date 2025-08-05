@@ -14,9 +14,10 @@ import org.example.Server.models.*;
 import org.example.Server.models.Building.AnimalHouse;
 import org.example.Server.models.Skills.*;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Player {
+public class Player implements Serializable {
     private User user;
     private Player spouse;
     private int x, y;
@@ -42,11 +43,11 @@ public class Player {
     private List<AnimalHouse> coopAndBarns = new ArrayList<>();
     private List<String> notifications = new ArrayList<>();
     private static int mapNum;
-    private Texture texture;
+    private transient Texture texture;
     private float width = 49, height = 122;
     private float speed = 200f;
     private float X, Y;
-    private TextureRegion currentTexture;
+    private transient TextureRegion currentTexture;
     private final float energyCostPerStep = 0.05f;
     private float distanceTraveled = 0f;
     private boolean isFainting = false;
@@ -55,20 +56,20 @@ public class Player {
     private int id;
 
     //walking animations
-    private Animation<TextureRegion> walkUpAnimation;
-    private Animation<TextureRegion> walkDownAnimation;
-    private Animation<TextureRegion> walkLeftAnimation;
-    private Animation<TextureRegion> walkRightAnimation;
-    private Animation<TextureRegion> currentAnimation = null;
-    private Animation<TextureRegion> faintAnimation = null;
-    private Animation<TextureRegion> eatingAnimation = null;
+    private transient Animation<TextureRegion> walkUpAnimation;
+    private transient Animation<TextureRegion> walkDownAnimation;
+    private transient Animation<TextureRegion> walkLeftAnimation;
+    private transient Animation<TextureRegion> walkRightAnimation;
+    private transient Animation<TextureRegion> currentAnimation = null;
+    private transient Animation<TextureRegion> faintAnimation= null;
+    private transient Animation<TextureRegion> eatingAnimation = null;
     private float stateTime = 0f;
     private Direction lastDirection = Direction.DOWN;
 
-    private TextureRegion frontStill = new TextureRegion(new Texture("player-female/front still.png"));
-    private TextureRegion backStill = new TextureRegion(new Texture("player-female/back still.png"));
-    private TextureRegion leftStill = new TextureRegion(new Texture("player-female/left 0.png"));
-    private TextureRegion rightStill = new TextureRegion(new Texture("player-female/right 0.png"));
+    private transient TextureRegion frontStill = new TextureRegion(new Texture("player-female/front still.png"));
+    private transient TextureRegion backStill = new TextureRegion(new Texture("player-female/back still.png"));
+    private transient TextureRegion leftStill = new TextureRegion(new Texture("player-female/left 0.png"));
+    private transient TextureRegion rightStill = new TextureRegion(new Texture("player-female/right 0.png"));
 
     //tool usage
     private float toolUseTime = 0f;

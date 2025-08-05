@@ -11,11 +11,12 @@ import org.example.Common.GameTile;
 import org.example.Common.Item;
 import org.example.Server.controllers.GameManager;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class TileMapRenderer {
+public class TileMapRenderer implements Serializable {
     private static final int TILE_SIZE = 64;
     private static final int MAP_WIDTH = 200;
     private static final int MAP_HEIGHT = 200;

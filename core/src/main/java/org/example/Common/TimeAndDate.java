@@ -5,7 +5,9 @@ import org.example.Common.Enums.Season;
 import org.example.Common.Enums.Weather;
 import org.example.Server.models.MyGame;
 
-public class TimeAndDate {
+import java.io.Serializable;
+
+public class TimeAndDate implements Serializable {
     int day = 1;
     Season season;
     public int hour = 9;
