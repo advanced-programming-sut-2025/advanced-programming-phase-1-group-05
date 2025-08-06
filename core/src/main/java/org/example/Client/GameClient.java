@@ -3,6 +3,7 @@ package org.example.Client;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Listener;
+import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.Enums.MessageType;
 import org.example.Common.Request.TradeMessage;
@@ -23,8 +24,10 @@ public class GameClient {
         kryo.register(PlayerUpdate.class);
         kryo.register(TradeMessage.class);
         kryo.register(MessageType.class);
+        kryo.register(ChatMessage.class);
 
-        client.connect(5000, "localhost", 54555, 54777);  // change "localhost" to your server's IP if on LAN
+//        client.connect(5000, "localhost", 54555, 54777);  // change "localhost" to your server's IP if on LAN
+        client.connect(5000, "192.168.107.247", 54555, 54777);
 
         // Send initial position update
         PlayerUpdate update = new PlayerUpdate("friend-" + System.currentTimeMillis(), 0, 0);
@@ -33,6 +36,10 @@ public class GameClient {
         client.addListener(new Listener() {
             public void received(Connection c, Object object) {
                 if (!(object instanceof TradeMessage)) return;
+                else if (object instanceof ChatMessage) {
+                    ChatMessage chat = (ChatMessage) object;
+                    MyGame.getGameScreen().receiveChatMessage(chat.sender, chat.content);
+                }
                 TradeMessage msg = (TradeMessage) object;
 
                 switch (msg.type) {

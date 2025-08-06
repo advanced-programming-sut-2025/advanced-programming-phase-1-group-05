@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.Enums.MessageType;
 import org.example.Common.Product;
@@ -33,6 +34,7 @@ public class ServerMain {
         kryo.register(MessageType.class);
         kryo.register(StoreUpdatePacket.class);
         kryo.register(PurchaseRequest.class);
+        kryo.register(ChatMessage.class);
 
         server.addListener(new Listener() {
             public void received(Connection c, Object object) {
@@ -84,6 +86,12 @@ public class ServerMain {
                         server.sendToAllTCP(updatePacket);
                     }
                 }
+                else if (object instanceof ChatMessage) {
+                    ChatMessage msg = (ChatMessage) object;
+                    System.out.println(msg.sender + ": " + msg.content);
+                    server.sendToAllTCP(msg);
+                }
+
             }
 
                 private Connection getConnectionByName(String playerName) {

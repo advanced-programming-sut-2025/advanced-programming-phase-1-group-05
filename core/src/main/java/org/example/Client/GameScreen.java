@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.example.Common.*;
+import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.Enums.*;
 import org.example.Common.Request.TradeMessage;
 import org.example.Main;
@@ -175,6 +176,14 @@ public class GameScreen implements Screen {
     ImageButton accept, reject;
     boolean acceptedRequest;
 
+    //chat
+    private Table chatTable;
+    private TextField chatInputField;
+    private ScrollPane chatScrollPane;
+    private VerticalGroup chatMessagesGroup;
+    private boolean isChatOpen = false;
+
+
     Player player;
 
 
@@ -186,7 +195,7 @@ public class GameScreen implements Screen {
         camera.setToOrtho(false);
         batch = new SpriteBatch();
         players = playerList;
-        controller = new GameMenuController(Main.currentUser , Main.getNetworkManager());
+        controller = new GameMenuController(Main.currentUser);
         homeMenuController = new HomeMenuController();
         cheatCodeWindow = new CheatCodeWindow(camera, Gdx.input.getInputProcessor());
         shapeRenderer = new ShapeRenderer();
@@ -1485,6 +1494,59 @@ public class GameScreen implements Screen {
         dialogueTable.setFillParent(true);
         uiStage.addActor(dialogueTable);
 
+        chatTable = new Table();
+        chatTable.setVisible(false);
+        chatTable.setFillParent(true);
+        uiStage.addActor(chatTable);
+
+        Table innerPanel = new Table(skin);
+        Texture chatBgTex = GameAssetManager.getInstance().getOrLoadTexture("Animals/MenuBackground2.png");
+        Drawable chatBg = new TextureRegionDrawable(new TextureRegion(chatBgTex));
+        innerPanel.setBackground(chatBg);
+        innerPanel.pad(30);
+
+        chatMessagesGroup = new VerticalGroup();
+        chatMessagesGroup.top().left().columnAlign(Align.left).space(10);
+        chatMessagesGroup.setFillParent(true);
+        chatMessagesGroup.wrap(true);
+
+        chatScrollPane = new ScrollPane(chatMessagesGroup, skin);
+        chatScrollPane.setFadeScrollBars(false);
+        chatScrollPane.setScrollingDisabled(true, false);
+
+        chatInputField = new TextField("", skin);
+        chatInputField.setMessageText("Type your message...");
+        TextButton sendButton = new TextButton("Send", skin);
+        TextButton backButton = new TextButton("Back", skin);
+
+        sendButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                String content = chatInputField.getText().trim();
+                if (!content.isEmpty()) {
+                    ChatMessage msg = new ChatMessage(MyGame.getCurrentPlayer().getUsername(), content);
+                    GameClient.client.sendTCP(msg);
+                    chatInputField.setText("");
+                }
+            }
+        });
+
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                chatTable.setVisible(false);
+                isChatOpen = false;
+            }
+        });
+
+        innerPanel.add(chatScrollPane).height(400).width(600).colspan(2).padBottom(20).row();
+        innerPanel.add(chatInputField).width(400).padRight(10);
+        innerPanel.add(sendButton).width(100).row();
+        innerPanel.add(backButton).colspan(2).padTop(20);
+
+        chatTable.add(innerPanel).center();
+
+
         for (NpcActor npc : NPCs) {
             stage.addActor(npc);
             npc.addListener(new InputListener() {
@@ -1548,6 +1610,24 @@ public class GameScreen implements Screen {
         });
         uiStage.addActor(friendshipButton);
 
+        Texture chatTex = GameAssetManager.getInstance().getOrLoadTexture("ui/chat.png");
+        Drawable chatDrawable = new TextureRegionDrawable(new TextureRegion(chatTex));
+        ImageButton chatButton = new ImageButton(chatDrawable);
+        chatButton.setPosition(x, y - 250f);
+        chatButton.getImageCell().size(72, 56);
+        chatButton.setSize(72, 56);
+
+        chatButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                chatTable.setVisible(true);
+                isChatOpen = true;
+            }
+        });
+
+        uiStage.addActor(chatButton);
+
+
         Texture tradingTexture = GameAssetManager.tradingButton;
         Drawable tradingDrawable = new TextureRegionDrawable(new TextureRegion(tradingTexture));
         tradingButton = new ImageButton(tradingDrawable);
@@ -1606,6 +1686,15 @@ public class GameScreen implements Screen {
 //        addAnimalActor(new AnimalActor(animal));
 
     }
+
+    public void receiveChatMessage(String sender, String message) {
+        Label msgLabel = new Label(sender + ": " + message, skin);
+        msgLabel.setAlignment(Align.left);
+        chatMessagesGroup.addActor(msgLabel);
+        chatScrollPane.layout();
+        chatScrollPane.setScrollPercentY(100);
+    }
+
 
     private void forceViewportReset() {
         toggleOverviewMode();
