@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import org.example.Common.DataTransferObjects.ChatMessage;
+import org.example.Common.DataTransferObjects.LoginPacket;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.MessageType;
@@ -34,6 +35,8 @@ public class ServerMain {
         kryo.register(MessageType.class);
         kryo.register(ChatMessage.class);
         kryo.register(PrivateChatMessage.class);
+        kryo.register(String.class);
+        kryo.register(LoginPacket.class);
 
 
         server.addListener(new Listener() {
@@ -86,16 +89,21 @@ public class ServerMain {
                         server.sendToAllTCP(updatePacket);
                     }
                 }
+                else if (object instanceof LoginPacket) {
+                    LoginPacket login = (LoginPacket) object;
+                    System.out.println("Registered player connection: " + login.username);
+                    registerPlayerConnection(login.username, c);
+                }
                 else if (object instanceof ChatMessage) {
                     ChatMessage chat = (ChatMessage) object;
                     if (chat.receiver != null && !chat.receiver.isBlank()) {
-                        // پیام خصوصی
-                        Connection target = ServerState.getConnectionForUsername(chat.receiver);
+                        Connection target = getConnectionByUsername(chat.receiver);
                         if (target != null) {
                             target.sendTCP(chat);
+                        } else {
+                            System.out.println("❌ Target not found for private message: " + chat.receiver);
                         }
                     } else {
-                        // پیام عمومی
                         server.sendToAllTCP(chat);
                     }
                 }
@@ -107,6 +115,14 @@ public class ServerMain {
             });
         System.out.println("Server started on port 54555!");
     }
+    public static void registerPlayerConnection(String username, Connection connection) {
+        playerConnections.put(username, connection);
+    }
+
+    public static Connection getConnectionByUsername(String username) {
+        return playerConnections.get(username);
+    }
+
 }
 //package org.example.Server;
 //

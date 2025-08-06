@@ -1788,28 +1788,80 @@ public class GameScreen implements Screen {
 //    }
 
 
+//    private void showPrivateChatPopup() {
+//        final TextField usernameField = new TextField("", skin);
+//
+//        Dialog dialog = new Dialog("Start Private Chat", skin) {
+//            @Override
+//            protected void result(Object obj) {
+//                if ((boolean) obj) {
+//                    String targetUsername = usernameField.getText().trim();
+//                    if (!targetUsername.isEmpty() &&
+//                        !targetUsername.equals(MyGame.getCurrentPlayer().getUsername())) {
+//                        openPrivateChat(targetUsername);
+//                    }
+//                }
+//            }
+//        };
+//
+//        usernameField.setMessageText("Enter username...");
+//        dialog.getContentTable().add(usernameField).width(300).pad(10).row();
+//
+//        dialog.button("Start", true);
+//        dialog.button("Cancel", false);
+//
+//        dialog.show(uiStage);
+//    }
+
     private void showPrivateChatPopup() {
-        final TextField usernameField = new TextField("", skin);
+        Dialog dialog = new Dialog("Private Message", skin);
+        dialog.pad(20);
 
-        Dialog dialog = new Dialog("Start Private Chat", skin) {
+        TextField recipientField = new TextField("", skin);
+        recipientField.setMessageText("Enter recipient username");
+
+        TextField messageField = new TextField("", skin);
+        messageField.setMessageText("Type your message here");
+
+        TextButton sendBtn = new TextButton("Send", skin);
+        TextButton cancelBtn = new TextButton("Cancel", skin);
+
+        sendBtn.addListener(new ClickListener() {
             @Override
-            protected void result(Object obj) {
-                if ((boolean) obj) {
-                    String targetUsername = usernameField.getText().trim();
-                    if (!targetUsername.isEmpty() &&
-                        !targetUsername.equals(MyGame.getCurrentPlayer().getUsername())) {
-                        openPrivateChat(targetUsername);
-                    }
+            public void clicked(InputEvent event, float x, float y) {
+                String recipient = recipientField.getText().trim();
+                String content = messageField.getText().trim();
+                String sender = MyGame.getCurrentPlayer().getUsername();
+
+                if (!recipient.isEmpty() && !content.isEmpty()) {
+                    ChatMessage msg = new ChatMessage(sender, recipient, content);
+                    GameClient.client.sendTCP(msg);
+
+                    // نمایش پیام محلی هم می‌تونه اضافه بشه:
+                    receivePrivateMessage("To " + recipient, content);
                 }
+
+                dialog.hide();
             }
-        };
+        });
 
-        usernameField.setMessageText("Enter username...");
-        dialog.getContentTable().add(usernameField).width(300).pad(10).row();
+        cancelBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                dialog.hide();
+            }
+        });
 
-        dialog.button("Start", true);
-        dialog.button("Cancel", false);
+        Table table = new Table();
+        table.add(new Label("To:", skin)).padRight(10);
+        table.add(recipientField).width(300).row();
+        table.add(new Label("Message:", skin)).padTop(10).padRight(10);
+        table.add(messageField).width(300).row();
+        table.add(sendBtn).padTop(20);
+        table.add(cancelBtn).padTop(20);
 
+        dialog.getContentTable().add(table);
+        dialog.button("Close", false);
         dialog.show(uiStage);
     }
 
@@ -1839,10 +1891,9 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 String msg = messageField.getText().trim();
                 if (!msg.isEmpty()) {
-                    ChatMessage chat = new ChatMessage();
-                    chat.sender = MyGame.getCurrentPlayer().getUsername();
-                    chat.receiver = targetUsername;
-                    chat.content = msg;
+                    ChatMessage chat = new ChatMessage(MyGame.getCurrentPlayer().getUsername(), targetUsername, msg);
+                    GameClient.client.sendTCP(chat);
+
 
                     Main.getMain().gameClient.sendChat(chat);
                     messageField.setText("");
