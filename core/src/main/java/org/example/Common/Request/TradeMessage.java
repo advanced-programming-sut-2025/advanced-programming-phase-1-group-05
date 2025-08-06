@@ -9,7 +9,7 @@ public class TradeMessage implements Message {
         REQUEST,RESPONSE,
         START,REJECTED,UPDATE;
     }
-    public MessageType type;
+    public org.example.Common.Enums.MessageType type;
     public Player fromPlayer;
     public Player toPlayer;
     public Trade trade;
