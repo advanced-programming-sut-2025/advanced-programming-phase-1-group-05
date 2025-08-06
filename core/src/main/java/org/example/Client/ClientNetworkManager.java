@@ -76,6 +76,10 @@ public class ClientNetworkManager {
             ((StoreView) current).rebuildItemList(localStore.getProducts());
         }
     }
+    public void sendTCP(Object object) {
+        GameClient.client.sendTCP(object);
+    }
+
 
 
     // setupListeners(), registerClasses(), etc.

@@ -6,6 +6,8 @@ import java.io.Serializable;
 public class LeaveLobbyRequest implements Serializable {
     public Player player;
 
+    public LeaveLobbyRequest() {}
+
     public LeaveLobbyRequest(Player player) {
         this.player = player;
     }

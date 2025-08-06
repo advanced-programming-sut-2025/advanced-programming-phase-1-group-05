@@ -9,6 +9,9 @@ import org.example.Common.DataTransferObjects.LoginPacket;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.MessageType;
+import org.example.Common.Lobby;
+import org.example.Common.Network.*;
+import org.example.Common.Player;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
 import org.example.Server.Packets.MovePacket;
@@ -19,6 +22,7 @@ import org.example.Server.Packets.StoreUpdatePacket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimerTask;
 
 public class ServerMain {
     public static ServerGameState gameState = new ServerGameState();
@@ -37,6 +41,19 @@ public class ServerMain {
         kryo.register(PrivateChatMessage.class);
         kryo.register(String.class);
         kryo.register(LoginPacket.class);
+        kryo.register(Lobby.class);
+        kryo.register(Player.class);
+        kryo.register(ArrayList.class);
+        kryo.register(java.util.List.class);
+        kryo.register(HashMap.class);
+        kryo.register(CreateLobbyRequest.class);
+        kryo.register(GetLobbiesRequest.class);
+        kryo.register(JoinLobbyRequest.class);
+        kryo.register(LeaveLobbyRequest.class);
+        kryo.register(LobbyListResponse.class);
+        kryo.register(ResultResponse.class);
+        kryo.register(org.example.Server.models.Skills.AnimalCare.class);
+
 
 
         server.addListener(new Listener() {
@@ -113,6 +130,14 @@ public class ServerMain {
                     return playerConnections.get(playerName);
                 }
             });
+        server.addListener(new LobbyServerHandler());
+        new java.util.Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                LobbyServerHandler.cleanUpEmptyLobbies();
+            }
+        }, 0, 60_000);
+
         System.out.println("Server started on port 54555!");
     }
     public static void registerPlayerConnection(String username, Connection connection) {
@@ -124,31 +149,3 @@ public class ServerMain {
     }
 
 }
-//package org.example.Server;
-//
-//import java.net.ServerSocket;
-//import java.net.Socket;
-//
-//public class ServerMain {
-//    public static void main(String[] args) {
-//        try {
-//            int port = 54555; // پورتی که کلاینت وصل میشه
-//            ServerSocket serverSocket = new ServerSocket(port);
-//
-//            System.out.println("✅ Server started on port " + port);
-//
-//            while (true) {
-//                // هر کلاینت که وصل شد
-//                Socket clientSocket = serverSocket.accept();
-//                System.out.println("🔗 New client connected: " + clientSocket.getInetAddress());
-//
-//                // اجرای ClientHandler در یک Thread جدا
-//                Thread t = new Thread(new ClientHandler(clientSocket));
-//                t.start();
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            System.out.println("❌ Server failed to start: " + e.getMessage());
-//        }
-//    }
-//}

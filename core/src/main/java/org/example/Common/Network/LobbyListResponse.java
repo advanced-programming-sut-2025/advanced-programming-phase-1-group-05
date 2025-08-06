@@ -7,6 +7,8 @@ import java.util.List;
 public class LobbyListResponse implements Serializable {
     public List<Lobby> lobbies;
 
+    public LobbyListResponse() {}
+
     public LobbyListResponse(List<Lobby> lobbies) {
         this.lobbies = lobbies;
     }

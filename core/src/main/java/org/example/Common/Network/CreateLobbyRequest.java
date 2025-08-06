@@ -1,6 +1,7 @@
 package org.example.Common.Network;
 
 import org.example.Common.Player;
+
 import java.io.Serializable;
 
 public class CreateLobbyRequest implements Serializable {
@@ -9,6 +10,8 @@ public class CreateLobbyRequest implements Serializable {
     public String password;
     public boolean visible;
     public Player creator;
+
+    public CreateLobbyRequest() {}
 
     public CreateLobbyRequest(String name, boolean isPrivate, String password, boolean visible, Player creator) {
         this.name = name;

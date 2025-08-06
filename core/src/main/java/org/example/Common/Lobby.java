@@ -1,10 +1,11 @@
 package org.example.Common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Lobby {
+public class Lobby implements Serializable {
     public static final int MAX_PLAYERS = 4;
 
     private String id;
@@ -16,15 +17,19 @@ public class Lobby {
     private Player admin;
     private long creationTime;
 
-    public Lobby(String name, boolean isPrivate, String password, boolean isVisible, Player creator) {
+    public Lobby() {
+        this.players = new ArrayList<>();
         this.id = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        this.creationTime = System.currentTimeMillis();
+    }
+
+    public Lobby(String name, boolean isPrivate, String password, boolean isVisible, Player creator) {
+        this();
         this.name = name;
         this.isPrivate = isPrivate;
         this.password = password;
         this.isVisible = isVisible;
-        this.players = new ArrayList<>();
         this.admin = creator;
-        this.creationTime = System.currentTimeMillis();
         this.players.add(creator);
     }
 
@@ -39,12 +44,11 @@ public class Lobby {
 
     public boolean addPlayer(Player player) {
         if (players.size() >= MAX_PLAYERS) {
-            return false; // ظرفیت پر شده
+            return false;
         }
         if (!players.contains(player)) players.add(player);
         return true;
     }
-
 
     public void removePlayer(Player player) {
         players.remove(player);

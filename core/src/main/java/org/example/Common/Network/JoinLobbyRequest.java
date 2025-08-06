@@ -8,6 +8,8 @@ public class JoinLobbyRequest implements Serializable {
     public Player player;
     public String password;
 
+    public JoinLobbyRequest() {}
+
     public JoinLobbyRequest(String lobbyId, Player player, String password) {
         this.lobbyId = lobbyId;
         this.player = player;

@@ -16,6 +16,8 @@ import org.example.Common.DataTransferObjects.LoginPacket;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.MessageType;
+import org.example.Common.Lobby;
+import org.example.Common.Network.*;
 import org.example.Common.Player;
 import org.example.Common.Request.TradeMessage;
 import org.example.Common.User;
@@ -29,6 +31,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Main extends Game {
     public static SpriteBatch batch;
@@ -63,12 +67,23 @@ public class Main extends Game {
             kryo.register(PrivateChatMessage.class);
             kryo.register(String.class);
             kryo.register(LoginPacket.class);
+            kryo.register(Lobby.class);
+            kryo.register(Player.class);
+            kryo.register(ArrayList.class);
+            kryo.register(java.util.List.class);
+            kryo.register(HashMap.class);
+            kryo.register(CreateLobbyRequest.class);
+            kryo.register(GetLobbiesRequest.class);
+            kryo.register(JoinLobbyRequest.class);
+            kryo.register(LeaveLobbyRequest.class);
+            kryo.register(LobbyListResponse.class);
+            kryo.register(ResultResponse.class);
+            kryo.register(org.example.Server.models.Skills.AnimalCare.class);
+
 
 
             try {
                 GameClient.client.connect(5000, "192.168.107.247", 54555, 54777); // ← IP سرور
-//                LoginPacket loginPacket = new LoginPacket(currentUser.getUsername());
-//                GameClient.client.sendTCP(loginPacket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -84,6 +99,18 @@ public class Main extends Game {
                         } else if (chat.receiver.equals(currentUser)) {
                             MyGame.getGameScreen().receivePrivateMessage(chat.sender, chat.content);
                         }
+                    }
+                    else if (object instanceof LobbyListResponse) {
+                        LobbyListResponse response = (LobbyListResponse) object;
+                        if (MenuNavigator.getSharedSkin() != null && MenuNavigator.getLobbyMenu() != null) {
+                            MenuNavigator.getLobbyMenu().updateLobbyList(response.lobbies);
+                        }
+                    }
+
+                    else if (object instanceof ResultResponse) {
+                        ResultResponse res = (ResultResponse) object;
+                        System.out.println("✅ Lobby response: " + res.message);
+                        // می‌تونی اینو به UI هم پاس بدی
                     }
                     else if (object instanceof TradeMessage) {
                         TradeMessage msg = (TradeMessage) object;

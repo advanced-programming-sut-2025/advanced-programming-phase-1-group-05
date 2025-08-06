@@ -6,6 +6,8 @@ public class ResultResponse implements Serializable {
     public boolean success;
     public String message;
 
+    public ResultResponse() {}
+
     public ResultResponse(boolean success, String message) {
         this.success = success;
         this.message = message;
