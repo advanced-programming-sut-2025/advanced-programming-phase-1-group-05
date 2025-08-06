@@ -106,5 +106,4 @@ public class GameClient {
         }
     }
 
-    // اگر خواستی متدهای دیگه‌ای مثل sendChatMessage هم اینجا اضافه کن
 }

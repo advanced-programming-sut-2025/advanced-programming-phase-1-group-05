@@ -12,8 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Common.Player;
 import org.example.Common.User;
+import org.example.Main;
 import org.example.Server.controllers.DBController;
 import org.example.Server.controllers.GameMenuController;
+import org.example.Server.controllers.TradingController;
 import org.example.Server.models.*;
 
 import java.util.*;
@@ -102,7 +104,8 @@ public class MapSelectionScreen implements Screen {
                     resultLabel.setText("Game started!");
                     //MenuNavigator.showGameScreen();
                     MyGame.setCurrentPlayer(players.get(0));
-                    MenuNavigator.showGameScreen(players);
+                   MenuNavigator.showGameScreen(players);
+                    //Main.getMain().setScreen(new TradeScreen(MyGame.getCurrentPlayer(), MyGame.getCurrentPlayer(), true, new TradingController()));
                 }
             }
         });
