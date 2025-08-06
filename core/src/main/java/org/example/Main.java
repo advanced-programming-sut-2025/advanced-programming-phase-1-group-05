@@ -142,7 +142,6 @@ public class Main extends Game {
                     else if (object instanceof ResultResponse) {
                         ResultResponse res = (ResultResponse) object;
                         System.out.println("✅ Lobby response: " + res.message);
-                        // می‌تونی اینو به UI هم پاس بدی
                     }
                     else if (object instanceof TradeMessage) {
                         TradeMessage msg = (TradeMessage) object;
@@ -191,7 +190,6 @@ public class Main extends Game {
             GameClient.client.sendTCP(loginPacket);
         }
 
-        MenuNavigator.showMainMenu();
     }
 
     public static void checkAutoLogin() {
