@@ -6,6 +6,7 @@ import org.example.Client.*;
 import org.example.Common.*;
 import org.example.Common.Enums.*;
 import org.example.Common.Network.*;
+import org.example.Main;
 import org.example.Server.managers.LobbyManager;
 import org.example.Server.models.*;
 import org.example.Common.Tool.FishingPole;
@@ -19,13 +20,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GameMenuController extends MenuController {
-    public static User currentUser;
+    public static User currentUser = Main.currentUser;
     public static List<Player> selectedPlayers;
     private static Map<String, MyGame> activeGames = new HashMap<>();
     private MyGame pendingGame;
     public static boolean canChooseMap = false;
     public static boolean canDeleteGame = false;
-//    public static boolean canLoadGame = false;
     public static boolean[] canExitGame;
     private static Map<Integer, Integer> playerMapChoices = new HashMap<>();
     private GameMap map = MyGame.getGameMap();
@@ -33,16 +33,16 @@ public class GameMenuController extends MenuController {
     private static final Map<String, String> playerMapSelections = new HashMap<>();
     private GameScreen view;
     public static boolean canCheatThor = false;
-    private final ClientNetworkManager connection;
+    private final ClientNetworkManager connection = Main.getMain().getNetworkManager();
 
-    public GameMenuController(User currentUser, ClientNetworkManager connection) {
-        GameMenuController.currentUser = currentUser;
-        this.connection = connection;
-    }
+//    public GameMenuController(User currentUser, ClientNetworkManager connection) {
+//        GameMenuController.currentUser = currentUser;
+//        this.connection = connection;
+//    }
 
-    public GameMenuController(User currentUser) {
-        this(currentUser, null);
-    }
+//    public GameMenuController(User currentUser) {
+//        this(currentUser, null);
+//    }
 
     private NPC lastNPC = null;
 
@@ -762,5 +762,20 @@ public class GameMenuController extends MenuController {
 
     public Lobby getCurrentLobby() {
         return getCurrentLobbyFor(new Player(currentUser));
+    }
+
+    public Item getItemByName(String itemName) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(itemName.substring(0, 1).toUpperCase()).append(itemName.substring(1));
+        String name = sb.toString();
+        Item item = null;
+        if (MyGame.getDatabase().getItem(name) != null) item = MyGame.getDatabase().getItem(name);
+        else if (CropType.fromString(name) != null) item = CropType.fromString(name);
+        else if (ForagingTreeSourceType.fromString(name) != null) item = ForagingTreeSourceType.fromString(name);
+        else if (ForagingCrop.fromString(name) != null) item = ForagingCrop.fromString(name);
+        else if (ForagingSeedType.fromString(name) != null) item = ForagingSeedType.fromString(name);
+        else if (FishType.fromString(name) != null) item = FishType.fromString(name);
+        else if (MineralType.fromString(name) != null) item = MineralType.fromString(name);
+        return item;
     }
 }

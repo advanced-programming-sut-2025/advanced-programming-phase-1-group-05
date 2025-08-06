@@ -5,6 +5,10 @@ import org.example.Common.Player;
 import org.example.Common.Trade;
 
 public class TradeMessage implements Message {
+    public enum MessageType {
+        REQUEST,RESPONSE,
+        START,REJECTED,UPDATE;
+    }
     public MessageType type;
     public Player fromPlayer;
     public Player toPlayer;

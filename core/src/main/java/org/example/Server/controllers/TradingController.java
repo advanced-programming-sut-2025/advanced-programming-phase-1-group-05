@@ -84,7 +84,7 @@ public class TradingController {
             }
             if (MyGame.getCurrentPlayer().getGold() < price)
                 return Result.error("You don't have enough gold.");
-            trades.add(new Trade(MyGame.getCurrentPlayer(), targetPlayer, type, item, amount, price, null, null));
+            trades.add(new Trade(MyGame.getCurrentPlayer(), targetPlayer, type, item, amount, null, null));
         } else if (input.matches(tradeWithItem)) {
             for (int i = tiIndex + 1; i < taIndex; i++) {
                 builder.append(parts[i]).append(" ");
@@ -98,7 +98,7 @@ public class TradingController {
             } catch (NumberFormatException e) {
                 return new Result(false, "invalid amount");
             }
-            trades.add(new Trade(MyGame.getCurrentPlayer(), targetPlayer, type, item, amount, null, targetItem, targetAmount));
+            //trades.add(new Trade(MyGame.getCurrentPlayer(), targetPlayer, type, item, amount, null, targetItem, targetAmount));
         }
         targetPlayer.addNotification("You've got a new offer from "+ MyGame.getCurrentPlayer().getName() +"! Check your requests to respond.");
         return new Result(false, "trade request sent successfully");
@@ -174,7 +174,7 @@ public class TradingController {
 
 
     public void sendOffer(Player fromPlayer, Player toPlayer, Item offerItem, Item requestItem, int offerAmount, int requestAmount) {
-        Trade trade = new Trade(fromPlayer, toPlayer, "request", offerItem, offerAmount, 0, requestItem, requestAmount );
+        Trade trade = new Trade(fromPlayer, toPlayer, "request", offerItem, offerAmount, requestItem, requestAmount );
         trades.add(trade);
 
     }

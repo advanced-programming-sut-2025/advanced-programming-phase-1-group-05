@@ -39,6 +39,7 @@ public class GameAssetManager {
     public static final TextureRegion journalBg = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/journal page.png"));
     private static final Texture clockSheet = new Texture("Stardew_Valley_Images-main/extra/PC Computer - Stardew Valley - Clock.png");
     public static final TextureRegion clockTexture = new TextureRegion(new Texture("Stardew_Valley_Images-main/extra/clock.png"));
+    public static final Texture slotBg = new Texture("Stardew_Valley_Images-main/extra/slot.png");
     public static final Texture tradingButton = new Texture("ui/trading.png");
     public static final Texture menuBg = new Texture("Animals/MenuBackground2.png");
     public static final Texture backGround = new Texture("backgrounds/login_bg.png");

@@ -15,7 +15,7 @@ public class Trade implements Serializable {
     private final Integer targetAmount;
     private boolean answered = false;
 
-    public Trade(Player player, Player targetPlayer, String type, Item item, int amount, Integer cost, Item targetItem, Integer targetAmount) {
+    public Trade(Player player, Player targetPlayer, String type, Item item, int amount, Item targetItem, Integer targetAmount) {
         this.player = player;
         this.targetPlayer = targetPlayer;
         this.type = type;

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.Enums.MessageType;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
@@ -14,11 +15,13 @@ import org.example.Server.Packets.PositionUpdate;
 import org.example.Server.Packets.PurchaseRequest;
 import org.example.Server.Packets.StoreUpdatePacket;
 import org.example.Server.models.MyGame;
+import org.example.Server.models.Result;
 import org.example.Server.models.Store;
 
 import java.io.IOException;
 
 import static com.esotericsoftware.kryonet.rmi.ObjectSpace.registerClasses;
+import static org.example.Common.Request.TradeMessage.MessageType.UPDATE;
 
 public class ClientNetworkManager {
     private Client client;
@@ -63,6 +66,42 @@ public class ClientNetworkManager {
                 if (object instanceof StoreUpdatePacket) {
                     StoreUpdatePacket p = (StoreUpdatePacket) object;
                     Gdx.app.postRunnable(() -> handleStoreUpdate(p));
+                } else if (object instanceof ChatMessage) {
+                    ChatMessage chat = (ChatMessage) object;
+                    MyGame.getGameScreen().receiveChatMessage(chat.sender, chat.content);
+                }
+                TradeMessage msg = (TradeMessage) object;
+
+                switch (msg.type) {
+                    case REQUEST: {
+                        boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
+
+                        TradeMessage response = new TradeMessage();
+                        response.type = MessageType.RESPONSE;
+                        response.fromPlayer = msg.toPlayer;
+                        response.toPlayer = msg.fromPlayer;
+                        response.accepted = accepted;
+
+                        client.sendTCP(response);
+                        break;
+                    }
+
+                    case START: {
+                      //  MyGame.getGameScreen().startTradingWith(msg.toPlayer.getUsername());
+                        break;
+                    }
+
+                    case REJECTED: {
+                        Result result = new Result(false, "Your trade request was rejected :(");
+                        MyGame.getGameScreen().showResult = true;
+                        MyGame.getGameScreen().latestResult = result;
+                        break;
+                    }
+                    case UPDATE:{
+//                        updateOfferSlot(msg.fromPlayer, msg.offerItem);
+//                        updateRequestSlot(msg.fromPlayer, msg.requestItem);
+
+                    }
                 }
             }
         });
