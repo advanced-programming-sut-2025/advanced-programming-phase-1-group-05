@@ -7,6 +7,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.Enums.MessageType;
+import org.example.Common.Network.LobbyListResponse;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
 import org.example.Main;
@@ -63,46 +64,52 @@ public class ClientNetworkManager {
         client.addListener(new Listener() {
             @Override
             public void received(Connection connection, Object object) {
-                if (object instanceof StoreUpdatePacket) {
+                if (object instanceof LobbyListResponse) {
+                    Gdx.app.postRunnable(() -> {
+                        LobbyListResponse res = (LobbyListResponse) object;
+                        MenuNavigator.getLobbyMenu().updateLobbyList(res.lobbies);
+                    });
+                }
+                else if (object instanceof StoreUpdatePacket) {
                     StoreUpdatePacket p = (StoreUpdatePacket) object;
                     Gdx.app.postRunnable(() -> handleStoreUpdate(p));
                 } else if (object instanceof ChatMessage) {
                     ChatMessage chat = (ChatMessage) object;
                     MyGame.getGameScreen().receiveChatMessage(chat.sender, chat.content);
                 }
-                TradeMessage msg = (TradeMessage) object;
+//                TradeMessage msg = (TradeMessage) object;
 
-                switch (msg.type) {
-                    case REQUEST: {
-                        boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
-
-                        TradeMessage response = new TradeMessage();
-                        response.type = MessageType.RESPONSE;
-                        response.fromPlayer = msg.toPlayer;
-                        response.toPlayer = msg.fromPlayer;
-                        response.accepted = accepted;
-
-                        client.sendTCP(response);
-                        break;
-                    }
-
-                    case START: {
-                      //  MyGame.getGameScreen().startTradingWith(msg.toPlayer.getUsername());
-                        break;
-                    }
-
-                    case REJECTED: {
-                        Result result = new Result(false, "Your trade request was rejected :(");
-                        MyGame.getGameScreen().showResult = true;
-                        MyGame.getGameScreen().latestResult = result;
-                        break;
-                    }
-                    case UPDATE:{
-//                        updateOfferSlot(msg.fromPlayer, msg.offerItem);
-//                        updateRequestSlot(msg.fromPlayer, msg.requestItem);
-
-                    }
-                }
+//                switch (msg.type) {
+//                    case REQUEST: {
+//                        boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
+//
+//                        TradeMessage response = new TradeMessage();
+//                        response.type = MessageType.RESPONSE;
+//                        response.fromPlayer = msg.toPlayer;
+//                        response.toPlayer = msg.fromPlayer;
+//                        response.accepted = accepted;
+//
+//                        client.sendTCP(response);
+//                        break;
+//                    }
+//
+//                    case START: {
+//                      //  MyGame.getGameScreen().startTradingWith(msg.toPlayer.getUsername());
+//                        break;
+//                    }
+//
+//                    case REJECTED: {
+//                        Result result = new Result(false, "Your trade request was rejected :(");
+//                        MyGame.getGameScreen().showResult = true;
+//                        MyGame.getGameScreen().latestResult = result;
+//                        break;
+//                    }
+////                    case UPDATE:{
+//////                        updateOfferSlot(msg.fromPlayer, msg.offerItem);
+//////                        updateRequestSlot(msg.fromPlayer, msg.requestItem);
+////
+////                    }
+//                }
             }
         });
     }
@@ -123,44 +130,3 @@ public class ClientNetworkManager {
 
     // setupListeners(), registerClasses(), etc.
 }
-
-//public class ClientNetworkManager {
-//    private Socket socket;
-//    private ObjectOutputStream out;
-//    private ObjectInputStream in;
-//
-//    public ClientNetworkManager(String host, int port) throws Exception {
-//        socket = new Socket(host, port);
-//
-//        // ✅ مهم: flush بعد از ساخت output stream
-//        out = new ObjectOutputStream(socket.getOutputStream());
-//        out.flush();
-//
-//        in = new ObjectInputStream(socket.getInputStream());
-//
-//        System.out.println("✅ Connected to server: " + host + ":" + port);
-//    }
-//
-//    public synchronized Object sendAndReceive(Object request) {
-//        try {
-//            out.writeObject(request);
-//            out.flush();
-//            System.out.println("📤 Sending: " + request.getClass().getSimpleName());
-//            return in.readObject();
-//        } catch (Exception e) {
-//            System.err.println("❌ Error in sendAndReceive:");
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-//
-//    public synchronized void send(Object request) {
-//        try {
-//            out.writeObject(request);
-//            out.flush();
-//        } catch (Exception e) {
-//            System.err.println("❌ Error in send:");
-//            e.printStackTrace();
-//        }
-//    }
-//}

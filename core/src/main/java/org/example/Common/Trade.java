@@ -10,7 +10,7 @@ public class Trade implements Serializable {
     private final String type;
     private final Item item;
     private final int amount;
-    private final Integer cost;
+//    private final Integer cost;
     private final Item targetItem;
     private final Integer targetAmount;
     private boolean answered = false;
@@ -21,7 +21,7 @@ public class Trade implements Serializable {
         this.type = type;
         this.item = item;
         this.amount = amount;
-        this.cost = cost;
+//        this.cost = cost;
         this.targetItem = targetItem;
         this.targetAmount = targetAmount;
         this.id = ++tradesCount;
@@ -59,9 +59,9 @@ public class Trade implements Serializable {
         return amount;
     }
 
-    public Integer getCost() {
-        return cost;
-    }
+//    public Integer getCost() {
+//        return cost;
+//    }
 
     public Item getTargetItem() {
         return targetItem;

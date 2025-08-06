@@ -34,13 +34,31 @@ public class ServerMain {
         server.bind(54555, 54777);
 
         Kryo kryo = server.getKryo();
+
+// --- Common Data Transfer ---
+        kryo.register(String.class);
+        kryo.register(ArrayList.class);
+        kryo.register(java.util.List.class);
+        kryo.register(HashMap.class);
+
         kryo.register(PlayerUpdate.class);
-        kryo.register(TradeMessage.class);
-        kryo.register(MessageType.class);
         kryo.register(ChatMessage.class);
         kryo.register(PrivateChatMessage.class);
-        kryo.register(String.class);
+        kryo.register(TradeMessage.class);
+        kryo.register(MessageType.class);
         kryo.register(LoginPacket.class);
+        kryo.register(ResultResponse.class);
+
+// --- Lobby System ---
+        kryo.register(Lobby.class);
+        kryo.register(SimplePlayer.class);
+        kryo.register(CreateLobbyRequest.class);
+        kryo.register(GetLobbiesRequest.class);
+        kryo.register(JoinLobbyRequest.class);
+        kryo.register(LeaveLobbyRequest.class);
+        kryo.register(LobbyListResponse.class);
+
+// --- Server Models ---
         kryo.register(org.example.Server.models.Skills.AnimalCare.class);
         kryo.register(org.example.Server.models.Skills.Cooking.class);
         kryo.register(org.example.Server.models.Skills.Crafting.class);
@@ -48,6 +66,7 @@ public class ServerMain {
         kryo.register(org.example.Server.models.Skills.Fishing.class);
         kryo.register(org.example.Server.models.Skills.Foraging.class);
         kryo.register(org.example.Server.models.Skills.Mining.class);
+
         kryo.register(org.example.Server.models.Animal.class);
         kryo.register(org.example.Server.models.AnimalAnimations.class);
         kryo.register(org.example.Server.models.App.class);
@@ -69,22 +88,6 @@ public class ServerMain {
         kryo.register(org.example.Server.models.TileMapRenderer.class);
         kryo.register(org.example.Server.models.Tree.class);
         kryo.register(org.example.Server.models.UserDatabase.class);
-        kryo.register(Lobby.class);
-        kryo.register(Player.class);
-        kryo.register(ArrayList.class);
-        kryo.register(java.util.List.class);
-        kryo.register(HashMap.class);
-        kryo.register(CreateLobbyRequest.class);
-        kryo.register(GetLobbiesRequest.class);
-        kryo.register(JoinLobbyRequest.class);
-        kryo.register(LeaveLobbyRequest.class);
-        kryo.register(LobbyListResponse.class);
-        kryo.register(ResultResponse.class);
-
-
-
-
-
 
 
         server.addListener(new Listener() {
@@ -161,7 +164,8 @@ public class ServerMain {
                     return playerConnections.get(playerName);
                 }
             });
-        server.addListener(new LobbyServerHandler());
+        LobbyServerHandler lobbyHandler = new LobbyServerHandler(server);
+        server.addListener(lobbyHandler);
         new java.util.Timer().schedule(new TimerTask() {
             @Override
             public void run() {

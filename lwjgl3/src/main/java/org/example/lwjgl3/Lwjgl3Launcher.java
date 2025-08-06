@@ -11,7 +11,7 @@ public class Lwjgl3Launcher {
             if (StartupHelper.startNewJvmIfRequired()) return;
             createApplication();
         } catch (Exception e) {
-            e.printStackTrace(); // لاگ استک‌تریس رو نشون بده
+            e.printStackTrace();
         }
     }
 

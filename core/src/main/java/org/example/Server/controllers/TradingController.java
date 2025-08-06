@@ -142,11 +142,11 @@ public class TradingController {
                 builder.append("Type          : ").append(trade.getType()).append("\n");
                 builder.append("Item          : ").append(trade.getItem().getName()).append("\n");
                 builder.append("Amount        : ").append(trade.getAmount()).append("\n");
-                if (trade.getCost() != null) builder.append("Price         : ").append(trade.getCost()).append("\n");
-                else {
-                    builder.append("target item   : ").append(trade.getTargetItem().getName()).append("\n");
-                    builder.append("target amount : ").append(trade.getTargetAmount()).append("\n");
-                }
+//                if (trade.getCost() != null) builder.append("Price         : ").append(trade.getCost()).append("\n");
+//                else {
+//                    builder.append("target item   : ").append(trade.getTargetItem().getName()).append("\n");
+//                    builder.append("target amount : ").append(trade.getTargetAmount()).append("\n");
+//                }
                 builder.append("======================");
             }
         }
@@ -162,11 +162,11 @@ public class TradingController {
             builder.append("Item          : ").append(trade.getItem().getName()).append("\n");
             builder.append("Amount        : ").append(trade.getAmount()).append("\n");
             builder.append("Answered      : ").append(trade.isAnswered()).append("\n");
-            if (trade.getCost() != null) builder.append("Price         : ").append(trade.getCost()).append("\n");
-            else {
-                builder.append("target item   : ").append(trade.getTargetItem().getName()).append("\n");
-                builder.append("target amount : ").append(trade.getTargetAmount()).append("\n");
-            }
+//            if (trade.getCost() != null) builder.append("Price         : ").append(trade.getCost()).append("\n");
+//            else {
+//                builder.append("target item   : ").append(trade.getTargetItem().getName()).append("\n");
+//                builder.append("target amount : ").append(trade.getTargetAmount()).append("\n");
+//            }
             builder.append("======================").append("\n");
         }
         return Result.success(builder.toString());

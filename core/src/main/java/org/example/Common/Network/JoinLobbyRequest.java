@@ -5,12 +5,12 @@ import java.io.Serializable;
 
 public class JoinLobbyRequest implements Serializable {
     public String lobbyId;
-    public Player player;
+    public SimplePlayer player;
     public String password;
 
     public JoinLobbyRequest() {}
 
-    public JoinLobbyRequest(String lobbyId, Player player, String password) {
+    public JoinLobbyRequest(String lobbyId, SimplePlayer player, String password) {
         this.lobbyId = lobbyId;
         this.player = player;
         this.password = password;
