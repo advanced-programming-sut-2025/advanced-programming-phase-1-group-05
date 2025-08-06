@@ -35,7 +35,6 @@ public class ServerMain {
 
         Kryo kryo = server.getKryo();
 
-// --- Common Data Transfer ---
         kryo.register(String.class);
         kryo.register(ArrayList.class);
         kryo.register(java.util.List.class);
@@ -49,7 +48,6 @@ public class ServerMain {
         kryo.register(LoginPacket.class);
         kryo.register(ResultResponse.class);
 
-// --- Lobby System ---
         kryo.register(Lobby.class);
         kryo.register(SimplePlayer.class);
         kryo.register(CreateLobbyRequest.class);
@@ -58,7 +56,6 @@ public class ServerMain {
         kryo.register(LeaveLobbyRequest.class);
         kryo.register(LobbyListResponse.class);
 
-// --- Server Models ---
         kryo.register(org.example.Server.models.Skills.AnimalCare.class);
         kryo.register(org.example.Server.models.Skills.Cooking.class);
         kryo.register(org.example.Server.models.Skills.Crafting.class);
