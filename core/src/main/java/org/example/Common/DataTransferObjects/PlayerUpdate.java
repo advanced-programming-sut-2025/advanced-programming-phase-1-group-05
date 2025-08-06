@@ -2,14 +2,14 @@ package org.example.Common.DataTransferObjects;
 
 
 public class PlayerUpdate {
-    public String playerId;
+    public String username;
     public float x;
     public float y;
 
     public PlayerUpdate() {}
 
-    public PlayerUpdate(String playerId, float x, float y) {
-        this.playerId = playerId;
+    public PlayerUpdate(String username, float x, float y) {
+        this.username = username;
         this.x = x;
         this.y = y;
     }

@@ -152,6 +152,8 @@
 
 package org.example.Server.controllers;
 
+import org.example.Client.GameClient;
+import org.example.Common.DataTransferObjects.LoginPacket;
 import org.example.Main;
 import org.example.Server.models.Result;
 import org.example.Common.User;
@@ -191,6 +193,11 @@ public class LoginMenuController {
         this.currentUser = user;
         RegisterMenuController.currentUser = user;
         Main.currentUser = user;
+        if (Main.currentUser != null) {
+            System.out.println("kkkkk");
+            LoginPacket loginPacket = new LoginPacket(currentUser.getUsername());
+            GameClient.client.sendTCP(loginPacket);
+        }
         return new Result(true, "Logged in successfully!");
     }
 

@@ -5,7 +5,9 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import org.example.Common.DataTransferObjects.ChatMessage;
+import org.example.Common.DataTransferObjects.LoginPacket;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
+import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.MessageType;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
@@ -32,6 +34,9 @@ public class ServerMain {
         kryo.register(TradeMessage.class);
         kryo.register(MessageType.class);
         kryo.register(ChatMessage.class);
+        kryo.register(PrivateChatMessage.class);
+        kryo.register(String.class);
+        kryo.register(LoginPacket.class);
 
 
         server.addListener(new Listener() {
@@ -84,12 +89,24 @@ public class ServerMain {
                         server.sendToAllTCP(updatePacket);
                     }
                 }
-                else if (object instanceof ChatMessage) {
-                    ChatMessage msg = (ChatMessage) object;
-                    System.out.println(msg.sender + ": " + msg.content);
-                    server.sendToAllTCP(msg);
+                else if (object instanceof LoginPacket) {
+                    LoginPacket login = (LoginPacket) object;
+                    System.out.println("Registered player connection: " + login.username);
+                    registerPlayerConnection(login.username, c);
                 }
-
+                else if (object instanceof ChatMessage) {
+                    ChatMessage chat = (ChatMessage) object;
+                    if (chat.receiver != null && !chat.receiver.isBlank()) {
+                        Connection target = getConnectionByUsername(chat.receiver);
+                        if (target != null) {
+                            target.sendTCP(chat);
+                        } else {
+                            System.out.println("❌ Target not found for private message: " + chat.receiver);
+                        }
+                    } else {
+                        server.sendToAllTCP(chat);
+                    }
+                }
             }
 
                 private Connection getConnectionByName(String playerName) {
@@ -98,6 +115,14 @@ public class ServerMain {
             });
         System.out.println("Server started on port 54555!");
     }
+    public static void registerPlayerConnection(String username, Connection connection) {
+        playerConnections.put(username, connection);
+    }
+
+    public static Connection getConnectionByUsername(String username) {
+        return playerConnections.get(username);
+    }
+
 }
 //package org.example.Server;
 //
