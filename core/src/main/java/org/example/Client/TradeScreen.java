@@ -16,6 +16,8 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Common.Item;
 import org.example.Common.Player;
+import org.example.Common.Request.TradeMessage;
+import org.example.Common.Trade;
 import org.example.Server.controllers.GameMenuController;
 import org.example.Server.controllers.TradingController;
 import org.example.Server.models.MyGame;
@@ -124,7 +126,11 @@ public class TradeScreen implements Screen {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     if (selectedOfferItem != null && selectedRequestItem != null) {
-                        // controller.sendOffer(fromPlayer, toPlayer, selectedOfferItem, selectedRequestItem);
+                        TradeMessage msg = new TradeMessage();
+                        msg.fromPlayer = fromPlayer;
+                        msg.toPlayer = toPlayer;
+                        Trade trade = new Trade(fromPlayer, toPlayer, "Trade", selectedOfferItem, 1, selectedRequestItem, 1);
+                        msg.trade = trade;
                     }
                 }
             });
