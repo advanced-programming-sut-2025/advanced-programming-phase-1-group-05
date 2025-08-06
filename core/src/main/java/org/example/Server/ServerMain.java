@@ -28,13 +28,11 @@ public class ServerMain {
         server.bind(54555, 54777);
 
         Kryo kryo = server.getKryo();
-        kryo.register(MovePacket.class);
-        kryo.register(PositionUpdate.class);
+        kryo.register(PlayerUpdate.class);
         kryo.register(TradeMessage.class);
         kryo.register(MessageType.class);
-        kryo.register(StoreUpdatePacket.class);
-        kryo.register(PurchaseRequest.class);
         kryo.register(ChatMessage.class);
+
 
         server.addListener(new Listener() {
             public void received(Connection c, Object object) {

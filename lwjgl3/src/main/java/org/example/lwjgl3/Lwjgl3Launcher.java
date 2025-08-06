@@ -7,8 +7,12 @@ import org.example.Main;
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
-        if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
-        createApplication();
+        try {
+            if (StartupHelper.startNewJvmIfRequired()) return;
+            createApplication();
+        } catch (Exception e) {
+            e.printStackTrace(); // لاگ استک‌تریس رو نشون بده
+        }
     }
 
     private static Lwjgl3Application createApplication() {
