@@ -67,6 +67,34 @@ public class Main extends Game {
             kryo.register(PrivateChatMessage.class);
             kryo.register(String.class);
             kryo.register(LoginPacket.class);
+            kryo.register(org.example.Server.models.Skills.AnimalCare.class);
+            kryo.register(org.example.Server.models.Skills.Cooking.class);
+            kryo.register(org.example.Server.models.Skills.Crafting.class);
+            kryo.register(org.example.Server.models.Skills.Farming.class);
+            kryo.register(org.example.Server.models.Skills.Fishing.class);
+            kryo.register(org.example.Server.models.Skills.Foraging.class);
+            kryo.register(org.example.Server.models.Skills.Mining.class);
+            kryo.register(org.example.Server.models.Animal.class);
+            kryo.register(org.example.Server.models.AnimalAnimations.class);
+            kryo.register(org.example.Server.models.App.class);
+            kryo.register(org.example.Server.models.Craft.class);
+            kryo.register(org.example.Server.models.Database.class);
+            kryo.register(org.example.Server.models.Farm.class);
+            kryo.register(org.example.Server.models.Fish.class);
+            kryo.register(org.example.Server.models.FishBar.class);
+            kryo.register(org.example.Server.models.Food.class);
+            kryo.register(org.example.Server.models.ForagingItem.class);
+            kryo.register(org.example.Server.models.FruitAndVegetable.class);
+            kryo.register(org.example.Server.models.GrowthStep.class);
+            kryo.register(org.example.Server.models.Mineral.class);
+            kryo.register(org.example.Server.models.MyGame.class);
+            kryo.register(org.example.Server.models.NPC.class);
+            kryo.register(org.example.Server.models.PacketHandler.class);
+            kryo.register(org.example.Server.models.Result.class);
+            kryo.register(org.example.Server.models.Store.class);
+            kryo.register(org.example.Server.models.TileMapRenderer.class);
+            kryo.register(org.example.Server.models.Tree.class);
+            kryo.register(org.example.Server.models.UserDatabase.class);
             kryo.register(Lobby.class);
             kryo.register(Player.class);
             kryo.register(ArrayList.class);
@@ -78,7 +106,8 @@ public class Main extends Game {
             kryo.register(LeaveLobbyRequest.class);
             kryo.register(LobbyListResponse.class);
             kryo.register(ResultResponse.class);
-            kryo.register(org.example.Server.models.Skills.AnimalCare.class);
+
+
 
 
 
