@@ -90,6 +90,14 @@ public class LobbyMenu implements Screen {
             }
         });
 
+        TextButton back = new TextButton("Back", skin);
+        back.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                MenuNavigator.showMainMenu();
+            }
+        });
+
         root.top().pad(20);
         root.add(new Label("Create a Lobby", skin)).colspan(2).padBottom(10).row();
         root.add(lobbyNameField).width(200).pad(5);
@@ -103,7 +111,8 @@ public class LobbyMenu implements Screen {
 
         root.add(refreshButton).pad(5);
         root.add(joinByIdButton).pad(5).row();
-        root.add(searchField).colspan(2).width(300).padTop(10);
+        root.add(searchField).colspan(2).width(300).padTop(10).row();
+        root.add(back).pad(5);
     }
 
     public void updateLobbyList(List<Lobby> lobbies) {
