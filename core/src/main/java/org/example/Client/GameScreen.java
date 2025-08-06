@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.example.Common.*;
 import org.example.Common.DataTransferObjects.ChatMessage;
+import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.*;
 import org.example.Common.Request.TradeMessage;
 import org.example.Main;
@@ -182,7 +183,8 @@ public class GameScreen implements Screen {
     private ScrollPane chatScrollPane;
     private VerticalGroup chatMessagesGroup;
     private boolean isChatOpen = false;
-
+    private String currentPrivateTarget = null;
+    private Table privateChatTable;
 
     Player player;
 
@@ -1518,6 +1520,7 @@ public class GameScreen implements Screen {
         chatInputField.setMessageText("Type your message...");
         TextButton sendButton = new TextButton("Send", skin);
         TextButton backButton = new TextButton("Back", skin);
+        TextButton privateChatButton = new TextButton("Private", skin);
 
         sendButton.addListener(new ClickListener() {
             @Override
@@ -1538,6 +1541,14 @@ public class GameScreen implements Screen {
                 isChatOpen = false;
             }
         });
+
+        privateChatButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showPrivateChatPopup(); // تابعی که پایین تعریف می‌کنیم
+            }
+        });
+        chatTable.add(privateChatButton).pad(10);
 
         innerPanel.add(chatScrollPane).height(400).width(600).colspan(2).padBottom(20).row();
         innerPanel.add(chatInputField).width(400).padRight(10);
@@ -1687,13 +1698,175 @@ public class GameScreen implements Screen {
 
     }
 
-    public void receiveChatMessage(String sender, String message) {
+    public void receivePrivateMessage(String sender, String message) {
         Label msgLabel = new Label(sender + ": " + message, skin);
+        msgLabel.setColor(Color.GOLD);
+        msgLabel.setAlignment(Align.left);
+        chatMessagesGroup.addActor(msgLabel);
+    }
+
+
+    public void receiveChatMessage(String sender, String message) {
+        // چک کردن تگ شدن
+        String currentUsername = MyGame.getCurrentPlayer().getUsername();
+        boolean isTagged = message.contains("@" + currentUsername);
+
+        // نمایش pop-up اگر تگ شد
+        if (isTagged) {
+            showTagPopup(sender, message);
+        }
+
+        // ساخت پیام چت با رنگ برای @
+        Label.LabelStyle style = skin.get(Label.LabelStyle.class);
+        Label msgLabel = new Label(formatTaggedMessage(sender, message, currentUsername), style);
+        msgLabel.setColor(Color.BLACK);
         msgLabel.setAlignment(Align.left);
         chatMessagesGroup.addActor(msgLabel);
         chatScrollPane.layout();
         chatScrollPane.setScrollPercentY(100);
     }
+
+    private String formatTaggedMessage(String sender, String message, String currentUsername) {
+        String taggedUser = "@" + currentUsername;
+
+        if (message.contains(taggedUser)) {
+            message = message.replace(taggedUser,  "**" + taggedUser + "**");
+        }
+
+        return sender + ": " + message;
+    }
+
+    private void showTagPopup(String sender, String message) {
+        Dialog tagDialog = new Dialog("You've been tagged!", skin);
+        Label label = new Label(sender + ": " + message, skin);
+        label.setWrap(true);
+        tagDialog.getContentTable().add(label).width(300).pad(10);
+        tagDialog.button("Close", true);
+        tagDialog.show(uiStage);
+    }
+
+//    public void showPrivateChatPopup(String sender, String content) {
+//        Dialog privateDialog = new Dialog("Private Chat with " + sender, skin);
+//
+//        Label message = new Label(sender + ": " + content, skin);
+//        message.setWrap(true);
+//
+//        TextField replyField = new TextField("", skin);
+//        TextButton sendButton = new TextButton("Send", skin);
+//        TextButton finishButton = new TextButton("Finish", skin);
+//
+//        Table body = privateDialog.getContentTable();
+//        body.add(message).width(300).padBottom(10).row();
+//        body.add(replyField).width(300).padBottom(10).row();
+//        body.add(sendButton).padRight(10);
+//        body.add(finishButton).row();
+//
+//        sendButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                String reply = replyField.getText();
+//                if (!reply.isEmpty()) {
+//                    PrivateChatMessage replyMsg = new PrivateChatMessage(
+//                        MyGame.getCurrentPlayer().getUsername(),
+//                        sender,
+//                        reply
+//                    );
+//                    GameClient.client.sendTCP(replyMsg);
+//                    replyField.setText("");
+//                }
+//            }
+//        });
+//
+//        finishButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                privateDialog.hide();
+//            }
+//        });
+//
+//        privateDialog.show(uiStage);
+//    }
+
+
+    private void showPrivateChatPopup() {
+        final TextField usernameField = new TextField("", skin);
+
+        Dialog dialog = new Dialog("Start Private Chat", skin) {
+            @Override
+            protected void result(Object obj) {
+                if ((boolean) obj) {
+                    String targetUsername = usernameField.getText().trim();
+                    if (!targetUsername.isEmpty() &&
+                        !targetUsername.equals(MyGame.getCurrentPlayer().getUsername())) {
+                        openPrivateChat(targetUsername);
+                    }
+                }
+            }
+        };
+
+        usernameField.setMessageText("Enter username...");
+        dialog.getContentTable().add(usernameField).width(300).pad(10).row();
+
+        dialog.button("Start", true);
+        dialog.button("Cancel", false);
+
+        dialog.show(uiStage);
+    }
+
+
+    private void openPrivateChat(String targetUsername) {
+        currentPrivateTarget = targetUsername;
+
+        chatTable.setVisible(false);
+
+        privateChatTable = new Table();
+        privateChatTable.setFillParent(true);
+        privateChatTable.top().left().pad(20);
+
+        Label title = new Label("Private chat with @" + targetUsername, skin);
+        privateChatTable.add(title).colspan(2).padBottom(10).row();
+
+        ScrollPane privateScroll = new ScrollPane(chatMessagesGroup = new VerticalGroup(), skin);
+        privateScroll.setFadeScrollBars(false);
+        privateChatTable.add(privateScroll).colspan(2).width(800).height(400).row();
+
+        TextField messageField = new TextField("", skin);
+        privateChatTable.add(messageField).width(600).pad(10);
+
+        TextButton sendBtn = new TextButton("Send", skin);
+        sendBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                String msg = messageField.getText().trim();
+                if (!msg.isEmpty()) {
+                    ChatMessage chat = new ChatMessage();
+                    chat.sender = MyGame.getCurrentPlayer().getUsername();
+                    chat.receiver = targetUsername;
+                    chat.content = msg;
+
+                    Main.getMain().gameClient.sendChat(chat);
+                    messageField.setText("");
+                    receivePrivateMessage(chat.sender, chat.content);
+                }
+            }
+        });
+
+        privateChatTable.add(sendBtn).width(100).pad(10);
+
+        TextButton finishBtn = new TextButton("Finish", skin);
+        finishBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                uiStage.getActors().removeValue(privateChatTable, true);
+                chatTable.setVisible(true);
+                currentPrivateTarget = null;
+            }
+        });
+        privateChatTable.add(finishBtn).colspan(2).padTop(20).row();
+
+        uiStage.addActor(privateChatTable);
+    }
+
 
 
     private void forceViewportReset() {

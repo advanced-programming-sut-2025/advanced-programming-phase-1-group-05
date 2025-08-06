@@ -6,6 +6,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
+import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.MessageType;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
@@ -32,6 +33,7 @@ public class ServerMain {
         kryo.register(TradeMessage.class);
         kryo.register(MessageType.class);
         kryo.register(ChatMessage.class);
+        kryo.register(PrivateChatMessage.class);
 
 
         server.addListener(new Listener() {
@@ -85,11 +87,18 @@ public class ServerMain {
                     }
                 }
                 else if (object instanceof ChatMessage) {
-                    ChatMessage msg = (ChatMessage) object;
-                    System.out.println(msg.sender + ": " + msg.content);
-                    server.sendToAllTCP(msg);
+                    ChatMessage chat = (ChatMessage) object;
+                    if (chat.receiver != null && !chat.receiver.isBlank()) {
+                        // پیام خصوصی
+                        Connection target = ServerState.getConnectionForUsername(chat.receiver);
+                        if (target != null) {
+                            target.sendTCP(chat);
+                        }
+                    } else {
+                        // پیام عمومی
+                        server.sendToAllTCP(chat);
+                    }
                 }
-
             }
 
                 private Connection getConnectionByName(String playerName) {

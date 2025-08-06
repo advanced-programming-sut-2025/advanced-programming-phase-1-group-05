@@ -271,6 +271,7 @@ import org.example.Client.GameClient;
 import org.example.Client.MenuNavigator;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
+import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.MessageType;
 import org.example.Common.Player;
 import org.example.Common.Request.TradeMessage;
@@ -316,7 +317,7 @@ public class Main extends Game {
             kryo.register(TradeMessage.class);
             kryo.register(MessageType.class);
             kryo.register(ChatMessage.class);
-
+            kryo.register(PrivateChatMessage.class);
 
             try {
                 GameClient.client.connect(5000, "192.168.107.247", 54555, 54777); // ← IP سرور
@@ -328,9 +329,14 @@ public class Main extends Game {
                 public void received(Connection c, Object object) {
                     if (object instanceof ChatMessage) {
                         ChatMessage chat = (ChatMessage) object;
-                        MyGame.getGameScreen().receiveChatMessage(chat.sender, chat.content);
-                    }
+                        String currentUser = MyGame.getCurrentPlayer().getUsername();
 
+                        if (chat.receiver == null || chat.receiver.isBlank()) {
+                            MyGame.getGameScreen().receiveChatMessage(chat.sender, chat.content);
+                        } else if (chat.receiver.equals(currentUser)) {
+                            MyGame.getGameScreen().receivePrivateMessage(chat.sender, chat.content);
+                        }
+                    }
                     else if (object instanceof TradeMessage) {
                         TradeMessage msg = (TradeMessage) object;
 

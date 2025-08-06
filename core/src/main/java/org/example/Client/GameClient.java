@@ -96,6 +96,7 @@
 package org.example.Client;
 
 import com.esotericsoftware.kryonet.Client;
+import org.example.Common.DataTransferObjects.ChatMessage;
 
 public class GameClient {
     public static Client client;
@@ -105,6 +106,13 @@ public class GameClient {
             client.sendTCP(msg);
         }
     }
+
+    public void sendChat(ChatMessage message) {
+        if (client != null) {
+            client.sendTCP(message);
+        }
+    }
+
 
     // اگر خواستی متدهای دیگه‌ای مثل sendChatMessage هم اینجا اضافه کن
 }
