@@ -99,6 +99,56 @@ import com.esotericsoftware.kryonet.Client;
 import org.example.Common.DataTransferObjects.ChatMessage;
 
 public class GameClient {
+    static Client client;
+    public static void main(String[] args) throws IOException {
+        client = new Client();
+        client.start();
+
+        Kryo kryo = client.getKryo();
+        kryo.register(PlayerUpdate.class);
+        kryo.register(TradeMessage.class);
+        kryo.register(MessageType.class);
+
+        client.connect(5000, "192.168.1.52", 54555, 54777);  // change "localhost" to your server's IP if on LAN
+
+        // Send initial position update
+        PlayerUpdate update = new PlayerUpdate("friend-" + System.currentTimeMillis(), 0, 0);
+        client.sendTCP(update);
+
+        client.addListener(new Listener() {
+            public void received(Connection c, Object object) {
+                if (!(object instanceof TradeMessage)) return;
+                TradeMessage msg = (TradeMessage) object;
+
+                switch (msg.type) {
+                    case REQUEST: {
+                        boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
+
+                        TradeMessage response = new TradeMessage();
+                        response.type = MessageType.RESPONSE;
+                        response.fromPlayer = msg.toPlayer;
+                        response.toPlayer = msg.fromPlayer;
+                        response.accepted = accepted;
+
+                        client.sendTCP(response);
+                        break;
+                    }
+
+                    case START: {
+                      //  MyGame.getGameScreen().startTradingWith(msg.toPlayer.getUsername());
+                        break;
+                    }
+
+                    case REJECTED: {
+                        Result result = new Result(false, "Your trade request was rejected :(");
+                        MyGame.getGameScreen().showResult = true;
+                        MyGame.getGameScreen().latestResult = result;
+                        break;
+                    }
+                }
+            }
+        });
+
     public static Client client;
 
     public void sendTradeRequest(org.example.Common.Request.TradeMessage msg) {

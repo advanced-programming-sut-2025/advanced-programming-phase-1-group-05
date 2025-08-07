@@ -2,6 +2,7 @@ package org.example.Client;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -11,6 +12,10 @@ import org.example.Common.Network.LobbyListResponse;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
 import org.example.Main;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalReceived;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalRequest;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
 import org.example.Server.Packets.MovePacket;
 import org.example.Server.Packets.PositionUpdate;
 import org.example.Server.Packets.PurchaseRequest;
@@ -34,7 +39,7 @@ public class ClientNetworkManager {
         client.start();
         setupListeners();
         try {
-            client.connect(5000, "localhost", 54555, 54777);
+            client.connect(5000, "192.168.1.52", 54555, 54777);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,6 +63,11 @@ public class ClientNetworkManager {
         kryo.register(MessageType.class);
         kryo.register(StoreUpdatePacket.class);
         kryo.register(PurchaseRequest.class);
+        kryo.register(MarriageProposalRequest.class);
+        kryo.register(MarriageProposalReceived.class);
+        kryo.register(MarriageProposalResponse.class);
+        kryo.register(MarriageProposalResult.class);
+
     }
 
     public void setupListeners() {
@@ -76,6 +86,13 @@ public class ClientNetworkManager {
                 } else if (object instanceof ChatMessage) {
                     ChatMessage chat = (ChatMessage) object;
                     MyGame.getGameScreen().receiveChatMessage(chat.sender, chat.content);
+                }
+                else if (object instanceof  MarriageProposalReceived) {
+                    MarriageProposalReceived msg  = (MarriageProposalReceived) object;
+                    Gdx.app.postRunnable(() -> {
+                        GameScreen screen = MenuNavigator.getGameScreen();
+                        if (screen != null) screen.showProposalPopup(msg.fromPlayer);
+                    });
                 }
 //                TradeMessage msg = (TradeMessage) object;
 
@@ -114,6 +131,8 @@ public class ClientNetworkManager {
         });
     }
 
+
+
     private void handleStoreUpdate(StoreUpdatePacket p) {
         Store localStore = p.store;
 
@@ -128,5 +147,4 @@ public class ClientNetworkManager {
 
 
 
-    // setupListeners(), registerClasses(), etc.
 }

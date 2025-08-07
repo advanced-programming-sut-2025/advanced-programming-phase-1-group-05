@@ -101,4 +101,8 @@ public class MenuNavigator {
     public static Skin getSharedSkin() {
         return sharedSkin;
     }
+
+    public static GameScreen getGameScreen() {
+        return gameScreen;
+    }
 }

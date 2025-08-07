@@ -9,11 +9,16 @@ import org.example.Common.DataTransferObjects.LoginPacket;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.MessageType;
+import org.example.Common.Player;
 import org.example.Common.Lobby;
 import org.example.Common.Network.*;
 import org.example.Common.Player;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalReceived;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalRequest;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
 import org.example.Server.Packets.MovePacket;
 import org.example.Server.Packets.PositionUpdate;
 import org.example.Server.Packets.PurchaseRequest;
@@ -86,6 +91,13 @@ public class ServerMain {
         kryo.register(org.example.Server.models.Tree.class);
         kryo.register(org.example.Server.models.UserDatabase.class);
 
+        kryo.register(StoreUpdatePacket.class);
+        kryo.register(PurchaseRequest.class);
+        kryo.register(MarriageProposalRequest.class);
+        kryo.register(MarriageProposalReceived.class);
+        kryo.register(MarriageProposalResponse.class);
+        kryo.register(MarriageProposalResult.class);
+
 
         server.addListener(new Listener() {
             public void received(Connection c, Object object) {
@@ -153,6 +165,25 @@ public class ServerMain {
                         }
                     } else {
                         server.sendToAllTCP(chat);
+                    }
+                }
+                else if (object instanceof MarriageProposalRequest) {
+                    MarriageProposalRequest request = (MarriageProposalRequest) object;
+                    MarriageProposalReceived msg = new MarriageProposalReceived();
+                    msg.fromPlayer = request.fromPlayer;
+                    server.sendToTCP(playerConnections.get(request.toPlayer.getUsername()).getID(), msg);
+                }
+                else if (object instanceof  MarriageProposalResponse) {
+                    MarriageProposalResponse response = (MarriageProposalResponse) object;
+                    Player from = response.fromPlayer;
+                    Player to = response.toPlayer;
+
+                    MarriageProposalResult result = new MarriageProposalResult();
+                    result.accepted = response.accepted;
+                    result.byPlayer = from;
+                    server.sendToTCP(playerConnections.get(to.getUsername()).getID(), result);
+                    if (response.accepted) {
+                        from.setSpouse(to);
                     }
                 }
             }
