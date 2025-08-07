@@ -10,12 +10,17 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Common.Item;
 import org.example.Common.Player;
+import org.example.Common.Request.TradeMessage;
+import org.example.Common.Trade;
+import org.example.Server.controllers.GameMenuController;
 import org.example.Server.controllers.TradingController;
+import org.example.Server.models.MyGame;
 
 public class TradeScreen implements Screen {
     private final Stage stage;
@@ -26,13 +31,17 @@ public class TradeScreen implements Screen {
     private final Player toPlayer;
 
     private final TradingController controller;
+    private final GameMenuController gameMenuController;
 
     private final Label titleLabel;
     private final TextButton confirmOfferButton, cancelButton;
     private final TextButton acceptButton, rejectButton;
     private TextField offerField, requestField;
 
+    private final Image offerSlotBg, requestSlotBg;
+    private final Image offerItemImage, requestItemImage;
 
+    private final Label offerQuantityLabel, requestQuantityLabel;
     private Item selectedOfferItem = null;
     private Item selectedRequestItem = null;
 
@@ -42,19 +51,29 @@ public class TradeScreen implements Screen {
         this.isInitiator = isInitiator;
         this.controller = controller;
 
-        stage = new Stage(new ScreenViewport());
-        skin = GameAssetManager.getSkin();
+        this.stage = new Stage(new ScreenViewport());
+        this.skin = GameAssetManager.getSkin();
+        this.gameMenuController = new GameMenuController();
 
-        titleLabel = new Label("Trading with: " + toPlayer.getUsername(), skin);
+        this.titleLabel = new Label("Trading with: " + toPlayer.getUsername(), skin);
 
+        this.confirmOfferButton = new TextButton("Confirm Offer", skin);
+        this.cancelButton = new TextButton("Cancel", skin);
+        this.acceptButton = new TextButton("Accept Trade", skin);
+        this.rejectButton = new TextButton("Reject Trade", skin);
 
-        confirmOfferButton = new TextButton("Confirm Offer", skin);
-        cancelButton = new TextButton("Cancel", skin);
-        acceptButton = new TextButton("Accept Trade", skin);
-        rejectButton = new TextButton("Reject Trade", skin);
+        this.offerSlotBg = new Image(GameAssetManager.slotBg);
+        this.requestSlotBg = new Image(GameAssetManager.slotBg);
+
+        this.offerItemImage = new Image();
+        this.requestItemImage = new Image();
+
+        offerQuantityLabel = new Label("", skin);
+        requestQuantityLabel = new Label("", skin);
 
         setupUI();
         setupListeners();
+
     }
 
     private void setupUI() {
@@ -68,21 +87,32 @@ public class TradeScreen implements Screen {
         root.add(new Label("Request:", skin)).padRight(10);
         root.add(new Label("Offer:", skin)).row();
 
-//        root.add(offerSlot).pad(10).size(64);
-//        root.add(requestSlot).pad(10).size(64).row();
-
         if (isInitiator) {
             offerField = new TextField("", skin);
             requestField = new TextField("", skin);
 
-            offerField.setMessageText("Enter your offer item");
-            requestField.setMessageText("Enter requested item");
+            offerField.setMessageText("Offered item (e.g., apple x2)");
+            requestField.setMessageText("Requested item (e.g., sword x1)");
 
             root.add(requestField).padTop(10).fillX();
             root.add(offerField).padTop(10).fillX().row();
 
+            Stack requestStack = createItemSlot(requestSlotBg, requestItemImage, requestQuantityLabel);
+            Stack offerStack = createItemSlot(offerSlotBg, offerItemImage, offerQuantityLabel);
+
+
+            root.add(requestStack).padTop(10).size(96, 96);
+            root.add(offerStack).padTop(10).size(96, 96).row();
+
             root.add(confirmOfferButton).colspan(2).padTop(20).fillX().row();
         } else {
+            Stack requestStack = createItemSlot(requestSlotBg, requestItemImage, requestQuantityLabel);
+            Stack offerStack = createItemSlot(offerSlotBg, offerItemImage, offerQuantityLabel);
+
+
+            root.add(requestStack).padTop(10).size(96);
+            root.add(offerStack).padTop(10).size(96).row();
+
             root.add(acceptButton).padTop(20).fillX();
             root.add(rejectButton).padTop(20).fillX().row();
         }
@@ -90,45 +120,35 @@ public class TradeScreen implements Screen {
         root.add(cancelButton).colspan(2).padTop(10).fillX();
     }
 
-
     private void setupListeners() {
         if (isInitiator) {
-//            offerSlot.addListener(new ClickListener() {
-//                @Override
-//                public void clicked(InputEvent event, float x, float y) {
-//                    //selectedOfferItem = controller.pickItemFromInventory(); // opens your inventory
-//                    updateSlotImage(offerSlot, selectedOfferItem);
-//                }
-//            });
-//
-//            requestSlot.addListener(new ClickListener() {
-//                @Override
-//                public void clicked(InputEvent event, float x, float y) {
-//                    //selectedRequestItem = controller.pickItemFromCatalog(); // pick what you want
-//                    updateSlotImage(requestSlot, selectedRequestItem);
-//                }
-//            });
-
             confirmOfferButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     if (selectedOfferItem != null && selectedRequestItem != null) {
-                        //controller.sendOffer(fromPlayer, toPlayer, selectedOfferItem, selectedRequestItem);
+                        TradeMessage msg = new TradeMessage();
+                        msg.fromPlayer = fromPlayer;
+                        msg.toPlayer = toPlayer;
+                        Trade trade = new Trade(fromPlayer, toPlayer, "Trade", selectedOfferItem, 1, selectedRequestItem, 1);
+                        msg.trade = trade;
                     }
                 }
             });
+
+            offerField.setTextFieldListener((textField, c) -> updateSlotFromText(offerField.getText(), offerItemImage, true));
+            requestField.setTextFieldListener((textField, c) -> updateSlotFromText(requestField.getText(), requestItemImage, false));
         } else {
             acceptButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                 //   controller.acceptTrade(fromPlayer, toPlayer);
+                    // controller.acceptTrade(fromPlayer, toPlayer);
                 }
             });
 
             rejectButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                   // controller.rejectTrade(fromPlayer, toPlayer);
+                    // controller.rejectTrade(fromPlayer, toPlayer);
                 }
             });
         }
@@ -136,17 +156,98 @@ public class TradeScreen implements Screen {
         cancelButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                //controller.cancelTrade();
+                // controller.cancelTrade();
             }
         });
     }
 
+    private void updateSlotFromText(String input, Image itemImage, boolean isOffer) {
+        if (input == null || input.isEmpty()) {
+            itemImage.setDrawable(null);
+            if (isOffer) {
+                offerQuantityLabel.setText("");
+            } else {
+                requestQuantityLabel.setText("");
+            }
+            return;
+        }
 
-    private void updateSlotImage(Image slot, Item item) {
-        if (item != null) {
-            slot.setDrawable(new TextureRegionDrawable(new TextureRegion(item.getTexture())));
+        String[] parts = input.trim().split("\\s*x\\s*");
+        if (parts.length != 2) {
+            itemImage.setDrawable(null);
+            if (isOffer) {
+                offerQuantityLabel.setText("");
+            } else {
+                requestQuantityLabel.setText("");
+            }
+            return;
+        }
+
+        String itemName = parts[0].trim().toLowerCase();
+        int quantity;
+        try {
+            quantity = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            itemImage.setDrawable(null);
+            if (isOffer) {
+                offerQuantityLabel.setText("");
+            } else {
+                requestQuantityLabel.setText("");
+            }
+            return;
+        }
+
+        Item item = gameMenuController.getItemByName(itemName);
+        if (item == null || quantity <= 0) {
+            itemImage.setDrawable(null);
+            if (isOffer) {
+                offerQuantityLabel.setText("");
+            } else {
+                requestQuantityLabel.setText("");
+            }
+            return;
+        }
+
+        Texture texture = item.getTexture().getTexture();
+        if (texture != null) {
+            itemImage.setDrawable(new TextureRegionDrawable(new TextureRegion(texture)));
+        }
+
+        if (isOffer) {
+            offerQuantityLabel.setText("x" + quantity);
+        } else {
+            requestQuantityLabel.setText("x" + quantity);
         }
     }
+
+
+    private Stack createItemSlot(Image slotBackground, Image itemImage, Label quantityLabel) {
+        Stack stack = new Stack();
+        stack.setSize(96, 96);
+
+        slotBackground.setSize(96, 96);
+        slotBackground.setScaling(Scaling.stretch);
+
+        itemImage.setScaling(Scaling.fit);
+        itemImage.setAlign(Align.center);
+        itemImage.setSize(48, 48);
+
+        quantityLabel.setFontScale(0.8f);
+        quantityLabel.setAlignment(Align.bottomRight);
+        quantityLabel.setTouchable(null);
+
+        Table labelTable = new Table();
+        labelTable.setFillParent(true);
+        labelTable.bottom().right().pad(4);
+        labelTable.add(quantityLabel);
+
+        stack.add(slotBackground);
+        stack.add(itemImage);
+        stack.add(labelTable);
+
+        return stack;
+    }
+
 
     @Override
     public void show() {
@@ -165,7 +266,6 @@ public class TradeScreen implements Screen {
         stage.getViewport().update(width, height, true);
     }
 
-
     @Override
     public void dispose() {
         stage.dispose();
@@ -173,12 +273,10 @@ public class TradeScreen implements Screen {
 
     @Override
     public void pause() {}
+
     @Override
     public void resume() {}
 
     @Override
-    public void hide() {
-
-    }
+    public void hide() {}
 }
-

@@ -4,8 +4,14 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import org.example.Common.DataTransferObjects.ChatMessage;
+import org.example.Common.DataTransferObjects.LoginPacket;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
+import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.MessageType;
+import org.example.Common.Player;
+import org.example.Common.Lobby;
+import org.example.Common.Network.*;
 import org.example.Common.Player;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
@@ -21,6 +27,7 @@ import org.example.Server.Packets.StoreUpdatePacket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimerTask;
 
 public class ServerMain {
     public static ServerGameState gameState = new ServerGameState();
@@ -32,10 +39,58 @@ public class ServerMain {
         server.bind(54555, 54777);
 
         Kryo kryo = server.getKryo();
-        kryo.register(MovePacket.class);
-        kryo.register(PositionUpdate.class);
+
+        kryo.register(String.class);
+        kryo.register(ArrayList.class);
+        kryo.register(java.util.List.class);
+        kryo.register(HashMap.class);
+
+        kryo.register(PlayerUpdate.class);
+        kryo.register(ChatMessage.class);
+        kryo.register(PrivateChatMessage.class);
         kryo.register(TradeMessage.class);
         kryo.register(MessageType.class);
+        kryo.register(LoginPacket.class);
+        kryo.register(ResultResponse.class);
+
+        kryo.register(Lobby.class);
+        kryo.register(SimplePlayer.class);
+        kryo.register(CreateLobbyRequest.class);
+        kryo.register(GetLobbiesRequest.class);
+        kryo.register(JoinLobbyRequest.class);
+        kryo.register(LeaveLobbyRequest.class);
+        kryo.register(LobbyListResponse.class);
+
+        kryo.register(org.example.Server.models.Skills.AnimalCare.class);
+        kryo.register(org.example.Server.models.Skills.Cooking.class);
+        kryo.register(org.example.Server.models.Skills.Crafting.class);
+        kryo.register(org.example.Server.models.Skills.Farming.class);
+        kryo.register(org.example.Server.models.Skills.Fishing.class);
+        kryo.register(org.example.Server.models.Skills.Foraging.class);
+        kryo.register(org.example.Server.models.Skills.Mining.class);
+
+        kryo.register(org.example.Server.models.Animal.class);
+        kryo.register(org.example.Server.models.AnimalAnimations.class);
+        kryo.register(org.example.Server.models.App.class);
+        kryo.register(org.example.Server.models.Craft.class);
+        kryo.register(org.example.Server.models.Database.class);
+        kryo.register(org.example.Server.models.Farm.class);
+        kryo.register(org.example.Server.models.Fish.class);
+        kryo.register(org.example.Server.models.FishBar.class);
+        kryo.register(org.example.Server.models.Food.class);
+        kryo.register(org.example.Server.models.ForagingItem.class);
+        kryo.register(org.example.Server.models.FruitAndVegetable.class);
+        kryo.register(org.example.Server.models.GrowthStep.class);
+        kryo.register(org.example.Server.models.Mineral.class);
+        kryo.register(org.example.Server.models.MyGame.class);
+        kryo.register(org.example.Server.models.NPC.class);
+        kryo.register(org.example.Server.models.PacketHandler.class);
+        kryo.register(org.example.Server.models.Result.class);
+        kryo.register(org.example.Server.models.Store.class);
+        kryo.register(org.example.Server.models.TileMapRenderer.class);
+        kryo.register(org.example.Server.models.Tree.class);
+        kryo.register(org.example.Server.models.UserDatabase.class);
+
         kryo.register(StoreUpdatePacket.class);
         kryo.register(PurchaseRequest.class);
         kryo.register(MarriageProposalRequest.class);
@@ -94,6 +149,24 @@ public class ServerMain {
                         server.sendToAllTCP(updatePacket);
                     }
                 }
+                else if (object instanceof LoginPacket) {
+                    LoginPacket login = (LoginPacket) object;
+                    System.out.println("Registered player connection: " + login.username);
+                    registerPlayerConnection(login.username, c);
+                }
+                else if (object instanceof ChatMessage) {
+                    ChatMessage chat = (ChatMessage) object;
+                    if (chat.receiver != null && !chat.receiver.isBlank()) {
+                        Connection target = getConnectionByUsername(chat.receiver);
+                        if (target != null) {
+                            target.sendTCP(chat);
+                        } else {
+                            System.out.println("❌ Target not found for private message: " + chat.receiver);
+                        }
+                    } else {
+                        server.sendToAllTCP(chat);
+                    }
+                }
                 else if (object instanceof MarriageProposalRequest) {
                     MarriageProposalRequest request = (MarriageProposalRequest) object;
                     MarriageProposalReceived msg = new MarriageProposalReceived();
@@ -119,34 +192,23 @@ public class ServerMain {
                     return playerConnections.get(playerName);
                 }
             });
+        LobbyServerHandler lobbyHandler = new LobbyServerHandler(server);
+        server.addListener(lobbyHandler);
+        new java.util.Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                LobbyServerHandler.cleanUpEmptyLobbies();
+            }
+        }, 0, 60_000);
+
         System.out.println("Server started on port 54555!");
     }
+    public static void registerPlayerConnection(String username, Connection connection) {
+        playerConnections.put(username, connection);
+    }
+
+    public static Connection getConnectionByUsername(String username) {
+        return playerConnections.get(username);
+    }
+
 }
-//package org.example.Server;
-//
-//import java.net.ServerSocket;
-//import java.net.Socket;
-//
-//public class ServerMain {
-//    public static void main(String[] args) {
-//        try {
-//            int port = 54555; // پورتی که کلاینت وصل میشه
-//            ServerSocket serverSocket = new ServerSocket(port);
-//
-//            System.out.println("✅ Server started on port " + port);
-//
-//            while (true) {
-//                // هر کلاینت که وصل شد
-//                Socket clientSocket = serverSocket.accept();
-//                System.out.println("🔗 New client connected: " + clientSocket.getInetAddress());
-//
-//                // اجرای ClientHandler در یک Thread جدا
-//                Thread t = new Thread(new ClientHandler(clientSocket));
-//                t.start();
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            System.out.println("❌ Server failed to start: " + e.getMessage());
-//        }
-//    }
-//}

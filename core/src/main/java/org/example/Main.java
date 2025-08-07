@@ -1,150 +1,39 @@
-//
-//package org.example;
-//
-//import com.badlogic.gdx.Game;
-//import com.badlogic.gdx.Gdx;
-//import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-//import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-//import org.example.Client.ClientNetworkManager;
-//import org.example.Client.MenuNavigator;
-//import org.example.Server.controllers.DBController;
-//import org.example.Server.controllers.RegisterMenuController;
-//import org.example.Server.models.MyGame;
-//import org.example.Common.Player;
-//import org.example.Common.User;
-//import org.example.Server.models.UserDatabase;
-//
-//import java.io.File;
-//import java.nio.file.Files;
-//import java.nio.file.Paths;
-//
-//
-//public class Main extends Game {
-//    public static SpriteBatch batch;
-//    private Skin skin;
-//    private static Main main;
-//    public static ClientNetworkManager networkManager = new ClientNetworkManager();
-//
-//    public static Main getMain() {
-//        return main;
-//    }
-//
-//    public static void setBatch(SpriteBatch batch) {
-//        Main.batch = batch;
-//    }
-//
-//    public static SpriteBatch getBatch() {
-//        return batch;
-//    }
-//
-//    @Override
-//    public void create() {
-//        main = this;
-//        batch = new SpriteBatch();
-//        skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
-//        MenuNavigator.init(this, skin);
-//        try {
-//            //networkManager = new ClientNetworkManager("localhost", 54555);
-//            System.out.println("✅ Connected to server");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            System.out.println("❌ Cannot connect to server");
-//        }
-//        checkAutoLogin();
-//       MenuNavigator.showMainMenu();
-//    }
-//
-//    public static void checkAutoLogin() {
-//        DBController.loadPlayersFromFile();
-//        UserDatabase.loadUsers();
-//        File file = new File("currentuser.json");
-//        if (!file.exists()) {
-//            MenuNavigator.showLoginMenu();
-//            return;
-//        }
-//
-//        try {
-//            String content = new String(Files.readAllBytes(Paths.get("currentuser.json")));
-//            String username = extractValue(content, "username");
-//            String stayLoggedStr = extractValue(content, "stayLogged");
-//
-//            boolean stayLogged = Boolean.parseBoolean(stayLoggedStr);
-//
-//            if (stayLogged && username != null) {
-//                User user = UserDatabase.getUserByUsername(username);
-//                Player currentPlayer = MyGame.getPlayerByUsername(user.getUsername());
-//                MyGame.setCurrentPlayer(currentPlayer);
-//                if (user != null) {
-//                    RegisterMenuController.currentUser = user;
-//                    MenuNavigator.showMainMenu();
-//                    return;
-//                }
-//            }else {
-//                MenuNavigator.showLoginMenu();
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        MenuNavigator.showLoginMenu();
-//    }
-//
-//    private static String extractValue(String json, String key) {
-//        String pattern = "\"" + key + "\"\\s*:\\s*";
-//        int index = json.indexOf("\"" + key + "\"");
-//        if (index == -1) return null;
-//
-//        int colonIndex = json.indexOf(":", index);
-//        int startQuote = json.indexOf("\"", colonIndex + 1);
-//        int endQuote = json.indexOf("\"", startQuote + 1);
-//
-//        if (startQuote == -1 || endQuote == -1) {
-//            String part = json.substring(colonIndex + 1).trim();
-//            if (part.startsWith("true")) return "true";
-//            if (part.startsWith("false")) return "false";
-//            return null;
-//        }
-//
-//        return json.substring(startQuote + 1, endQuote);
-//    }
-//
-//    public static ClientNetworkManager getNetworkManager() {
-//        return networkManager;
-//    }
-//
-//    @Override
-//    public void render() {
-//        super.render();
-//    }
-//
-//    @Override
-//    public void dispose() {
-//        super.dispose();
-//        batch.dispose();
-//        skin.dispose();
-//    }
-//}
 package org.example;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import org.example.Client.ClientNetworkManager;
 import org.example.Client.GameClient;
 import org.example.Client.GameScreen;
 import org.example.Client.MenuNavigator;
+import org.example.Common.DataTransferObjects.ChatMessage;
+import org.example.Common.DataTransferObjects.LoginPacket;
+import org.example.Common.DataTransferObjects.PlayerUpdate;
+import org.example.Common.DataTransferObjects.PrivateChatMessage;
+import org.example.Common.Enums.MessageType;
+import org.example.Common.Lobby;
+import org.example.Common.Network.*;
 import org.example.Common.Player;
+import org.example.Common.Request.TradeMessage;
 import org.example.Common.User;
 import org.example.Server.controllers.DBController;
 import org.example.Server.controllers.RegisterMenuController;
 import org.example.Server.models.MyGame;
+import org.example.Server.models.Result;
 import org.example.Server.models.UserDatabase;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Main extends Game {
     public static SpriteBatch batch;
@@ -159,10 +48,6 @@ public class Main extends Game {
         return main;
     }
 
-    public static void setBatch(SpriteBatch batch) {
-        Main.batch = batch;
-    }
-
     public static SpriteBatch getBatch() {
         return batch;
     }
@@ -170,7 +55,129 @@ public class Main extends Game {
     @Override
     public void create() {
         main = this;
-        gameClient = new GameClient();
+
+        // ✅ Init network connection (KryoNet Client)
+        if (GameClient.client == null) {
+            GameClient.client = new Client();
+            GameClient.client.start();
+
+            Kryo kryo = GameClient.client.getKryo();
+
+            kryo.register(String.class);
+            kryo.register(ArrayList.class);
+            kryo.register(java.util.List.class);
+            kryo.register(HashMap.class);
+
+            kryo.register(PlayerUpdate.class);
+            kryo.register(ChatMessage.class);
+            kryo.register(PrivateChatMessage.class);
+            kryo.register(TradeMessage.class);
+            kryo.register(MessageType.class);
+            kryo.register(LoginPacket.class);
+            kryo.register(ResultResponse.class);
+
+            kryo.register(Lobby.class);
+            kryo.register(SimplePlayer.class);
+            kryo.register(CreateLobbyRequest.class);
+            kryo.register(GetLobbiesRequest.class);
+            kryo.register(JoinLobbyRequest.class);
+            kryo.register(LeaveLobbyRequest.class);
+            kryo.register(LobbyListResponse.class);
+
+            kryo.register(org.example.Server.models.Skills.AnimalCare.class);
+            kryo.register(org.example.Server.models.Skills.Cooking.class);
+            kryo.register(org.example.Server.models.Skills.Crafting.class);
+            kryo.register(org.example.Server.models.Skills.Farming.class);
+            kryo.register(org.example.Server.models.Skills.Fishing.class);
+            kryo.register(org.example.Server.models.Skills.Foraging.class);
+            kryo.register(org.example.Server.models.Skills.Mining.class);
+
+            kryo.register(org.example.Server.models.Animal.class);
+            kryo.register(org.example.Server.models.AnimalAnimations.class);
+            kryo.register(org.example.Server.models.App.class);
+            kryo.register(org.example.Server.models.Craft.class);
+            kryo.register(org.example.Server.models.Database.class);
+            kryo.register(org.example.Server.models.Farm.class);
+            kryo.register(org.example.Server.models.Fish.class);
+            kryo.register(org.example.Server.models.FishBar.class);
+            kryo.register(org.example.Server.models.Food.class);
+            kryo.register(org.example.Server.models.ForagingItem.class);
+            kryo.register(org.example.Server.models.FruitAndVegetable.class);
+            kryo.register(org.example.Server.models.GrowthStep.class);
+            kryo.register(org.example.Server.models.Mineral.class);
+            kryo.register(org.example.Server.models.MyGame.class);
+            kryo.register(org.example.Server.models.NPC.class);
+            kryo.register(org.example.Server.models.PacketHandler.class);
+            kryo.register(org.example.Server.models.Result.class);
+            kryo.register(org.example.Server.models.Store.class);
+            kryo.register(org.example.Server.models.TileMapRenderer.class);
+            kryo.register(org.example.Server.models.Tree.class);
+            kryo.register(org.example.Server.models.UserDatabase.class);
+
+
+
+            try {
+                GameClient.client.connect(5000, "192.168.107.247", 54555, 54777); // ← IP سرور
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            GameClient.client.addListener(new Listener() {
+                public void received(Connection c, Object object) {
+                    if (object instanceof ChatMessage) {
+                        ChatMessage chat = (ChatMessage) object;
+                        String currentUser = MyGame.getCurrentPlayer().getUsername();
+
+                        if (chat.receiver == null || chat.receiver.isBlank()) {
+                            MyGame.getGameScreen().receiveChatMessage(chat.sender, chat.content);
+                        } else if (chat.receiver.equals(currentUser)) {
+                            MyGame.getGameScreen().receivePrivateMessage(chat.sender, chat.content);
+                        }
+                    }
+                    else if (object instanceof LobbyListResponse) {
+                        LobbyListResponse response = (LobbyListResponse) object;
+                        if (MenuNavigator.getSharedSkin() != null && MenuNavigator.getLobbyMenu() != null) {
+                            MenuNavigator.getLobbyMenu().updateLobbyList(response.lobbies);
+                        }
+                    }
+
+                    else if (object instanceof ResultResponse) {
+                        ResultResponse res = (ResultResponse) object;
+                        System.out.println("✅ Lobby response: " + res.message);
+                    }
+                    else if (object instanceof TradeMessage) {
+                        TradeMessage msg = (TradeMessage) object;
+
+                        switch (msg.type) {
+                            case REQUEST:
+                                boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
+
+                                TradeMessage response = new TradeMessage();
+                                response.type = MessageType.RESPONSE;
+                                response.fromPlayer = msg.toPlayer;
+                                response.toPlayer = msg.fromPlayer;
+                                response.accepted = accepted;
+
+                                GameClient.client.sendTCP(response);
+                                break;
+
+                            case REJECTED:
+                                Result result = new Result(false, "Your trade request was rejected :(");
+                                MyGame.getGameScreen().showResult = true;
+                                MyGame.getGameScreen().latestResult = result;
+                                break;
+
+                            case START:
+                                // Optional: handle trade start
+                                break;
+                        }
+
+                    }
+                }
+            });
+        }
+
+        // 🎮 UI and Game Setup
         batch = new SpriteBatch();
         skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
 
@@ -179,7 +186,12 @@ public class Main extends Game {
         networkManager = new ClientNetworkManager();
         checkAutoLogin();
 
-        MenuNavigator.showMainMenu();
+        if (currentUser != null) {
+            System.out.println("kkkkk");
+            LoginPacket loginPacket = new LoginPacket(currentUser.getUsername());
+            GameClient.client.sendTCP(loginPacket);
+        }
+
     }
 
     public static void checkAutoLogin() {
@@ -206,6 +218,7 @@ public class Main extends Game {
                     RegisterMenuController.currentUser = user;
 
                     Player currentPlayer = MyGame.getPlayerByUsername(user.getUsername());
+
                     MyGame.setCurrentPlayer(currentPlayer);
 
                     MenuNavigator.showMainMenu();
@@ -220,6 +233,10 @@ public class Main extends Game {
         }
 
         MenuNavigator.showLoginMenu();
+    }
+
+    public ClientNetworkManager getNetworkManager() {
+        return networkManager;
     }
 
     private static String extractValue(String json, String key) {
@@ -238,10 +255,6 @@ public class Main extends Game {
         }
 
         return json.substring(startQuote + 1, endQuote);
-    }
-
-    public ClientNetworkManager getNetworkManager() {
-        return networkManager;
     }
 
     @Override

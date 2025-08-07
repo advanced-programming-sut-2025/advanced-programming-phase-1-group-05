@@ -4,9 +4,11 @@ import org.example.Common.Player;
 import java.io.Serializable;
 
 public class LeaveLobbyRequest implements Serializable {
-    public Player player;
+    public SimplePlayer player;
 
-    public LeaveLobbyRequest(Player player) {
+    public LeaveLobbyRequest() {}
+
+    public LeaveLobbyRequest(SimplePlayer player) {
         this.player = player;
     }
 }

@@ -11,7 +11,6 @@ import java.io.Serializable;
 
 public class Scythe implements Tool<ItemLevel> , Serializable {
     ItemLevel level = ItemLevel.Normal;
-    Database database = new Database();
     @Override
     public String getName() {
         return "Scythe";
@@ -36,7 +35,7 @@ public class Scythe implements Tool<ItemLevel> , Serializable {
                     return new Result(false, "The crop isn't ready for harvest");
                 MyGame.getCurrentPlayer().getFarmingSkill().harvestCrop(tile);
                 return new Result(true, item.getName() + " harvested successfully");
-            } else if(item == database.getItem("Fiber")) {
+            } else if(item == MyGame.getDatabase().getItem("Fiber")) {
                 MyGame.getCurrentPlayer().getBackPack().addToInventory(tile.getItemOnTile(), 1);
                 tile.setItemOnTile(null);
                 return new Result(true, item.getName() + " harvested successfully");

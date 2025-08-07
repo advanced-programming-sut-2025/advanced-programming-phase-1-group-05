@@ -35,12 +35,6 @@ public class MainMenu implements Screen {
 
         User currentUser = RegisterMenuController.currentUser;
         String nickname = currentUser != null ? currentUser.getNickName() : "Guest";
-//        String avatarPath = "assets/NPCs/sebastian/avatar.png";
-//        if (currentUser.getGender().equals("Male")) {
-//            avatarPath = "assets/NPCs/sebastian/avatar.png";
-//        } else {
-//            avatarPath = "assets/NPCs/sebastian/avatar.png";
-//        }
         String path = "NPCs/sebastian/avatar.png";
         if (Gdx.files.internal(path).exists()) {
             avatarTexture = new Texture(Gdx.files.internal(path));
@@ -56,6 +50,7 @@ public class MainMenu implements Screen {
         Label title = new Label("Main Menu", skin);
         TextButton profileButton = new TextButton("Profile", skin);
         TextButton gameButton = new TextButton("Game", skin);
+        TextButton lobbyButton = new TextButton("Lobby", skin);
         TextButton avatarButton = new TextButton("Avatar", skin);
         TextButton logoutButton = new TextButton("Logout", skin);
         TextButton exitButton = new TextButton("Exit", skin);
@@ -65,6 +60,7 @@ public class MainMenu implements Screen {
         table.add(title).padBottom(20).row();
         table.add(profileButton).pad(5).width(200).row();
         table.add(gameButton).pad(5).width(200).row();
+        table.add(lobbyButton).pad(5).width(200).row();
         table.add(avatarButton).pad(5).width(200).row();
         table.add(logoutButton).padTop(15).width(200).row();
         table.add(exitButton).padTop(10).width(200).row();
@@ -102,6 +98,13 @@ public class MainMenu implements Screen {
                 }
             }
         });
+
+        lobbyButton.addListener(new ChangeListener() {
+            @Override public void changed(ChangeEvent event, Actor actor) {
+                MenuNavigator.showLobbyMenu();
+            }
+        });
+
 
         exitButton.addListener(new ChangeListener() {
             @Override

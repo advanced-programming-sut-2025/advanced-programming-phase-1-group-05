@@ -128,6 +128,17 @@ public class Player implements Serializable {
 
         notifications.add("Have fun playing this game i'm just trying to see how the notification panel looks hahahaha long text ");
     }
+    public Player() {
+        this.energy = 200;
+        this.backPack.getInventory().put(new Hoe(), 1);
+        this.backPack.getInventory().put(new Pickaxe(), 1);
+        this.backPack.getInventory().put(new Scythe(), 1);
+        this.backPack.getInventory().put(new Axe(), 1);
+        this.backPack.getInventory().put(new WateringCan(), 1);
+        this.backPack.getInventory().put(new Shear(), 1);
+        this.backPack.getInventory().put(new MilkPail(), 1);
+        this.backPack.getInventory().put(new FishingPole(), 1);
+    }
 
     public void initializeAnimations() {
         walkUpAnimation = loadAnimations('u');
