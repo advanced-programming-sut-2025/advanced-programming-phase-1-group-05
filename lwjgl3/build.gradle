@@ -14,7 +14,16 @@ plugins {
   id "application"
 }
 apply plugin: 'io.github.fourlastor.construo'
+application {
+  mainClass = 'org.example.Server.ServerMain'
+}
 
+tasks.register('runServer', JavaExec) {
+  group = 'application'
+  description = 'Runs the game server'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'org.example.Server.ServerMain'
+}
 
 import io.github.fourlastor.construo.Target
 

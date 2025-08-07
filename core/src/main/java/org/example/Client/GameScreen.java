@@ -26,6 +26,7 @@ import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.*;
 import org.example.Common.Request.TradeMessage;
 import org.example.Main;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.controllers.*;
 import org.example.Server.models.*;
 import org.example.Server.models.Building.AnimalHouse;
@@ -198,6 +199,7 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
         players = playerList;
         controller = new GameMenuController();
+        controller = new GameMenuController(Main.currentUser , Main.getMain().getNetworkManager());
         homeMenuController = new HomeMenuController();
         cheatCodeWindow = new CheatCodeWindow(camera, Gdx.input.getInputProcessor());
         shapeRenderer = new ShapeRenderer();
@@ -3186,6 +3188,40 @@ public class GameScreen implements Screen {
         tradeRequestTable.add(reject);
         uiStage.addActor(tradeRequestTable);
         return acceptedRequest; //implement better
+    }
+
+    public void showProposalPopup(Player fromPlayer) {
+//        Dialog dialog = new Dialog("Marriage Proposal", skin);
+//        dialog.text(fromPlayer + " wants to marry you 💍");
+//
+//        dialog.button("Accept", true);
+//        dialog.button("Reject", false);
+//
+//        dialog.show(stage);
+//        dialog.setResultListener(result -> {
+//            MarriageProposalResponse resp = new MarriageProposalResponse();
+//            resp.fromPlayer = MyGame.getCurrentPlayer().getUsername();
+//            resp.toPlayer = fromPlayer;
+//            resp.accepted = (Boolean) result;
+//            MyGame.getClient().sendTCP(resp);
+//        });
+
+        Dialog dialog = new Dialog("Marriage Proposal", skin) {
+            @Override
+            protected void result(Object object) {
+                boolean accepted = (Boolean) object;
+                MarriageProposalResponse resp = new MarriageProposalResponse();
+                resp.fromPlayer = MyGame.getCurrentPlayer();
+                resp.toPlayer = fromPlayer;
+                resp.accepted = accepted;
+                Main.getMain().getNetworkManager().getClient().sendTCP(resp);
+            }
+        };
+
+        dialog.text(fromPlayer + " wants to marry you 💍");
+        dialog.button("Accept", true);
+        dialog.button("Reject", false);
+        dialog.show(stage);
     }
 
 

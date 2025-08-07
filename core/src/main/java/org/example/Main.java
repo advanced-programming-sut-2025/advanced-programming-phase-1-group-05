@@ -10,6 +10,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import org.example.Client.ClientNetworkManager;
 import org.example.Client.GameClient;
+import org.example.Client.GameScreen;
 import org.example.Client.MenuNavigator;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.LoginPacket;
@@ -41,6 +42,7 @@ public class Main extends Game {
     public ClientNetworkManager networkManager;
     public GameClient gameClient;
     public static User currentUser;
+    public GameScreen screen;
 
     public static Main getMain() {
         return main;
