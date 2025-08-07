@@ -234,7 +234,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import org.example.Common.Lobby;
 import org.example.Common.Player;
 import org.example.Common.Network.ResultResponse;
@@ -263,7 +265,8 @@ public class GameMenu implements Screen {
     public GameMenu(Skin skin, GameMenuController controller) {
         this.skin = skin;
         this.controller = controller;
-        this.stage = new Stage(new ScreenViewport());
+        Viewport viewport = new FitViewport(800, 480);
+        this.stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
@@ -520,7 +523,9 @@ public class GameMenu implements Screen {
         stage.draw();
     }
 
-    @Override public void resize(int width, int height) {}
+    @Override public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}

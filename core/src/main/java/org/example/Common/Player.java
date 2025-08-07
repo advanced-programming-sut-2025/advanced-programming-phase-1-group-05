@@ -601,7 +601,9 @@ public class Player implements Serializable {
 
     public void setSpouse(Player spouse) {
         this.spouse = spouse;
+        spouse.spouse = this;
         farm.addOwner(spouse);
+        spouse.getFarm().addOwner(this);
         SharedWallet wallet = new SharedWallet(this.gold, spouse.gold);
         this.sharedWallet = wallet;
         spouse.sharedWallet = wallet;

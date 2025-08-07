@@ -133,6 +133,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.example.Client.ClientNetworkManager;
 import org.example.Client.GameClient;
+import org.example.Client.GameScreen;
 import org.example.Client.MenuNavigator;
 import org.example.Common.Player;
 import org.example.Common.User;
@@ -152,6 +153,7 @@ public class Main extends Game {
     public ClientNetworkManager networkManager;
     public GameClient gameClient;
     public static User currentUser;
+    public GameScreen screen;
 
     public static Main getMain() {
         return main;

@@ -24,7 +24,7 @@ public class GameClient {
         kryo.register(TradeMessage.class);
         kryo.register(MessageType.class);
 
-        client.connect(5000, "localhost", 54555, 54777);  // change "localhost" to your server's IP if on LAN
+        client.connect(5000, "192.168.1.52", 54555, 54777);  // change "localhost" to your server's IP if on LAN
 
         // Send initial position update
         PlayerUpdate update = new PlayerUpdate("friend-" + System.currentTimeMillis(), 0, 0);
