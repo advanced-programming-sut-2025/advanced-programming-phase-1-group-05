@@ -54,7 +54,14 @@ public class Player implements Serializable {
     private boolean isEating = false;
     private boolean buildGreenHouse = false;
     private int id;
+    private Map<String, Trade> trades = new HashMap<>();
 
+//    {
+////        trades.put("Baran", new Trade(this, this, "hello", new BasicItem("hi", 2),
+////            2, new BasicItem("hello", 4), 5));
+////        trades.put("Maryam", new Trade(this, this, "hello", new BasicItem("hi", 2),
+////            2, new BasicItem("hello", 4), 5));
+//    }
     //walking animations
     private transient Animation<TextureRegion> walkUpAnimation;
     private transient Animation<TextureRegion> walkDownAnimation;
@@ -774,5 +781,12 @@ public class Player implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public void addTrade(String playerName, Trade trade) {
+        trades.put(playerName, trade);
+    }
+    public Map<String,Trade> getTrades() {
+        return trades;
     }
 }

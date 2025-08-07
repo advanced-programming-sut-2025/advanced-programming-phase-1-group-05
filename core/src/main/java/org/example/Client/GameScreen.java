@@ -1621,22 +1621,22 @@ public class GameScreen implements Screen {
         });
         uiStage.addActor(friendshipButton);
 
-        Texture chatTex = GameAssetManager.getInstance().getOrLoadTexture("ui/chat.png");
-        Drawable chatDrawable = new TextureRegionDrawable(new TextureRegion(chatTex));
-        ImageButton chatButton = new ImageButton(chatDrawable);
-        chatButton.setPosition(x, y - 250f);
-        chatButton.getImageCell().size(72, 56);
-        chatButton.setSize(72, 56);
-
-        chatButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                chatTable.setVisible(true);
-                isChatOpen = true;
-            }
-        });
-
-        uiStage.addActor(chatButton);
+//        Texture chatTex = GameAssetManager.getInstance().getOrLoadTexture("ui/chat.png");
+//        Drawable chatDrawable = new TextureRegionDrawable(new TextureRegion(chatTex));
+//        ImageButton chatButton = new ImageButton(chatDrawable);
+//        chatButton.setPosition(x, y - 250f);
+//        chatButton.getImageCell().size(72, 56);
+//        chatButton.setSize(72, 56);
+//
+//        chatButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                chatTable.setVisible(true);
+//                isChatOpen = true;
+//            }
+//        });
+//
+//        uiStage.addActor(chatButton);
 
 
         Texture tradingTexture = GameAssetManager.tradingButton;

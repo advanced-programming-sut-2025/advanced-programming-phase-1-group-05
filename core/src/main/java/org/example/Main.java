@@ -151,7 +151,7 @@ public class Main extends Game {
                                 boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
 
                                 TradeMessage response = new TradeMessage();
-                                response.type = MessageType.RESPONSE;
+                                response.type = TradeMessage.MessageType.RESPONSE;
                                 response.fromPlayer = msg.toPlayer;
                                 response.toPlayer = msg.fromPlayer;
                                 response.accepted = accepted;

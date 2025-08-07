@@ -69,47 +69,53 @@ public class ClientNetworkManager {
                         LobbyListResponse res = (LobbyListResponse) object;
                         MenuNavigator.getLobbyMenu().updateLobbyList(res.lobbies);
                     });
-                }
-                else if (object instanceof StoreUpdatePacket) {
+                } else if (object instanceof StoreUpdatePacket) {
                     StoreUpdatePacket p = (StoreUpdatePacket) object;
                     Gdx.app.postRunnable(() -> handleStoreUpdate(p));
                 } else if (object instanceof ChatMessage) {
                     ChatMessage chat = (ChatMessage) object;
                     MyGame.getGameScreen().receiveChatMessage(chat.sender, chat.content);
-                }
-//                TradeMessage msg = (TradeMessage) object;
+                } else if (object instanceof TradeMessage) {
+                    TradeMessage msg = (TradeMessage) object;
 
-//                switch (msg.type) {
-//                    case REQUEST: {
-//                        boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
-//
-//                        TradeMessage response = new TradeMessage();
-//                        response.type = MessageType.RESPONSE;
-//                        response.fromPlayer = msg.toPlayer;
-//                        response.toPlayer = msg.fromPlayer;
-//                        response.accepted = accepted;
-//
-//                        client.sendTCP(response);
-//                        break;
-//                    }
-//
-//                    case START: {
-//                      //  MyGame.getGameScreen().startTradingWith(msg.toPlayer.getUsername());
-//                        break;
-//                    }
-//
-//                    case REJECTED: {
-//                        Result result = new Result(false, "Your trade request was rejected :(");
-//                        MyGame.getGameScreen().showResult = true;
-//                        MyGame.getGameScreen().latestResult = result;
-//                        break;
-//                    }
-////                    case UPDATE:{
-//////                        updateOfferSlot(msg.fromPlayer, msg.offerItem);
-//////                        updateRequestSlot(msg.fromPlayer, msg.requestItem);
-////
-////                    }
-//                }
+                    switch (msg.type) {
+                        case REQUEST: {
+                            boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
+
+                            TradeMessage response = new TradeMessage();
+                            response.type = TradeMessage.MessageType.RESPONSE;
+                            response.fromPlayer = msg.toPlayer;
+                            response.toPlayer = msg.fromPlayer;
+                            response.accepted = accepted;
+
+                            client.sendTCP(response);
+                            break;
+                        }
+
+                        case START: {
+                            //  MyGame.getGameScreen().startTradingWith(msg.toPlayer.getUsername());
+                            break;
+                        }
+
+                        case REJECTED: {
+                            Result result = new Result(false, "Your trade request was rejected :(");
+                            MyGame.getGameScreen().showResult = true;
+                            MyGame.getGameScreen().latestResult = result;
+                            break;
+                        }
+                        case UPDATE: {
+                            //updateOfferSlot(msg.fromPlayer, msg.offerItem);
+                            //updateRequestSlot(msg.fromPlayer, msg.requestItem);
+
+                        }
+                        case ACCEPT:{
+                            // TODO implement
+                        }
+                        case DECLINE: {
+                            Main.getMain().setScreen(MyGame.getGameScreen());
+                        }
+                    }
+                }
             }
         });
     }
@@ -125,8 +131,6 @@ public class ClientNetworkManager {
     public void sendTCP(Object object) {
         GameClient.client.sendTCP(object);
     }
-
-
 
     // setupListeners(), registerClasses(), etc.
 }

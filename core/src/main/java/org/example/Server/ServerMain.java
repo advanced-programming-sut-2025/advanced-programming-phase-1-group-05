@@ -105,7 +105,7 @@ public class ServerMain {
                             if (initiator != null) {
                                 if (msg.accepted) {
                                     TradeMessage start = new TradeMessage();
-                                    start.type = MessageType.START;
+                                    start.type = TradeMessage.MessageType.START;
                                     start.fromPlayer = msg.fromPlayer;
                                     start.toPlayer = msg.toPlayer;
 
@@ -113,7 +113,7 @@ public class ServerMain {
                                     c.sendTCP(start);
                                 } else {
                                     TradeMessage rejected = new TradeMessage();
-                                    rejected.type = MessageType.REJECTED;
+                                    rejected.type = TradeMessage.MessageType.REJECTED;
                                     rejected.fromPlayer = msg.fromPlayer;
                                     rejected.toPlayer = msg.toPlayer;
 

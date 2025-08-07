@@ -1,8 +1,12 @@
 package org.example.Server.controllers;
 
+import org.example.Client.ClientNetworkManager;
+import org.example.Client.TradeScreen;
 import org.example.Common.Item;
 import org.example.Common.Player;
+import org.example.Common.Request.TradeMessage;
 import org.example.Common.Trade;
+import org.example.Main;
 import org.example.Server.models.*;
 
 import java.util.ArrayList;
@@ -10,11 +14,16 @@ import java.util.List;
 
 
 public class TradingController {
+    private TradeScreen tradeScreen;
+    private static ClientNetworkManager clientNetworkManager = Main.getMain().getNetworkManager();
     private static TradingController instance;
     private  List<Trade> trades = new ArrayList<>();
     private static final String tradeWithMoney = "trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-i\\s+.*-a\\s+\\d+\\s+-p\\s+\\d+";
     private static final String tradeWithItem = "trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-i\\s+.*-a\\s+\\d+\\s+-ti.*\\s+-ta\\s+.*";
 
+    public void setTradeScreen(TradeScreen tradeScreen) {
+        this.tradeScreen = tradeScreen;
+    }
 
     public static TradingController getInstance() {
         if (instance == null) instance = new TradingController();
@@ -172,10 +181,53 @@ public class TradingController {
         return Result.success(builder.toString());
     }
 
+    public void sendTradeOffer(Player fromPlayer, Player toPlayer, String type, Item selectedOfferItem, int amount,
+                               Item selectedRequestItem, int tragetAmount) {
+        //create trade message object
+        TradeMessage msg = new TradeMessage();
+        msg.fromPlayer = fromPlayer;
+        msg.toPlayer = toPlayer;
+        msg.type = TradeMessage.MessageType.REQUEST;
+        Trade trade = new Trade(fromPlayer, toPlayer, "Trade", selectedOfferItem, 1, selectedRequestItem, 1);
+        msg.trade = trade;
 
-    public void sendOffer(Player fromPlayer, Player toPlayer, Item offerItem, Item requestItem, int offerAmount, int requestAmount) {
-        Trade trade = new Trade(fromPlayer, toPlayer, "request", offerItem, offerAmount, requestItem, requestAmount );
-        trades.add(trade);
+        clientNetworkManager.getClient().sendTCP(msg); //send offer message
+    }
 
+    public void acceptTradeOffer(Player fromPlayer, Player toPlayer, String type, Item selectedOfferItem, int amount,
+                                 Item selectedRequestItem, int targetAmount) {
+        //create trade accept message
+        TradeMessage msg = new TradeMessage();
+        msg.fromPlayer = fromPlayer;
+        msg.toPlayer = toPlayer;
+        msg.type = TradeMessage.MessageType.ACCEPT;
+        Trade trade = new Trade(fromPlayer, toPlayer, type, selectedOfferItem, amount, selectedRequestItem, targetAmount);
+        msg.trade = trade;
+        clientNetworkManager.getClient().sendTCP(msg);
+        MyGame.getCurrentPlayer().addTrade(fromPlayer.getUsername(), trade);
+        updateInventory(selectedRequestItem, targetAmount, selectedOfferItem, amount);
+
+    }
+
+    public void rejectTrade(Player fromPlayer, Player toPlayer) {
+        //create rejection message :(
+        TradeMessage msg = new TradeMessage();
+        msg.fromPlayer = fromPlayer;
+        msg.toPlayer = toPlayer;
+        msg.type = TradeMessage.MessageType.DECLINE;
+        clientNetworkManager.getClient().sendTCP(msg); // send message
+    }
+
+    public void completeTrade(Player fromPlayer, Player toPlayer, String type, Item selectedOfferItem, int amount,
+                              Item selectedRequestItem, int targetAmount) {
+        Trade trade = new Trade(fromPlayer, toPlayer, type, selectedOfferItem, amount, selectedRequestItem, targetAmount);
+        MyGame.getCurrentPlayer().addTrade(toPlayer.getUsername(), trade);
+        updateInventory(selectedOfferItem, amount, selectedRequestItem, targetAmount);
+    }
+
+    private void updateInventory(Item itemToRemove, int itemToRemoveAmount, Item itemToAdd, int itemToAddAmount) {
+       if(itemToAdd == null || itemToRemove == null) return; //TODO implement
+        MyGame.getCurrentPlayer().getBackPack().addToInventory(itemToAdd, itemToAddAmount);
+        MyGame.getCurrentPlayer().getBackPack().removeFromInventory(itemToRemove, itemToRemoveAmount);
     }
 }
