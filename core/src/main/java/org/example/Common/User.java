@@ -1,5 +1,7 @@
 package org.example.Common;
 
+import com.badlogic.gdx.graphics.Texture;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,7 @@ public class User implements Serializable {
     private int gamesPlayed;
     public String plainPassword;
     public String avatarTexturePath;
+    public Texture avatarTexture;
 
     private String securityQuestion;
     String securityAnswer;
@@ -99,9 +102,13 @@ public class User implements Serializable {
 
     public void setAvatarTexturePath(String avatarTexturePath) {
         this.avatarTexturePath = avatarTexturePath;
+        avatarTexture = new Texture(avatarTexturePath);
     }
     public String getAvatarTexturePath() {
         return avatarTexturePath;
+    }
+    public Texture getAvatarTexture() {
+        return avatarTexture;
     }
     public void incrementGamesPlayed() {
         this.gamesPlayed++;

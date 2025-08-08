@@ -832,4 +832,8 @@ public class Player implements Serializable {
         Player that = (Player) o;
         return getUsername().equals(that.getUsername());
     }
+
+    public User getUser() {
+        return user;
+    }
 }

@@ -145,34 +145,7 @@ public class Main extends Game {
                         ResultResponse res = (ResultResponse) object;
                         System.out.println("✅ Lobby response: " + res.message);
                     }
-                    else if (object instanceof TradeMessage) {
-                        TradeMessage msg = (TradeMessage) object;
 
-                        switch (msg.type) {
-                            case REQUEST:
-                                boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
-
-                                TradeMessage response = new TradeMessage();
-                                response.type = TradeMessage.MessageType.RESPONSE;
-                                response.fromPlayer = msg.toPlayer;
-                                response.toPlayer = msg.fromPlayer;
-                                response.accepted = accepted;
-
-                                GameClient.client.sendTCP(response);
-                                break;
-
-                            case REJECTED:
-                                Result result = new Result(false, "Your trade request was rejected :(");
-                                MyGame.getGameScreen().showResult = true;
-                                MyGame.getGameScreen().latestResult = result;
-                                break;
-
-                            case START:
-                                // Optional: handle trade start
-                                break;
-                        }
-
-                    }
                 }
             });
         }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import org.example.Common.Network.SimplePlayer;
 import org.example.Server.controllers.GameMenuController;
 import org.example.Common.Player;
 import org.example.Server.models.Result;
@@ -58,9 +59,9 @@ public class GameMenu implements Screen {
         }
 
         table.add(addPlayersBtn).colspan(2).pad(5).row();
-        table.add(startGameBtn).colspan(2).pad(5).row();
+        table.add(startGameBtn).colspan(2).pad(5);
         table.add(loadGameBtn).colspan(2).pad(5).row();
-        table.add(deleteGameBtn).colspan(2).pad(5).row();
+        table.add(deleteGameBtn).colspan(2).pad(5);
         table.add(exitGameBtn).colspan(2).pad(5).row();
         table.add(resultLabel).colspan(2).pad(5).width(400).row();
 

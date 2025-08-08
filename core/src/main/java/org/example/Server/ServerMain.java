@@ -34,7 +34,7 @@ import java.util.TimerTask;
 
 public class ServerMain {
     public static ServerGameState gameState = new ServerGameState();
-    private static final Map<String, Connection> playerConnections = new HashMap<>();
+    private static final Map<Player, Connection> playerConnections = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
         Server server = new Server();
@@ -99,6 +99,7 @@ public class ServerMain {
         kryo.register(MarriageProposalReceived.class);
         kryo.register(MarriageProposalResponse.class);
         kryo.register(MarriageProposalResult.class);
+        kryo.register(OnlinePlayerPacket.class);
 
 
         server.addListener(new Listener() {
@@ -154,8 +155,10 @@ public class ServerMain {
                 else if (object instanceof LoginPacket) {
                     LoginPacket login = (LoginPacket) object;
                     System.out.println("Registered player connection: " + login.username);
-                    registerPlayerConnection(login.username, c);
+                    registerPlayerConnection(login.player, c);
+                    broadcastOnlinePlayers();
                 }
+
                 else if (object instanceof ChatMessage) {
                     ChatMessage chat = (ChatMessage) object;
                     if (chat.receiver != null && !chat.receiver.isBlank()) {
@@ -202,10 +205,28 @@ public class ServerMain {
                 }
             }
 
-                private Connection getConnectionByName(String playerName) {
-                    return playerConnections.get(playerName);
+            private Connection getConnectionByName(String playerName) {
+                return playerConnections.get(playerName);
+            }
+            private String getUsernameFromConnection(Connection connection) {
+                for(Map.Entry<Player, Connection> entry : playerConnections.entrySet()) {
+                    if (entry.getValue() == connection) {
+                        return entry.getKey().getUsername();
+                    }
                 }
-            });
+                return "";
+            }
+
+            @Override
+            public void disconnected(Connection connection) {
+                String username = getUsernameFromConnection(connection);
+                if (username != null) {
+                    playerConnections.remove(username);
+                    broadcastOnlinePlayers();
+                }
+            }
+
+        });
         LobbyServerHandler lobbyHandler = new LobbyServerHandler(server);
         server.addListener(lobbyHandler);
         new java.util.Timer().schedule(new TimerTask() {
@@ -217,12 +238,21 @@ public class ServerMain {
 
         System.out.println("Server started on port 54555!");
     }
-    public static void registerPlayerConnection(String username, Connection connection) {
-        playerConnections.put(username, connection);
+    public static void registerPlayerConnection(Player player, Connection connection) {
+        playerConnections.put(player, connection);
     }
 
     public static Connection getConnectionByUsername(String username) {
         return playerConnections.get(username);
     }
+    public static void broadcastOnlinePlayers() {
+        OnlinePlayerPacket packet = new OnlinePlayerPacket();
+        packet.players = new ArrayList<>(playerConnections.keySet());
+        for (Connection c : playerConnections.values()) {
+            c.sendTCP(packet);
+        }
+    }
+
+
 
 }

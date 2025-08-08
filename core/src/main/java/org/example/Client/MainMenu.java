@@ -4,26 +4,36 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import org.example.Common.Player;
 import org.example.Server.controllers.RegisterMenuController;
 import org.example.Common.User;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainMenu implements Screen {
     private final Stage stage;
     private final Skin skin;
     private Texture avatarTexture;
+    private static final List<Player> onlinePlayers = new ArrayList<>();
+    private TextButton onlineButton;
+    private TextButton scoreboardButton;
 
     public MainMenu(Skin skin) {
         this.skin = skin;
         this.stage = new Stage(new ScreenViewport());
+        onlineButton = new TextButton("Online Players", skin);
+        scoreboardButton = new TextButton("Scoreboard", skin);
     }
 
     @Override
@@ -55,22 +65,36 @@ public class MainMenu implements Screen {
         TextButton logoutButton = new TextButton("Logout", skin);
         TextButton exitButton = new TextButton("Exit", skin);
 
-        table.add(avatarImage).size(80, 80).padBottom(10).row();
-        table.add(nicknameLabel).padBottom(20).row();
-        table.add(title).padBottom(20).row();
-        table.add(profileButton).pad(5).width(200).row();
-        table.add(gameButton).pad(5).width(200).row();
-        table.add(lobbyButton).pad(5).width(200).row();
-        table.add(avatarButton).pad(5).width(200).row();
-        table.add(logoutButton).padTop(15).width(200).row();
-        table.add(exitButton).padTop(10).width(200).row();
+        table.add(avatarImage).size(80, 80).padBottom(12).colspan(2).row();
+        table.add(nicknameLabel).padBottom(8).colspan(2).row();
+        table.add(title).padBottom(18).colspan(2).row();
+
+        table.add(profileButton).pad(5).width(300);
+        table.add(gameButton).pad(5).width(300).row();
+
+        table.add(onlineButton).pad(5).width(300);
+        table.add(lobbyButton).pad(5).width(300).row();
+
+        table.add(scoreboardButton).pad(5).width(300);
+        table.add(avatarButton).pad(5).width(300).colspan(2).row();
+
+        table.add(logoutButton).padTop(15).width(300);
+        table.add(exitButton).padTop(15).width(300).row();
 
         stage.clear();
         stage.addActor(table);
 
+
+
         profileButton.addListener(new ChangeListener() {
             @Override public void changed(ChangeEvent event, Actor actor) {
                 MenuNavigator.showProfileMenu();
+            }
+        });
+
+        scoreboardButton.addListener(new ChangeListener() {
+            @Override public void changed(ChangeEvent event, Actor actor) {
+                stage.addActor(new ScoreboardView()); //change this
             }
         });
 
@@ -83,6 +107,12 @@ public class MainMenu implements Screen {
         avatarButton.addListener(new ChangeListener() {
             @Override public void changed(ChangeEvent event, Actor actor) {
 //                MenuNavigator.showAvatarMenu();
+            }
+        });
+
+        onlineButton.addListener(new ChangeListener() {
+            @Override public void changed(ChangeEvent event, Actor actor) {
+                showOnlinePlayers();
             }
         });
 
@@ -131,6 +161,48 @@ public class MainMenu implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();
+    }
+
+    private void showOnlinePlayers() {
+        Dialog dialog = new Dialog("Online Players", skin);
+        Table content = new Table();
+        content.pad(10).top().left();
+
+        if (onlinePlayers.isEmpty()) {
+            content.add(new Label("No players online.", skin));
+        } else {
+            for (Player player : onlinePlayers) {
+                Table row = new Table();
+
+                Image avatar = new Image(player.getUser().getAvatarTexture());
+                avatar.setSize(32, 32);
+
+                Label nameLabel = new Label(player.getUsername(), skin);
+               // String lobbyName = (player.getLobby() != null) ? player.getLobby().getName() : "No Lobby";
+               // Label lobbyLabel = new Label("Lobby: " + lobbyName, skin);
+
+                row.add(avatar).size(32).padRight(10);
+                row.add(nameLabel).padRight(10);
+               // row.add(lobbyLabel).left();
+
+                content.add(row).left().row();
+            }
+        }
+
+        ScrollPane scrollPane = new ScrollPane(content, skin);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollingDisabled(true, false);
+        scrollPane.setScrollbarsOnTop(true);
+        scrollPane.setScrollbarsVisible(true);
+
+        dialog.getContentTable().add(scrollPane).width(400).height(300);
+        dialog.button("Close");
+        dialog.show(stage);
+    }
+
+    public static void updateOnlinePlayers(List<Player> players) {
+        onlinePlayers.clear();
+        onlinePlayers.addAll(players);
     }
 
     @Override public void resize(int width, int height) { stage.getViewport().update(width, height, true); }

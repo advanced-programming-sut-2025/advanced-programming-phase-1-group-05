@@ -17,6 +17,7 @@ import org.example.Common.Player;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
 import org.example.Main;
+import org.example.Server.OnlinePlayerPacket;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalReceived;
@@ -27,6 +28,7 @@ import org.example.Server.Packets.MovePacket;
 import org.example.Server.Packets.PositionUpdate;
 import org.example.Server.Packets.PurchaseRequest;
 import org.example.Server.Packets.StoreUpdatePacket;
+import org.example.Server.controllers.TradingController;
 import org.example.Server.models.MyGame;
 import org.example.Server.models.Result;
 import org.example.Server.models.Store;
@@ -180,7 +182,11 @@ public class ClientNetworkManager {
                         }
 
                         case START: {
-                            //  MyGame.getGameScreen().startTradingWith(msg.toPlayer.getUsername());
+                            boolean initiator = false;
+                            if(msg.fromPlayer != null && msg.fromPlayer == MyGame.getCurrentPlayer())  {
+                                initiator = true;
+                            }
+                            Main.getMain().setScreen(new TradeScreen(msg.fromPlayer, msg.toPlayer, initiator, new TradingController()));
                             break;
                         }
 
@@ -202,6 +208,11 @@ public class ClientNetworkManager {
                             Main.getMain().setScreen(MyGame.getGameScreen());
                         }
                     }
+                } else if (object instanceof OnlinePlayerPacket) {
+                    OnlinePlayerPacket packet = (OnlinePlayerPacket) object;
+                    Gdx.app.postRunnable(() -> {
+                        MainMenu.updateOnlinePlayers(packet.players);
+                    });
                 }
             }
         });

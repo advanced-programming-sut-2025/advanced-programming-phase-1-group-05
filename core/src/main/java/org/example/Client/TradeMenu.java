@@ -26,13 +26,14 @@ public class TradeMenu extends Table {
 
     private final TradingController tradingController;
     private final MenuController menuController;
+    private final ClientNetworkManager clientNetworkManager;
     private final Label tradingMenuLabel, startTradingLabel, tradeHistoryLabel, closeLabel;
 
     public TradeMenu(TradingController tradingController, MenuController menuController, Skin skin) {
         super(skin);
         this.tradingController = tradingController;
         this.menuController = menuController;
-
+        this.clientNetworkManager = Main.getMain().getNetworkManager();
         Texture bgTexture = new Texture(Gdx.files.internal("Animals/MenuBackground2.png"));
         Drawable background = new TextureRegionDrawable(new TextureRegion(bgTexture));
         this.setBackground(background);
@@ -87,7 +88,7 @@ public class TradeMenu extends Table {
                         }
                         msg.toPlayer = otherPlayer;
 
-                        Main.getMain().gameClient.sendTradeRequest(msg); //idk?
+                        clientNetworkManager.sendTradeRequest(msg);//idk?
 
                     }
                 });

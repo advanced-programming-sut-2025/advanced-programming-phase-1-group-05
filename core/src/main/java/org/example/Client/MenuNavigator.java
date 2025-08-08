@@ -56,6 +56,10 @@ public class MenuNavigator {
         game.setScreen(gameScreen);
     }
 
+//    public static void showScoreboard() {
+//        ScoreboardView scoreboardView = new ScoreboardView();
+//        game.setScreen(scoreboardView);
+//    }
     public static void showGameMenu() {
         if (Main.getMain().networkManager == null || Main.currentUser == null) {
             System.out.println("⚠️ Cannot open GameMenu: user or network not initialized.");
