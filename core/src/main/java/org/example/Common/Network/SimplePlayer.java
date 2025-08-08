@@ -6,12 +6,14 @@ import java.io.Serializable;
 public class SimplePlayer implements Serializable {
     public String username;
     public String nickname;
+    Player player;
 
     public SimplePlayer() {}
 
     public SimplePlayer(Player player) {
         this.username = player.getUsername();
         this.nickname = player.getName();
+        this.player = player;
     }
 
     @Override
@@ -27,4 +29,11 @@ public class SimplePlayer implements Serializable {
         return username.hashCode();
     }
 
+    public char[] getUsername() {
+        return username.toCharArray();
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
 }

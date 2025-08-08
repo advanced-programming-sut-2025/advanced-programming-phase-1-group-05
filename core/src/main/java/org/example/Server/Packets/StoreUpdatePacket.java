@@ -6,6 +6,6 @@ import org.example.Server.models.Store;
 import java.util.List;
 
 public class StoreUpdatePacket {
-    public Store store;
+    public String storeName;
     public List<Product> products;
 }

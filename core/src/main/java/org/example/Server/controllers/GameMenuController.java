@@ -141,6 +141,16 @@ public class GameMenuController extends MenuController {
         return new Result(true, "** your energy got increased by " + value + " **");
     }
 
+    public Result petAnimal(Animal animal) {
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        if (Math.abs(animal.getX() - currentPlayer.getXX()) > 100 ||
+            Math.abs(animal.getY() - currentPlayer.getYY()) > 100) {
+            return Result.error("You need to get closer to the animal.");
+        }
+        animal.adjustFriendshipPoints(15);
+        animal.setPetToday(true);
+        return Result.success("You gently pet "+ animal.getName() +". It seems happy and lets out a content sound.");
+    }
     public Result feedHay(Animal animal) {
         Player player = MyGame.getCurrentPlayer();
         Item hay = MyGame.getDatabase().getItem("Hay");
@@ -711,86 +721,86 @@ public class GameMenuController extends MenuController {
     }
 
     //todo : lobby
-    public List<Lobby> getActiveLobbies() {
-//        if (connection != null) {
-//            Object response = connection.sendAndReceive(new GetLobbiesRequest());
-//            if (response instanceof LobbyListResponse) {
-//                LobbyListResponse res = (LobbyListResponse) response;
-//                return res.lobbies;
-//            }
-//            return new ArrayList<>();
-//        }
-//        return LobbyManager.getActiveLobbies();
-        return new ArrayList<>();
-    }
-
+//    public List<Lobby> getActiveLobbies() {
+////        if (connection != null) {
+////            Object response = connection.sendAndReceive(new GetLobbiesRequest());
+////            if (response instanceof LobbyListResponse) {
+////                LobbyListResponse res = (LobbyListResponse) response;
+////                return res.lobbies;
+////            }
+////            return new ArrayList<>();
+////        }
+////        return LobbyManager.getActiveLobbies();
+//        return new ArrayList<>();
+//    }
+//
+////    public Lobby createLobby(String name, boolean isPrivate, String password, boolean isVisible, Player creator) {
+////        if (connection != null) {
+//////            Object response = connection.sendAndReceive(new CreateLobbyRequest(name, isPrivate, password, isVisible, creator));
+//////            return new Lobby(name, isPrivate, password, isVisible, creator); // locally return for UI update
+////        }
+////        return LobbyManager.createLobby(name, isPrivate, password, isVisible, creator);
+////    }
 //    public Lobby createLobby(String name, boolean isPrivate, String password, boolean isVisible, Player creator) {
-//        if (connection != null) {
+////        if (connection != null) {
 ////            Object response = connection.sendAndReceive(new CreateLobbyRequest(name, isPrivate, password, isVisible, creator));
 ////            return new Lobby(name, isPrivate, password, isVisible, creator); // locally return for UI update
-//        }
-//        return LobbyManager.createLobby(name, isPrivate, password, isVisible, creator);
+////        }
+////        return LobbyManager.createLobby(name, isPrivate, password, isVisible, creator);
+//        return new Lobby(name, isPrivate, password, isVisible, creator);
 //    }
-    public Lobby createLobby(String name, boolean isPrivate, String password, boolean isVisible, Player creator) {
-//        if (connection != null) {
-//            Object response = connection.sendAndReceive(new CreateLobbyRequest(name, isPrivate, password, isVisible, creator));
-//            return new Lobby(name, isPrivate, password, isVisible, creator); // locally return for UI update
-//        }
-//        return LobbyManager.createLobby(name, isPrivate, password, isVisible, creator);
-        return new Lobby(name, isPrivate, password, isVisible, creator);
-    }
-
+//
+////    public boolean joinLobby(String lobbyId, Player player, String password) {
+////        if (connection != null) {
+//////            Object response = connection.sendAndReceive(new JoinLobbyRequest(lobbyId, player, password));
+//////            if (response instanceof ResultResponse) {
+//////                ResultResponse res = (ResultResponse) response;
+//////                return res.success;
+//////            }
+////            return false;
+////        }
+////        return LobbyManager.joinLobby(lobbyId, player, password);
+////    }
 //    public boolean joinLobby(String lobbyId, Player player, String password) {
-//        if (connection != null) {
+////        if (connection != null) {
 ////            Object response = connection.sendAndReceive(new JoinLobbyRequest(lobbyId, player, password));
 ////            if (response instanceof ResultResponse) {
 ////                ResultResponse res = (ResultResponse) response;
 ////                return res.success;
 ////            }
-//            return false;
-//        }
-//        return LobbyManager.joinLobby(lobbyId, player, password);
+////            return false;
+////        }
+////        return LobbyManager.joinLobby(lobbyId, player, password);
+//        return true;
 //    }
-    public boolean joinLobby(String lobbyId, Player player, String password) {
-//        if (connection != null) {
-//            Object response = connection.sendAndReceive(new JoinLobbyRequest(lobbyId, player, password));
-//            if (response instanceof ResultResponse) {
-//                ResultResponse res = (ResultResponse) response;
-//                return res.success;
-//            }
-//            return false;
-//        }
-//        return LobbyManager.joinLobby(lobbyId, player, password);
-        return true;
-    }
-
+//
+////    public void leaveLobby(Player player) {
+////        if (connection != null) {
+//////            connection.sendAndReceive(new LeaveLobbyRequest(player));
+////        } else {
+////            LobbyManager.leaveLobby(player);
+////        }
+////    }
 //    public void leaveLobby(Player player) {
 //        if (connection != null) {
-////            connection.sendAndReceive(new LeaveLobbyRequest(player));
+//            //connection.sendAndReceive(new LeaveLobbyRequest(player));
 //        } else {
 //            LobbyManager.leaveLobby(player);
 //        }
 //    }
-    public void leaveLobby(Player player) {
-        if (connection != null) {
-            //connection.sendAndReceive(new LeaveLobbyRequest(player));
-        } else {
-            LobbyManager.leaveLobby(player);
-        }
-    }
+//
+//    public Lobby getCurrentLobbyFor(Player player) {
+//        for (Lobby lobby : getActiveLobbies()) {
+//            if (lobby.getPlayers().contains(player)) {
+//                return lobby;
+//            }
+//        }
+//        return null;
+//    }
 
-    public Lobby getCurrentLobbyFor(Player player) {
-        for (Lobby lobby : getActiveLobbies()) {
-            if (lobby.getPlayers().contains(player)) {
-                return lobby;
-            }
-        }
-        return null;
-    }
-
-    public Lobby getCurrentLobby() {
-        return getCurrentLobbyFor(new Player(currentUser));
-    }
+//    public Lobby getCurrentLobby() {
+//        return getCurrentLobbyFor(new Player(currentUser));
+//    }
 
     public Item getItemByName(String itemName) {
         StringBuilder sb = new StringBuilder();

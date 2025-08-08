@@ -15,6 +15,8 @@ import org.example.Common.Network.*;
 import org.example.Common.Player;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
+import org.example.Server.Packets.EmotePackets.EmoteMessage;
+import org.example.Server.Packets.EmotePackets.TextMessage;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalReceived;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalRequest;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
@@ -23,6 +25,7 @@ import org.example.Server.Packets.MovePacket;
 import org.example.Server.Packets.PositionUpdate;
 import org.example.Server.Packets.PurchaseRequest;
 import org.example.Server.Packets.StoreUpdatePacket;
+import org.example.Server.models.MyGame;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,7 +93,6 @@ public class ServerMain {
         kryo.register(org.example.Server.models.TileMapRenderer.class);
         kryo.register(org.example.Server.models.Tree.class);
         kryo.register(org.example.Server.models.UserDatabase.class);
-
         kryo.register(StoreUpdatePacket.class);
         kryo.register(PurchaseRequest.class);
         kryo.register(MarriageProposalRequest.class);
@@ -144,7 +146,7 @@ public class ServerMain {
                         for (Map.Entry<Product, Integer> entry : request.items.entrySet()) {
                             updatePacket.products.add(entry.getKey());
                         }
-                        updatePacket.store = request.store;
+                        updatePacket.storeName = request.storeName;
 
                         server.sendToAllTCP(updatePacket);
                     }
@@ -167,13 +169,25 @@ public class ServerMain {
                         server.sendToAllTCP(chat);
                     }
                 }
+                else if (object instanceof EmoteMessage) {
+                    EmoteMessage msg = (EmoteMessage) object;
+                    for (Connection connection : server.getConnections()) {
+                        connection.sendTCP(msg);
+                    }
+                }
+                else if (object instanceof TextMessage) {
+                    TextMessage message = (TextMessage) object;
+                    for (Connection connection : server.getConnections()) {
+                        connection.sendTCP(message);
+                    }
+                }
                 else if (object instanceof MarriageProposalRequest) {
                     MarriageProposalRequest request = (MarriageProposalRequest) object;
                     MarriageProposalReceived msg = new MarriageProposalReceived();
                     msg.fromPlayer = request.fromPlayer;
                     server.sendToTCP(playerConnections.get(request.toPlayer.getUsername()).getID(), msg);
                 }
-                else if (object instanceof  MarriageProposalResponse) {
+                else if (object instanceof MarriageProposalResponse) {
                     MarriageProposalResponse response = (MarriageProposalResponse) object;
                     Player from = response.fromPlayer;
                     Player to = response.toPlayer;

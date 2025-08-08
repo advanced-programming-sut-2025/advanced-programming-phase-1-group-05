@@ -26,6 +26,8 @@ import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.*;
 import org.example.Common.Request.TradeMessage;
 import org.example.Main;
+import org.example.Server.Packets.EmotePackets.EmoteMessage;
+import org.example.Server.Packets.EmotePackets.TextMessage;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.controllers.*;
 import org.example.Server.models.*;
@@ -199,7 +201,7 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
         players = playerList;
         controller = new GameMenuController();
-        controller = new GameMenuController(Main.currentUser , Main.getMain().getNetworkManager());
+        //controller = new GameMenuController(Main.currentUser , Main.getMain().getNetworkManager());
         homeMenuController = new HomeMenuController();
         cheatCodeWindow = new CheatCodeWindow(camera, Gdx.input.getInputProcessor());
         shapeRenderer = new ShapeRenderer();
@@ -207,19 +209,17 @@ public class GameScreen implements Screen {
         mapRenderer = new TileMapRenderer();
         mapRenderer.setSeason(currentSeason);
 
-        Vector2 spawnPos = null;
         for (Player player : players) {
             String selectedMap = GameMenuController.getMapForPlayer(player.getUsername());
             Vector2 spawnPosition = getInitialPositionForMap(selectedMap);
-            if (players.indexOf(player) == 0) spawnPos = spawnPosition;
             player.setPosition(spawnPosition.x, spawnPosition.y);
 
 
         }
         initializeFarmArea();
         Player player = MyGame.getCurrentPlayer();
-        camera.position.set(spawnPos.x + player.getWidth() / 2f,
-            spawnPos.y + player.getHeight() / 2f, 0);
+        camera.position.set(player.getXX() + player.getWidth() / 2f,
+            player.getYY() + player.getHeight() / 2f, 0);
         camera.update();
 
 
@@ -345,8 +345,8 @@ public class GameScreen implements Screen {
         mapRenderer.render(batch, camera);
         for (Player player : players) {
             if (player.equals(playerA) || player.equals(playerB))
-                player.draw(batch, bounceOffset);
-            else player.draw(batch, 0);
+                player.draw(batch, bounceOffset, delta);
+            else player.draw(batch, 0, delta);
             for (AnimalHouse house : player.getCoopsAndBarns()) {
                 house.draw(batch);
             }
@@ -1691,12 +1691,6 @@ public class GameScreen implements Screen {
         uiStage.addActor(tradingButton);
 
         forceViewportReset();
-//        Player player = MyGame.getCurrentPlayer();
-//        AnimalHouse house  = new AnimalHouse(EnclosureType.COOP, AnimalHouseLevel.Big, 500, 500, GameAssetManager.getInstance().getItemTexture("Coop"));
-//        player.addAnimalHouse(house);
-//        Animal animal = new Animal("parastoo", AnimalType.CHICKEN, player);
-//        house.addAnimal(animal);
-//        addAnimalActor(new AnimalActor(animal));
 
     }
 
@@ -2548,6 +2542,7 @@ public class GameScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 latestResult = controller.feedHay(animalActor.getAnimal());
+                showResult = true;
                 feedAnimal(animalActor);
                 animalMenuTable.setVisible(false);
             }
@@ -2556,6 +2551,15 @@ public class GameScreen implements Screen {
         innerPanel.add(petButton).fillX();
         innerPanel.row();
         petButton.setColor(1, 210f / 255, 132f / 255, 1);
+        petButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                latestResult = controller.petAnimal(animal);
+                showResult = true;
+                animalActor.pet();
+                artisanMenuTable.setVisible(false);
+            }
+        });
         TextButton shepherdAnimal = new TextButton("shepherd " + name, skin);
         innerPanel.add(shepherdAnimal).fillX();
         innerPanel.row();
@@ -3191,21 +3195,6 @@ public class GameScreen implements Screen {
     }
 
     public void showProposalPopup(Player fromPlayer) {
-//        Dialog dialog = new Dialog("Marriage Proposal", skin);
-//        dialog.text(fromPlayer + " wants to marry you 💍");
-//
-//        dialog.button("Accept", true);
-//        dialog.button("Reject", false);
-//
-//        dialog.show(stage);
-//        dialog.setResultListener(result -> {
-//            MarriageProposalResponse resp = new MarriageProposalResponse();
-//            resp.fromPlayer = MyGame.getCurrentPlayer().getUsername();
-//            resp.toPlayer = fromPlayer;
-//            resp.accepted = (Boolean) result;
-//            MyGame.getClient().sendTCP(resp);
-//        });
-
         Dialog dialog = new Dialog("Marriage Proposal", skin) {
             @Override
             protected void result(Object object) {
@@ -3222,6 +3211,74 @@ public class GameScreen implements Screen {
         dialog.button("Accept", true);
         dialog.button("Reject", false);
         dialog.show(stage);
+    }
+
+
+    public void showEmoteMenu() {
+        Table emoteMenu = new Table();
+        final TextField messageField = new TextField("", skin);
+        messageField.setMessageText("Max 10 chars");
+
+        final Emote[] selectedEmote = {null};
+
+        for (Emote emote : Emote.values()) {
+            Texture tex = GameAssetManager.getInstance().getOrLoadTexture(emote.texturePath);
+            ImageButton btn = new ImageButton(new TextureRegionDrawable(new TextureRegion(tex)));
+
+            btn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    selectedEmote[0] = emote;
+                }
+            });
+
+            emoteMenu.add(btn).pad(5);
+        }
+        emoteMenu.row();
+
+        messageField.setMaxLength(10);
+        emoteMenu.add(messageField).colspan(Emote.values().length).pad(5).width(200);
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+        emoteMenu.row();
+        ImageButton closeButton = new ImageButton(closeDrawable);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                emoteMenu.setVisible(false);
+            }
+        });
+        emoteMenu.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
+
+        TextButton sendButton = new TextButton("Send", skin);
+        sendButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!messageField.getText().isEmpty() && messageField.getText().length() <= 10) {
+                    MyGame.getCurrentPlayer().triggerReaction(messageField.getText());
+                    TextMessage msg  = new TextMessage();
+                    msg.senderUsername = MyGame.getCurrentPlayer().getUsername();
+                    msg.text = messageField.getText();
+                    Main.getMain().getNetworkManager().getClient().sendTCP(msg);
+
+
+                    emoteMenu.setVisible(false);
+                }
+                else if (selectedEmote[0] != null) {
+                    MyGame.getCurrentPlayer().triggerReaction(selectedEmote[0]);
+                    EmoteMessage msg = new EmoteMessage();
+                    msg.senderUsername = MyGame.getCurrentPlayer().getUsername();
+                    msg.emoteName = selectedEmote[0].name();
+                    Main.getMain().getNetworkManager().getClient().sendTCP(msg);
+                    emoteMenu.setVisible(false);
+                }
+            }
+        });
+        emoteMenu.add(sendButton).colspan(Emote.values().length).pad(5);
+
+        stage.addActor(emoteMenu);
+
     }
 
 

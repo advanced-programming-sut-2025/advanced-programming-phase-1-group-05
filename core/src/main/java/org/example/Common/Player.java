@@ -1,13 +1,17 @@
 package org.example.Common;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import org.example.Client.GameAssetManager;
 import org.example.Common.Enums.*;
+import org.example.Common.Network.SimplePlayer;
 import org.example.Common.Tool.*;
 import org.example.Server.controllers.GameManager;
 import org.example.Server.models.*;
@@ -39,7 +43,6 @@ public class Player implements Serializable {
     private int proposalRejectionDaysLeft = 0;
     private Farm farm;
     private SharedWallet sharedWallet = null;
-    private Map.Entry<Integer, Integer> coordinates;
     private List<AnimalHouse> coopAndBarns = new ArrayList<>();
     private List<String> notifications = new ArrayList<>();
     private static int mapNum;
@@ -55,6 +58,12 @@ public class Player implements Serializable {
     private boolean buildGreenHouse = false;
     private int id;
     private Map<String, Trade> trades = new HashMap<>();
+
+    private float emoteTimer = 0;
+    private Emote currentEmote = null;
+    private String currentMessage = "";
+
+    private BitmapFont font;
 
 //    {
 ////        trades.put("Baran", new Trade(this, this, "hello", new BasicItem("hi", 2),
@@ -134,6 +143,10 @@ public class Player implements Serializable {
         }
 
         notifications.add("Have fun playing this game i'm just trying to see how the notification panel looks hahahaha long text ");
+        font = new BitmapFont();
+        font.setColor(Color.BLACK);
+        font.getData().setScale(2);
+
     }
     public Player() {
         this.energy = 200;
@@ -283,7 +296,7 @@ public class Player implements Serializable {
         Y = MathUtils.clamp(Y, minY, maxY);
     }
 
-    public void draw(SpriteBatch batch, float bounceOffset) {
+    public void draw(SpriteBatch batch, float bounceOffset, float delta) {
         TextureRegion frameToDraw;
 
         if(isFainting) {
@@ -350,6 +363,14 @@ public class Player implements Serializable {
             } else {
                 batch.draw(textureRegion, itemX, itemY, itemSize, itemSize);
             }
+        }
+        if (emoteTimer > 0) {
+            emoteTimer -= delta;
+            if (currentEmote != null)
+                batch.draw(GameAssetManager.getInstance().getOrLoadTexture(currentEmote.texturePath), getXX(), getYY() + getHeight());
+
+            if (!currentMessage.isEmpty())
+                font.draw(batch, currentMessage, getXX(), getYY() + getHeight() + 20);
         }
 
     }
@@ -790,5 +811,25 @@ public class Player implements Serializable {
     }
     public Map<String,Trade> getTrades() {
         return trades;
+    }
+
+    public void triggerReaction(Emote emote) {
+        currentMessage = "";
+        this.currentEmote = emote;
+        this.emoteTimer = 5f;
+    }
+
+    public void triggerReaction(String currentMessage) {
+        currentEmote = null;
+        this.currentMessage = currentMessage;
+        this.emoteTimer = 5f;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player that = (Player) o;
+        return getUsername().equals(that.getUsername());
     }
 }

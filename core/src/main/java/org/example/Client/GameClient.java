@@ -95,11 +95,20 @@
 
 package org.example.Client;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
 import org.example.Common.DataTransferObjects.ChatMessage;
+import org.example.Common.DataTransferObjects.PlayerUpdate;
+import org.example.Common.Request.TradeMessage;
+import org.example.Server.models.MyGame;
+import org.example.Server.models.Result;
+
+import java.io.IOException;
 
 public class GameClient {
-    static Client client;
+    public static Client client;
     public static void main(String[] args) throws IOException {
         client = new Client();
         client.start();
@@ -107,7 +116,7 @@ public class GameClient {
         Kryo kryo = client.getKryo();
         kryo.register(PlayerUpdate.class);
         kryo.register(TradeMessage.class);
-        kryo.register(MessageType.class);
+        kryo.register(TradeMessage.MessageType.class);
 
         client.connect(5000, "192.168.1.52", 54555, 54777);  // change "localhost" to your server's IP if on LAN
 
@@ -125,7 +134,7 @@ public class GameClient {
                         boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
 
                         TradeMessage response = new TradeMessage();
-                        response.type = MessageType.RESPONSE;
+                        response.type = TradeMessage.MessageType.RESPONSE;
                         response.fromPlayer = msg.toPlayer;
                         response.toPlayer = msg.fromPlayer;
                         response.accepted = accepted;
@@ -135,7 +144,7 @@ public class GameClient {
                     }
 
                     case START: {
-                      //  MyGame.getGameScreen().startTradingWith(msg.toPlayer.getUsername());
+                        //  MyGame.getGameScreen().startTradingWith(msg.toPlayer.getUsername());
                         break;
                     }
 
@@ -148,9 +157,7 @@ public class GameClient {
                 }
             }
         });
-
-    public static Client client;
-
+    }
     public void sendTradeRequest(org.example.Common.Request.TradeMessage msg) {
         if (client != null) {
             client.sendTCP(msg);

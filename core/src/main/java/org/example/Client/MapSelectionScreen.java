@@ -102,8 +102,8 @@ public class MapSelectionScreen implements Screen {
                     }
                     DBController.saveGameState();
                     resultLabel.setText("Game started!");
-                    //MenuNavigator.showGameScreen();
-                    MyGame.setCurrentPlayer(players.get(0));
+//                    //MenuNavigator.showGameScreen();
+//                    MyGame.setCurrentPlayer(players.get(0));
                    MenuNavigator.showGameScreen(players);
                     //Main.getMain().setScreen(new TradeScreen(MyGame.getCurrentPlayer(), MyGame.getCurrentPlayer(), true, new TradingController()));
                 }
