@@ -106,7 +106,11 @@ public class ServerMain {
                     for (SimplePlayer player : msg.players) {
                         Connection playerConn = playerConnections.get(player.getUsername());
                         if (playerConn != null) {
-                            playerConn.sendTCP(new StartGamePacket());
+                            StartGamePacket packet = new StartGamePacket();
+                            packet.lobbyId = msg.lobbyId;
+                            packet.players = new ArrayList<>();
+                            packet.players.addAll(msg.players);
+                            playerConn.sendTCP(packet);
                         }
                     }
                 }

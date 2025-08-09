@@ -197,7 +197,7 @@ public class LobbyMenu implements Screen {
                         msg.players = new ArrayList<>();
                         msg.players.addAll(lobby.getPlayers());
                         msg.lobbyId = lobby.getId();
-                        startTheGame(lobby);
+                        startTheGame(lobby.getPlayers());
                         GameClient.client.sendTCP(msg);
                     }
                 });
@@ -244,9 +244,9 @@ public class LobbyMenu implements Screen {
     @Override public void hide() {}
     @Override public void dispose() { stage.dispose(); }
 
-    public void startTheGame(Lobby lobby) {
+    public void startTheGame(List<SimplePlayer> simplePlayers) {
         List<Player> players = new ArrayList<>();
-        for(SimplePlayer simplePlayer : lobby.getPlayers()) {
+        for(SimplePlayer simplePlayer : simplePlayers) {
             players.add(new Player(simplePlayer));
         }
         MyGame.addPlayers(players);

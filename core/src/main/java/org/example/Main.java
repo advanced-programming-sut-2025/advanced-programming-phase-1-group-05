@@ -248,7 +248,8 @@ public class Main extends Game {
                     StartGamePacket startGamePacket = (StartGamePacket) object;
                     Gdx.app.postRunnable(() -> {
                         Lobby lobby = LobbyManager.getLobbyByID(startGamePacket.lobbyId);
-                        MenuNavigator.getLobbyMenu().startTheGame(lobby);
+                        System.out.println(startGamePacket.lobbyId);
+                        MenuNavigator.getLobbyMenu().startTheGame(startGamePacket.players);
                         Main.getMain().setScreen(new GameScreen(MyGame.getAllPlayers()));
                     });
                 }

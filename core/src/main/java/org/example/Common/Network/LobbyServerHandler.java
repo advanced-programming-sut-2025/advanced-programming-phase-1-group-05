@@ -28,7 +28,6 @@ public class LobbyServerHandler extends Listener {
             lobbyCreationTimestamps.put(lobby.getId(), System.currentTimeMillis());
 
             System.out.println("✅ Lobby created: " + lobby.getId());
-            System.out.println( "is private : " + lobby.isPrivate());
             c.sendTCP(new ResultResponse(true, "Lobby created with ID: " + lobby.getId()));
 
             broadcastLobbyList();

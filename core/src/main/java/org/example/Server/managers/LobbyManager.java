@@ -16,6 +16,7 @@ public class LobbyManager {
         Iterator<Lobby> iterator = activeLobbies.iterator();
         while (iterator.hasNext()) {
             if (iterator.next().isEmpty()) {
+                System.out.println("removed " +iterator.next().getId());
                 iterator.remove();
             }
         }
@@ -25,6 +26,11 @@ public class LobbyManager {
     public static synchronized Lobby createLobby(String name, boolean isPrivate, String password, boolean visible, SimplePlayer creator) {
         Lobby lobby = new Lobby(name, isPrivate, password, visible, creator);
         activeLobbies.add(lobby);
+        System.out.println("lobby added");
+
+        for (Lobby lobby1 : activeLobbies) {
+            System.out.println(lobby1.getId());
+        }
         return lobby;
     }
 
@@ -50,6 +56,7 @@ public class LobbyManager {
 
     public static synchronized Lobby getLobbyByID(String id) {
         for (Lobby lobby : activeLobbies) {
+            System.out.println(lobby.getId());
             if (lobby.getId().equals(id))
                 return lobby;
         }
