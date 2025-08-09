@@ -16,6 +16,7 @@ import org.example.Common.Network.*;
 import org.example.Common.Player;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
+import org.example.Common.Trade;
 import org.example.Main;
 import org.example.Server.OnlinePlayerPacket;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
@@ -186,7 +187,7 @@ public class ClientNetworkManager {
                             if(msg.fromPlayer != null && msg.fromPlayer == MyGame.getCurrentPlayer())  {
                                 initiator = true;
                             }
-                            Main.getMain().setScreen(new TradeScreen(msg.fromPlayer, msg.toPlayer, initiator, new TradingController()));
+                            Main.getMain().setScreen(new TradeScreen(msg.fromPlayer, msg.toPlayer, initiator, MyGame.getTradingController()));
                             break;
                         }
 
@@ -197,15 +198,29 @@ public class ClientNetworkManager {
                             break;
                         }
                         case UPDATE: {
-                            //updateOfferSlot(msg.fromPlayer, msg.offerItem);
-                            //updateRequestSlot(msg.fromPlayer, msg.requestItem);
+                            Gdx.app.postRunnable(() -> {
+                                TradingController controller = MyGame.getTradingController();
+                                controller.updateOfferSlot(msg.trade);
+                                controller.updateRequestSlot(msg.trade);
+                            });
+                            break;
 
                         }
                         case ACCEPT:{
-                            // TODO implement
+                            Gdx.app.postRunnable(() -> {
+                                Trade trade = msg.trade;
+                                MyGame.getTradingController()
+                                    .completeTrade(msg.fromPlayer, msg.toPlayer, "type", trade.getItem(),
+                                        trade.getAmount(), trade.getTargetItem(), trade.getTargetAmount());
+                            });
+                        break;
                         }
                         case DECLINE: {
-                            Main.getMain().setScreen(MyGame.getGameScreen());
+                            Gdx.app.postRunnable(() -> {
+                                //MyGame.getTradingController().rejectTrade(msg.fromPlayer, msg.toPlayer);
+                                Main.getMain().setScreen(MyGame.getGameScreen());
+                            });
+                            break;
                         }
                     }
                 } else if (object instanceof OnlinePlayerPacket) {

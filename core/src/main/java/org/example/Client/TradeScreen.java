@@ -53,6 +53,7 @@ public class TradeScreen implements Screen {
         this.toPlayer = toPlayer;
         this.isInitiator = isInitiator;
         this.controller = controller;
+        this.controller.setTradeScreen(this);
 
         this.stage = new Stage(new ScreenViewport());
         this.skin = GameAssetManager.getSkin();
@@ -161,7 +162,7 @@ public class TradeScreen implements Screen {
         });
     }
 
-    private void updateSlotFromText(String input, Image itemImage, boolean isOffer) {
+    public void updateSlotFromText(String input, Image itemImage, boolean isOffer) {
         if (input == null || input.isEmpty()) {
             itemImage.setDrawable(null);
             if (isOffer) {

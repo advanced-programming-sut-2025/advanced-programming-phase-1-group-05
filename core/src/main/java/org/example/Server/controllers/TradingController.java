@@ -1,5 +1,6 @@
 package org.example.Server.controllers;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import org.example.Client.ClientNetworkManager;
 import org.example.Client.TradeScreen;
 import org.example.Common.Item;
@@ -226,8 +227,18 @@ public class TradingController {
     }
 
     private void updateInventory(Item itemToRemove, int itemToRemoveAmount, Item itemToAdd, int itemToAddAmount) {
-       if(itemToAdd == null || itemToRemove == null) return; //TODO implement
+        if(itemToAdd == null || itemToRemove == null) return; //TODO implement
         MyGame.getCurrentPlayer().getBackPack().addToInventory(itemToAdd, itemToAddAmount);
         MyGame.getCurrentPlayer().getBackPack().removeFromInventory(itemToRemove, itemToRemoveAmount);
+    }
+
+    public void updateOfferSlot(Trade trade) {
+        Image itemImage = new Image(trade.getItem().getTexture());
+        tradeScreen.updateSlotFromText(trade.getItem().getName(), itemImage, true);
+    }
+
+    public void updateRequestSlot(Trade trade) {
+        Image itemImage = new Image(trade.getTargetItem().getTexture());
+        tradeScreen.updateSlotFromText(trade.getTargetItem().getName(), itemImage, false);
     }
 }

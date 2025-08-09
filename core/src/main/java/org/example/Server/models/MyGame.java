@@ -5,6 +5,7 @@ import org.example.Server.controllers.GameManager;
 import org.example.Common.Enums.Season;
 import org.example.Common.Enums.Weather;
 import org.example.Client.GameScreen;
+import org.example.Server.controllers.TradingController;
 
 import java.io.Serializable;
 import java.util.*;
@@ -24,8 +25,12 @@ public class MyGame implements Serializable {
     private static GameScreen gameScreen;
 //    public static boolean greenHouseBuilt = false;
     public static Map<Player, Item> soldItems = new HashMap<>();
+    private static TradingController tradingController = new TradingController();
 
     // TODO make the game methods nonstatic
+    public static TradingController getTradingController() {
+        return tradingController;
+    }
     public static Player getCurrentPlayer() {
         return currentPlayer;
     }
