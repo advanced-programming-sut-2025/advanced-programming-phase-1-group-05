@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PurchaseRequest {
-    public Store store;
+    public String storeName;
     public Player player;
     public Map<Product, Integer> items;
 }

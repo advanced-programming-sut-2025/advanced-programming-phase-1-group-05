@@ -14,13 +14,13 @@ public class AnimalActor extends Actor {
     private AnimalAnimations animations;
     private float stateTime = 0f;
     private final Animal animal;
+    private boolean isBeingPetted = false;
+    private float pettingTimer = 0f;
+    private final float PETTING_DURATION = 5f;
+    private boolean showHeart = false;
 
     public AnimalActor(Animal animal) {
         this.animal = animal;
- //      Texture tex = GameAssetManager.;
-//
-//        setSize(npcTexture.getWidth() * 4f, npcTexture.getHeight() * 4f);
-//        currentFrame = new TextureRegion(npcTexture);
         System.out.println(animal.getX() + ", " + animal.getY());
         setPosition(animal.getX(), animal.getY());
         setSize(64, 64);
@@ -53,6 +53,13 @@ public class AnimalActor extends Actor {
         if (currentAnimation != null) {
             stateTime += delta;
         }
+        if (isBeingPetted) {
+            pettingTimer -= delta;
+            if (pettingTimer <= 0) {
+                isBeingPetted = false;
+                showHeart = false;
+            }
+        }
     }
     @Override
     public void draw(Batch batch, float parentAlpha) {
@@ -62,9 +69,15 @@ public class AnimalActor extends Actor {
             TextureRegion frame = currentAnimation.getKeyFrame(stateTime, true);
             batch.draw(frame, getX(), getY(), getWidth(), getHeight());
         }
-       // System.out.println("drawing" + animal.getName() + " on (" +getX() + ", " + getY() + ")");
     }
     public Animal getAnimal() {
         return animal;
+    }
+
+    public void pet() {
+        isBeingPetted = true;
+        pettingTimer = PETTING_DURATION;
+        showHeart = true;
+        currentAnimation = animations.pet;
     }
 }

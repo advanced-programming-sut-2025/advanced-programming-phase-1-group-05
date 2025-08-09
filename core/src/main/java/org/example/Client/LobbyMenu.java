@@ -4,15 +4,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Common.Network.*;
 import org.example.Common.Lobby;
+import org.example.Common.Player;
 import org.example.Main;
+import org.example.Server.Packets.StartGamePacket;
+import org.example.Server.ServerMain;
 import org.example.Server.models.MyGame;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LobbyMenu implements Screen {
@@ -174,6 +180,20 @@ public class LobbyMenu implements Screen {
                 }
             });
 
+            if (lobby.getPlayers().size() > 1 && isAdmin) {
+                TextButton start = new TextButton("start the game", skin);
+                start.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        StartGamePacket msg = new StartGamePacket();
+                        msg.players = new ArrayList<>();
+                        msg.players.addAll(lobby.getPlayers());
+                        startTheGame(lobby);
+                        GameClient.client.sendTCP(msg);
+                    }
+                });
+            }
+
             lobbyTable.add(lobbyInfo).width(300).left().pad(5);
             lobbyTable.add(joinBtn).pad(5);
             lobbyTable.add(playersBtn).pad(5);
@@ -215,4 +235,15 @@ public class LobbyMenu implements Screen {
     @Override public void resume() {}
     @Override public void hide() {}
     @Override public void dispose() { stage.dispose(); }
+
+    private void startTheGame(Lobby lobby) {
+        List<Player> players = new ArrayList<>();
+        for(SimplePlayer simplePlayer : lobby.getPlayers()) {
+            players.add(new Player(simplePlayer));
+        }
+        MyGame.addPlayers(players);
+        for (Player player : players) {
+            player.setMapNum(players.indexOf(player) + 1);
+        }
+    }
 }

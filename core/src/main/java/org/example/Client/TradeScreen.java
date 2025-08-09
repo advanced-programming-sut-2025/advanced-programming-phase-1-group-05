@@ -18,6 +18,7 @@ import org.example.Common.Item;
 import org.example.Common.Player;
 import org.example.Common.Request.TradeMessage;
 import org.example.Common.Trade;
+import org.example.Main;
 import org.example.Server.controllers.GameMenuController;
 import org.example.Server.controllers.TradingController;
 import org.example.Server.models.MyGame;
@@ -44,12 +45,14 @@ public class TradeScreen implements Screen {
     private final Label offerQuantityLabel, requestQuantityLabel;
     private Item selectedOfferItem = null;
     private Item selectedRequestItem = null;
+    private int amount , targetAmount = 0;
 
     public TradeScreen(Player fromPlayer, Player toPlayer, boolean isInitiator, TradingController controller) {
         this.fromPlayer = fromPlayer;
         this.toPlayer = toPlayer;
         this.isInitiator = isInitiator;
         this.controller = controller;
+        this.controller.setTradeScreen(this);
 
         this.stage = new Stage(new ScreenViewport());
         this.skin = GameAssetManager.getSkin();
@@ -126,11 +129,8 @@ public class TradeScreen implements Screen {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     if (selectedOfferItem != null && selectedRequestItem != null) {
-                        TradeMessage msg = new TradeMessage();
-                        msg.fromPlayer = fromPlayer;
-                        msg.toPlayer = toPlayer;
-                        Trade trade = new Trade(fromPlayer, toPlayer, "Trade", selectedOfferItem, 1, selectedRequestItem, 1);
-                        msg.trade = trade;
+                        controller.sendTradeOffer(fromPlayer, toPlayer, "type", selectedOfferItem, amount, selectedRequestItem, targetAmount);
+
                     }
                 }
             });
@@ -141,14 +141,15 @@ public class TradeScreen implements Screen {
             acceptButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    // controller.acceptTrade(fromPlayer, toPlayer);
+                    controller.acceptTradeOffer(fromPlayer, toPlayer, "type", selectedOfferItem, amount, selectedRequestItem, targetAmount);
                 }
             });
 
             rejectButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    // controller.rejectTrade(fromPlayer, toPlayer);
+                    controller.rejectTrade(fromPlayer, toPlayer);
+                    Main.getMain().setScreen(MenuNavigator.getGameScreen());
                 }
             });
         }
@@ -156,12 +157,12 @@ public class TradeScreen implements Screen {
         cancelButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // controller.cancelTrade();
+                Main.getMain().setScreen(MenuNavigator.getGameScreen()); //??
             }
         });
     }
 
-    private void updateSlotFromText(String input, Image itemImage, boolean isOffer) {
+    public void updateSlotFromText(String input, Image itemImage, boolean isOffer) {
         if (input == null || input.isEmpty()) {
             itemImage.setDrawable(null);
             if (isOffer) {

@@ -14,10 +14,14 @@ import org.example.Common.Network.*;
 import org.example.Common.Player;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
-import org.example.Server.Packets.MovePacket;
-import org.example.Server.Packets.PositionUpdate;
-import org.example.Server.Packets.PurchaseRequest;
-import org.example.Server.Packets.StoreUpdatePacket;
+import org.example.Server.Packets.*;
+import org.example.Server.Packets.EmotePackets.EmoteMessage;
+import org.example.Server.Packets.EmotePackets.TextMessage;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalReceived;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalRequest;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
+import org.example.Server.models.MyGame;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,11 +89,28 @@ public class ServerMain {
         kryo.register(org.example.Server.models.TileMapRenderer.class);
         kryo.register(org.example.Server.models.Tree.class);
         kryo.register(org.example.Server.models.UserDatabase.class);
+        kryo.register(MarriageProposalRequest.class);
+        kryo.register(MarriageProposalReceived.class);
+        kryo.register(MarriageProposalResponse.class);
+        kryo.register(MarriageProposalResult.class);
+        kryo.register(EmoteMessage.class);
+        kryo.register(TextMessage.class);
+        kryo.register(OnlinePlayerPacket.class);
+        kryo.register(StartGamePacket.class);
 
 
         server.addListener(new Listener() {
             public void received(Connection c, Object object) {
-                if (object instanceof TradeMessage){
+                if (object instanceof StartGamePacket) {
+                    StartGamePacket msg = (StartGamePacket) object;
+                    for (SimplePlayer player : msg.players) {
+                        Connection playerConn = playerConnections.get(player.getUsername());
+                        if (playerConn != null) {
+                            playerConn.sendTCP(new StartGamePacket());
+                        }
+                    }
+                }
+                else if (object instanceof TradeMessage){
                     TradeMessage msg = (TradeMessage) object;
                     switch (msg.type) {
                         case REQUEST: {
@@ -105,7 +126,7 @@ public class ServerMain {
                             if (initiator != null) {
                                 if (msg.accepted) {
                                     TradeMessage start = new TradeMessage();
-                                    start.type = MessageType.START;
+                                    start.type = TradeMessage.MessageType.START;
                                     start.fromPlayer = msg.fromPlayer;
                                     start.toPlayer = msg.toPlayer;
 
@@ -113,7 +134,7 @@ public class ServerMain {
                                     c.sendTCP(start);
                                 } else {
                                     TradeMessage rejected = new TradeMessage();
-                                    rejected.type = MessageType.REJECTED;
+                                    rejected.type = TradeMessage.MessageType.REJECTED;
                                     rejected.fromPlayer = msg.fromPlayer;
                                     rejected.toPlayer = msg.toPlayer;
 
@@ -132,7 +153,7 @@ public class ServerMain {
                         for (Map.Entry<Product, Integer> entry : request.items.entrySet()) {
                             updatePacket.products.add(entry.getKey());
                         }
-                        updatePacket.store = request.store;
+                        updatePacket.storeName = request.storeName;
 
                         server.sendToAllTCP(updatePacket);
                     }
@@ -141,6 +162,7 @@ public class ServerMain {
                     LoginPacket login = (LoginPacket) object;
                     System.out.println("Registered player connection: " + login.username);
                     registerPlayerConnection(login.username, c);
+                    broadcastOnlinePlayers();
                 }
                 else if (object instanceof ChatMessage) {
                     ChatMessage chat = (ChatMessage) object;
@@ -155,11 +177,58 @@ public class ServerMain {
                         server.sendToAllTCP(chat);
                     }
                 }
+                else if (object instanceof EmoteMessage) {
+                    EmoteMessage msg = (EmoteMessage) object;
+                    for (Connection connection : server.getConnections()) {
+                        connection.sendTCP(msg);
+                    }
+                }
+                else if (object instanceof TextMessage) {
+                    TextMessage message = (TextMessage) object;
+                    for (Connection connection : server.getConnections()) {
+                        connection.sendTCP(message);
+                    }
+                }
+                else if (object instanceof MarriageProposalRequest) {
+                    MarriageProposalRequest request = (MarriageProposalRequest) object;
+                    MarriageProposalReceived msg = new MarriageProposalReceived();
+                    msg.fromPlayer = request.fromPlayer;
+                    server.sendToTCP(playerConnections.get(request.toPlayer).getID(), msg);
+                }
+                else if (object instanceof  MarriageProposalResponse) {
+                    MarriageProposalResponse response = (MarriageProposalResponse) object;
+                    Player from = MyGame.getPlayerByUsername(response.fromPlayer);
+                    Player to = MyGame.getPlayerByUsername(response.toPlayer);
+
+                    MarriageProposalResult result = new MarriageProposalResult();
+                    result.accepted = response.accepted;
+                    result.byPlayer = from.getUsername();
+                    server.sendToTCP(playerConnections.get(to.getUsername()).getID(), result);
+                    if (response.accepted) {
+                        from.setSpouse(to);
+                    }
+                }
             }
 
                 private Connection getConnectionByName(String playerName) {
                     return playerConnections.get(playerName);
                 }
+               private String getUsernameFromConnection(Connection connection) {
+                for(Map.Entry<String, Connection> entry : playerConnections.entrySet()) {
+                    if (entry.getValue() == connection) {
+                        return entry.getKey();
+                    }
+                }
+                return "";
+            }
+            @Override
+            public void disconnected(Connection connection) {
+                String username = getUsernameFromConnection(connection);
+                if (username != null) {
+                    playerConnections.remove(username);
+                    broadcastOnlinePlayers();
+                }
+            }
             });
         LobbyServerHandler lobbyHandler = new LobbyServerHandler(server);
         server.addListener(lobbyHandler);
@@ -178,6 +247,14 @@ public class ServerMain {
 
     public static Connection getConnectionByUsername(String username) {
         return playerConnections.get(username);
+    }
+
+    public static void broadcastOnlinePlayers() {
+        OnlinePlayerPacket packet = new OnlinePlayerPacket();
+        packet.players = new ArrayList<>(playerConnections.keySet());
+        for (Connection c : playerConnections.values()) {
+            c.sendTCP(packet);
+        }
     }
 
 }

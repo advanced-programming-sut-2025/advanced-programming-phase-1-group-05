@@ -99,7 +99,7 @@ public class GameAssetManager {
         Texture duckTextureSheet = getOrLoadTexture("Animals/duck/sheet.png");
         Texture chickenTextureSheet = getOrLoadTexture("Animals/chicken/sheet.png");
         Texture rabbitTextureSheet = getOrLoadTexture("Animals/rabbit/sheet.png");
-        //Texture dinosaurTextureSheet = getOrLoadTexture("Animals/dinosaur/sheet.png");
+        Texture dinosaurTextureSheet = getOrLoadTexture("Animals/dinosaur/sheet.png");
         Texture cowTextureSheet = getOrLoadTexture("Animals/cow/sheet.png");
         Texture goatTextureSheet = getOrLoadTexture("Animals/goat/sheet.png");
         Texture sheepTextureSheet = getOrLoadTexture("Animals/sheep/sheet.png");
@@ -108,7 +108,7 @@ public class GameAssetManager {
         animalAnimations.put(AnimalType.DUCK, buildDuckAnimation(duckTextureSheet));
         animalAnimations.put(AnimalType.CHICKEN, buildChickenAnimation(chickenTextureSheet));
         animalAnimations.put(AnimalType.RABBIT, buildRabbitAnimation(rabbitTextureSheet));
-       // animalAnimations.put(AnimalType.DINOSAUR, buildDinosaurAnimation(dinosaurTextureSheet));
+        animalAnimations.put(AnimalType.DINOSAUR, buildDinosaurAnimation(dinosaurTextureSheet));
         animalAnimations.put(AnimalType.COW, buildBarnAnimalAnimation(cowTextureSheet));
         animalAnimations.put(AnimalType.GOAT, buildBarnAnimalAnimation(goatTextureSheet));
         animalAnimations.put(AnimalType.SHEEP, buildBarnAnimalAnimation(sheepTextureSheet));

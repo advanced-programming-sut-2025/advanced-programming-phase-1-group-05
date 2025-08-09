@@ -101,6 +101,7 @@ import org.example.Common.DataTransferObjects.ChatMessage;
 public class GameClient {
     public static Client client;
 
+
     public void sendTradeRequest(org.example.Common.Request.TradeMessage msg) {
         if (client != null) {
             client.sendTCP(msg);

@@ -13,22 +13,27 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import org.example.Common.Player;
 import org.example.Common.Request.TradeMessage;
+import org.example.Common.Trade;
 import org.example.Main;
 import org.example.Server.controllers.MenuController;
 import org.example.Server.controllers.TradingController;
 import org.example.Server.models.MyGame;
 import org.example.Server.models.Result;
 
+import java.util.Map;
+
 public class TradeMenu extends Table {
 
     private final TradingController tradingController;
     private final MenuController menuController;
+    private final ClientNetworkManager clientNetworkManager;
     private final Label tradingMenuLabel, startTradingLabel, tradeHistoryLabel, closeLabel;
 
     public TradeMenu(TradingController tradingController, MenuController menuController, Skin skin) {
         super(skin);
         this.tradingController = tradingController;
         this.menuController = menuController;
+        this.clientNetworkManager = Main.getMain().getNetworkManager();
 
         Texture bgTexture = new Texture(Gdx.files.internal("Animals/MenuBackground2.png"));
         Drawable background = new TextureRegionDrawable(new TextureRegion(bgTexture));
@@ -84,7 +89,7 @@ public class TradeMenu extends Table {
                         }
                         msg.toPlayer = otherPlayer;
 
-                        Main.getMain().gameClient.sendTradeRequest(msg); //idk?
+                        clientNetworkManager.sendTradeRequest(msg);
 
                     }
                 });
@@ -100,7 +105,34 @@ public class TradeMenu extends Table {
         tradeHistoryLabel.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // TODO implement
+                clear();
+
+                Map<String, Trade> tradeHistory = MyGame.getCurrentPlayer().getTrades();
+
+                Skin skin = getSkin();
+                for (Map.Entry<String, Trade> entry : tradeHistory.entrySet()) {
+                    String otherPlayerName = entry.getKey();
+                    Trade trade = entry.getValue();
+
+                    Label tradeWithLabel = new Label("Trade With: " + otherPlayerName, skin);
+                    tradeWithLabel.setColor(Color.RED);
+                    tradeWithLabel.setScale(1.5f);
+
+                    String itemName = trade.getItem().getName();
+                    String targetItemName = trade.getTargetItem().getName();
+                    int amount = trade.getAmount();
+
+                    Label offeredItemLabel = new Label("Offered Item: " + itemName + " x" + amount, skin);
+                    Label requestedItemLabel = new Label("Requested Item: " + targetItemName +  " x" + amount, skin);
+
+                    offeredItemLabel.setColor(Color.BLACK);
+                    requestedItemLabel.setColor(Color.BLACK);
+
+                    add(tradeWithLabel).left().row();
+                    add(offeredItemLabel).left().padLeft(10).row();
+                    add(requestedItemLabel).left().padLeft(10).row();
+                    row().row();
+                }
             }
         });
 

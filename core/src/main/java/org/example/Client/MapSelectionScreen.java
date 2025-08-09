@@ -80,21 +80,25 @@ public class MapSelectionScreen implements Screen {
                         switch (selections.get(username).toLowerCase()) {
                             case "map1" : {
                                 player.setFarm(new Rectangle(10f * TILE_SIZE, 10f * TILE_SIZE, 50f * TILE_SIZE, 50f * TILE_SIZE));
+                                player.setMapNum(1);
                                 System.out.println("set " + username + "'s farm");
                                 break;
                             }
                             case "map2" : {
                                 player.setFarm(new Rectangle(80 * TILE_SIZE, 10 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
+                                player.setMapNum(2);
                                 System.out.println("set " + username + "'s farm");
                                 break;
                             }
                             case "map3" : {
                                 player.setFarm(new Rectangle(10 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
+                                player.setMapNum(3);
                                 System.out.println("set " + username + "'s farm");
                                 break;
                             }
                             case "map4" : {
                                 player.setFarm(new Rectangle(80 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
+                                player.setMapNum(4);
                                 System.out.println("set " + username + "'s farm");
                                 break;
                             }
@@ -103,8 +107,9 @@ public class MapSelectionScreen implements Screen {
                     DBController.saveGameState();
                     resultLabel.setText("Game started!");
                     //MenuNavigator.showGameScreen();
-                    MyGame.setCurrentPlayer(players.get(0));
+                    //MyGame.setCurrentPlayer(players.get(0));
                    MenuNavigator.showGameScreen(players);
+                   MyGame.addPlayers(players);
                     //Main.getMain().setScreen(new TradeScreen(MyGame.getCurrentPlayer(), MyGame.getCurrentPlayer(), true, new TradingController()));
                 }
             }

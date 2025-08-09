@@ -31,7 +31,7 @@ public class LobbyManager {
     public static synchronized boolean joinLobby(String lobbyId, SimplePlayer player, String password) {
         for (Lobby lobby : activeLobbies) {
             if (lobby.getId().equals(lobbyId)) {
-                if (lobby.isPrivate() && (password == null || !lobby.getPassword().equals(password))) {
+                if (lobby.isPrivate() && (!lobby.getPassword().equals(password))) {
                     return false;
                 }
                 return lobby.addPlayer(player);

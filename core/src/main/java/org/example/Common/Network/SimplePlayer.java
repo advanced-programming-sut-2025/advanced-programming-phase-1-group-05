@@ -27,4 +27,7 @@ public class SimplePlayer implements Serializable {
         return username.hashCode();
     }
 
+    public String getUsername() {
+        return username;
+    }
 }
