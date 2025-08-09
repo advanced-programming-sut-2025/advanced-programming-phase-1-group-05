@@ -1,6 +1,7 @@
 package org.example.Server.models.Skills;
 
 import org.example.Server.models.Animal;
+import org.example.Server.models.MyGame;
 
 import java.io.Serializable;
 import java.util.List;
@@ -45,6 +46,7 @@ public class AnimalCare implements Skill , Serializable {
         if((level + 1) * 100 + 50 <= capacity) {
             capacity -= (level + 1)*100 + 50;
             increaseLevel();
+            MyGame.getCurrentPlayer().getUser().updateUserInfo(1, "skill");
             return true;
         }
         return false;

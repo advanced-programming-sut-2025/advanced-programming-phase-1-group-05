@@ -539,8 +539,10 @@ public class Player implements Serializable {
     }
 
     public void addGold(int amount) {
-        if (sharedWallet == null)
+        if (sharedWallet == null) {
             gold += amount;
+            MyGame.getCurrentPlayer().getUser().updateUserInfo(amount, "gold");
+        }
         else sharedWallet.addGold(amount);
     }
 

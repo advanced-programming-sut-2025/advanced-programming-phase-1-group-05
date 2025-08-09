@@ -25,7 +25,9 @@ import org.example.Server.Packets.MovePacket;
 import org.example.Server.Packets.PositionUpdate;
 import org.example.Server.Packets.PurchaseRequest;
 import org.example.Server.Packets.StoreUpdatePacket;
+import org.example.Server.controllers.DBController;
 import org.example.Server.models.MyGame;
+import org.w3c.dom.views.DocumentView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -155,6 +157,8 @@ public class ServerMain {
                 else if (object instanceof LoginPacket) {
                     LoginPacket login = (LoginPacket) object;
                     System.out.println("Registered player connection: " + login.username);
+                    DBController.registerUser(login.player.getUser());
+                    MyGame.getScoreboardView().setPlayers(DBController.getAllUsers());
                     registerPlayerConnection(login.player, c);
                     broadcastOnlinePlayers();
                 }

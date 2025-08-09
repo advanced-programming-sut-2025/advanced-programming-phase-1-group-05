@@ -17,6 +17,7 @@ public class User implements Serializable {
     public String plainPassword;
     public String avatarTexturePath;
     public Texture avatarTexture;
+    private PlayerInfo info = new PlayerInfo();
 
     private String securityQuestion;
     String securityAnswer;
@@ -126,4 +127,52 @@ public class User implements Serializable {
             ", haveSavedGame='" + haveSavedGame + '\'' +
             '}';
     }
+
+    public int getInfo(String infoType) {
+        if(infoType.equalsIgnoreCase("quests")) {
+            return info.getCompletedQuests();
+        }
+        else if(infoType.equalsIgnoreCase("gold")) {
+            return info.getTotalGold();
+        } else if(infoType.equalsIgnoreCase("skill")) {
+            return info.getFarmerSkill();
+        }
+        return 0;
+    }
+
+    public void updateUserInfo(int update, String infoType) {
+        if(infoType.equalsIgnoreCase("quests")) {
+            info.setCompletedQuests(update);
+        }
+        else if(infoType.equalsIgnoreCase("gold")) {
+            info.setTotalGold(update);
+        } else if(infoType.equalsIgnoreCase("skill")) {
+            info.addFarmerSkill(update);
+        }
+    }
+}
+class PlayerInfo {
+    private int completedQuests;
+    private int totalGold;
+    private int farmerSkill;
+
+    public void setCompletedQuests(int completedQuests) {
+        this.completedQuests += completedQuests;
+    }
+    public int getCompletedQuests() {
+        return completedQuests;
+    }
+    public void setTotalGold(int totalGold) {
+        this.totalGold += totalGold;
+    }
+    public int getTotalGold() {
+        return totalGold;
+    }
+    public void addFarmerSkill(int farmerSkill) {
+        this.farmerSkill += farmerSkill;
+    }
+    public int getFarmerSkill() {
+        return farmerSkill;
+    }
+
 }

@@ -35,6 +35,9 @@ public class DBController {
     public static void loadAllUsers() {
         UserDatabase.loadUsers();
     }
+    public static List<User> getAllUsers() {
+        return UserDatabase.getAllUsers();
+    }
 
     public static String hashPassword(String password) {
         try {

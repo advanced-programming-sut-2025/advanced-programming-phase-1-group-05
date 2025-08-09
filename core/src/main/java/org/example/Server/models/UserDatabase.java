@@ -23,6 +23,9 @@ public class UserDatabase implements Serializable {
         loadUsers();
     }
 
+    public static void updateUser(User user) {
+        saveUsers();
+    }
     public static void addUser(User user) {
         if (!usernameExists(user.getUsername())) {
             users.add(user);
@@ -42,7 +45,18 @@ public class UserDatabase implements Serializable {
     }
 
     public static List<User> getAllUsers() {
-        return Collections.unmodifiableList(users);
+        try (FileReader reader = new FileReader(USER_FILE)) {
+            Type listType = new TypeToken<ArrayList<User>>() {}.getType();
+            List<User> loaded = gson.fromJson(reader, listType);
+            if (loaded != null) {
+                users.clear();
+                users.addAll(loaded);
+            }
+            return loaded;
+        } catch (IOException e) {
+            System.err.println("Error loading users: " + e.getMessage());
+        }
+        return null;
     }
 
     public static void saveUsers() {

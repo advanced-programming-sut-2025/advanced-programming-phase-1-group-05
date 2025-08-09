@@ -39,6 +39,7 @@ public class Foraging implements Skill , Serializable {
         if((level + 1) * 100 + 50 <= capacity) {
             capacity -= (level + 1)*100 + 50;
             increaseLevel();
+            MyGame.getCurrentPlayer().getUser().updateUserInfo(1, "skill");
             return true;
         }
         return false;
