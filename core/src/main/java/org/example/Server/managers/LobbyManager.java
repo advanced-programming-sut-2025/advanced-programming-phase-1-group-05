@@ -48,4 +48,12 @@ public class LobbyManager {
         }
     }
 
+    public static synchronized Lobby getLobbyByID(String id) {
+        for (Lobby lobby : activeLobbies) {
+            if (lobby.getId().equals(id))
+                return lobby;
+        }
+        return null;
+    }
+
 }

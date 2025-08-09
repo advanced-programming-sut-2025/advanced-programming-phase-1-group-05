@@ -6,4 +6,5 @@ import java.util.List;
 
 public class StartGamePacket {
     public List<SimplePlayer> players;
+    public String lobbyId;
 }

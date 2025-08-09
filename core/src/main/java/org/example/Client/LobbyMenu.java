@@ -3,6 +3,7 @@ package org.example.Client;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -20,6 +21,8 @@ import org.example.Server.models.MyGame;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.example.Client.GameScreen.TILE_SIZE;
 
 public class LobbyMenu implements Screen {
     private final Stage stage;
@@ -180,6 +183,11 @@ public class LobbyMenu implements Screen {
                 }
             });
 
+            lobbyTable.add(lobbyInfo).width(300).left().pad(5);
+            lobbyTable.add(joinBtn).pad(5);
+            lobbyTable.add(playersBtn).pad(5);
+            lobbyTable.add(outBtn).pad(5);
+
             if (lobby.getPlayers().size() > 1 && isAdmin) {
                 TextButton start = new TextButton("start the game", skin);
                 start.addListener(new ClickListener() {
@@ -188,16 +196,16 @@ public class LobbyMenu implements Screen {
                         StartGamePacket msg = new StartGamePacket();
                         msg.players = new ArrayList<>();
                         msg.players.addAll(lobby.getPlayers());
+                        msg.lobbyId = lobby.getId();
                         startTheGame(lobby);
                         GameClient.client.sendTCP(msg);
                     }
                 });
+                lobbyTable.add(start).pad(5);
             }
 
-            lobbyTable.add(lobbyInfo).width(300).left().pad(5);
-            lobbyTable.add(joinBtn).pad(5);
-            lobbyTable.add(playersBtn).pad(5);
-            lobbyTable.add(outBtn).pad(5).row();
+            lobbyTable.row();
+
         }
     }
 
@@ -236,7 +244,7 @@ public class LobbyMenu implements Screen {
     @Override public void hide() {}
     @Override public void dispose() { stage.dispose(); }
 
-    private void startTheGame(Lobby lobby) {
+    public void startTheGame(Lobby lobby) {
         List<Player> players = new ArrayList<>();
         for(SimplePlayer simplePlayer : lobby.getPlayers()) {
             players.add(new Player(simplePlayer));
@@ -244,6 +252,31 @@ public class LobbyMenu implements Screen {
         MyGame.addPlayers(players);
         for (Player player : players) {
             player.setMapNum(players.indexOf(player) + 1);
+            initializeFarm(player);
+        }
+    }
+    private void initializeFarm(Player player) {
+        switch (player.getMapNum()) {
+            case 1 : {
+                player.setFarm(new Rectangle(10f * TILE_SIZE, 10f * TILE_SIZE, 50f * TILE_SIZE, 50f * TILE_SIZE));
+                System.out.println("set " + player.getUsername()  + "'s farm.");
+                break;
+            }
+            case 2 : {
+                player.setFarm(new Rectangle(80 * TILE_SIZE, 10 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
+                System.out.println("set " + player.getUsername()  + "'s farm.");
+                break;
+            }
+            case 3 : {
+                player.setFarm(new Rectangle(10 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
+                System.out.println("set " + player.getUsername()  + "'s farm.");
+                break;
+            }
+            case 4 : {
+                player.setFarm(new Rectangle(80 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
+                System.out.println("set " + player.getUsername()  + "'s farm.");
+                break;
+            }
         }
     }
 }

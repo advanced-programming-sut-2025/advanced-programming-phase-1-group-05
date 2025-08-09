@@ -14,6 +14,7 @@ import org.example.Common.DataTransferObjects.LoginPacket;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.Emote;
+import org.example.Common.Enums.Menu;
 import org.example.Common.Enums.MessageType;
 import org.example.Common.Lobby;
 import org.example.Common.Network.*;
@@ -32,6 +33,7 @@ import org.example.Server.Packets.StartGamePacket;
 import org.example.Server.controllers.DBController;
 import org.example.Server.controllers.RegisterMenuController;
 import org.example.Server.controllers.TradingController;
+import org.example.Server.managers.LobbyManager;
 import org.example.Server.models.MyGame;
 import org.example.Server.models.Result;
 import org.example.Server.models.UserDatabase;
@@ -75,7 +77,7 @@ public class Main extends Game {
 
             new Thread(() -> {
                 try {
-                    GameClient.client.connect(5000, "192.168.1.56", 54555, 54777);
+                    GameClient.client.connect(5000, "192.168.1.54", 54555, 54777);
                     addListeners();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -243,7 +245,10 @@ public class Main extends Game {
         GameClient.client.addListener(new Listener() {
             public void received(Connection c, Object object) {
                 if (object instanceof  StartGamePacket) {
+                    StartGamePacket startGamePacket = (StartGamePacket) object;
                     Gdx.app.postRunnable(() -> {
+                        Lobby lobby = LobbyManager.getLobbyByID(startGamePacket.lobbyId);
+                        MenuNavigator.getLobbyMenu().startTheGame(lobby);
                         Main.getMain().setScreen(new GameScreen(MyGame.getAllPlayers()));
                     });
                 }
