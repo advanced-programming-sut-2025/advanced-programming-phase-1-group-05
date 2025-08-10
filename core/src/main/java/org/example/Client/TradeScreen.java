@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -16,8 +15,6 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Common.Item;
 import org.example.Common.Player;
-import org.example.Common.Request.TradeMessage;
-import org.example.Common.Trade;
 import org.example.Main;
 import org.example.Server.controllers.GameMenuController;
 import org.example.Server.controllers.TradingController;
@@ -248,7 +245,6 @@ public class TradeScreen implements Screen {
 
         return stack;
     }
-
 
     @Override
     public void show() {

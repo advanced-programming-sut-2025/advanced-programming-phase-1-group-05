@@ -18,6 +18,9 @@ public class User implements Serializable {
     public String plainPassword;
     public String avatarTexturePath;
     public Texture avatarTexture;
+    public int totalGold;
+    public int totalQuests;
+    public int totalSkill;
 
     private String securityQuestion;
     String securityAnswer;
@@ -126,5 +129,37 @@ public class User implements Serializable {
             ", plainPassword='" + plainPassword + '\'' +
             ", haveSavedGame='" + haveSavedGame + '\'' +
             '}';
+    }
+
+    public void updateUserInfo(int amount, String type) {
+        switch (type) {
+            case "gold": {
+                this.totalGold += amount;
+                break;
+            }
+            case "quests": {
+                this.totalQuests += amount;
+                break;
+            }
+            case "skill": {
+                this.totalSkill += amount;
+                break;
+            }
+        }
+    }
+
+    public int getInfo(String type) {
+        switch (type) {
+            case "gold": {
+                return totalGold;
+            }
+            case "quests": {
+                return totalQuests;
+            }
+            case "skill": {
+                return totalSkill;
+            }
+        }
+        return 0;
     }
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Common.Player;
+import org.example.Main;
 import org.example.Server.controllers.RegisterMenuController;
 import org.example.Common.User;
 
@@ -90,7 +91,7 @@ public class MainMenu implements Screen {
 
         scoreboardButton.addListener(new ChangeListener() {
             @Override public void changed(ChangeEvent event, Actor actor) {
-                stage.addActor(new ScoreboardView()); //change this
+                Main.getMain().setScreen(new S());
             }
         });
 

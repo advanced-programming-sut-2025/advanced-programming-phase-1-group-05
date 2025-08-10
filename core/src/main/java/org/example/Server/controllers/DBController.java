@@ -31,7 +31,9 @@ public class DBController {
     public static void saveAllUsers() {
         UserDatabase.saveUsers();
     }
-
+    public static List<User> getAllUsers() {
+        return UserDatabase.getAllUsers();
+    }
     public static void loadAllUsers() {
         UserDatabase.loadUsers();
     }
@@ -289,5 +291,6 @@ public class DBController {
             System.err.println("Error loading players: " + e.getMessage());
         }
     }
+
 
 }
