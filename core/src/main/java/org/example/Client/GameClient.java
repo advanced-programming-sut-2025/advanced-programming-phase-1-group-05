@@ -153,7 +153,11 @@ public class GameClient {
                     Gdx.app.postRunnable(() -> {
                         System.out.println(startGamePacket.lobbyId);
                         MenuNavigator.getLobbyMenu().startTheGame(startGamePacket.players);
+                        for (Player player : MyGame.getAllPlayers()) {
+                            System.out.println(player.getMapNum());
+                        }
                         Main.getMain().setScreen(new GameScreen(MyGame.getAllPlayers()));
+
                     });
                 }
                 else if (object instanceof MovePacket) {
