@@ -247,7 +247,7 @@ public class LobbyMenu implements Screen {
     public void startTheGame(List<SimplePlayer> simplePlayers) {
         List<Player> players = new ArrayList<>();
         for(SimplePlayer simplePlayer : simplePlayers) {
-            players.add(new Player(simplePlayer));
+           // players.add(new Player(simplePlayer.));
         }
         MyGame.addPlayers(players);
         for (Player player : players) {

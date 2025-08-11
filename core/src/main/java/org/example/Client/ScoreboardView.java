@@ -77,15 +77,10 @@ public class ScoreboardView implements Screen {
                 user.updateUserInfo(packet.quests, "quests");
                 user.updateUserInfo(packet.skill, "skill");
 
-                Label[] labels = labelMap.get(user);
-                if (labels != null) {
-                    labels[2].setText(String.valueOf(packet.gold));
-                    labels[3].setText(String.valueOf(packet.quests));
-                    labels[4].setText(String.valueOf(packet.skill));
-                }
                 break;
             }
         }
+        refreshData();
     }
 
     private void buildRows() {
@@ -109,7 +104,7 @@ public class ScoreboardView implements Screen {
         }
     }
 
-    private void refreshData() {
+    public void refreshData() {
         List<User> sortedUsers = new ArrayList<>(users);
         sortedUsers.sort(Comparator.comparingInt(u -> -(int) u.getInfo(sortBy)));
         String currentUsername = MyGame.getCurrentPlayer().getUsername();
@@ -192,5 +187,8 @@ public class ScoreboardView implements Screen {
     @Override public void hide() {}
     @Override public void dispose() {
         stage.dispose();
+    }
+    public List<User> getUsers() {
+        return users;
     }
 }
