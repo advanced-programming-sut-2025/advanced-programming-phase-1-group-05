@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import org.example.Client.GameAssetManager;
+import org.example.Client.GameClient;
 import org.example.Common.Enums.*;
 import org.example.Common.Network.SimplePlayer;
 import org.example.Common.Tool.*;
@@ -857,7 +858,7 @@ public class Player implements Serializable {
             user.getInfo("skill")
         );
 
-        ServerMain.getServer().sendToAllTCP(packet);
+        GameClient.client.sendTCP(packet);
     }
 
 }

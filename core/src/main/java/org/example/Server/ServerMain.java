@@ -100,6 +100,7 @@ public class ServerMain {
         kryo.register(StartGamePacket.class);
         kryo.register(MovePacket.class);
         kryo.register(Direction.class);
+        kryo.register(ScoreboardUpdatePacket.class);
 
 
         server.addListener(new Listener() {
@@ -221,6 +222,9 @@ public class ServerMain {
                     if (response.accepted) {
                         from.setSpouse(to);
                     }
+                } else if(object instanceof ScoreboardUpdatePacket) {
+                    ScoreboardUpdatePacket update = (ScoreboardUpdatePacket) object;
+                    server.sendToAllTCP(update);
                 }
             }
 

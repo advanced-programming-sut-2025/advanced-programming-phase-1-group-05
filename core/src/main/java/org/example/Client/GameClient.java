@@ -121,6 +121,7 @@ import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
 import org.example.Server.Packets.MovePacket;
 import org.example.Server.Packets.OnlinePlayerPacket;
 import org.example.Server.Packets.PositionUpdate;
+import org.example.Server.Packets.ScoreboardUpdatePacket;
 import org.example.Server.Packets.StartGamePacket;
 import org.example.Server.controllers.TradingController;
 import org.example.Server.models.MyGame;
@@ -147,6 +148,16 @@ public class GameClient {
     }
 
     public static void addListeners() {
+        client.addListener(new Listener() {
+            public void connected(Connection connection) {
+                System.out.println("✅ Connected to server");
+            }
+
+            public void disconnected(Connection connection) {
+                System.out.println("❌ Disconnected from server");
+            }
+        });
+
         client.addListener(new Listener() {
             public void received(Connection c, Object object) {
                 if (object instanceof StartGamePacket) {
@@ -300,7 +311,14 @@ public class GameClient {
                         GameScreen screen = MenuNavigator.getGameScreen();
                         if (screen != null) screen.showProposalPopup(MyGame.getPlayerByUsername(msg.fromPlayer));
                     });
+                } else if(object instanceof ScoreboardUpdatePacket) {
+                    ScoreboardUpdatePacket packet = (ScoreboardUpdatePacket) object;
+                    System.out.println("📊 Scoreboard update received: " + packet.username + " G:" + packet.gold);
+                    Gdx.app.postRunnable(() -> {
+                        MyGame.getScoreboardView().updateUser(packet);
+                    });
                 }
+
             }
         });
     }
@@ -366,5 +384,6 @@ public class GameClient {
         kryo.register(StartGamePacket.class);
         kryo.register(MovePacket.class);
         kryo.register(Direction.class);
+        kryo.register(ScoreboardUpdatePacket.class);
     }
 }
