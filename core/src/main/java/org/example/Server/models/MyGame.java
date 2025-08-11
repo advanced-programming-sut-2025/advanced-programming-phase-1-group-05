@@ -1,5 +1,6 @@
 package org.example.Server.models;
 
+import org.example.Client.ScoreboardView;
 import org.example.Common.*;
 import org.example.Server.controllers.GameManager;
 import org.example.Common.Enums.Season;
@@ -23,6 +24,7 @@ public class MyGame implements Serializable {
     public static int currentPlayerIndex = 0;
     public static boolean canBuildGreenHouse = false;
     private static GameScreen gameScreen;
+    private static ScoreboardView scoreboardView;
 //    public static boolean greenHouseBuilt = false;
     public static Map<Player, Item> soldItems = new HashMap<>();
     private static TradingController tradingController = new TradingController();
@@ -200,5 +202,12 @@ public class MyGame implements Serializable {
     public static void addPlayers(List<Player> playersToAdd) {
         players.clear();
         players.addAll(playersToAdd);
+    }
+
+    public static void setScoreboardView(ScoreboardView scoreboardView) {
+        MyGame.scoreboardView = scoreboardView;
+    }
+    public static ScoreboardView getScoreboardView() {
+        return scoreboardView;
     }
 }

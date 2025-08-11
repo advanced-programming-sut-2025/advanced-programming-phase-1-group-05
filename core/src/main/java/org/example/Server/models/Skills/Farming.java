@@ -132,6 +132,7 @@ public class Farming implements Skill , Serializable {
         if((level + 1) * 100 + 50 <= capacity) {
             capacity -= (level + 1)*100 + 50;
             increaseLevel();
+            MyGame.getCurrentPlayer().updateUserStats(0, 0, 1);
             return true;
         }
         return false;

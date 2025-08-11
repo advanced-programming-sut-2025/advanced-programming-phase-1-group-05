@@ -13,6 +13,10 @@ import org.example.Client.GameAssetManager;
 import org.example.Common.Enums.*;
 import org.example.Common.Network.SimplePlayer;
 import org.example.Common.Tool.*;
+import org.example.Main;
+import org.example.Server.ScoreboardUpdatePacket;
+import org.example.Server.ServerMain;
+import org.example.Server.controllers.DBController;
 import org.example.Server.controllers.GameManager;
 import org.example.Server.models.*;
 import org.example.Server.models.Building.AnimalHouse;
@@ -45,7 +49,7 @@ public class Player implements Serializable {
     private SharedWallet sharedWallet = null;
     private List<AnimalHouse> coopAndBarns = new ArrayList<>();
     private List<String> notifications = new ArrayList<>();
-    private int mapNum;
+    private static int mapNum;
     private transient Texture texture;
     private float width = 49, height = 122;
     private float speed = 200f;
@@ -64,6 +68,13 @@ public class Player implements Serializable {
     private String currentMessage = "";
 
     private BitmapFont font;
+
+//    {
+////        trades.put("Baran", new Trade(this, this, "hello", new BasicItem("hi", 2),
+////            2, new BasicItem("hello", 4), 5));
+////        trades.put("Maryam", new Trade(this, this, "hello", new BasicItem("hi", 2),
+////            2, new BasicItem("hello", 4), 5));
+//    }
     //walking animations
     private transient Animation<TextureRegion> walkUpAnimation;
     private transient Animation<TextureRegion> walkDownAnimation;
@@ -84,13 +95,11 @@ public class Player implements Serializable {
     private float toolUseTime = 0f;
     private boolean isUsingTool = false;
 
-    public Player(SimplePlayer simplePlayer) {
-        this(UserDatabase.getUserByUsername(simplePlayer.username));
-    }
 
     public Player(User user) {
         this.user = user;
         this.energy = 200;
+        //this.farm = new Farm(this,) //TODO fix this
         backPack.getInventory().put(new Hoe(), 1);
         backPack.getInventory().put(new Pickaxe(), 1);
         backPack.getInventory().put(new Scythe(), 1);
@@ -138,10 +147,10 @@ public class Player implements Serializable {
         }
 
         notifications.add("Have fun playing this game i'm just trying to see how the notification panel looks hahahaha long text ");
-
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
+
     }
     public Player() {
         this.energy = 200;
@@ -359,7 +368,6 @@ public class Player implements Serializable {
                 batch.draw(textureRegion, itemX, itemY, itemSize, itemSize);
             }
         }
-
         if (emoteTimer > 0) {
             emoteTimer -= delta;
             if (currentEmote != null)
@@ -368,6 +376,7 @@ public class Player implements Serializable {
             if (!currentMessage.isEmpty())
                 font.draw(batch, currentMessage, getXX(), getYY() + getHeight() + 20);
         }
+
     }
 
     public void useTool() {
@@ -403,7 +412,7 @@ public class Player implements Serializable {
     }
 
     public void setMapNum(int mapNum) {
-        this.mapNum = mapNum;
+        Player.mapNum = mapNum;
     }
 
     public int getMapNum() {
@@ -534,8 +543,10 @@ public class Player implements Serializable {
     }
 
     public void addGold(int amount) {
-        if (sharedWallet == null)
+        if (sharedWallet == null) {
             gold += amount;
+            updateUserStats(1, 0, 0);
+        }
         else sharedWallet.addGold(amount);
     }
 
@@ -635,12 +646,12 @@ public class Player implements Serializable {
 
     public void setSpouse(Player spouse) {
         this.spouse = spouse;
-        farm.addOwner(spouse);
         spouse.spouse = this;
+        farm.addOwner(spouse);
+        spouse.getFarm().addOwner(this);
         SharedWallet wallet = new SharedWallet(this.gold, spouse.gold);
         this.sharedWallet = wallet;
         spouse.sharedWallet = wallet;
-        spouse.getFarm().addOwner(this);
     }
 
     public boolean isMarriedTo(Player a) {
@@ -800,12 +811,14 @@ public class Player implements Serializable {
     public int getId() {
         return id;
     }
+
     public void addTrade(String playerName, Trade trade) {
         trades.put(playerName, trade);
     }
     public Map<String,Trade> getTrades() {
         return trades;
     }
+
     public void triggerReaction(Emote emote) {
         currentMessage = "";
         this.currentEmote = emote;
@@ -825,7 +838,24 @@ public class Player implements Serializable {
         Player that = (Player) o;
         return getUsername().equals(that.getUsername());
     }
+
     public User getUser() {
         return user;
     }
+
+    public void updateUserStats(int gold, int quests, int skill) {
+        user.updateUserInfo(gold, "gold");
+        user.updateUserInfo(quests, "quests");
+        user.updateUserInfo(skill, "skill");
+
+        ScoreboardUpdatePacket packet = new ScoreboardUpdatePacket(
+            user.getUsername(),
+            user.getInfo("gold"),
+            user.getInfo("quests"),
+            user.getInfo("skill")
+        );
+
+        ServerMain.getServer().sendToAllTCP(packet);
+    }
+
 }

@@ -32,9 +32,9 @@ import java.util.TimerTask;
 public class ServerMain {
     public static ServerGameState gameState = new ServerGameState();
     private static final Map<String, Connection> playerConnections = new HashMap<>();
-
+    private static Server server;
     public static void main(String[] args) throws Exception {
-        Server server = new Server();
+        server = new Server();
         server.start();
         server.bind(54555, 54777);
 
@@ -268,4 +268,7 @@ public class ServerMain {
         }
     }
 
+    public static Server getServer(){
+        return server;
+    }
 }
