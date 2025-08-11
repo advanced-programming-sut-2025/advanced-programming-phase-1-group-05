@@ -208,7 +208,9 @@ public class GameScreen implements Screen {
         currentSeason = GameManager.getSeason();
         mapRenderer = new TileMapRenderer();
         mapRenderer.setSeason(currentSeason);
-
+        viewport = new FitViewport(320, 180, camera);
+        viewport.apply();
+        stage = new Stage(viewport, batch);
         Vector2 spawnPos = null;
         for (Player player : players) {
             if (player.equals(MyGame.getCurrentPlayer())) {
@@ -218,11 +220,10 @@ public class GameScreen implements Screen {
             if (player.equals(MyGame.getCurrentPlayer()))
                 spawnPos = spawnPosition;
             player.setPosition(spawnPosition.x, spawnPosition.y);
-            System.out.println(spawnPosition);
-            System.out.println(player.getMapNum());
-            System.out.println("set " + player.getUsername() + " position to " + player.getXX() + " " + player.getYY());
 
-
+        }
+        for (NPC npc : MyGame.getAllNPCs()) {
+            npc.initializeFriendships();
         }
         initializeFarmArea();
         Player player = MyGame.getCurrentPlayer();
@@ -267,10 +268,9 @@ public class GameScreen implements Screen {
 
     private void initializeFarmArea() {
         for (Player player : players) {
-            String map = GameMenuController.getMapForPlayer(player.getUsername());
             farms.add(getAllowedAreaForMap(player.getMapNum()));
         }
-
+        MyGame.setNpcActors();
         NPCs.addAll(MyGame.getNpcActors());
     }
 
@@ -607,7 +607,6 @@ public class GameScreen implements Screen {
             msg.direction = Direction.UP;
             msg.delta = delta;
             GameClient.client.sendTCP(msg);
-            System.out.println(player.getUsername() + " moving.");
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             player.moveDown(delta);
@@ -694,9 +693,6 @@ public class GameScreen implements Screen {
             if (result.isSuccess()) {
                 Player currentPlayer = MyGame.getCurrentPlayer();
                 String map = GameMenuController.getMapForPlayer(currentPlayer.getUsername());
-
-                farms.clear();
-                farms.add(getAllowedAreaForMap(player.getMapNum()));
 
                 Vector2 pos = getInitialPositionForMap(player.getMapNum());
                 camera.viewportWidth = VIEW_WIDTH * TILE_SIZE;
@@ -1466,11 +1462,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        viewport = new FitViewport(320, 180, camera);
-        viewport.apply();
+
 
         uiStage = new Stage(new ScreenViewport(), batch);
-        stage = new Stage(viewport, batch);
+
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(stage);
         multiplexer.addProcessor(new InventoryInputHandler(this));
@@ -1714,8 +1709,8 @@ public class GameScreen implements Screen {
             }
         });
 
-        Texture rejectTex = new Texture("closeButton.png");
-        Texture acceptTex = new Texture("ui/checkMark.png");
+        Texture rejectTex = GameAssetManager.getInstance().getOrLoadTexture("closeButton.png");
+        Texture acceptTex = GameAssetManager.getInstance().getOrLoadTexture("ui/checkMark.png");
         Drawable rejectDrawable = new TextureRegionDrawable(new TextureRegion(rejectTex));
         Drawable acceptDrawable = new TextureRegionDrawable(new TextureRegion(acceptTex));
         accept = new ImageButton(acceptDrawable);
@@ -2596,7 +2591,8 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 latestResult = controller.feedHay(animalActor.getAnimal());
                 showResult = true;
-                feedAnimal(animalActor);
+                if (latestResult.isSuccess())
+                    feedAnimal(animalActor);
                 animalMenuTable.setVisible(false);
             }
         });
@@ -2612,8 +2608,8 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 latestResult = controller.petAnimal(animal);
                 showResult = true;
-                animalActor.pet();
-                artisanMenuTable.setVisible(false);
+                if (latestResult.isSuccess())animalActor.pet();
+                animalMenuTable.setVisible(false);
             }
         });
         shepherdAnimal.setColor(1, 210f / 255, 132f / 255, 1);

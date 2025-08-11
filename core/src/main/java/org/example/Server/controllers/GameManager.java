@@ -16,8 +16,8 @@ public class GameManager {
 
     public static void nextDay(){
         resetEnergy();
-        checkNPCGifts();
-        checkForThirdQuest();
+        //checkNPCGifts();
+        //checkForThirdQuest();
         giveBackSoldItemGolds();
         getAnimalProducts();
         manageWeather();

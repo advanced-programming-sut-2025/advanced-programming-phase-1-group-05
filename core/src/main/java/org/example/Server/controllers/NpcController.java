@@ -9,74 +9,83 @@ import org.example.Client.GameAssetManager;
 import org.example.Client.GameScreen;
 import org.example.Client.NpcActor;
 import org.example.Common.Enums.Direction;
+import org.example.Server.models.NPC;
+import org.example.Server.models.ServerNPC;
 import org.example.Server.models.Store;
 
-public class NpcController {
-    NpcActor npc;
-    Store store;
+import java.util.ArrayList;
+import java.util.List;
 
-    public NpcController(NpcActor npc, Store store) {
+public class NpcController {
+    public ServerNPC npc;
+    public Direction direction;
+    public float moveTimer = 0f;
+    public Vector2 directionVector = new Vector2();
+
+    public NpcController(ServerNPC npc) {
         this.npc = npc;
-        this.store = store;
     }
 
-    public NpcActor getNpc () {
+    public ServerNPC getNpc () {
         return npc;
     }
 
     public void update(float delta) {
+        System.out.println("Updating NPC " + npc.name + " moveTimer: " + moveTimer);
         if (!npc.walking) return;
-        npc.moveTimer -= delta;
-        Vector2 target = new Vector2(store.getX() + store.getWidth()/2, store.getY());
+        moveTimer -= delta;
+        Vector2 target = new Vector2(npc.storeX, npc.storeY);
         int hour = GameManager.getGameClock().hour;
         float biasStrength = 0f;
-        if (hour >= store.getOpeningTime() - 2 && hour < store.getOpeningTime() - 1) {
+        if (hour >= npc.startHour - 2 && hour < npc.startHour - 1) {
             biasStrength = 0.5f;
-        } else if (hour >= store.getOpeningTime() - 1) {
+        } else if (hour >= npc.startHour - 1 && hour < npc.endHour) {
             biasStrength = 1f;
         }
 
-        if (npc.moveTimer <= 0) {
+        if (moveTimer <= 0) {
             Vector2 randomDir = new Vector2(MathUtils.random(-1f, 1f), MathUtils.random(-1f, 1f));
 
-            Vector2 toTarget = target.cpy().sub(npc.getX(), npc.getY()).nor();
+            Vector2 toTarget = target.cpy().sub(npc.x, npc.y).nor();
 
-            npc.directionVector = randomDir.scl(1f - biasStrength).add(toTarget.scl(biasStrength)).nor();
+            directionVector = randomDir.scl(1f - biasStrength).add(toTarget.scl(biasStrength)).nor();
 
-            npc.moveTimer = MathUtils.random(1f, 3f);
+            moveTimer = MathUtils.random(1f, 3f);
         }
 
-        float newX = npc.getX() + npc.directionVector.x * npc.speed * delta;
-        float newY = npc.getY() + npc.directionVector.y * npc.speed * delta;
+        float newX = npc.x + directionVector.x * 30 * delta;
+        float newY = npc.y + directionVector.y * 30 * delta;
 
-        if (newX < 100 || newX + npc.getWidth() > 8500 || newY < 100 || newY + npc.getHeight() > 8525) {
+        if (newX < 100 || newX + 60 > 8500 || newY < 100 || newY + 104 > 8525) {
             return; // skip movement this frame
         }
-        Rectangle nextBounds = new Rectangle(newX, newY, npc.getWidth(), npc.getHeight());
+        Rectangle nextBounds = new Rectangle(newX, newY, 60, 104);
 
         if (!overlapsAnyFarm(nextBounds)) {
-            npc.setPosition(newX, newY);
-            npc.getNpc().setPosition(newX, newY);
-
-            if (Math.abs(npc.directionVector.x) > Math.abs(npc.directionVector.y)) {
-                npc.direction = npc.directionVector.x > 0 ? Direction.RIGHT : Direction.LEFT;
+            if (Math.abs(directionVector.x) > Math.abs(directionVector.y)) {
+                npc.direction = directionVector.x > 0 ? Direction.RIGHT : Direction.LEFT;
             } else {
-                npc.direction = npc.directionVector.y > 0 ? Direction.UP : Direction.DOWN;
+                npc.direction = directionVector.y > 0 ? Direction.UP : Direction.DOWN;
             }
-
+            npc.x = newX;
+            npc.y = newY;
         }
 
-        npc.stateTime += delta;
-        Animation<TextureRegion> anim = GameAssetManager.getInstance().getNPCWalkingAnimation(npc.getNpc(), npc.direction);
-        npc.currentFrame = anim.getKeyFrame(npc.stateTime, true);
+
+
     }
 
 
     private boolean overlapsAnyFarm(Rectangle bounds) {
-        for (Rectangle farm : GameScreen.farms) {
-            if (bounds.overlaps(farm)) {
+        List<Rectangle> farms = new ArrayList<>();
+        int TILE_SIZE = 64;
+        farms.add(new Rectangle(10f * TILE_SIZE, 10f * TILE_SIZE, 50f * TILE_SIZE, 50f * TILE_SIZE));
+        farms.add(new Rectangle(80 * TILE_SIZE, 10 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
+        farms.add(new Rectangle(10 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
+        farms.add(new Rectangle(80 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
+        for (Rectangle farm : farms) {
+            if (farm.overlaps(bounds))
                 return true;
-            }
         }
         return false;
     }

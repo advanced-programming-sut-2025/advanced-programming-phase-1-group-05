@@ -7,7 +7,6 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.LoginPacket;
-import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.MessageType;
 import org.example.Common.Lobby;
@@ -65,7 +64,6 @@ public class ClientNetworkManager {
         kryo.register(java.util.List.class);
         kryo.register(HashMap.class);
 
-        kryo.register(PlayerUpdate.class);
         kryo.register(ChatMessage.class);
         kryo.register(PrivateChatMessage.class);
         kryo.register(TradeMessage.class);

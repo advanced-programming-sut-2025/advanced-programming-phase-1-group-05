@@ -1,11 +1,15 @@
 package org.example.Client;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import org.example.Common.Product;
 import org.example.Server.models.Animal;
 import org.example.Server.models.AnimalAnimations;
+
+import java.util.List;
 
 public class AnimalActor extends Actor {
     //private TextureRegion currentFrame;
@@ -18,6 +22,7 @@ public class AnimalActor extends Actor {
     private float pettingTimer = 0f;
     private final float PETTING_DURATION = 5f;
     private boolean showHeart = false;
+    Texture heartTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/heart.png");
 
     public AnimalActor(Animal animal) {
         this.animal = animal;
@@ -68,6 +73,18 @@ public class AnimalActor extends Actor {
         } else if (currentAnimation != null) {
             TextureRegion frame = currentAnimation.getKeyFrame(stateTime, true);
             batch.draw(frame, getX(), getY(), getWidth(), getHeight());
+        }
+        if (showHeart) {
+            batch.draw(heartTexture,
+                getX() + (getWidth() - heartTexture.getWidth()) / 2f,
+                getY() + getHeight() + 5);
+        }
+        List<Product> products = animal.getUnCollectedProducts();
+        if (!products.isEmpty()) {
+            for (Product product : products) {
+                Texture texture = product.getTexture().getTexture();
+                batch.draw(texture, getX() + getWidth() + texture.getWidth(), getY() + texture.getHeight());
+            }
         }
     }
     public Animal getAnimal() {

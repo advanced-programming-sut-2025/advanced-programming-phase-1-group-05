@@ -42,6 +42,7 @@ public class StoreView implements Screen {
     Table itemTable;
     ScrollPane scrollPane;
     MessageBanner banner;
+    boolean animalAdded;
 
     public StoreView(Store store, GameScreen game) {
         this.skin = GameAssetManager.getSkin();
@@ -86,6 +87,7 @@ public class StoreView implements Screen {
                     AnimalType animalType = AnimalType.fromString(product.getName());
                     if (animalType != null) {
                         showNameDialog(animalType, product);
+                        Main.getMain().setScreen(previousScreen);
                         return;
                     }
                 }
@@ -95,6 +97,7 @@ public class StoreView implements Screen {
                 if (result.isSuccess()){
                     PurchaseRequest req = new PurchaseRequest();
                     req.player = MyGame.getCurrentPlayer();
+                    req.items = new HashMap<>();
                     req.items.putAll(toPurchase);
                     Main.getMain().getNetworkManager().getClient().sendTCP(req);
                 }
@@ -226,7 +229,14 @@ public class StoreView implements Screen {
                         player.addGold(-item.getPrice());
                         Main.getMain().setScreen(previousScreen);
                     }
-
+                    AnimalType animalType = AnimalType.fromString(item.getName());
+                    if (animalType!= null && !quantities.isEmpty())
+                        return;
+                    if (animalType == null && animalAdded)
+                        return;
+                    if (animalType != null) {
+                        animalAdded = true;
+                    }
                     qty++;
                     if (item.getRemainingForToday() < qty && item.getRemainingForToday() > 0) {
                         banner.showMessage("No more of this item available.", Color.RED, 5f);
@@ -249,7 +259,7 @@ public class StoreView implements Screen {
             }
         });
 
-        Image hoverRect = new Image(new Texture("white_pixel.png"));
+        Image hoverRect = new Image(GameAssetManager.getInstance().getOrLoadTexture("white_pixel.png"));
         hoverRect.setColor(Color.BLACK);
         hoverRect.setSize(200, 200);
         hoverRect.setVisible(false);
@@ -291,7 +301,7 @@ public class StoreView implements Screen {
     }
     @Override
     public void show() {
-        Image background = new Image(new Texture("stores/"+ store.getStoreName().toLowerCase().replaceAll("\\s+", "") + "Interior.png"));
+        Image background = new Image(GameAssetManager.getInstance().getOrLoadTexture("stores/"+ store.getStoreName().toLowerCase().replaceAll("\\s+", "") + "Interior.png"));
         background.setFillParent(true);
         stage.addActor(background);
         Gdx.input.setInputProcessor(stage);

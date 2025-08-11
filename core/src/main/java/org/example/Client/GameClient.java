@@ -126,7 +126,9 @@ import org.example.Server.Packets.ScoreboardUpdatePacket;
 import org.example.Server.Packets.StartGamePacket;
 import org.example.Server.controllers.TradingController;
 import org.example.Server.models.MyGame;
+import org.example.Server.models.NPC;
 import org.example.Server.models.Result;
+import org.example.Server.models.ServerNPC;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -332,12 +334,23 @@ public class GameClient {
                 }
                 else if (object instanceof  NpcMovePacket) {
                     NpcMovePacket packet = (NpcMovePacket) object;
+                    System.out.println("hello");
                     Gdx.app.postRunnable(() -> {
                         NpcActor npcActor = MyGame.getNpcActorByName(packet.npcName);
                         if (npcActor != null) {
                             npcActor.setPosition(packet.x, packet.y);
-                            npcActor.getNpc().setPosition(packet.x, packet.y);
-                            npcActor.direction = packet.direction;
+                        }
+                        else {
+                            System.out.println("null lol");
+                        }
+                        NPC npc  = MyGame.getNPCByName(packet.npcName);
+                        if (npc != null) {
+                            npc.setPosition(packet.x, packet.y);
+                            npc.direction = packet.direction;
+                            npc.stateTime += packet.delta;
+                        }
+                        else {
+                            System.out.println("null again🤣🤣");
                         }
                     });
                 }
@@ -407,5 +420,7 @@ public class GameClient {
         kryo.register(MovePacket.class);
         kryo.register(Direction.class);
         kryo.register(ScoreboardUpdatePacket.class);
+        kryo.register(NpcMovePacket.class);
+        kryo.register(ServerNPC.class);
     }
 }

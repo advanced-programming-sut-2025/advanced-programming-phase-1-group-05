@@ -24,6 +24,7 @@ import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
 import org.example.Server.controllers.NpcController;
 import org.example.Server.models.MyGame;
+import org.example.Server.models.ServerNPC;
 
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -34,6 +35,7 @@ public class ServerMain {
     private static final Map<String, Connection> playerConnections = new HashMap<>();
     private static Server server;
     private static List<NpcController> npcControllers = new ArrayList<>();
+    static boolean updateNPCS = false;
     public static void main(String[] args) throws Exception {
         server = new Server();
         server.start();
@@ -102,11 +104,14 @@ public class ServerMain {
         kryo.register(MovePacket.class);
         kryo.register(Direction.class);
         kryo.register(ScoreboardUpdatePacket.class);
+        kryo.register(NpcMovePacket.class);
+        kryo.register(ServerNPC.class);
 
 
         server.addListener(new Listener() {
             public void received(Connection c, Object object) {
                 if (object instanceof StartGamePacket) {
+
                     StartGamePacket msg = (StartGamePacket) object;
                     for (SimplePlayer player : msg.players) {
                         Connection playerConn = playerConnections.get(player.getUsername());
@@ -118,6 +123,7 @@ public class ServerMain {
                             playerConn.sendTCP(packet);
                         }
                     }
+                    updateNPCS = true;
                 } else if (object instanceof MovePacket) {
                     MovePacket movePacket = (MovePacket) object;
                     server.sendToAllExceptTCP(c.getID(), movePacket);
@@ -283,28 +289,38 @@ public class ServerMain {
     private static void startGameLoop() {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(() -> {
-            float delta = 0.05f;
+            try {
+                {
+                    float delta = 0.05f;
 
-            for (NpcController controller : npcControllers) {
-                controller.update(delta);
+                    for (NpcController controller : npcControllers) {
+                        controller.update(delta);
 
-                NpcMovePacket pkt = new NpcMovePacket();
-                pkt.npcName = controller.getNpc().getName();
-                pkt.x = controller.getNpc().getX();
-                pkt.y = controller.getNpc().getY();
-                pkt.direction = controller.getNpc().getDirection();
+                        NpcMovePacket pkt = new NpcMovePacket();
+                        pkt.npcName = controller.getNpc().name;
+                        pkt.x = controller.getNpc().x;
+                        pkt.y = controller.getNpc().y;
+                        pkt.direction = controller.getNpc().direction;
+                        pkt.delta = delta;
 
-                server.sendToAllTCP(pkt);
+                        server.sendToAllTCP(pkt);
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
 
         }, 0, 50, TimeUnit.MILLISECONDS);
     }
 
-    private static void initializeNPCs (){
-        MyGame.setNpcActors();
-        for (NpcActor npcActor : MyGame.getNpcActors()) {
-            npcControllers.add(new NpcController(npcActor, npcActor.getNpc().getStore()));
-        }
+    private static void initializeNPCs() {
+
+        npcControllers.add(new NpcController(new ServerNPC("Sebastian", true, 9, 17, 3450, 4000, 6493.93f, 4108)));
+        npcControllers.add(new NpcController(new ServerNPC("Abigail", true, 9, 16, 7100, 4050, 4470.5f, 4468.5f)));
+        npcControllers.add(new NpcController(new ServerNPC("Harvey", true, 9, 17, 4650, 7650, 6404.52f, 3929.28f)));
+        npcControllers.add(new NpcController(new ServerNPC("Leah", true, 9, 16, 2350, 4300, 1129.33f, 3902.43f)));
+        npcControllers.add(new NpcController(new ServerNPC("Robin", true, 9, 20, 1120, 3950, 156.41f, 4823)));
+
 
     }
 }

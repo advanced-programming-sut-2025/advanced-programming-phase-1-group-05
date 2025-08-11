@@ -19,17 +19,10 @@ import java.util.Random;
 
 public class NpcActor extends Actor {
     private final Image exclamationImage;
-    public Direction direction = Direction.DOWN;
-    public float stateTime = 0f;
     public TextureRegion currentFrame;
-    public float moveTimer = 0f;
-    public float speed = 30f;
-    public Vector2 directionVector = new Vector2();
     private final NPC npc;
     private boolean dialogueReady = false;
     private final int dialogueTime;
-    public   boolean walking = true;
-
 
     public NpcActor (NPC npc) {
         this.npc = npc;
@@ -62,6 +55,8 @@ public class NpcActor extends Actor {
         super.act(delta);
         exclamationImage.act(delta);
 
+        Animation<TextureRegion> anim = GameAssetManager.getInstance().getNPCWalkingAnimation(npc, npc.direction);
+        currentFrame = anim.getKeyFrame(npc.stateTime);
     }
 
 
@@ -85,7 +80,7 @@ public class NpcActor extends Actor {
     }
 
     public void setWalking(boolean walking) {
-        this.walking = walking;
+        npc.walking = walking;
     }
 
     public boolean isDialogueReady() {
@@ -102,7 +97,4 @@ public class NpcActor extends Actor {
          return message;
     }
 
-    public Direction getDirection() {
-        return direction;
-    }
 }

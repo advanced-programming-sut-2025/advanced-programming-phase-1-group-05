@@ -248,7 +248,6 @@ public class Player implements Serializable {
         lastDirection = Direction.UP;
         stateTime += delta;
         reduceEnergyByStep(speed * delta);
-        System.out.println("moved " + getUsername());
     }
 
     public void moveDown(float delta) {

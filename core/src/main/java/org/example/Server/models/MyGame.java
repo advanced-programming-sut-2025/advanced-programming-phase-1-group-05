@@ -32,8 +32,10 @@ public class MyGame implements Serializable {
     private static ArrayList<NpcActor> npcActors = new ArrayList<>();
 
     public static void setNpcActors() {
-        for (NPC npc : getAllNPCs()) {
-            npcActors.add(new NpcActor(npc));
+        if (npcActors.isEmpty()) {
+            for (NPC npc : getAllNPCs()) {
+                npcActors.add(new NpcActor(npc));
+            }
         }
     }
 
@@ -144,9 +146,7 @@ public class MyGame implements Serializable {
             if (!players.isEmpty()) {
                 currentPlayer = players.get(0);
             }
-            for (NPC npc : getAllNPCs()) {
-                npc.initializeFriendships();
-            }
+
             return Result.success("Game started successfully! Current player: " +
                     (currentPlayer != null ? currentPlayer.getUsername() : "None"));
         } catch (Exception e) {

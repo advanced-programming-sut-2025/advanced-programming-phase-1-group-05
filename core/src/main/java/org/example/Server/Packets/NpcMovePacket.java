@@ -7,4 +7,5 @@ public class NpcMovePacket {
     public float x;
     public float y;
     public Direction direction;
+    public float delta;
 }
