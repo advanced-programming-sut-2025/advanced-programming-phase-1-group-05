@@ -28,6 +28,7 @@ import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.Packets.MovePacket;
+import org.example.Server.Packets.PositionUpdate;
 import org.example.Server.controllers.*;
 import org.example.Server.models.*;
 import org.example.Server.models.Building.AnimalHouse;
@@ -804,12 +805,16 @@ public class GameScreen implements Screen {
             if (store.getBoundingRectangle().overlaps(playerRect)) {
                 stoore = store;
                 player.setPosition(oldPos.x, oldPos.y);
+                PositionUpdate msg = new PositionUpdate(player.getUsername(), player.getXX(), player.getYY());
+                GameClient.client.sendTCP(msg);
             }
         }
 
         if (stoore == null) {
             if (!canWalk(px, py)) {
                 player.setPosition(oldPos.x, oldPos.y);
+                PositionUpdate msg = new PositionUpdate(player.getUsername(), player.getXX(), player.getYY());
+                GameClient.client.sendTCP(msg);
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
                 toggleOverviewMode();

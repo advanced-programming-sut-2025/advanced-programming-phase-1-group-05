@@ -120,6 +120,7 @@ import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
 import org.example.Server.Packets.MovePacket;
 import org.example.Server.Packets.OnlinePlayerPacket;
+import org.example.Server.Packets.PositionUpdate;
 import org.example.Server.Packets.StartGamePacket;
 import org.example.Server.controllers.TradingController;
 import org.example.Server.models.MyGame;
@@ -183,6 +184,11 @@ public class GameClient {
                             }
                         }
                     }
+                }
+                else if (object instanceof PositionUpdate) {
+                    PositionUpdate positionUpdate = (PositionUpdate) object;
+                    Player otherPlayer = MyGame.getPlayerByUsername(positionUpdate.playerUsername);
+                    otherPlayer.setPosition(positionUpdate.x, positionUpdate.y);
                 }
                 else if (object instanceof ChatMessage) {
                     ChatMessage chat = (ChatMessage) object;

@@ -116,10 +116,13 @@ public class ServerMain {
                             playerConn.sendTCP(packet);
                         }
                     }
-                }
-                else if (object instanceof  MovePacket) {
+                } else if (object instanceof MovePacket) {
                     MovePacket movePacket = (MovePacket) object;
                     server.sendToAllExceptTCP(c.getID(), movePacket);
+                }
+                else if (object instanceof PositionUpdate) {
+                    PositionUpdate positionUpdate = (PositionUpdate) object;
+                    server.sendToAllExceptTCP(c.getID(), positionUpdate);
                 }
                 else if (object instanceof TradeMessage){
                     TradeMessage msg = (TradeMessage) object;
