@@ -8,6 +8,7 @@ import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.LoginPacket;
 import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
+import org.example.Common.Enums.Direction;
 import org.example.Common.Enums.MessageType;
 import org.example.Common.Lobby;
 import org.example.Common.Network.*;
@@ -97,6 +98,8 @@ public class ServerMain {
         kryo.register(TextMessage.class);
         kryo.register(OnlinePlayerPacket.class);
         kryo.register(StartGamePacket.class);
+        kryo.register(MovePacket.class);
+        kryo.register(Direction.class);
 
 
         server.addListener(new Listener() {
@@ -113,6 +116,10 @@ public class ServerMain {
                             playerConn.sendTCP(packet);
                         }
                     }
+                }
+                else if (object instanceof  MovePacket) {
+                    MovePacket movePacket = (MovePacket) object;
+                    server.sendToAllExceptTCP(c.getID(), movePacket);
                 }
                 else if (object instanceof TradeMessage){
                     TradeMessage msg = (TradeMessage) object;

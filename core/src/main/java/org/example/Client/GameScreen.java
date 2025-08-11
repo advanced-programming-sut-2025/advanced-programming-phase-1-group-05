@@ -27,6 +27,7 @@ import org.example.Main;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
+import org.example.Server.Packets.MovePacket;
 import org.example.Server.controllers.*;
 import org.example.Server.models.*;
 import org.example.Server.models.Building.AnimalHouse;
@@ -599,10 +600,36 @@ public class GameScreen implements Screen {
         Vector2 oldPos = new Vector2(player.getXX(), player.getYY());
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             player.moveUp(delta);
+            MovePacket msg = new MovePacket();
+            msg.playerUsername = player.getUsername();
+            msg.direction = Direction.UP;
+            msg.delta = delta;
+            GameClient.client.sendTCP(msg);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) player.moveDown(delta);
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.moveLeft(delta);
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.moveRight(delta);
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            player.moveDown(delta);
+            MovePacket msg = new MovePacket();
+            msg.playerUsername = player.getUsername();
+            msg.direction = Direction.DOWN;
+            msg.delta = delta;
+            GameClient.client.sendTCP(msg);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            player.moveLeft(delta);
+            MovePacket msg = new MovePacket();
+            msg.playerUsername = player.getUsername();
+            msg.direction = Direction.LEFT;
+            msg.delta = delta;
+            GameClient.client.sendTCP(msg);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            player.moveRight(delta);
+            MovePacket msg = new MovePacket();
+            msg.playerUsername = player.getUsername();
+            msg.direction = Direction.RIGHT;
+            msg.delta = delta;
+            GameClient.client.sendTCP(msg);
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
             cheatCodeWindow.toggle();
         }
@@ -762,6 +789,9 @@ public class GameScreen implements Screen {
             isCraftOpen = false;
             isSkillSetOpen = false;
             isInvenotryOpen = false;
+        }
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.Y)) {
+            showEmoteMenu();
         }
         float px = player.getXX() + player.getWidth() / 2f;
         float py = player.getYY() + player.getHeight() / 2f;
