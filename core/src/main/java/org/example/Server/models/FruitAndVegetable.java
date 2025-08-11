@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import org.example.Common.GameMap;
 import org.example.Common.GameTile;
 import org.example.Common.Item;
-import org.example.GrowthStep;
 import org.example.Common.Enums.CropType;
 import org.example.Common.Enums.Season;
 

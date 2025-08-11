@@ -605,6 +605,7 @@ public class GameScreen implements Screen {
             msg.direction = Direction.UP;
             msg.delta = delta;
             GameClient.client.sendTCP(msg);
+            System.out.println(player.getUsername() + " moving.");
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             player.moveDown(delta);

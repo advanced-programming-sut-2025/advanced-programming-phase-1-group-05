@@ -13,10 +13,8 @@ import org.example.Client.GameAssetManager;
 import org.example.Common.Enums.*;
 import org.example.Common.Network.SimplePlayer;
 import org.example.Common.Tool.*;
-import org.example.Main;
-import org.example.Server.ScoreboardUpdatePacket;
+import org.example.Server.Packets.ScoreboardUpdatePacket;
 import org.example.Server.ServerMain;
-import org.example.Server.controllers.DBController;
 import org.example.Server.controllers.GameManager;
 import org.example.Server.models.*;
 import org.example.Server.models.Building.AnimalHouse;
@@ -96,10 +94,13 @@ public class Player implements Serializable {
     private boolean isUsingTool = false;
 
 
+    public Player(SimplePlayer simplePlayer) {
+        this(UserDatabase.getUserByUsername(simplePlayer.username));
+    }
+
     public Player(User user) {
         this.user = user;
         this.energy = 200;
-        //this.farm = new Farm(this,) //TODO fix this
         backPack.getInventory().put(new Hoe(), 1);
         backPack.getInventory().put(new Pickaxe(), 1);
         backPack.getInventory().put(new Scythe(), 1);
@@ -246,6 +247,7 @@ public class Player implements Serializable {
         lastDirection = Direction.UP;
         stateTime += delta;
         reduceEnergyByStep(speed * delta);
+        System.out.println("moved " + getUsername());
     }
 
     public void moveDown(float delta) {

@@ -71,8 +71,8 @@ public class NpcActor extends Actor {
         }
 
 
-        float newX = getX() + directionVector.x * speed * delta;
-        float newY = getY() + directionVector.y * speed * delta;
+        float newX = getX() + directionVector.x * speed * delta + getWidth()/2;
+        float newY = getY() + directionVector.y * speed * delta + getHeight()/2;
 
         if (newX < 100 || newX + getWidth() > 8500 || newY < 100 || newY + getHeight() > 8525) {
             return; // skip movement this frame

@@ -1,6 +1,4 @@
-package org.example.Server;
-
-import java.util.List;
+package org.example.Server.Packets;
 
 public class ScoreboardUpdatePacket {
     public String username;

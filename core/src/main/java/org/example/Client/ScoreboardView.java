@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Common.User;
-import org.example.Server.ScoreboardUpdatePacket;
+import org.example.Server.Packets.ScoreboardUpdatePacket;
 import org.example.Server.controllers.DBController;
 import org.example.Server.models.MyGame;
 

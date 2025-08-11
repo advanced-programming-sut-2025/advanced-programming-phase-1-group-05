@@ -91,7 +91,7 @@ public class MainMenu implements Screen {
 
         scoreboardButton.addListener(new ChangeListener() {
             @Override public void changed(ChangeEvent event, Actor actor) {
-                Main.getMain().setScreen(new S());
+                Main.getMain().setScreen(new ScoreboardView());
             }
         });
 
