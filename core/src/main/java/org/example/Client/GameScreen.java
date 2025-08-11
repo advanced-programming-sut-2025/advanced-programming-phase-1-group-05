@@ -216,7 +216,9 @@ public class GameScreen implements Screen {
             if (player.equals(MyGame.getCurrentPlayer()))
                 spawnPos = spawnPosition;
             player.setPosition(spawnPosition.x, spawnPosition.y);
-
+            System.out.println(spawnPosition);
+            System.out.println(player.getMapNum());
+            System.out.println("set " + player.getUsername() + " position to " + player.getXX() + " " + player.getYY());
 
 
         }

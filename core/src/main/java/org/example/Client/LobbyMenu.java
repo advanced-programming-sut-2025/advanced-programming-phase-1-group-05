@@ -197,7 +197,6 @@ public class LobbyMenu implements Screen {
                         msg.players = new ArrayList<>();
                         msg.players.addAll(lobby.getPlayers());
                         msg.lobbyId = lobby.getId();
-                        startTheGame(lobby.getPlayers());
                         GameClient.client.sendTCP(msg);
                     }
                 });
@@ -249,32 +248,37 @@ public class LobbyMenu implements Screen {
         for(SimplePlayer simplePlayer : simplePlayers) {
            // players.add(new Player(simplePlayer.));
         }
-        MyGame.addPlayers(players);
+
         for (Player player : players) {
             player.setMapNum(players.indexOf(player) + 1);
             initializeFarm(player);
         }
+        MyGame.addPlayers(players);
     }
     private void initializeFarm(Player player) {
         switch (player.getMapNum()) {
             case 1 : {
                 player.setFarm(new Rectangle(10f * TILE_SIZE, 10f * TILE_SIZE, 50f * TILE_SIZE, 50f * TILE_SIZE));
-                System.out.println("set " + player.getUsername()  + "'s farm.");
+                player.setMapNum(1);
+                System.out.println("set " + player.getUsername()  + "'s farm. 1");
                 break;
             }
             case 2 : {
                 player.setFarm(new Rectangle(80 * TILE_SIZE, 10 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
-                System.out.println("set " + player.getUsername()  + "'s farm.");
+                player.setMapNum(2);
+                System.out.println("set " + player.getUsername()  + "'s farm. 2");
                 break;
             }
             case 3 : {
                 player.setFarm(new Rectangle(10 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
-                System.out.println("set " + player.getUsername()  + "'s farm.");
+                player.setMapNum(3);
+                System.out.println("set " + player.getUsername()  + "'s farm. 3");
                 break;
             }
             case 4 : {
                 player.setFarm(new Rectangle(80 * TILE_SIZE, 80 * TILE_SIZE, 50 * TILE_SIZE, 50 * TILE_SIZE));
-                System.out.println("set " + player.getUsername()  + "'s farm.");
+                player.setMapNum(4);
+                System.out.println("set " + player.getUsername()  + "'s farm. 4");
                 break;
             }
         }

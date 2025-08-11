@@ -48,7 +48,7 @@ public class Player implements Serializable {
     private SharedWallet sharedWallet = null;
     private List<AnimalHouse> coopAndBarns = new ArrayList<>();
     private List<String> notifications = new ArrayList<>();
-    private static int mapNum;
+    private int mapNum;
     private transient Texture texture;
     private float width = 49, height = 122;
     private float speed = 200f;
@@ -415,7 +415,7 @@ public class Player implements Serializable {
     }
 
     public void setMapNum(int mapNum) {
-        Player.mapNum = mapNum;
+        this.mapNum = mapNum;
     }
 
     public int getMapNum() {
