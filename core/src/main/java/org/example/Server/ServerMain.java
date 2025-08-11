@@ -4,9 +4,9 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import org.example.Client.NpcActor;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.LoginPacket;
-import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.Direction;
 import org.example.Common.Enums.MessageType;
@@ -22,22 +22,24 @@ import org.example.Server.Packets.MarriagePackets.MarriageProposalReceived;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalRequest;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
+import org.example.Server.controllers.NpcController;
 import org.example.Server.models.MyGame;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ServerMain {
-    public static ServerGameState gameState = new ServerGameState();
     private static final Map<String, Connection> playerConnections = new HashMap<>();
     private static Server server;
+    private static List<NpcController> npcControllers = new ArrayList<>();
     public static void main(String[] args) throws Exception {
         server = new Server();
         server.start();
         server.bind(54555, 54777);
-
+        initializeNPCs();
+        startGameLoop();
         Kryo kryo = server.getKryo();
 
         kryo.register(String.class);
@@ -45,7 +47,6 @@ public class ServerMain {
         kryo.register(java.util.List.class);
         kryo.register(HashMap.class);
 
-        kryo.register(PlayerUpdate.class);
         kryo.register(ChatMessage.class);
         kryo.register(PrivateChatMessage.class);
         kryo.register(TradeMessage.class);
@@ -162,16 +163,16 @@ public class ServerMain {
                 }
                 else if (object instanceof PurchaseRequest) {
                     PurchaseRequest request = (PurchaseRequest) object;
-                    synchronized (gameState) {
-                        StoreUpdatePacket updatePacket = new StoreUpdatePacket();
-                        updatePacket.products = new ArrayList<>();
-                        for (Map.Entry<Product, Integer> entry : request.items.entrySet()) {
-                            updatePacket.products.add(entry.getKey());
-                        }
-                        updatePacket.storeName = request.storeName;
-
-                        server.sendToAllTCP(updatePacket);
-                    }
+//                    synchronized (gameState) {
+//                        StoreUpdatePacket updatePacket = new StoreUpdatePacket();
+//                        updatePacket.products = new ArrayList<>();
+//                        for (Map.Entry<Product, Integer> entry : request.items.entrySet()) {
+//                            updatePacket.products.add(entry.getKey());
+//                        }
+//                        updatePacket.storeName = request.storeName;
+//
+//                        server.sendToAllTCP(updatePacket);
+//                    }
                 }
                 else if (object instanceof LoginPacket) {
                     LoginPacket login = (LoginPacket) object;
@@ -277,5 +278,33 @@ public class ServerMain {
 
     public static Server getServer(){
         return server;
+    }
+
+    private static void startGameLoop() {
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(() -> {
+            float delta = 0.05f;
+
+            for (NpcController controller : npcControllers) {
+                controller.update(delta);
+
+                NpcMovePacket pkt = new NpcMovePacket();
+                pkt.npcName = controller.getNpc().getName();
+                pkt.x = controller.getNpc().getX();
+                pkt.y = controller.getNpc().getY();
+                pkt.direction = controller.getNpc().getDirection();
+
+                server.sendToAllTCP(pkt);
+            }
+
+        }, 0, 50, TimeUnit.MILLISECONDS);
+    }
+
+    private static void initializeNPCs (){
+        MyGame.setNpcActors();
+        for (NpcActor npcActor : MyGame.getNpcActors()) {
+            npcControllers.add(new NpcController(npcActor, npcActor.getNpc().getStore()));
+        }
+
     }
 }

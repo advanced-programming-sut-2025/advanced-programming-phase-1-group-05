@@ -1,5 +1,6 @@
 package org.example.Server.models;
 
+import org.example.Client.NpcActor;
 import org.example.Client.ScoreboardView;
 import org.example.Common.*;
 import org.example.Server.controllers.GameManager;
@@ -28,8 +29,24 @@ public class MyGame implements Serializable {
 //    public static boolean greenHouseBuilt = false;
     public static Map<Player, Item> soldItems = new HashMap<>();
     private static TradingController tradingController = new TradingController();
+    private static ArrayList<NpcActor> npcActors = new ArrayList<>();
 
+    public static void setNpcActors() {
+        for (NPC npc : getAllNPCs()) {
+            npcActors.add(new NpcActor(npc));
+        }
+    }
 
+    public static ArrayList<NpcActor> getNpcActors () {
+        return npcActors;
+    }
+    public static NpcActor getNpcActorByName(String name) {
+        for (NpcActor npcActor : npcActors) {
+            if (npcActor.getNpc().getName().equalsIgnoreCase(name))
+                return npcActor;
+        }
+        return null;
+    }
     public static TradingController getTradingController() {
         return tradingController;
     }

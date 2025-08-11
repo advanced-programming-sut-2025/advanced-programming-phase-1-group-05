@@ -59,4 +59,12 @@ public class Store extends Actor implements Serializable {
     public Rectangle getBoundingRectangle() {
         return new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
+
+    public int getOpeningTime() {
+        return openingTime;
+    }
+
+    public int getClosingTime() {
+        return closingTime;
+    }
 }

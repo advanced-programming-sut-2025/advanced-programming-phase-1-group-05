@@ -15,6 +15,7 @@ public class NPC  implements Serializable {
     List<Mission> missions = new ArrayList<>();
     public boolean dialogueForToday = false;
     private final int daysToUnlockThirdQuest;
+    private Store store;
     public NPC(String name, List<String> favorites, List<Mission> missionList) {
         this.name = name;
         this.favorites.addAll(favorites);
@@ -27,21 +28,30 @@ public class NPC  implements Serializable {
     public void setXandY () {
         if (name.equalsIgnoreCase("Sebastian")){
             x = 6493.93f; y= 4108;
+            store = MyGame.getDatabase().getStoreByName("Pierre's General Store");
         }
         else if (name.equalsIgnoreCase("Abigail")) {
             x = 4470.5f; y = 4468.5f;
+            store = MyGame.getDatabase().getStoreByName("Blacksmith");
         }
         else  if (name.equalsIgnoreCase("Harvey")) {
             x = 6404.52f; y = 3929.28f;
+            store = MyGame.getDatabase().getStoreByName("Fish Shop");
         }
         else if (name.equalsIgnoreCase("Leah")) {
             x = 1129.33f; y= 3902.43f;
+            store = MyGame.getDatabase().getStoreByName("Marnie's Ranch");
         }
         else if (name.equalsIgnoreCase("Robin")) {
             x = 156.41f; y = 4823;
+            store = MyGame.getDatabase().getStoreByName("Carpenter's Shop");
         }
     }
 
+
+    public Store getStore() {
+        return store;
+    }
     public float getX() {
         return x;
     }

@@ -26,6 +26,7 @@ import org.example.Common.Enums.*;
 import org.example.Main;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
+import org.example.Server.Packets.HugMessage;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.Packets.MovePacket;
 import org.example.Server.Packets.PositionUpdate;
@@ -80,7 +81,7 @@ public class GameScreen implements Screen {
 
     private boolean isInvenotryOpen = false;
     public static Array<Rectangle> farms = new Array<>();
-    Array<NpcActor> NPCs = new Array<>();
+    ArrayList<NpcActor> NPCs = new ArrayList<>();
 
     // lightning effect
     private boolean lightningEffectActive = false;
@@ -270,9 +271,7 @@ public class GameScreen implements Screen {
             farms.add(getAllowedAreaForMap(player.getMapNum()));
         }
 
-        for (NPC npc : MyGame.getAllNPCs()) {
-            NPCs.add(new NpcActor(npc));
-        }
+        NPCs.addAll(MyGame.getNpcActors());
     }
 
     private Vector2 getInitialPositionForMap(int mapNum) {
@@ -2387,12 +2386,11 @@ public class GameScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (playersAreClose(currentPlayer, player)) {
-                    hugMode = true;
-                    playerA = currentPlayer;
-                    playerB = player;
-                    hugTimer = 0f;
-                    faceEachOther(currentPlayer, player);
-                    moveToCenter(currentPlayer, player);
+                    hug(currentPlayer, player);
+                    HugMessage msg = new HugMessage();
+                    msg.player1 = playerA.getUsername();
+                    msg.player2 = playerB.getUsername();
+                    GameClient.client.sendTCP(msg);
                 }
                 playerMenuTable.setVisible(false);
             }
@@ -2419,6 +2417,15 @@ public class GameScreen implements Screen {
         playerMenuTable.add(innerPanel).center();
     }
 
+    public void hug(Player currentPlayer, Player player) {
+        // TODO controller hug
+        hugMode = true;
+        playerA = currentPlayer;
+        playerB = player;
+        hugTimer = 0f;
+        faceEachOther(currentPlayer, player);
+        moveToCenter(currentPlayer, player);
+    }
     private boolean playersAreClose(Player player1, Player player2) {
         Vector2 pos1 = new Vector2(player1.getXX(), player1.getYY());
         Vector2 pos2 = new Vector2(player2.getXX(), player2.getYY());

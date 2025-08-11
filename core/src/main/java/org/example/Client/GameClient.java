@@ -101,10 +101,10 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.LoginPacket;
-import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.Direction;
 import org.example.Common.Enums.Emote;
+import org.example.Common.Enums.Menu;
 import org.example.Common.Enums.MessageType;
 import org.example.Common.Lobby;
 import org.example.Common.Network.*;
@@ -112,6 +112,7 @@ import org.example.Common.Player;
 import org.example.Common.Request.TradeMessage;
 import org.example.Common.Trade;
 import org.example.Main;
+import org.example.Server.Packets.*;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalReceived;
@@ -305,6 +306,17 @@ public class GameClient {
                         MainMenu.updateOnlinePlayers(players);
                     });
                 }
+                else if (object instanceof HugMessage) {
+                    HugMessage message = (HugMessage) object;
+                    Player playerA = MyGame.getPlayerByUsername(message.player1);
+                    Player playerB = MyGame.getPlayerByUsername(message.player2);
+                    Gdx.app.postRunnable(() -> {
+                        GameScreen screen = MenuNavigator.getGameScreen();
+                        if (screen!= null) {
+                            screen.hug(playerA, playerB);
+                        }
+                    });
+                }
                 else if (object instanceof MarriageProposalReceived) {
                     MarriageProposalReceived msg  = (MarriageProposalReceived) object;
                     Gdx.app.postRunnable(() -> {
@@ -318,6 +330,17 @@ public class GameClient {
                         MyGame.getScoreboardView().updateUser(packet);
                     });
                 }
+                else if (object instanceof  NpcMovePacket) {
+                    NpcMovePacket packet = (NpcMovePacket) object;
+                    Gdx.app.postRunnable(() -> {
+                        NpcActor npcActor = MyGame.getNpcActorByName(packet.npcName);
+                        if (npcActor != null) {
+                            npcActor.setPosition(packet.x, packet.y);
+                            npcActor.getNpc().setPosition(packet.x, packet.y);
+                            npcActor.direction = packet.direction;
+                        }
+                    });
+                }
 
             }
         });
@@ -329,7 +352,6 @@ public class GameClient {
         kryo.register(java.util.List.class);
         kryo.register(HashMap.class);
 
-        kryo.register(PlayerUpdate.class);
         kryo.register(ChatMessage.class);
         kryo.register(PrivateChatMessage.class);
         kryo.register(TradeMessage.class);

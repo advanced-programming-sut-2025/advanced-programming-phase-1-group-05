@@ -52,15 +52,4 @@ public class PacketHandler {
         }
     }
 
-    private static void handleMove(GameMessage message, ClientHandler client) {
-//        ServerPlayer p = ServerMain.gameState.getPlayer(message.playerId);
-//
-//        if (Math.abs(message.newX - p.x) > 10) return;
-//
-//        p.x = message.newX;
-//        p.y = message.newY;
-//
-//        // اطلاع به بقیه کلاینت‌ها
-//        //ServerMain.broadcastToAll(new PositionUpdate(p.id, p.x, p.y));
-    }
 }
