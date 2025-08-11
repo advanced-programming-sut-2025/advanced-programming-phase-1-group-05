@@ -547,7 +547,7 @@ public class Player implements Serializable {
     public void addGold(int amount) {
         if (sharedWallet == null) {
             gold += amount;
-            updateUserStats(1, 0, 0);
+            updateUserStats(amount, 0, 0);
         }
         else sharedWallet.addGold(amount);
     }
@@ -852,9 +852,9 @@ public class Player implements Serializable {
 
         ScoreboardUpdatePacket packet = new ScoreboardUpdatePacket(
             user.getUsername(),
-            user.getInfo("gold"),
-            user.getInfo("quests"),
-            user.getInfo("skill")
+            gold,
+            quests,
+            skill
         );
 
         GameClient.client.sendTCP(packet);

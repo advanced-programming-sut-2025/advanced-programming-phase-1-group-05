@@ -7,11 +7,9 @@
     "email": "Nila.-a11@gma-il.com",
     "gamesPlayed": 0,
     "plainPassword": "Nil3333a%11",
-    "info": {
-      "completedQuests": 0,
-      "totalGold": 0,
-      "farmerSkill": 0
-    },
+    "totalGold": 0,
+    "totalQuests": 0,
+    "totalSkill": 0,
     "securityQuestion": "What city were you born in?",
     "securityAnswer": "Tehran",
     "friends": []
@@ -24,11 +22,9 @@
     "email": "Nila.-a11@gma-il.com",
     "gamesPlayed": 0,
     "plainPassword": "Nil3333a%11",
-    "info": {
-      "completedQuests": 0,
-      "totalGold": 0,
-      "farmerSkill": 0
-    },
+    "totalGold": 0,
+    "totalQuests": 0,
+    "totalSkill": 0,
     "securityQuestion": "What city were you born in?",
     "securityAnswer": "Tehran",
     "friends": []
@@ -41,11 +37,9 @@
     "email": "Nila.-a11@gma-il.com",
     "gamesPlayed": 0,
     "plainPassword": "Nil3333a%11",
-    "info": {
-      "completedQuests": 0,
-      "totalGold": 0,
-      "farmerSkill": 0
-    },
+    "totalGold": 0,
+    "totalQuests": 0,
+    "totalSkill": 0,
     "securityQuestion": "What city were you born in?",
     "securityAnswer": "Karaj",
     "friends": []
@@ -58,11 +52,9 @@
     "email": "Nila.-a11@gma-il.com",
     "gamesPlayed": 0,
     "plainPassword": "S%rowjaso20349",
-    "info": {
-      "completedQuests": 0,
-      "totalGold": 0,
-      "farmerSkill": 0
-    },
+    "totalGold": 50,
+    "totalQuests": 0,
+    "totalSkill": 0,
     "securityQuestion": "What city were you born in?",
     "securityAnswer": "tehran",
     "friends": []
