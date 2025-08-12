@@ -243,19 +243,24 @@ public class GameClient {
                 }
                 else if (object instanceof TradeMessage) {
                     TradeMessage msg = (TradeMessage) object;
-
+                    System.out.println("Trade message recieved from server");
+                    System.out.println(msg.type);
+                    System.out.println(msg.fromPlayer);
+                    System.out.println(msg.toPlayer);
+                    System.out.println(msg.trade);
                     switch (msg.type) {
                         case REQUEST:
-                            boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer);
+                            MyGame.getGameScreen().showTradingRequest(msg.fromPlayer, accepted -> {
+                                TradeMessage response = new TradeMessage();
+                                response.type = TradeMessage.MessageType.RESPONSE;
+                                response.fromPlayer = msg.toPlayer;
+                                response.toPlayer = msg.fromPlayer;
+                                response.accepted = accepted;
 
-                            TradeMessage response = new TradeMessage();
-                            response.type = TradeMessage.MessageType.RESPONSE;
-                            response.fromPlayer = msg.toPlayer;
-                            response.toPlayer = msg.fromPlayer;
-                            response.accepted = accepted;
-
-                            GameClient.client.sendTCP(response);
+                                GameClient.client.sendTCP(response);
+                            });
                             break;
+
 
                         case REJECTED: {
                             Result result = new Result(false, "Your trade request was rejected :(");
@@ -264,11 +269,15 @@ public class GameClient {
                             break;
                         }
                         case START: {
-                            boolean initiator = false;
-                            if(msg.fromPlayer != null && msg.fromPlayer == MyGame.getCurrentPlayer().getUsername())  {
+                            boolean initiator;
+                            if(msg.fromPlayer != null && msg.toPlayer.equals(MyGame.getCurrentPlayer().getUsername()))  {
                                 initiator = true;
+                            } else {
+                                initiator = false;
                             }
-                            Main.getMain().setScreen(new TradeScreen(msg.fromPlayer, msg.toPlayer, initiator, MyGame.getTradingController()));
+                            Gdx.app.postRunnable(() -> {
+                                MyGame.getGameScreen().controller.startTrading(msg, initiator);
+                            });
                             break;
                         }
                         case UPDATE:{
@@ -281,16 +290,14 @@ public class GameClient {
                         }
                         case ACCEPT:{
                             Gdx.app.postRunnable(() -> {
-                                Trade trade = msg.trade;
-//                                MyGame.getTradingController()
-//                                    .completeTrade(msg.fromPlayer, msg.toPlayer, "type", trade.item,
-//                                        trade.amount, trade.targetItem, trade.targetAmount);
+                                MyGame.getTradingController()
+                                    .completeTrade(msg);
                             });
                             break;
                         }
                         case DECLINE: {
                             Gdx.app.postRunnable(() -> {
-                                //MyGame.getTradingController().rejectTrade(msg.fromPlayer, msg.toPlayer);
+                                MyGame.getTradingController().rejectTrade(msg.fromPlayer, msg.toPlayer);
                                 Main.getMain().setScreen(MyGame.getGameScreen());
                             });
                             break;
@@ -335,14 +342,14 @@ public class GameClient {
                 }
                 else if (object instanceof  NpcMovePacket) {
                     NpcMovePacket packet = (NpcMovePacket) object;
-                    System.out.println("hello");
+                    //System.out.println("hello");
                     Gdx.app.postRunnable(() -> {
                         NpcActor npcActor = MyGame.getNpcActorByName(packet.npcName);
                         if (npcActor != null) {
                             npcActor.setPosition(packet.x, packet.y);
                         }
                         else {
-                            System.out.println("null lol");
+                            //System.out.println("null lol");
                         }
                         NPC npc  = MyGame.getNPCByName(packet.npcName);
                         if (npc != null) {
@@ -351,7 +358,7 @@ public class GameClient {
                             npc.stateTime += packet.delta;
                         }
                         else {
-                            System.out.println("null again🤣🤣");
+                           // System.out.println("null again🤣🤣");
                         }
                     });
                 }
@@ -424,5 +431,7 @@ public class GameClient {
         kryo.register(NpcMovePacket.class);
         kryo.register(ServerNPC.class);
         kryo.register(TradePacket.class);
+        kryo.register(Trade.class);
+        kryo.register(TradeMessage.MessageType.class);
     }
 }

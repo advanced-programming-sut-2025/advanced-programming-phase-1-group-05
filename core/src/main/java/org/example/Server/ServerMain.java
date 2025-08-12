@@ -16,6 +16,7 @@ import org.example.Common.Player;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
 import org.example.Common.Tool.BackPack;
+import org.example.Common.Trade;
 import org.example.Server.Packets.*;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
@@ -109,6 +110,8 @@ public class ServerMain {
         kryo.register(NpcMovePacket.class);
         kryo.register(ServerNPC.class);
         kryo.register(TradePacket.class);
+        kryo.register(Trade.class);
+        kryo.register(TradeMessage.MessageType.class);
 
 
         server.addListener(new Listener() {
@@ -137,6 +140,11 @@ public class ServerMain {
                 }
                 else if (object instanceof TradeMessage){
                     TradeMessage msg = (TradeMessage) object;
+                    System.out.println("Trade message recieved from client");
+                    System.out.println(msg.type);
+                    System.out.println(msg.fromPlayer);
+                    System.out.println(msg.toPlayer);
+                    System.out.println(msg.trade);
                     switch (msg.type) {
                         case REQUEST: {
                             Connection target = getConnectionByName(msg.toPlayer);
@@ -148,6 +156,7 @@ public class ServerMain {
 
                         case RESPONSE: {
                             Connection initiator = getConnectionByName(msg.toPlayer);
+                            System.out.println(initiator);
                             if (initiator != null) {
                                 if (msg.accepted) {
                                     TradeMessage start = new TradeMessage();

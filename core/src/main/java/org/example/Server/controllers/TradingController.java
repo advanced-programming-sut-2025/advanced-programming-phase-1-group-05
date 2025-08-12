@@ -2,6 +2,7 @@ package org.example.Server.controllers;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import org.example.Client.ClientNetworkManager;
+import org.example.Client.TradeMenu;
 import org.example.Client.TradeScreen;
 import org.example.Common.Item;
 import org.example.Common.Player;
@@ -242,4 +243,5 @@ public class TradingController {
         Image itemImage = new Image(item.getTexture());
         tradeScreen.updateSlotFromText(item.getName(), itemImage, false);
     }
+
 }

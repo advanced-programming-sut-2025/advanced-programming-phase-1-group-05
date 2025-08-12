@@ -78,8 +78,9 @@ public class TradeMenu extends Table {
                     public void clicked(InputEvent event, float x, float y) {
                         TradeMessage msg = new TradeMessage();
                         Result result;
+                        msg.type = TradeMessage.MessageType.REQUEST;
                         msg.fromPlayer = MyGame.getCurrentPlayer().getUsername();
-                        String otherPlayerUsername = (String) usernameField.getText();
+                        String otherPlayerUsername = usernameField.getText();
                         Player otherPlayer = MyGame.getPlayer(otherPlayerUsername);
                         if(otherPlayer == null) {
                             result = new Result(false, "Player not found");

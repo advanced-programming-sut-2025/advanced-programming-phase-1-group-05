@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.example.Common.GameMap.MAP_HEIGHT;
 import static org.example.Common.GameMap.MAP_WIDTH;
@@ -3243,14 +3244,21 @@ public class GameScreen implements Screen {
         player.addAnimalHouse(building);
     }
 
-    public boolean showTradingRequest(String playerName){
-        Table tradeRequestTable = new Table();
-        Label tradeLabel = new Label("Trade request by " + playerName, skin);
-        tradeRequestTable.add(tradeLabel);
-        tradeRequestTable.add(accept);
-        tradeRequestTable.add(reject);
-        uiStage.addActor(tradeRequestTable);
-        return acceptedRequest; //implement better
+    public void showTradingRequest(String playerName, Consumer<Boolean> callback) {
+        Dialog dialog = new Dialog("Trade Request", skin) {
+            @Override
+            protected void result(Object object) {
+                boolean accepted = (Boolean) object;
+                callback.accept(accepted);
+            }
+        };
+
+        dialog.text("Trade request by " + playerName);
+
+        dialog.button("Accept", true).pad(5);
+        dialog.button("Reject", false).pad(5);
+
+        dialog.show(uiStage);
     }
 
 

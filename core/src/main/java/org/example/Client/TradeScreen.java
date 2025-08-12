@@ -131,7 +131,7 @@ public class TradeScreen implements Screen {
                         TradeMessage msg = new TradeMessage();
                         msg.fromPlayer = fromPlayer;
                         msg.toPlayer = toPlayer;
-                        Trade trade = new Trade(msg.fromPlayer, msg.toPlayer, msg.trade.item, 1, msg.trade.targetItem, 1);
+                        Trade trade = new Trade(msg.fromPlayer, msg.toPlayer, selectedOfferItem.getName(), amount, selectedRequestItem.getName(), targetAmount);
                         msg.trade = trade;
                         controller.sendTradeOffer(msg);
 
