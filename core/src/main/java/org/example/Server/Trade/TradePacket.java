@@ -1,6 +1,6 @@
 package org.example.Server.Trade;
 
-public class ServerTrade {
+public class TradePacket {
     public String fromPlayer;
     public String toPlayer;
     public String offeredItem;
@@ -8,7 +8,7 @@ public class ServerTrade {
     public String requestedItem;
     public int requestedAmount;
     public boolean success;
-    public ServerTrade(String fromPlayer, String toPlayer, String offeredItem, int offeredAmount) {
+    public TradePacket(String fromPlayer, String toPlayer, String offeredItem, int offeredAmount) {
         this.fromPlayer = fromPlayer;
         this.toPlayer = toPlayer;
         this.offeredItem = offeredItem;

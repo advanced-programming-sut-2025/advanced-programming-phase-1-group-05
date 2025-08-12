@@ -124,6 +124,7 @@ import org.example.Server.Packets.OnlinePlayerPacket;
 import org.example.Server.Packets.PositionUpdate;
 import org.example.Server.Packets.ScoreboardUpdatePacket;
 import org.example.Server.Packets.StartGamePacket;
+import org.example.Server.Trade.TradePacket;
 import org.example.Server.controllers.TradingController;
 import org.example.Server.models.MyGame;
 import org.example.Server.models.NPC;
@@ -267,7 +268,7 @@ public class GameClient {
                             if(msg.fromPlayer != null && msg.fromPlayer == MyGame.getCurrentPlayer().getUsername())  {
                                 initiator = true;
                             }
-                            //Main.getMain().setScreen(new TradeScreen(msg.fromPlayer, msg.toPlayer, initiator, MyGame.getTradingController()));
+                            Main.getMain().setScreen(new TradeScreen(msg.fromPlayer, msg.toPlayer, initiator, MyGame.getTradingController()));
                             break;
                         }
                         case UPDATE:{
@@ -422,5 +423,6 @@ public class GameClient {
         kryo.register(ScoreboardUpdatePacket.class);
         kryo.register(NpcMovePacket.class);
         kryo.register(ServerNPC.class);
+        kryo.register(TradePacket.class);
     }
 }

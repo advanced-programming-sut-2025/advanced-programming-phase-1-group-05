@@ -23,6 +23,7 @@ import org.example.Server.Packets.MarriagePackets.MarriageProposalReceived;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalRequest;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
+import org.example.Server.Trade.TradePacket;
 import org.example.Server.controllers.NpcController;
 import org.example.Server.models.MyGame;
 import org.example.Server.models.ServerNPC;
@@ -107,6 +108,7 @@ public class ServerMain {
         kryo.register(ScoreboardUpdatePacket.class);
         kryo.register(NpcMovePacket.class);
         kryo.register(ServerNPC.class);
+        kryo.register(TradePacket.class);
 
 
         server.addListener(new Listener() {

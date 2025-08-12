@@ -182,48 +182,48 @@ public class TradingController {
 //        return Result.success(builder.toString());
 //    }
 
-    public void sendTradeOffer(Player fromPlayer, Player toPlayer, String type, Item selectedOfferItem, int amount,
-                               Item selectedRequestItem, int tragetAmount) {
+    public void sendTradeOffer(TradeMessage message) {
         //create trade message object
         TradeMessage msg = new TradeMessage();
-        msg.fromPlayer = fromPlayer.getUsername();
-        msg.toPlayer = toPlayer.getUsername();
+        msg.fromPlayer = message.fromPlayer;
+        msg.toPlayer = message.toPlayer;
         msg.type = TradeMessage.MessageType.REQUEST;
-        Trade trade = new Trade(fromPlayer.getUsername(), toPlayer.getUsername(), selectedOfferItem.getName(), 1, selectedRequestItem.getName(), 1);
+        Trade trade = new Trade(msg.fromPlayer, msg.toPlayer, msg.trade.item, 1, msg.trade.targetItem, 1);
         msg.trade = trade;
 
         clientNetworkManager.getClient().sendTCP(msg); //send offer message
     }
 
-    public void acceptTradeOffer(Player fromPlayer, Player toPlayer, String type, Item selectedOfferItem, int amount,
-                                 Item selectedRequestItem, int targetAmount) {
+    public void acceptTradeOffer(TradeMessage message) {
         //create trade accept message
         TradeMessage msg = new TradeMessage();
-        msg.fromPlayer = fromPlayer.getUsername();
-        msg.toPlayer = toPlayer.getUsername();
+        msg.fromPlayer = message.fromPlayer;
+        msg.toPlayer = message.toPlayer;
         msg.type = TradeMessage.MessageType.ACCEPT;
-        Trade trade = new Trade(fromPlayer.getUsername(), toPlayer.getUsername(), selectedOfferItem.getName(), amount, selectedRequestItem.getName(), targetAmount);
-        msg.trade = trade;
+        msg.trade = message.trade;
         clientNetworkManager.getClient().sendTCP(msg);
-        MyGame.getCurrentPlayer().addTrade(fromPlayer.getUsername(), trade);
-        updateInventory(selectedRequestItem, targetAmount, selectedOfferItem, amount);
+        MyGame.getCurrentPlayer().addTrade(msg.fromPlayer, msg.trade);
+        Item selectedOfferItem = gameMenuController.getItemByName(msg.trade.item);
+        Item selectedRequestItem = gameMenuController.getItemByName(msg.trade.targetItem);
+        updateInventory(selectedRequestItem, msg.trade.targetAmount, selectedOfferItem, msg.trade.amount);
 
     }
 
-    public void rejectTrade(Player fromPlayer, Player toPlayer) {
+    public void rejectTrade(String fromPlayer, String toPlayer) {
         //create rejection message :(
         TradeMessage msg = new TradeMessage();
-        msg.fromPlayer = fromPlayer.getUsername();
-        msg.toPlayer = toPlayer.getUsername();
+        msg.fromPlayer = fromPlayer;
+        msg.toPlayer = toPlayer;
         msg.type = TradeMessage.MessageType.DECLINE;
-        clientNetworkManager.getClient().sendTCP(msg); // send message
+        clientNetworkManager.getClient().sendTCP(msg);
     }
 
-    public void completeTrade(Player fromPlayer, Player toPlayer, String type, Item selectedOfferItem, int amount,
-                              Item selectedRequestItem, int targetAmount) {
-        Trade trade = new Trade(fromPlayer.getUsername(), toPlayer.getUsername(), selectedOfferItem.getName(), amount, selectedRequestItem.getName(), targetAmount);
-        MyGame.getCurrentPlayer().addTrade(toPlayer.getUsername(), trade);
-        updateInventory(selectedOfferItem, amount, selectedRequestItem, targetAmount);
+    public void completeTrade(TradeMessage msg) {
+        Trade trade = new Trade(msg.fromPlayer, msg.toPlayer, msg.trade.item, 1, msg.trade.targetItem, 1);
+        MyGame.getCurrentPlayer().addTrade(msg.toPlayer, trade);
+        Item selectedOfferItem = gameMenuController.getItemByName(trade.item);
+        Item selectedRequestItem = gameMenuController.getItemByName(trade.targetItem);
+        updateInventory(selectedOfferItem, trade.amount, selectedRequestItem, trade.targetAmount);
     }
 
     private void updateInventory(Item itemToRemove, int itemToRemoveAmount, Item itemToAdd, int itemToAddAmount) {
