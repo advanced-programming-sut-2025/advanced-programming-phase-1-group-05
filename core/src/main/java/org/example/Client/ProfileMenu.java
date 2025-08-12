@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Server.controllers.ProfileMenuController;
 import org.example.Server.controllers.RegisterMenuController;
+import org.example.Server.models.MyGame;
 import org.example.Server.models.Result;
 import org.example.Common.User;
 
@@ -118,7 +119,7 @@ public class ProfileMenu implements Screen {
                     avatarTexture = new Texture(Gdx.files.internal(avatarFile));
                     avatarImage.setDrawable(new Image(avatarTexture).getDrawable());
 
-                    controller.handleProfileCommand("change avatar -a " + avatarFile);
+                    MyGame.getCurrentPlayer().getUser().setAvatarTexturePath(avatarFile);
                 }
             });
 

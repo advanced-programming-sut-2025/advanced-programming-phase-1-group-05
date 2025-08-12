@@ -245,7 +245,7 @@ public class GameClient {
 
                     switch (msg.type) {
                         case REQUEST:
-                            boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
+                            boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer);
 
                             TradeMessage response = new TradeMessage();
                             response.type = TradeMessage.MessageType.RESPONSE;
@@ -264,10 +264,10 @@ public class GameClient {
                         }
                         case START: {
                             boolean initiator = false;
-                            if(msg.fromPlayer != null && msg.fromPlayer == MyGame.getCurrentPlayer())  {
+                            if(msg.fromPlayer != null && msg.fromPlayer == MyGame.getCurrentPlayer().getUsername())  {
                                 initiator = true;
                             }
-                            Main.getMain().setScreen(new TradeScreen(msg.fromPlayer, msg.toPlayer, initiator, MyGame.getTradingController()));
+                            //Main.getMain().setScreen(new TradeScreen(msg.fromPlayer, msg.toPlayer, initiator, MyGame.getTradingController()));
                             break;
                         }
                         case UPDATE:{
@@ -281,9 +281,9 @@ public class GameClient {
                         case ACCEPT:{
                             Gdx.app.postRunnable(() -> {
                                 Trade trade = msg.trade;
-                                MyGame.getTradingController()
-                                    .completeTrade(msg.fromPlayer, msg.toPlayer, "type", trade.getItem(),
-                                        trade.getAmount(), trade.getTargetItem(), trade.getTargetAmount());
+//                                MyGame.getTradingController()
+//                                    .completeTrade(msg.fromPlayer, msg.toPlayer, "type", trade.item,
+//                                        trade.amount, trade.targetItem, trade.targetAmount);
                             });
                             break;
                         }

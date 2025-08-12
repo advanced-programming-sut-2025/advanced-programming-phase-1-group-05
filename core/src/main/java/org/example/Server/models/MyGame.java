@@ -227,4 +227,5 @@ public class MyGame implements Serializable {
     public static ScoreboardView getScoreboardView() {
         return scoreboardView;
     }
+
 }

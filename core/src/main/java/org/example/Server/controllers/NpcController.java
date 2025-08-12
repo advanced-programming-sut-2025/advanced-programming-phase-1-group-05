@@ -31,7 +31,7 @@ public class NpcController {
     }
 
     public void update(float delta) {
-        System.out.println("Updating NPC " + npc.name + " moveTimer: " + moveTimer);
+       // System.out.println("Updating NPC " + npc.name + " moveTimer: " + moveTimer);
         if (!npc.walking) return;
         moveTimer -= delta;
         Vector2 target = new Vector2(npc.storeX, npc.storeY);

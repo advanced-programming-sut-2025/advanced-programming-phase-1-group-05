@@ -15,6 +15,7 @@ import org.example.Common.Network.*;
 import org.example.Common.Player;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
+import org.example.Common.Tool.BackPack;
 import org.example.Server.Packets.*;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
@@ -136,7 +137,7 @@ public class ServerMain {
                     TradeMessage msg = (TradeMessage) object;
                     switch (msg.type) {
                         case REQUEST: {
-                            Connection target = getConnectionByName(msg.toPlayer.getUsername());
+                            Connection target = getConnectionByName(msg.toPlayer);
                             if (target != null) {
                                 target.sendTCP(msg);
                             }
@@ -144,7 +145,7 @@ public class ServerMain {
                         }
 
                         case RESPONSE: {
-                            Connection initiator = getConnectionByName(msg.toPlayer.getUsername());
+                            Connection initiator = getConnectionByName(msg.toPlayer);
                             if (initiator != null) {
                                 if (msg.accepted) {
                                     TradeMessage start = new TradeMessage();
