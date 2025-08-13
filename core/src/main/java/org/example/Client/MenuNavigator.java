@@ -1,6 +1,7 @@
 package org.example.Client;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.example.Common.Player;
 import org.example.Main;
@@ -28,6 +29,10 @@ public class MenuNavigator {
         loginMenu = new LoginMenu(sharedSkin);
         registerMenu = new RegisterMenu(sharedSkin);
         mainMenu = new MainMenu(sharedSkin);
+    }
+
+    public static void setGameScreen(GameScreen screen) {
+        gameScreen = screen;
     }
 
     public static void showProfileMenu() {
