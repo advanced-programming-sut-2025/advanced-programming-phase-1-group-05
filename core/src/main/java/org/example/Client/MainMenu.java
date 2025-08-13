@@ -175,12 +175,12 @@ public class MainMenu implements Screen {
                 avatar.setSize(32, 32);
 
                 Label nameLabel = new Label(player.getUsername(), skin);
-                // String lobbyName = (player.getLobby() != null) ? player.getLobby().getName() : "No Lobby";
-                // Label lobbyLabel = new Label("Lobby: " + lobbyName, skin);
+                 String lobbyName = (player.getCurrentLobby() != null) ? player.getCurrentLobby().getName() : "No Lobby";
+                 Label lobbyLabel = new Label("Lobby: " + lobbyName, skin);
 
                 row.add(avatar).size(32).padRight(10);
                 row.add(nameLabel).padRight(10);
-                // row.add(lobbyLabel).left();
+                 row.add(lobbyLabel).left();
 
                 content.add(row).left().row();
             }
