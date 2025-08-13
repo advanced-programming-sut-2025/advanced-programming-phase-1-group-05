@@ -2,6 +2,7 @@ package org.example.Server.controllers;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import org.example.Client.ClientNetworkManager;
+import org.example.Client.GameClient;
 import org.example.Client.TradeMenu;
 import org.example.Client.TradeScreen;
 import org.example.Common.Item;
@@ -17,7 +18,6 @@ import java.util.List;
 
 public class TradingController {
     private TradeScreen tradeScreen;
-    private static ClientNetworkManager clientNetworkManager = Main.getMain().getNetworkManager();
     private static TradingController instance;
     private  List<Trade> trades = new ArrayList<>();
     private static final String tradeWithMoney = "trade\\s+-u\\s+.*\\s+-t\\s+(offer|request)\\s+-i\\s+.*-a\\s+\\d+\\s+-p\\s+\\d+";
@@ -95,7 +95,12 @@ public class TradingController {
             }
             if (MyGame.getCurrentPlayer().getGold() < price)
                 return Result.error("You don't have enough gold.");
-            trades.add(new Trade(MyGame.getCurrentPlayer().getUsername(), targetPlayer.getUsername(), item.getName(), amount, null, 0));
+            Trade trade = new Trade();
+            trade.player = MyGame.getCurrentPlayer().getUsername();
+            trade.targetItem = targetPlayer.getUsername();
+            trade.item = item.getName();
+            trade.amount = amount;
+            trades.add(trade);
         } else if (input.matches(tradeWithItem)) {
             for (int i = tiIndex + 1; i < taIndex; i++) {
                 builder.append(parts[i]).append(" ");
@@ -183,16 +188,20 @@ public class TradingController {
 //        return Result.success(builder.toString());
 //    }
 
+
     public void sendTradeOffer(TradeMessage message) {
         //create trade message object
         TradeMessage msg = new TradeMessage();
         msg.fromPlayer = message.fromPlayer;
         msg.toPlayer = message.toPlayer;
         msg.type = TradeMessage.MessageType.REQUEST;
-        Trade trade = new Trade(msg.fromPlayer, msg.toPlayer, msg.trade.item, 1, msg.trade.targetItem, 1);
-        msg.trade = trade;
+        msg.trade = message.trade;
 
-        clientNetworkManager.getClient().sendTCP(msg); //send offer message
+        GameClient.client.sendTCP(msg); //send offer message
+    }
+
+    public void sendUpdateMessage(TradeMessage message) {
+        GameClient.client.sendTCP(message);
     }
 
     public void acceptTradeOffer(TradeMessage message) {
@@ -202,7 +211,7 @@ public class TradingController {
         msg.toPlayer = message.toPlayer;
         msg.type = TradeMessage.MessageType.ACCEPT;
         msg.trade = message.trade;
-        clientNetworkManager.getClient().sendTCP(msg);
+        GameClient.client.sendTCP(msg);
         MyGame.getCurrentPlayer().addTrade(msg.fromPlayer, msg.trade);
         Item selectedOfferItem = gameMenuController.getItemByName(msg.trade.item);
         Item selectedRequestItem = gameMenuController.getItemByName(msg.trade.targetItem);
@@ -216,11 +225,11 @@ public class TradingController {
         msg.fromPlayer = fromPlayer;
         msg.toPlayer = toPlayer;
         msg.type = TradeMessage.MessageType.DECLINE;
-        clientNetworkManager.getClient().sendTCP(msg);
+        GameClient.client.sendTCP(msg);
     }
 
     public void completeTrade(TradeMessage msg) {
-        Trade trade = new Trade(msg.fromPlayer, msg.toPlayer, msg.trade.item, 1, msg.trade.targetItem, 1);
+        Trade trade = msg.trade;
         MyGame.getCurrentPlayer().addTrade(msg.toPlayer, trade);
         Item selectedOfferItem = gameMenuController.getItemByName(trade.item);
         Item selectedRequestItem = gameMenuController.getItemByName(trade.targetItem);
@@ -243,5 +252,7 @@ public class TradingController {
         Image itemImage = new Image(item.getTexture());
         tradeScreen.updateSlotFromText(item.getName(), itemImage, false);
     }
+
+
 
 }

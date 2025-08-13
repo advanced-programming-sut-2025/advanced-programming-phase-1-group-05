@@ -370,7 +370,6 @@ public class GameClient {
 
         kryo.register(ChatMessage.class);
         kryo.register(PrivateChatMessage.class);
-        kryo.register(TradeMessage.class);
         kryo.register(MessageType.class);
         kryo.register(LoginPacket.class);
         kryo.register(ResultResponse.class);
@@ -426,10 +425,11 @@ public class GameClient {
         kryo.register(NpcMovePacket.class);
         kryo.register(ServerNPC.class);
         kryo.register(TradePacket.class);
-        kryo.register(Trade.class);
         kryo.register(TradeMessage.MessageType.class);
         kryo.register(PositionUpdate.class);
         kryo.register(HugMessage.class);
         kryo.register(PurchaseRequest.class);
+        kryo.register(Trade.class);
+        kryo.register(TradeMessage.class);
     }
 }

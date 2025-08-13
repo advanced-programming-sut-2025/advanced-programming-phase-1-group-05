@@ -739,6 +739,6 @@ public class GameMenuController extends MenuController {
 
     public void startTrading(TradeMessage msg, boolean initiator) {
         Main.getMain().setScreen(new TradeScreen(msg.fromPlayer,
-            msg.toPlayer, initiator, new TradingController()));
+            msg.toPlayer, initiator, MyGame.getTradingController()));
     }
 }
