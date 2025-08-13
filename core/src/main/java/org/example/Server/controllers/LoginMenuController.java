@@ -189,7 +189,7 @@ public class LoginMenuController {
         if (stayLoggedIn) {
             saveCurrentUser(username, true);
         } else {
-            deleteCurrentUserFile(); // پاک کردن فایل اگر تیک stay logged نخورده بود
+            deleteCurrentUserFile();
         }
 
         this.currentUser = user;

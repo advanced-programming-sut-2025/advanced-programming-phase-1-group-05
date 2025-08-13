@@ -101,10 +101,10 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.LoginPacket;
-import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.Direction;
 import org.example.Common.Enums.Emote;
+import org.example.Common.Enums.Menu;
 import org.example.Common.Enums.MessageType;
 import org.example.Common.Lobby;
 import org.example.Common.Network.*;
@@ -112,6 +112,7 @@ import org.example.Common.Player;
 import org.example.Common.Request.TradeMessage;
 import org.example.Common.Trade;
 import org.example.Main;
+import org.example.Server.Packets.*;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalReceived;
@@ -120,10 +121,15 @@ import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
 import org.example.Server.Packets.MovePacket;
 import org.example.Server.Packets.OnlinePlayerPacket;
+import org.example.Server.Packets.PositionUpdate;
+import org.example.Server.Packets.ScoreboardUpdatePacket;
 import org.example.Server.Packets.StartGamePacket;
+import org.example.Server.Trade.TradePacket;
 import org.example.Server.controllers.TradingController;
 import org.example.Server.models.MyGame;
+import org.example.Server.models.NPC;
 import org.example.Server.models.Result;
+import org.example.Server.models.ServerNPC;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -146,6 +152,16 @@ public class GameClient {
     }
 
     public static void addListeners() {
+        client.addListener(new Listener() {
+            public void connected(Connection connection) {
+                System.out.println("✅ Connected to server");
+            }
+
+            public void disconnected(Connection connection) {
+                System.out.println("❌ Disconnected from server");
+            }
+        });
+
         client.addListener(new Listener() {
             public void received(Connection c, Object object) {
                 if (object instanceof StartGamePacket) {
@@ -183,6 +199,11 @@ public class GameClient {
                             }
                         }
                     }
+                }
+                else if (object instanceof PositionUpdate) {
+                    PositionUpdate positionUpdate = (PositionUpdate) object;
+                    Player otherPlayer = MyGame.getPlayerByUsername(positionUpdate.playerUsername);
+                    otherPlayer.setPosition(positionUpdate.x, positionUpdate.y);
                 }
                 else if (object instanceof ChatMessage) {
                     ChatMessage chat = (ChatMessage) object;
@@ -222,19 +243,24 @@ public class GameClient {
                 }
                 else if (object instanceof TradeMessage) {
                     TradeMessage msg = (TradeMessage) object;
-
+                    System.out.println("Trade message recieved from server");
+                    System.out.println(msg.type);
+                    System.out.println(msg.fromPlayer);
+                    System.out.println(msg.toPlayer);
+                    System.out.println(msg.trade);
                     switch (msg.type) {
                         case REQUEST:
-                            boolean accepted = MyGame.getGameScreen().showTradingRequest(msg.fromPlayer.getUsername());
+                            MyGame.getGameScreen().showTradingRequest(msg.fromPlayer, accepted -> {
+                                TradeMessage response = new TradeMessage();
+                                response.type = TradeMessage.MessageType.RESPONSE;
+                                response.fromPlayer = msg.toPlayer;
+                                response.toPlayer = msg.fromPlayer;
+                                response.accepted = accepted;
 
-                            TradeMessage response = new TradeMessage();
-                            response.type = TradeMessage.MessageType.RESPONSE;
-                            response.fromPlayer = msg.toPlayer;
-                            response.toPlayer = msg.fromPlayer;
-                            response.accepted = accepted;
-
-                            GameClient.client.sendTCP(response);
+                                GameClient.client.sendTCP(response);
+                            });
                             break;
+
 
                         case REJECTED: {
                             Result result = new Result(false, "Your trade request was rejected :(");
@@ -243,11 +269,15 @@ public class GameClient {
                             break;
                         }
                         case START: {
-                            boolean initiator = false;
-                            if(msg.fromPlayer != null && msg.fromPlayer == MyGame.getCurrentPlayer())  {
+                            boolean initiator;
+                            if(msg.fromPlayer != null && msg.toPlayer.equals(MyGame.getCurrentPlayer().getUsername()))  {
                                 initiator = true;
+                            } else {
+                                initiator = false;
                             }
-                            Main.getMain().setScreen(new TradeScreen(msg.fromPlayer, msg.toPlayer, initiator, MyGame.getTradingController()));
+                            Gdx.app.postRunnable(() -> {
+                                MyGame.getGameScreen().controller.startTrading(msg, initiator);
+                            });
                             break;
                         }
                         case UPDATE:{
@@ -260,16 +290,14 @@ public class GameClient {
                         }
                         case ACCEPT:{
                             Gdx.app.postRunnable(() -> {
-                                Trade trade = msg.trade;
                                 MyGame.getTradingController()
-                                    .completeTrade(msg.fromPlayer, msg.toPlayer, "type", trade.getItem(),
-                                        trade.getAmount(), trade.getTargetItem(), trade.getTargetAmount());
+                                    .completeTrade(msg);
                             });
                             break;
                         }
                         case DECLINE: {
                             Gdx.app.postRunnable(() -> {
-                                //MyGame.getTradingController().rejectTrade(msg.fromPlayer, msg.toPlayer);
+                                MyGame.getTradingController().rejectTrade(msg.fromPlayer, msg.toPlayer);
                                 Main.getMain().setScreen(MyGame.getGameScreen());
                             });
                             break;
@@ -288,13 +316,53 @@ public class GameClient {
                         MainMenu.updateOnlinePlayers(players);
                     });
                 }
+                else if (object instanceof HugMessage) {
+                    HugMessage message = (HugMessage) object;
+                    Player playerA = MyGame.getPlayerByUsername(message.player1);
+                    Player playerB = MyGame.getPlayerByUsername(message.player2);
+                    Gdx.app.postRunnable(() -> {
+                        GameScreen screen = MenuNavigator.getGameScreen();
+                        if (screen!= null) {
+                            screen.hug(playerA, playerB);
+                        }
+                    });
+                }
                 else if (object instanceof MarriageProposalReceived) {
                     MarriageProposalReceived msg  = (MarriageProposalReceived) object;
                     Gdx.app.postRunnable(() -> {
                         GameScreen screen = MenuNavigator.getGameScreen();
                         if (screen != null) screen.showProposalPopup(MyGame.getPlayerByUsername(msg.fromPlayer));
                     });
+                } else if(object instanceof ScoreboardUpdatePacket) {
+                    ScoreboardUpdatePacket packet = (ScoreboardUpdatePacket) object;
+                    System.out.println("📊 Scoreboard update received: " + packet.username + " G:" + packet.gold);
+                    Gdx.app.postRunnable(() -> {
+                        MyGame.getScoreboardView().updateUser(packet);
+                    });
                 }
+                else if (object instanceof  NpcMovePacket) {
+                    NpcMovePacket packet = (NpcMovePacket) object;
+                    //System.out.println("hello");
+                    Gdx.app.postRunnable(() -> {
+                        NpcActor npcActor = MyGame.getNpcActorByName(packet.npcName);
+                        if (npcActor != null) {
+                            npcActor.setPosition(packet.x, packet.y);
+                        }
+                        else {
+                            //System.out.println("null lol");
+                        }
+                        NPC npc  = MyGame.getNPCByName(packet.npcName);
+                        if (npc != null) {
+                            npc.setPosition(packet.x, packet.y);
+                            npc.direction = packet.direction;
+                            npc.stateTime += packet.delta;
+                        }
+                        else {
+                           // System.out.println("null again🤣🤣");
+                        }
+                    });
+                }
+
             }
         });
     }
@@ -305,7 +373,6 @@ public class GameClient {
         kryo.register(java.util.List.class);
         kryo.register(HashMap.class);
 
-        kryo.register(PlayerUpdate.class);
         kryo.register(ChatMessage.class);
         kryo.register(PrivateChatMessage.class);
         kryo.register(TradeMessage.class);
@@ -360,5 +427,11 @@ public class GameClient {
         kryo.register(StartGamePacket.class);
         kryo.register(MovePacket.class);
         kryo.register(Direction.class);
+        kryo.register(ScoreboardUpdatePacket.class);
+        kryo.register(NpcMovePacket.class);
+        kryo.register(ServerNPC.class);
+        kryo.register(TradePacket.class);
+        kryo.register(Trade.class);
+        kryo.register(TradeMessage.MessageType.class);
     }
 }

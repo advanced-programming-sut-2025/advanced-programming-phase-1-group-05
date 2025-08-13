@@ -26,8 +26,10 @@ import org.example.Common.Enums.*;
 import org.example.Main;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
+import org.example.Server.Packets.HugMessage;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.Packets.MovePacket;
+import org.example.Server.Packets.PositionUpdate;
 import org.example.Server.controllers.*;
 import org.example.Server.models.*;
 import org.example.Server.models.Building.AnimalHouse;
@@ -39,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.example.Common.GameMap.MAP_HEIGHT;
 import static org.example.Common.GameMap.MAP_WIDTH;
@@ -79,7 +82,7 @@ public class GameScreen implements Screen {
 
     private boolean isInvenotryOpen = false;
     public static Array<Rectangle> farms = new Array<>();
-    Array<NpcActor> NPCs = new Array<>();
+    ArrayList<NpcActor> NPCs = new ArrayList<>();
 
     // lightning effect
     private boolean lightningEffectActive = false;
@@ -206,7 +209,9 @@ public class GameScreen implements Screen {
         currentSeason = GameManager.getSeason();
         mapRenderer = new TileMapRenderer();
         mapRenderer.setSeason(currentSeason);
-
+        viewport = new FitViewport(320, 180, camera);
+        viewport.apply();
+        stage = new Stage(viewport, batch);
         Vector2 spawnPos = null;
         for (Player player : players) {
             if (player.equals(MyGame.getCurrentPlayer())) {
@@ -216,11 +221,10 @@ public class GameScreen implements Screen {
             if (player.equals(MyGame.getCurrentPlayer()))
                 spawnPos = spawnPosition;
             player.setPosition(spawnPosition.x, spawnPosition.y);
-            System.out.println(spawnPosition);
-            System.out.println(player.getMapNum());
-            System.out.println("set " + player.getUsername() + " position to " + player.getXX() + " " + player.getYY());
 
-
+        }
+        for (NPC npc : MyGame.getAllNPCs()) {
+            npc.initializeFriendships();
         }
         initializeFarmArea();
         Player player = MyGame.getCurrentPlayer();
@@ -265,13 +269,10 @@ public class GameScreen implements Screen {
 
     private void initializeFarmArea() {
         for (Player player : players) {
-            String map = GameMenuController.getMapForPlayer(player.getUsername());
             farms.add(getAllowedAreaForMap(player.getMapNum()));
         }
-
-        for (NPC npc : MyGame.getAllNPCs()) {
-            NPCs.add(new NpcActor(npc));
-        }
+        MyGame.setNpcActors();
+        NPCs.addAll(MyGame.getNpcActors());
     }
 
     private Vector2 getInitialPositionForMap(int mapNum) {
@@ -607,7 +608,6 @@ public class GameScreen implements Screen {
             msg.direction = Direction.UP;
             msg.delta = delta;
             GameClient.client.sendTCP(msg);
-            System.out.println(player.getUsername() + " moving.");
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             player.moveDown(delta);
@@ -694,9 +694,6 @@ public class GameScreen implements Screen {
             if (result.isSuccess()) {
                 Player currentPlayer = MyGame.getCurrentPlayer();
                 String map = GameMenuController.getMapForPlayer(currentPlayer.getUsername());
-
-                farms.clear();
-                farms.add(getAllowedAreaForMap(player.getMapNum()));
 
                 Vector2 pos = getInitialPositionForMap(player.getMapNum());
                 camera.viewportWidth = VIEW_WIDTH * TILE_SIZE;
@@ -804,12 +801,16 @@ public class GameScreen implements Screen {
             if (store.getBoundingRectangle().overlaps(playerRect)) {
                 stoore = store;
                 player.setPosition(oldPos.x, oldPos.y);
+                PositionUpdate msg = new PositionUpdate(player.getUsername(), player.getXX(), player.getYY());
+                GameClient.client.sendTCP(msg);
             }
         }
 
         if (stoore == null) {
             if (!canWalk(px, py)) {
                 player.setPosition(oldPos.x, oldPos.y);
+                PositionUpdate msg = new PositionUpdate(player.getUsername(), player.getXX(), player.getYY());
+                GameClient.client.sendTCP(msg);
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
                 toggleOverviewMode();
@@ -1462,11 +1463,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        viewport = new FitViewport(320, 180, camera);
-        viewport.apply();
+
 
         uiStage = new Stage(new ScreenViewport(), batch);
-        stage = new Stage(viewport, batch);
+
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(stage);
         multiplexer.addProcessor(new InventoryInputHandler(this));
@@ -1664,22 +1664,22 @@ public class GameScreen implements Screen {
         });
         uiStage.addActor(friendshipButton);
 
-        Texture chatTex = GameAssetManager.getInstance().getOrLoadTexture("ui/chat.png");
-        Drawable chatDrawable = new TextureRegionDrawable(new TextureRegion(chatTex));
-        ImageButton chatButton = new ImageButton(chatDrawable);
-        chatButton.setPosition(x, y - 250f);
-        chatButton.getImageCell().size(72, 56);
-        chatButton.setSize(72, 56);
-
-        chatButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                chatTable.setVisible(true);
-                isChatOpen = true;
-            }
-        });
-
-        uiStage.addActor(chatButton);
+//        Texture chatTex = GameAssetManager.getInstance().getOrLoadTexture("ui/chat.png");
+//        Drawable chatDrawable = new TextureRegionDrawable(new TextureRegion(chatTex));
+//        ImageButton chatButton = new ImageButton(chatDrawable);
+//        chatButton.setPosition(x, y - 250f);
+//        chatButton.getImageCell().size(72, 56);
+//        chatButton.setSize(72, 56);
+//
+//        chatButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                chatTable.setVisible(true);
+//                isChatOpen = true;
+//            }
+//        });
+//
+//        uiStage.addActor(chatButton);
 
 
         Texture tradingTexture = GameAssetManager.tradingButton;
@@ -1710,8 +1710,8 @@ public class GameScreen implements Screen {
             }
         });
 
-        Texture rejectTex = new Texture("closeButton.png");
-        Texture acceptTex = new Texture("ui/checkMark.png");
+        Texture rejectTex = GameAssetManager.getInstance().getOrLoadTexture("closeButton.png");
+        Texture acceptTex = GameAssetManager.getInstance().getOrLoadTexture("ui/checkMark.png");
         Drawable rejectDrawable = new TextureRegionDrawable(new TextureRegion(rejectTex));
         Drawable acceptDrawable = new TextureRegionDrawable(new TextureRegion(acceptTex));
         accept = new ImageButton(acceptDrawable);
@@ -2382,12 +2382,11 @@ public class GameScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (playersAreClose(currentPlayer, player)) {
-                    hugMode = true;
-                    playerA = currentPlayer;
-                    playerB = player;
-                    hugTimer = 0f;
-                    faceEachOther(currentPlayer, player);
-                    moveToCenter(currentPlayer, player);
+                    hug(currentPlayer, player);
+                    HugMessage msg = new HugMessage();
+                    msg.player1 = playerA.getUsername();
+                    msg.player2 = playerB.getUsername();
+                    GameClient.client.sendTCP(msg);
                 }
                 playerMenuTable.setVisible(false);
             }
@@ -2414,6 +2413,15 @@ public class GameScreen implements Screen {
         playerMenuTable.add(innerPanel).center();
     }
 
+    public void hug(Player currentPlayer, Player player) {
+        // TODO controller hug
+        hugMode = true;
+        playerA = currentPlayer;
+        playerB = player;
+        hugTimer = 0f;
+        faceEachOther(currentPlayer, player);
+        moveToCenter(currentPlayer, player);
+    }
     private boolean playersAreClose(Player player1, Player player2) {
         Vector2 pos1 = new Vector2(player1.getXX(), player1.getYY());
         Vector2 pos2 = new Vector2(player2.getXX(), player2.getYY());
@@ -2584,7 +2592,8 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 latestResult = controller.feedHay(animalActor.getAnimal());
                 showResult = true;
-                feedAnimal(animalActor);
+                if (latestResult.isSuccess())
+                    feedAnimal(animalActor);
                 animalMenuTable.setVisible(false);
             }
         });
@@ -2600,8 +2609,8 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 latestResult = controller.petAnimal(animal);
                 showResult = true;
-                animalActor.pet();
-                artisanMenuTable.setVisible(false);
+                if (latestResult.isSuccess())animalActor.pet();
+                animalMenuTable.setVisible(false);
             }
         });
         shepherdAnimal.setColor(1, 210f / 255, 132f / 255, 1);
@@ -3235,14 +3244,21 @@ public class GameScreen implements Screen {
         player.addAnimalHouse(building);
     }
 
-    public boolean showTradingRequest(String playerName){
-        Table tradeRequestTable = new Table();
-        Label tradeLabel = new Label("Trade request by " + playerName, skin);
-        tradeRequestTable.add(tradeLabel);
-        tradeRequestTable.add(accept);
-        tradeRequestTable.add(reject);
-        uiStage.addActor(tradeRequestTable);
-        return acceptedRequest; //implement better
+    public void showTradingRequest(String playerName, Consumer<Boolean> callback) {
+        Dialog dialog = new Dialog("Trade Request", skin) {
+            @Override
+            protected void result(Object object) {
+                boolean accepted = (Boolean) object;
+                callback.accept(accepted);
+            }
+        };
+
+        dialog.text("Trade request by " + playerName);
+
+        dialog.button("Accept", true).pad(5);
+        dialog.button("Reject", false).pad(5);
+
+        dialog.show(uiStage);
     }
 
 
@@ -3270,11 +3286,14 @@ public class GameScreen implements Screen {
         Table emoteMenu = new Table();
         final TextField messageField = new TextField("", skin);
         messageField.setMessageText("Max 10 chars");
-
+        Texture menuTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/emoteMenu.png");
+        emoteMenu.setFillParent(true);
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        emoteMenu.setBackground(menuDrawable);
         final Emote[] selectedEmote = {null};
 
         for (Emote emote : Emote.values()) {
-            Texture tex = GameAssetManager.getInstance().getOrLoadTexture(emote.texturePath);
+            Texture tex = GameAssetManager.getInstance().getOrLoadTexture(emote.getTexturePath());
             ImageButton btn = new ImageButton(new TextureRegionDrawable(new TextureRegion(tex)));
 
             btn.addListener(new ClickListener() {
@@ -3329,7 +3348,7 @@ public class GameScreen implements Screen {
         });
         emoteMenu.add(sendButton).colspan(Emote.values().length).pad(5);
 
-        stage.addActor(emoteMenu);
+        uiStage.addActor(emoteMenu);
 
     }
 

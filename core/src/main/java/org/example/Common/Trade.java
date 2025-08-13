@@ -3,71 +3,23 @@ package org.example.Common;
 import java.io.Serializable;
 
 public class Trade implements Serializable {
-    private final int id;
-    private static int tradesCount = 0;
-    private final Player player; // who initiated the trade
-    private final Player targetPlayer; // who the offer request is for
-    private final String type;
-    private final Item item;
-    private final int amount;
-//    private final Integer cost;
-    private final Item targetItem;
-    private final Integer targetAmount;
-    private boolean answered = false;
+    public final int id;
+    public static int tradesCount = 0;
+    public final String player; // who initiated the trade
+    public final String targetPlayer; // who the offer request is for
+    public final String item;
+    public final int amount;
+    public final String targetItem;
+    public final int targetAmount;
+    public boolean answered = false;
 
-    public Trade(Player player, Player targetPlayer, String type, Item item, int amount, Item targetItem, Integer targetAmount) {
+    public Trade(String player, String targetPlayer, String item, int amount, String targetItem, int targetAmount) {
         this.player = player;
         this.targetPlayer = targetPlayer;
-        this.type = type;
         this.item = item;
         this.amount = amount;
-//        this.cost = cost;
         this.targetItem = targetItem;
         this.targetAmount = targetAmount;
         this.id = ++tradesCount;
-    }
-
-    public boolean isAnswered() {
-        return answered;
-    }
-
-    public void setAnswered(boolean answered) {
-        this.answered = answered;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public Player getSender(){
-        return player;
-    }
-
-    public Player getReceiver() {
-        return targetPlayer;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public Item getItem() {
-        return item;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-//    public Integer getCost() {
-//        return cost;
-//    }
-
-    public Item getTargetItem() {
-        return targetItem;
-    }
-
-    public Integer getTargetAmount() {
-        return targetAmount;
     }
 }

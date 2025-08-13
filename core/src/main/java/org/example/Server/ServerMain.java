@@ -4,9 +4,9 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import org.example.Client.NpcActor;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.LoginPacket;
-import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.Direction;
 import org.example.Common.Enums.MessageType;
@@ -15,6 +15,8 @@ import org.example.Common.Network.*;
 import org.example.Common.Player;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
+import org.example.Common.Tool.BackPack;
+import org.example.Common.Trade;
 import org.example.Server.Packets.*;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
@@ -22,22 +24,27 @@ import org.example.Server.Packets.MarriagePackets.MarriageProposalReceived;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalRequest;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
+import org.example.Server.Trade.TradePacket;
+import org.example.Server.controllers.NpcController;
 import org.example.Server.models.MyGame;
+import org.example.Server.models.ServerNPC;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ServerMain {
-    public static ServerGameState gameState = new ServerGameState();
     private static final Map<String, Connection> playerConnections = new HashMap<>();
     private static Server server;
+    private static List<NpcController> npcControllers = new ArrayList<>();
+    static boolean updateNPCS = false;
     public static void main(String[] args) throws Exception {
         server = new Server();
         server.start();
         server.bind(54555, 54777);
-
+        initializeNPCs();
+        startGameLoop();
         Kryo kryo = server.getKryo();
 
         kryo.register(String.class);
@@ -45,7 +52,6 @@ public class ServerMain {
         kryo.register(java.util.List.class);
         kryo.register(HashMap.class);
 
-        kryo.register(PlayerUpdate.class);
         kryo.register(ChatMessage.class);
         kryo.register(PrivateChatMessage.class);
         kryo.register(TradeMessage.class);
@@ -100,11 +106,18 @@ public class ServerMain {
         kryo.register(StartGamePacket.class);
         kryo.register(MovePacket.class);
         kryo.register(Direction.class);
+        kryo.register(ScoreboardUpdatePacket.class);
+        kryo.register(NpcMovePacket.class);
+        kryo.register(ServerNPC.class);
+        kryo.register(TradePacket.class);
+        kryo.register(Trade.class);
+        kryo.register(TradeMessage.MessageType.class);
 
 
         server.addListener(new Listener() {
             public void received(Connection c, Object object) {
                 if (object instanceof StartGamePacket) {
+
                     StartGamePacket msg = (StartGamePacket) object;
                     for (SimplePlayer player : msg.players) {
                         Connection playerConn = playerConnections.get(player.getUsername());
@@ -116,16 +129,25 @@ public class ServerMain {
                             playerConn.sendTCP(packet);
                         }
                     }
-                }
-                else if (object instanceof  MovePacket) {
+                    updateNPCS = true;
+                } else if (object instanceof MovePacket) {
                     MovePacket movePacket = (MovePacket) object;
                     server.sendToAllExceptTCP(c.getID(), movePacket);
                 }
+                else if (object instanceof PositionUpdate) {
+                    PositionUpdate positionUpdate = (PositionUpdate) object;
+                    server.sendToAllExceptTCP(c.getID(), positionUpdate);
+                }
                 else if (object instanceof TradeMessage){
                     TradeMessage msg = (TradeMessage) object;
+                    System.out.println("Trade message recieved from client");
+                    System.out.println(msg.type);
+                    System.out.println(msg.fromPlayer);
+                    System.out.println(msg.toPlayer);
+                    System.out.println(msg.trade);
                     switch (msg.type) {
                         case REQUEST: {
-                            Connection target = getConnectionByName(msg.toPlayer.getUsername());
+                            Connection target = getConnectionByName(msg.toPlayer);
                             if (target != null) {
                                 target.sendTCP(msg);
                             }
@@ -133,7 +155,8 @@ public class ServerMain {
                         }
 
                         case RESPONSE: {
-                            Connection initiator = getConnectionByName(msg.toPlayer.getUsername());
+                            Connection initiator = getConnectionByName(msg.toPlayer);
+                            System.out.println(initiator);
                             if (initiator != null) {
                                 if (msg.accepted) {
                                     TradeMessage start = new TradeMessage();
@@ -158,16 +181,16 @@ public class ServerMain {
                 }
                 else if (object instanceof PurchaseRequest) {
                     PurchaseRequest request = (PurchaseRequest) object;
-                    synchronized (gameState) {
-                        StoreUpdatePacket updatePacket = new StoreUpdatePacket();
-                        updatePacket.products = new ArrayList<>();
-                        for (Map.Entry<Product, Integer> entry : request.items.entrySet()) {
-                            updatePacket.products.add(entry.getKey());
-                        }
-                        updatePacket.storeName = request.storeName;
-
-                        server.sendToAllTCP(updatePacket);
-                    }
+//                    synchronized (gameState) {
+//                        StoreUpdatePacket updatePacket = new StoreUpdatePacket();
+//                        updatePacket.products = new ArrayList<>();
+//                        for (Map.Entry<Product, Integer> entry : request.items.entrySet()) {
+//                            updatePacket.products.add(entry.getKey());
+//                        }
+//                        updatePacket.storeName = request.storeName;
+//
+//                        server.sendToAllTCP(updatePacket);
+//                    }
                 }
                 else if (object instanceof LoginPacket) {
                     LoginPacket login = (LoginPacket) object;
@@ -218,6 +241,9 @@ public class ServerMain {
                     if (response.accepted) {
                         from.setSpouse(to);
                     }
+                } else if(object instanceof ScoreboardUpdatePacket) {
+                    ScoreboardUpdatePacket update = (ScoreboardUpdatePacket) object;
+                    server.sendToAllTCP(update);
                 }
             }
 
@@ -270,5 +296,43 @@ public class ServerMain {
 
     public static Server getServer(){
         return server;
+    }
+
+    private static void startGameLoop() {
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                {
+                    float delta = 0.05f;
+
+                    for (NpcController controller : npcControllers) {
+                        controller.update(delta);
+
+                        NpcMovePacket pkt = new NpcMovePacket();
+                        pkt.npcName = controller.getNpc().name;
+                        pkt.x = controller.getNpc().x;
+                        pkt.y = controller.getNpc().y;
+                        pkt.direction = controller.getNpc().direction;
+                        pkt.delta = delta;
+
+                        server.sendToAllTCP(pkt);
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+
+        }, 0, 50, TimeUnit.MILLISECONDS);
+    }
+
+    private static void initializeNPCs() {
+
+        npcControllers.add(new NpcController(new ServerNPC("Sebastian", true, 9, 17, 3450, 4000, 6493.93f, 4108)));
+        npcControllers.add(new NpcController(new ServerNPC("Abigail", true, 9, 16, 7100, 4050, 4470.5f, 4468.5f)));
+        npcControllers.add(new NpcController(new ServerNPC("Harvey", true, 9, 17, 4650, 7650, 6404.52f, 3929.28f)));
+        npcControllers.add(new NpcController(new ServerNPC("Leah", true, 9, 16, 2350, 4300, 1129.33f, 3902.43f)));
+        npcControllers.add(new NpcController(new ServerNPC("Robin", true, 9, 20, 1120, 3950, 156.41f, 4823)));
+
+
     }
 }

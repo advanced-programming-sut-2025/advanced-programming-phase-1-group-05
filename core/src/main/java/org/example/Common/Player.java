@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import org.example.Client.GameAssetManager;
+import org.example.Client.GameClient;
 import org.example.Common.Enums.*;
 import org.example.Common.Network.SimplePlayer;
 import org.example.Common.Tool.*;
@@ -247,7 +248,6 @@ public class Player implements Serializable {
         lastDirection = Direction.UP;
         stateTime += delta;
         reduceEnergyByStep(speed * delta);
-        System.out.println("moved " + getUsername());
     }
 
     public void moveDown(float delta) {
@@ -373,7 +373,7 @@ public class Player implements Serializable {
         if (emoteTimer > 0) {
             emoteTimer -= delta;
             if (currentEmote != null)
-                batch.draw(GameAssetManager.getInstance().getOrLoadTexture(currentEmote.texturePath), getXX(), getYY() + getHeight());
+                batch.draw(GameAssetManager.getInstance().getOrLoadTexture(currentEmote.getTexturePath()), getXX(), getYY() + getHeight());
 
             if (!currentMessage.isEmpty())
                 font.draw(batch, currentMessage, getXX(), getYY() + getHeight() + 20);
@@ -547,7 +547,7 @@ public class Player implements Serializable {
     public void addGold(int amount) {
         if (sharedWallet == null) {
             gold += amount;
-            updateUserStats(1, 0, 0);
+            updateUserStats(amount, 0, 0);
         }
         else sharedWallet.addGold(amount);
     }
@@ -852,12 +852,12 @@ public class Player implements Serializable {
 
         ScoreboardUpdatePacket packet = new ScoreboardUpdatePacket(
             user.getUsername(),
-            user.getInfo("gold"),
-            user.getInfo("quests"),
-            user.getInfo("skill")
+            gold,
+            quests,
+            skill
         );
 
-        ServerMain.getServer().sendToAllTCP(packet);
+        GameClient.client.sendTCP(packet);
     }
 
 }

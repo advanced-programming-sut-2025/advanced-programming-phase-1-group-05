@@ -49,14 +49,14 @@ public class GameAssetManager {
     public Map<AnimalType, AnimalAnimations> animalAnimations = new HashMap<>();
     private GameAssetManager() {
         // Load skin from assets/skin/
-        try {
-            Pixmap cursorPixmap = new Pixmap(Gdx.files.internal("Stardew_Valley_Images-main/extra/cursor.png"));
-            Cursor cursor = Gdx.graphics.newCursor(cursorPixmap, 0, 0);
-            Gdx.graphics.setCursor(cursor);
-            cursorPixmap.dispose();
-        } catch (Exception e) {
-            Gdx.app.log("GameAssetManager", "Cursor not loaded: " + e.getMessage());
-        }
+//        try {
+//            Pixmap cursorPixmap = new Pixmap(Gdx.files.internal("Stardew_Valley_Images-main/extra/cursor.png"));
+//            Cursor cursor = Gdx.graphics.newCursor(cursorPixmap, 0, 0);
+//            Gdx.graphics.setCursor(cursor);
+//            cursorPixmap.dispose();
+//        } catch (Exception e) {
+//            Gdx.app.log("GameAssetManager", "Cursor not loaded: " + e.getMessage());
+//        }
         loadSfx();
         loadNPCAvatars();
         loadAnimalAnimations();

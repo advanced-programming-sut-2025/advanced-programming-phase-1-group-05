@@ -78,8 +78,9 @@ public class TradeMenu extends Table {
                     public void clicked(InputEvent event, float x, float y) {
                         TradeMessage msg = new TradeMessage();
                         Result result;
-                        msg.fromPlayer = MyGame.getCurrentPlayer();
-                        String otherPlayerUsername = (String) usernameField.getText();
+                        msg.type = TradeMessage.MessageType.REQUEST;
+                        msg.fromPlayer = MyGame.getCurrentPlayer().getUsername();
+                        String otherPlayerUsername = usernameField.getText();
                         Player otherPlayer = MyGame.getPlayer(otherPlayerUsername);
                         if(otherPlayer == null) {
                             result = new Result(false, "Player not found");
@@ -87,7 +88,7 @@ public class TradeMenu extends Table {
                             MyGame.getGameScreen().showResult = true;
                             return;
                         }
-                        msg.toPlayer = otherPlayer;
+                        msg.toPlayer = otherPlayer.getUsername();
 
                         clientNetworkManager.sendTradeRequest(msg);
 
@@ -118,9 +119,9 @@ public class TradeMenu extends Table {
                     tradeWithLabel.setColor(Color.RED);
                     tradeWithLabel.setScale(1.5f);
 
-                    String itemName = trade.getItem().getName();
-                    String targetItemName = trade.getTargetItem().getName();
-                    int amount = trade.getAmount();
+                    String itemName = trade.item;
+                    String targetItemName = trade.targetItem;
+                    int amount = trade.amount;
 
                     Label offeredItemLabel = new Label("Offered Item: " + itemName + " x" + amount, skin);
                     Label requestedItemLabel = new Label("Requested Item: " + targetItemName +  " x" + amount, skin);

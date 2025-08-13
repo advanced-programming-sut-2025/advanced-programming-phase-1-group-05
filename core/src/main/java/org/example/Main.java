@@ -11,7 +11,6 @@ import com.esotericsoftware.kryonet.Listener;
 import org.example.Client.*;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.LoginPacket;
-import org.example.Common.DataTransferObjects.PlayerUpdate;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.Direction;
 import org.example.Common.Enums.Emote;
@@ -79,12 +78,40 @@ public class Main extends Game {
 
             new Thread(() -> {
                 try {
-                    GameClient.client.connect(5000, "192.168.1.54", 54555, 54777);
+                    System.out.println("Attempting to connect...");
+
+                    // Start a thread to call update() continuously
+                    Thread updateThread = new Thread(() -> {
+                        while (!GameClient.client.isConnected()) {
+                            try {
+                                GameClient.client.update(100); // 100ms delay
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    });
+                    updateThread.start();
+
+                    // Connect (this blocks until connected or timeout)
+                    GameClient.client.connect(5000, "192.168.1.53", 54555, 54777);
+
+                    // Wait for update thread to finish
+                    updateThread.join();
+
+                    System.out.println("✅ Connected to server");
+
                     GameClient.addListeners();
-                } catch (IOException e) {
+
+                    if (Main.currentUser != null) {
+                        LoginPacket loginPacket = new LoginPacket(Main.currentUser.getUsername());
+                        GameClient.client.sendTCP(loginPacket);
+                    }
+
+                } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }).start();
+
 
 
         }

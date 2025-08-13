@@ -26,6 +26,9 @@ public class User implements Serializable {
     String securityAnswer;
     public static boolean haveSavedGame = false;
 
+    {
+        setAvatarTexturePath("NPCs/sebastian/avatar.png");
+    }
     private List<String> friends = new ArrayList<>();
 
     public void addFriend(String username) {

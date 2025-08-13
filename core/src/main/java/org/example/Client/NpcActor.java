@@ -19,17 +19,10 @@ import java.util.Random;
 
 public class NpcActor extends Actor {
     private final Image exclamationImage;
-    private Direction direction = Direction.DOWN;
-    private float stateTime = 0f;
-    private TextureRegion currentFrame;
-    float moveTimer = 0f;
-    float speed = 30f;
-    Vector2 directionVector = new Vector2();
+    public TextureRegion currentFrame;
     private final NPC npc;
     private boolean dialogueReady = false;
     private final int dialogueTime;
-    private  boolean walking = true;
-
 
     public NpcActor (NPC npc) {
         this.npc = npc;
@@ -59,51 +52,13 @@ public class NpcActor extends Actor {
             dialogueReady = true;
             exclamationImage.setVisible(true);
         }
-
-        if (!walking) return;
         super.act(delta);
-        moveTimer -= delta;
         exclamationImage.act(delta);
-        if (moveTimer <= 0) {
-            directionVector.set(MathUtils.random(-1, 1), MathUtils.random(-1, 1)).nor();
 
-            moveTimer = MathUtils.random(1f, 3f);
-        }
-
-
-        float newX = getX() + directionVector.x * speed * delta;
-        float newY = getY() + directionVector.y * speed * delta ;
-
-        if (newX < 100 || newX + getWidth() > 8500 || newY < 100 || newY + getHeight() > 8525) {
-            return; // skip movement this frame
-        }
-        Rectangle nextBounds = new Rectangle(newX, newY, getWidth(), getHeight());
-
-        if (!overlapsAnyFarm(nextBounds)) {
-            setPosition(newX, newY);
-            npc.setPosition(newX, newY);
-            if (Math.abs(directionVector.x) > Math.abs(directionVector.y)) {
-                direction = directionVector.x > 0 ? Direction.RIGHT : Direction.LEFT;
-            } else if (directionVector.len2() > 0.001f) {
-                direction = directionVector.y > 0 ? Direction.UP : Direction.DOWN;
-            }
-        }
-
-        stateTime += delta;
-        Animation<TextureRegion> anim = GameAssetManager.getInstance().getNPCWalkingAnimation(npc, direction);
-        currentFrame = anim.getKeyFrame(stateTime, true);
-
-
+        Animation<TextureRegion> anim = GameAssetManager.getInstance().getNPCWalkingAnimation(npc, npc.direction);
+        currentFrame = anim.getKeyFrame(npc.stateTime);
     }
 
-    private boolean overlapsAnyFarm(Rectangle bounds) {
-        for (Rectangle farm : GameScreen.farms) {
-            if (bounds.overlaps(farm)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
@@ -125,7 +80,7 @@ public class NpcActor extends Actor {
     }
 
     public void setWalking(boolean walking) {
-        this.walking = walking;
+        npc.walking = walking;
     }
 
     public boolean isDialogueReady() {
@@ -141,6 +96,5 @@ public class NpcActor extends Actor {
          dialogueReady = false;
          return message;
     }
-
 
 }
