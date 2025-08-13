@@ -2120,10 +2120,7 @@ public class GameScreen implements Screen {
         giftButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                giftMode = true;
-                lastPlayer = player;
-                lastNPC = null;
-                isInvenotryOpen = true;
+                showGiftMenu(player);
                 friendshipMenuTable.setVisible(false);
             }
         });
@@ -2372,6 +2369,9 @@ public class GameScreen implements Screen {
                 playerMenuTable.setVisible(false);
             }
         });
+        TextButton giftButton = new TextButton("gift " + player.getName(), skin);
+        innerPanel.add(giftButton).fillX();
+        innerPanel.row();
         TextButton hugButton = new TextButton("hug " + player.getName(), skin);
         innerPanel.add(hugButton).fillX();
         innerPanel.row();

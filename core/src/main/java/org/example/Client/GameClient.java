@@ -169,10 +169,9 @@ public class GameClient {
                     Gdx.app.postRunnable(() -> {
                         System.out.println(startGamePacket.lobbyId);
                         MenuNavigator.getLobbyMenu().startTheGame(startGamePacket.players);
-                        for (Player player : MyGame.getAllPlayers()) {
-                            System.out.println(player.getMapNum());
-                        }
-                        Main.getMain().setScreen(new GameScreen(MyGame.getAllPlayers()));
+                        GameScreen screen = new GameScreen(MyGame.getAllPlayers());
+                        MenuNavigator.setGameScreen(screen);
+                        Main.getMain().setScreen(screen);
 
                     });
                 }
@@ -318,12 +317,14 @@ public class GameClient {
                 }
                 else if (object instanceof HugMessage) {
                     HugMessage message = (HugMessage) object;
-                    Player playerA = MyGame.getPlayerByUsername(message.player1);
-                    Player playerB = MyGame.getPlayerByUsername(message.player2);
+
                     Gdx.app.postRunnable(() -> {
+                        Player playerA = MyGame.getPlayerByUsername(message.player1);
+                        Player playerB = MyGame.getPlayerByUsername(message.player2);
                         GameScreen screen = MenuNavigator.getGameScreen();
                         if (screen!= null) {
                             screen.hug(playerA, playerB);
+                            System.out.println(playerA.getUsername() + " " + playerB.getUsername() + " hugging");
                         }
                     });
                 }
