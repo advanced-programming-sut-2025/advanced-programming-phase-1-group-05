@@ -37,7 +37,7 @@ public class LoginMenu implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
-        stage.setKeyboardFocus(null); // پاک کردن فوکوس قبلی
+        stage.setKeyboardFocus(null);
 
         Texture bg = new Texture(Gdx.files.internal("backgrounds/login_bg.png"));
         Table root = new Table();
@@ -80,7 +80,6 @@ public class LoginMenu implements Screen {
         root.add(registerBtn).pad(5).row();
         root.add(forgotBtn).colspan(2).pad(5).row();
 
-        // فوکوس روی فیلد اول
         stage.setKeyboardFocus(usernameField);
 
         loginBtn.addListener(new ChangeListener() {

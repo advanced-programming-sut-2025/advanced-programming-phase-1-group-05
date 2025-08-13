@@ -15,6 +15,8 @@ import org.example.Common.Network.*;
 import org.example.Common.Player;
 import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
+import org.example.Common.Tool.BackPack;
+import org.example.Common.Trade;
 import org.example.Server.Packets.*;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
@@ -22,6 +24,7 @@ import org.example.Server.Packets.MarriagePackets.MarriageProposalReceived;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalRequest;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
+import org.example.Server.Trade.TradePacket;
 import org.example.Server.controllers.NpcController;
 import org.example.Server.models.MyGame;
 import org.example.Server.models.ServerNPC;
@@ -106,6 +109,9 @@ public class ServerMain {
         kryo.register(ScoreboardUpdatePacket.class);
         kryo.register(NpcMovePacket.class);
         kryo.register(ServerNPC.class);
+        kryo.register(TradePacket.class);
+        kryo.register(Trade.class);
+        kryo.register(TradeMessage.MessageType.class);
 
 
         server.addListener(new Listener() {
@@ -134,9 +140,14 @@ public class ServerMain {
                 }
                 else if (object instanceof TradeMessage){
                     TradeMessage msg = (TradeMessage) object;
+                    System.out.println("Trade message recieved from client");
+                    System.out.println(msg.type);
+                    System.out.println(msg.fromPlayer);
+                    System.out.println(msg.toPlayer);
+                    System.out.println(msg.trade);
                     switch (msg.type) {
                         case REQUEST: {
-                            Connection target = getConnectionByName(msg.toPlayer.getUsername());
+                            Connection target = getConnectionByName(msg.toPlayer);
                             if (target != null) {
                                 target.sendTCP(msg);
                             }
@@ -144,7 +155,8 @@ public class ServerMain {
                         }
 
                         case RESPONSE: {
-                            Connection initiator = getConnectionByName(msg.toPlayer.getUsername());
+                            Connection initiator = getConnectionByName(msg.toPlayer);
+                            System.out.println(initiator);
                             if (initiator != null) {
                                 if (msg.accepted) {
                                     TradeMessage start = new TradeMessage();

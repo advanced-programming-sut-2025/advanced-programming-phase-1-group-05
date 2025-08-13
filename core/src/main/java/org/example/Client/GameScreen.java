@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.example.Common.GameMap.MAP_HEIGHT;
 import static org.example.Common.GameMap.MAP_WIDTH;
@@ -1663,22 +1664,22 @@ public class GameScreen implements Screen {
         });
         uiStage.addActor(friendshipButton);
 
-        Texture chatTex = GameAssetManager.getInstance().getOrLoadTexture("ui/chat.png");
-        Drawable chatDrawable = new TextureRegionDrawable(new TextureRegion(chatTex));
-        ImageButton chatButton = new ImageButton(chatDrawable);
-        chatButton.setPosition(x, y - 250f);
-        chatButton.getImageCell().size(72, 56);
-        chatButton.setSize(72, 56);
-
-        chatButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                chatTable.setVisible(true);
-                isChatOpen = true;
-            }
-        });
-
-        uiStage.addActor(chatButton);
+//        Texture chatTex = GameAssetManager.getInstance().getOrLoadTexture("ui/chat.png");
+//        Drawable chatDrawable = new TextureRegionDrawable(new TextureRegion(chatTex));
+//        ImageButton chatButton = new ImageButton(chatDrawable);
+//        chatButton.setPosition(x, y - 250f);
+//        chatButton.getImageCell().size(72, 56);
+//        chatButton.setSize(72, 56);
+//
+//        chatButton.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                chatTable.setVisible(true);
+//                isChatOpen = true;
+//            }
+//        });
+//
+//        uiStage.addActor(chatButton);
 
 
         Texture tradingTexture = GameAssetManager.tradingButton;
@@ -3243,14 +3244,21 @@ public class GameScreen implements Screen {
         player.addAnimalHouse(building);
     }
 
-    public boolean showTradingRequest(String playerName){
-        Table tradeRequestTable = new Table();
-        Label tradeLabel = new Label("Trade request by " + playerName, skin);
-        tradeRequestTable.add(tradeLabel);
-        tradeRequestTable.add(accept);
-        tradeRequestTable.add(reject);
-        uiStage.addActor(tradeRequestTable);
-        return acceptedRequest; //implement better
+    public void showTradingRequest(String playerName, Consumer<Boolean> callback) {
+        Dialog dialog = new Dialog("Trade Request", skin) {
+            @Override
+            protected void result(Object object) {
+                boolean accepted = (Boolean) object;
+                callback.accept(accepted);
+            }
+        };
+
+        dialog.text("Trade request by " + playerName);
+
+        dialog.button("Accept", true).pad(5);
+        dialog.button("Reject", false).pad(5);
+
+        dialog.show(uiStage);
     }
 
 

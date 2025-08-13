@@ -15,6 +15,8 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.example.Common.Item;
 import org.example.Common.Player;
+import org.example.Common.Request.TradeMessage;
+import org.example.Common.Trade;
 import org.example.Main;
 import org.example.Server.controllers.GameMenuController;
 import org.example.Server.controllers.TradingController;
@@ -25,8 +27,8 @@ public class TradeScreen implements Screen {
     private final Skin skin;
     private final boolean isInitiator;
 
-    private final Player fromPlayer;
-    private final Player toPlayer;
+    private final String fromPlayer;
+    private final String toPlayer;
 
     private final TradingController controller;
     private final GameMenuController gameMenuController;
@@ -44,7 +46,7 @@ public class TradeScreen implements Screen {
     private Item selectedRequestItem = null;
     private int amount , targetAmount = 0;
 
-    public TradeScreen(Player fromPlayer, Player toPlayer, boolean isInitiator, TradingController controller) {
+    public TradeScreen(String fromPlayer, String toPlayer, boolean isInitiator, TradingController controller) {
         this.fromPlayer = fromPlayer;
         this.toPlayer = toPlayer;
         this.isInitiator = isInitiator;
@@ -55,7 +57,7 @@ public class TradeScreen implements Screen {
         this.skin = GameAssetManager.getSkin();
         this.gameMenuController = new GameMenuController();
 
-        this.titleLabel = new Label("Trading with: " + toPlayer.getUsername(), skin);
+        this.titleLabel = new Label("Trading with: " + toPlayer, skin);
 
         this.confirmOfferButton = new TextButton("Confirm Offer", skin);
         this.cancelButton = new TextButton("Cancel", skin);
@@ -126,7 +128,12 @@ public class TradeScreen implements Screen {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     if (selectedOfferItem != null && selectedRequestItem != null) {
-                        controller.sendTradeOffer(fromPlayer, toPlayer, "type", selectedOfferItem, amount, selectedRequestItem, targetAmount);
+                        TradeMessage msg = new TradeMessage();
+                        msg.fromPlayer = fromPlayer;
+                        msg.toPlayer = toPlayer;
+                        Trade trade = new Trade(msg.fromPlayer, msg.toPlayer, selectedOfferItem.getName(), amount, selectedRequestItem.getName(), targetAmount);
+                        msg.trade = trade;
+                        controller.sendTradeOffer(msg);
 
                     }
                 }
@@ -138,7 +145,12 @@ public class TradeScreen implements Screen {
             acceptButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    controller.acceptTradeOffer(fromPlayer, toPlayer, "type", selectedOfferItem, amount, selectedRequestItem, targetAmount);
+                    TradeMessage msg = new TradeMessage();
+                    msg.fromPlayer = fromPlayer;
+                    msg.toPlayer = toPlayer;
+                    Trade trade = new Trade(msg.fromPlayer, msg.toPlayer, msg.trade.item, 1, msg.trade.targetItem, 1);
+                    msg.trade = trade;
+                    controller.acceptTradeOffer(msg);
                 }
             });
 

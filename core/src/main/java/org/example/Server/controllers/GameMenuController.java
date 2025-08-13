@@ -6,6 +6,7 @@ import org.example.Client.*;
 import org.example.Common.*;
 import org.example.Common.Enums.*;
 import org.example.Common.Network.*;
+import org.example.Common.Request.TradeMessage;
 import org.example.Main;
 import org.example.Server.managers.LobbyManager;
 import org.example.Server.models.*;
@@ -20,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GameMenuController extends MenuController {
-    public static User currentUser = Main.currentUser;
     public static List<Player> selectedPlayers;
     private static Map<String, MyGame> activeGames = new HashMap<>();
     private MyGame pendingGame;
@@ -78,7 +78,7 @@ public class GameMenuController extends MenuController {
 
         // ست کردن بازیکن فعلی
         for (Player player : selectedPlayers) {
-            if (player.getUsername().equals(currentUser.getUsername())) {
+            if (player.getUsername().equals(Main.currentUser.getUsername())) {
                 MyGame.setCurrentPlayer(player);
                 break;
             }
@@ -116,7 +116,7 @@ public class GameMenuController extends MenuController {
         try {
             pendingGame = null;
             activeGames.values().removeIf(game ->
-                    selectedPlayers.contains(currentUser));
+                    selectedPlayers.contains(Main.currentUser));
 
             for (Player player : selectedPlayers) {
                 UserDatabase.setUserInGame(player.getUsername(), false);
@@ -553,7 +553,7 @@ public class GameMenuController extends MenuController {
         }
 
         selectedPlayers = new ArrayList<>();
-        selectedPlayers.add(new Player(currentUser));
+        selectedPlayers.add(new Player(Main.currentUser));
 
         for (int i = 1; i <= 3; i++) {
             String username = matcher.group("username" + (i == 1 ? "" : i));
@@ -567,7 +567,7 @@ public class GameMenuController extends MenuController {
                 }
                 Player player = new Player(user);
                 selectedPlayers.add(player);
-                currentUser.addFriend(username);
+                Main.currentUser.addFriend(username);
                 user.incrementGamesPlayed();
             }
         }
@@ -735,5 +735,10 @@ public class GameMenuController extends MenuController {
         else if (FishType.fromString(name) != null) item = FishType.fromString(name);
         else if (MineralType.fromString(name) != null) item = MineralType.fromString(name);
         return item;
+    }
+
+    public void startTrading(TradeMessage msg, boolean initiator) {
+        Main.getMain().setScreen(new TradeScreen(msg.fromPlayer,
+            msg.toPlayer, initiator, new TradingController()));
     }
 }

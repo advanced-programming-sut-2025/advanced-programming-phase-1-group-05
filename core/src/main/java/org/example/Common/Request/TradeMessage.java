@@ -10,8 +10,8 @@ public class TradeMessage implements Message {
         START,REJECTED,UPDATE, ACCEPT, DECLINE;
     }
     public MessageType type;
-    public Player fromPlayer;
-    public Player toPlayer;
+    public String fromPlayer;
+    public String toPlayer;
     public Trade trade;
     public boolean accepted;
 
