@@ -16,7 +16,6 @@ public class LobbyManager {
         Iterator<Lobby> iterator = activeLobbies.iterator();
         while (iterator.hasNext()) {
             if (iterator.next().isEmpty()) {
-                System.out.println("removed " +iterator.next().getId());
                 iterator.remove();
             }
         }

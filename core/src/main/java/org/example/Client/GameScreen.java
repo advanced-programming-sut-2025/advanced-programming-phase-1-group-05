@@ -213,7 +213,9 @@ public class GameScreen implements Screen {
         viewport.apply();
         stage = new Stage(viewport, batch);
         Vector2 spawnPos = null;
+        System.out.println(MyGame.getCurrentPlayer().getUsername());
         for (Player player : players) {
+            System.out.println(player.getUsername());
             if (player.equals(MyGame.getCurrentPlayer())) {
                 MyGame.setCurrentPlayer(player);
             }
