@@ -39,7 +39,7 @@ public class TradeScreen implements Screen {
     private TextField offerField, requestField;
 
     private final Image offerSlotBg, requestSlotBg;
-    private final Image offerItemImage, requestItemImage;
+    public final Image offerItemImage, requestItemImage;
 
     private final Label offerQuantityLabel, requestQuantityLabel;
     private Item selectedOfferItem = null;
@@ -225,6 +225,11 @@ public class TradeScreen implements Screen {
         }
 
         Item item = gameMenuController.getItemByName(itemName);
+        if(isOffer) {
+            selectedOfferItem = item;
+        } else {
+            selectedRequestItem = item;
+        }
         if (item == null || quantity <= 0) {
             itemImage.setDrawable(null);
             if (isOffer) {
@@ -237,14 +242,16 @@ public class TradeScreen implements Screen {
         if(isOffer) selectedOfferItem = item;
         else selectedRequestItem = item;
 
-        Texture texture = item.getTexture().getTexture();
+        TextureRegion texture = item.getTexture();
         if (texture != null) {
-            itemImage.setDrawable(new TextureRegionDrawable(new TextureRegion(texture)));
+            itemImage.setDrawable(new TextureRegionDrawable(texture));
         }
 
         if (isOffer) {
+            amount = quantity;
             offerQuantityLabel.setText("x" + quantity);
         } else {
+            targetAmount = quantity;
             requestQuantityLabel.setText("x" + quantity);
         }
     }

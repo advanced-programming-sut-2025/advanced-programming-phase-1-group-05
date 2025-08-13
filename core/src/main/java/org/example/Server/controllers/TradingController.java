@@ -243,16 +243,12 @@ public class TradingController {
     }
     public void updateOfferSlot(Trade trade) {
         Item item = gameMenuController.getItemByName(trade.item);
-        Image itemImage = new Image(item.getTexture());
-        tradeScreen.updateSlotFromText(item.getName(), itemImage, true);
+        tradeScreen.updateSlotFromText(item.getName() + " x" + trade.amount, tradeScreen.offerItemImage, true);
     }
 
     public void updateRequestSlot(Trade trade) {
         Item item = gameMenuController.getItemByName(trade.targetItem);
-        Image itemImage = new Image(item.getTexture());
-        tradeScreen.updateSlotFromText(item.getName(), itemImage, false);
+        tradeScreen.updateSlotFromText(item.getName() +" x" + trade.targetAmount, tradeScreen.requestItemImage, false);
     }
-
-
 
 }

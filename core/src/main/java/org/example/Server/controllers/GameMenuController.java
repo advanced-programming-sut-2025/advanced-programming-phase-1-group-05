@@ -723,9 +723,11 @@ public class GameMenuController extends MenuController {
 
 
     public Item getItemByName(String itemName) {
+        System.out.println(itemName);
         StringBuilder sb = new StringBuilder();
         sb.append(itemName.substring(0, 1).toUpperCase()).append(itemName.substring(1));
         String name = sb.toString();
+        System.out.println(name);
         Item item = null;
         if (MyGame.getDatabase().getItem(name) != null) item = MyGame.getDatabase().getItem(name);
         else if (CropType.fromString(name) != null) item = CropType.fromString(name);
@@ -734,11 +736,12 @@ public class GameMenuController extends MenuController {
         else if (ForagingSeedType.fromString(name) != null) item = ForagingSeedType.fromString(name);
         else if (FishType.fromString(name) != null) item = FishType.fromString(name);
         else if (MineralType.fromString(name) != null) item = MineralType.fromString(name);
+        System.out.println(item);
         return item;
     }
 
     public void startTrading(TradeMessage msg, boolean initiator) {
-        Main.getMain().setScreen(new TradeScreen(msg.fromPlayer,
-            msg.toPlayer, initiator, MyGame.getTradingController()));
+        Main.getMain().setScreen(new TradeScreen(msg.toPlayer,
+            msg.fromPlayer, initiator, MyGame.getTradingController()));
     }
 }
