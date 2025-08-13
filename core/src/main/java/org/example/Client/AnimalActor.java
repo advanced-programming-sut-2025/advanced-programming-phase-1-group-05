@@ -63,6 +63,8 @@ public class AnimalActor extends Actor {
             if (pettingTimer <= 0) {
                 isBeingPetted = false;
                 showHeart = false;
+                currentAnimation = null;
+                animal.setState(Animal.State.IDLE);
             }
         }
     }

@@ -373,7 +373,7 @@ public class Player implements Serializable {
         if (emoteTimer > 0) {
             emoteTimer -= delta;
             if (currentEmote != null)
-                batch.draw(GameAssetManager.getInstance().getOrLoadTexture(currentEmote.texturePath), getXX(), getYY() + getHeight());
+                batch.draw(GameAssetManager.getInstance().getOrLoadTexture(currentEmote.getTexturePath()), getXX(), getYY() + getHeight());
 
             if (!currentMessage.isEmpty())
                 font.draw(batch, currentMessage, getXX(), getYY() + getHeight() + 20);

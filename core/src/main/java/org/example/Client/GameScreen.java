@@ -3278,11 +3278,14 @@ public class GameScreen implements Screen {
         Table emoteMenu = new Table();
         final TextField messageField = new TextField("", skin);
         messageField.setMessageText("Max 10 chars");
-
+        Texture menuTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/emoteMenu.png");
+        emoteMenu.setFillParent(true);
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        emoteMenu.setBackground(menuDrawable);
         final Emote[] selectedEmote = {null};
 
         for (Emote emote : Emote.values()) {
-            Texture tex = GameAssetManager.getInstance().getOrLoadTexture(emote.texturePath);
+            Texture tex = GameAssetManager.getInstance().getOrLoadTexture(emote.getTexturePath());
             ImageButton btn = new ImageButton(new TextureRegionDrawable(new TextureRegion(tex)));
 
             btn.addListener(new ClickListener() {
@@ -3337,7 +3340,7 @@ public class GameScreen implements Screen {
         });
         emoteMenu.add(sendButton).colspan(Emote.values().length).pad(5);
 
-        stage.addActor(emoteMenu);
+        uiStage.addActor(emoteMenu);
 
     }
 
