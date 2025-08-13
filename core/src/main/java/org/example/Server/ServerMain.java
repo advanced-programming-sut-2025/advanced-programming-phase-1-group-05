@@ -112,6 +112,9 @@ public class ServerMain {
         kryo.register(TradePacket.class);
         kryo.register(Trade.class);
         kryo.register(TradeMessage.MessageType.class);
+        kryo.register(PositionUpdate.class);
+        kryo.register(HugMessage.class);
+        kryo.register(PurchaseRequest.class);
 
 
         server.addListener(new Listener() {
@@ -222,6 +225,10 @@ public class ServerMain {
                     for (Connection connection : server.getConnections()) {
                         connection.sendTCP(message);
                     }
+                }
+                else if (object instanceof  HugMessage) {
+                    HugMessage msg = (HugMessage) object;
+                    server.sendToAllExceptTCP(c.getID(), msg);
                 }
                 else if (object instanceof MarriageProposalRequest) {
                     MarriageProposalRequest request = (MarriageProposalRequest) object;

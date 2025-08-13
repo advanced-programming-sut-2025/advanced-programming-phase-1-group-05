@@ -348,17 +348,11 @@ public class GameClient {
                         if (npcActor != null) {
                             npcActor.setPosition(packet.x, packet.y);
                         }
-                        else {
-                            //System.out.println("null lol");
-                        }
                         NPC npc  = MyGame.getNPCByName(packet.npcName);
                         if (npc != null) {
                             npc.setPosition(packet.x, packet.y);
                             npc.direction = packet.direction;
                             npc.stateTime += packet.delta;
-                        }
-                        else {
-                           // System.out.println("null again🤣🤣");
                         }
                     });
                 }
@@ -433,5 +427,8 @@ public class GameClient {
         kryo.register(TradePacket.class);
         kryo.register(Trade.class);
         kryo.register(TradeMessage.MessageType.class);
+        kryo.register(PositionUpdate.class);
+        kryo.register(HugMessage.class);
+        kryo.register(PurchaseRequest.class);
     }
 }
