@@ -2978,7 +2978,7 @@ public class GameScreen implements Screen {
                             if (draggedItem == null && slot.item != null) {
                                 draggedItem = slot.item;
                                 slot.item = null;
-                                selectedSlot = slot
+                                selectedSlot = slot;
                                 if (!giftMode)MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
                                 return true;
                             } else if (draggedItem != null && slot.item == null) {
