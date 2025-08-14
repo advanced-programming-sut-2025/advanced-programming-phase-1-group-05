@@ -45,21 +45,24 @@ public class TimeAndDate implements Serializable {
         return day * 24 + hour;
     }
 
-    public void advanceTime(float seconds){
+    public boolean advanceTime(float seconds){
         timeAccumulator += seconds;
-        while (timeAccumulator >= 42f) {
-            timeAccumulator -= 42f;
+        while (timeAccumulator >= 15f) {
+            timeAccumulator -= 15f;
             hour ++;
             System.out.println("advanced an hour");
         }
         if (hour >= 22) {
-            advanceDay();
+            //advanceDay();
+            return true;
         }
+        return false;
     }
     public void advanceDay() {
-        if (MyGame.getForecastedWeather() != Weather.Sunny) {
-            MyGame.currentWeather = MyGame.getForecastedWeather();
-        }
+        System.out.println("Advance day start");
+//        if (MyGame.getForecastedWeather() != Weather.Sunny) {
+//            MyGame.currentWeather = MyGame.getForecastedWeather();
+//        }
         day++;
         hour = 9;
         //minute = 0;
@@ -67,12 +70,21 @@ public class TimeAndDate implements Serializable {
             day = 1;
             season = season.next();
         }
+        System.out.println("Growing plants");
         MyGame.getGameMap().growPlants();
+
+        System.out.println("Setting foraging items");
         MyGame.getGameMap().setForagingItems();
+
+        System.out.println("Setting minerals");
         MyGame.getGameMap().setForagingMinerals();
+        System.out.println("Setting weather");
         MyGame.setForecastedWeatherBySeason(season);
+        System.out.println("Crow damage");
         MyGame.getGameMap().crowDamage();
+        System.out.println("Next day game manager");
         GameManager.nextDay();
+        System.out.println("advance day end");
     }
     public Season getCurrentSeason() { return season; }
     public int getDay() { return day; }

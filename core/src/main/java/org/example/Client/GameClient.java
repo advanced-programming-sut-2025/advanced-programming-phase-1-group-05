@@ -347,6 +347,17 @@ public class GameClient {
                         }
                     });
                 }
+                else if (object instanceof BouquetSentPacket) {
+                    BouquetSentPacket packet = (BouquetSentPacket) object;
+                    Gdx.app.postRunnable(() -> {
+                        Player sender = MyGame.getPlayerByUsername(packet.sender);
+                        Player receiver = MyGame.getPlayerByUsername(packet.receiver);
+                        GameScreen screen = MenuNavigator.getGameScreen();
+                        if (screen != null) {
+                            screen.playBouquetAnimation(sender, receiver);
+                        }
+                    });
+                }
                 else if (object instanceof MarriageProposalReceived) {
                     MarriageProposalReceived msg  = (MarriageProposalReceived) object;
                     Gdx.app.postRunnable(() -> {
@@ -398,6 +409,9 @@ public class GameClient {
                         Player receiver = MyGame.getPlayerByUsername(packet.receiverUsername);
                         Item item =MyGame.getGameScreen().getController().getItemByName(packet.itemName);
                         MyGame.addGift(new Gift(sender, receiver, item, packet.amount));
+
+                       if (receiver!= null)
+                           receiver.getBackPack().addToInventory(item, packet.amount);
                     });
                 }
             }
@@ -481,5 +495,6 @@ public class GameClient {
         kryo.register(NpcDialogueRequest.class);
         kryo.register(NPCDialoguePacket.class);
         kryo.register(GiftPacket.class);
+        kryo.register(SaveGamePacket.class);
     }
 }

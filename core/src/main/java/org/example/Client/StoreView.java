@@ -89,11 +89,11 @@ public class StoreView implements Screen {
                 if (result.isSuccess()) banner.showMessage(result.getMessage(), Color.GREEN, 5);
                 else banner.showMessage(result.getMessage(), Color.RED, 5);
                 if (result.isSuccess()){
-                    PurchaseRequest req = new PurchaseRequest();
-                    req.player = MyGame.getCurrentPlayer();
-                    req.items = new HashMap<>();
-                    req.items.putAll(toPurchase);
-                    Main.getMain().getNetworkManager().getClient().sendTCP(req);
+//                    PurchaseRequest req = new PurchaseRequest();
+//                    req.player = MyGame.getCurrentPlayer();
+//                    req.items = new HashMap<>();
+//                    req.items.putAll(toPurchase);
+//                    Main.getMain().getNetworkManager().getClient().sendTCP(req);
                 }
             }
         });
