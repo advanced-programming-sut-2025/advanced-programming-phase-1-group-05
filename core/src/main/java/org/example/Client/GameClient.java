@@ -172,10 +172,18 @@ public class GameClient {
                     Gdx.app.postRunnable(() -> {
                         MenuNavigator.getLobbyMenu().startTheGame(startGamePacket.players);
                         radioClientHandler = new RadioClientHandler(client, MyGame.getCurrentPlayer().getUsername());
-                        GameScreen screen = new GameScreen(MyGame.getAllPlayers());
+                        MyGame.startTheGame();
+                        GameScreen screen = new GameScreen(MyGame.getAllPlayers(), startGamePacket.lobbyId);
                         MenuNavigator.setGameScreen(screen);
                         Main.getMain().setScreen(screen);
 
+                    });
+                }
+                else if (object instanceof SaveGamePacket) {
+                    SaveGamePacket packet = (SaveGamePacket) object;
+                    Gdx.app.postRunnable(() -> {
+                        MenuNavigator.setGameScreen(null);
+                        MenuNavigator.showLobbyMenu();
                     });
                 }
                 else if (object instanceof MovePacket) {
@@ -472,6 +480,6 @@ public class GameClient {
         kryo.register(RadioAudioDataPacket.class);
         kryo.register(NpcDialogueRequest.class);
         kryo.register(NPCDialoguePacket.class);
-
+        kryo.register(GiftPacket.class);
     }
 }

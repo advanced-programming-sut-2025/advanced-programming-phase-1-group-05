@@ -98,5 +98,6 @@ public class AnimalActor extends Actor {
         pettingTimer = PETTING_DURATION;
         showHeart = true;
         currentAnimation = animations.pet;
+        animal.setState(Animal.State.EATING);
     }
 }

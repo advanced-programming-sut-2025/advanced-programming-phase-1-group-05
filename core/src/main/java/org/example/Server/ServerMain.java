@@ -126,14 +126,13 @@ public class ServerMain {
         kryo.register(RadioAudioDataPacket.class);
         kryo.register(NpcDialogueRequest.class);
         kryo.register(NPCDialoguePacket.class);
-
+        kryo.register(GiftPacket.class);
         radioHandler = new RadioServerHandler(server);
         dialogueManager = new DialogueManager(playerConnections);
         server.addListener(new Listener() {
             public void received(Connection c, Object object) {
                 radioHandler.received(c, object);
                 if (object instanceof StartGamePacket) {
-
                     StartGamePacket msg = (StartGamePacket) object;
                     for (SimplePlayer player : msg.players) {
                         Connection playerConn = playerConnections.get(player.getUsername());
@@ -282,7 +281,14 @@ public class ServerMain {
                 }
                 else if (object instanceof GiftPacket) {
                     GiftPacket giftPacket = (GiftPacket) object;
+                    System.out.println("sent");
                     server.sendToTCP(playerConnections.get(giftPacket.receiverUsername).getID(), giftPacket);
+                }
+                else if (object instanceof SaveGamePacket) {
+                    SaveGamePacket packet = (SaveGamePacket) object;
+                    for (String username : packet.playerUsernames) {
+                        server.sendToTCP(playerConnections.get(username).getID(), packet);
+                    }
                 }
             }
 
@@ -354,6 +360,7 @@ public class ServerMain {
                             server.sendToAllTCP(pkt);
                         }
                     }
+
                 }
             } catch (Exception e) {
                 System.err.println(e.getMessage());

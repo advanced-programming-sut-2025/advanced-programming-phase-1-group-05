@@ -46,6 +46,9 @@ public class GameMenuController extends MenuController {
 //        this(currentUser, null);
 //    }
 
+
+
+
     private NPC lastNPC = null;
 
     //LOBBY
@@ -205,6 +208,10 @@ public class GameMenuController extends MenuController {
         return Result.success("added " + amount + " gold");
     }
 
+    public void setView(GameScreen screen) {
+        view = screen;
+    }
+
     public Result talkToPlayer(Player targetPlayer, String message) {
         Player currentPlayer = MyGame.getCurrentPlayer();
 
@@ -227,10 +234,12 @@ public class GameMenuController extends MenuController {
     public Result cheatAddFriendshipPoints(Matcher m) {
         Player currentPlayer = MyGame.getCurrentPlayer();
         Player targetPlayer = MyGame.getPlayerByUsername(m.group("username"));
-        if (targetPlayer == null) return Result.error("");
+        if (targetPlayer == null) System.out.println(m.group("username"));
+
         int amount = Integer.parseInt(m.group("amount"));
         currentPlayer.changeFriendshipXP(amount, targetPlayer);
-        return Result.success("added " + amount + " friendship points to " + targetPlayer.getName());
+        System.out.println("added " + amount + " friendship points to " + targetPlayer.getName());
+        return null;
     }
 
     public Result giftPlayer(Player targetPlayer, Item item, int amount) {
