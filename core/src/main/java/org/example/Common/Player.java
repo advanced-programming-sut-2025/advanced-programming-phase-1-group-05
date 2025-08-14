@@ -93,8 +93,6 @@ public class Player implements Serializable {
     //tool usage
     private float toolUseTime = 0f;
     private boolean isUsingTool = false;
-    private Lobby currentLobby;
-
 
     public Player(SimplePlayer simplePlayer) {
         this(UserDatabase.getUserByUsername(simplePlayer.username));
@@ -166,15 +164,6 @@ public class Player implements Serializable {
         this.backPack.getInventory().put(new MilkPail(), 1);
         this.backPack.getInventory().put(new FishingPole(), 1);
     }
-
-    public void setCurrentLobby(Lobby lobby) {
-        this.currentLobby = lobby;
-    }
-
-    public Lobby getCurrentLobby() {
-        return currentLobby;
-    }
-
     public void initializeAnimations() {
         walkUpAnimation = loadAnimations('u');
         walkDownAnimation = loadAnimations('d');

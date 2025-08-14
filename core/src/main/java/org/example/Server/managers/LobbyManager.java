@@ -2,13 +2,10 @@ package org.example.Server.managers;
 
 import org.example.Common.Lobby;
 import org.example.Common.Network.SimplePlayer;
-import org.example.Common.Player;
-import org.example.Server.models.MyGame;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 public class LobbyManager {
     private static final List<Lobby> activeLobbies = new ArrayList<>();
@@ -26,7 +23,6 @@ public class LobbyManager {
 
     public static synchronized Lobby createLobby(String name, boolean isPrivate, String password, boolean visible, SimplePlayer creator) {
         Lobby lobby = new Lobby(name, isPrivate, password, visible, creator);
-        //Objects.requireNonNull(MyGame.getPlayer(name)).setCurrentLobby(lobby);
         activeLobbies.add(lobby);
         System.out.println("lobby added");
 
@@ -42,7 +38,6 @@ public class LobbyManager {
                 if (lobby.isPrivate() && (!lobby.getPassword().equals(password))) {
                     return false;
                 }
-                //Objects.requireNonNull(MyGame.getPlayer(player.username)).setCurrentLobby(lobby);
                 return lobby.addPlayer(player);
             }
         }
@@ -53,7 +48,6 @@ public class LobbyManager {
         for (Lobby lobby : activeLobbies) {
             if (lobby.getPlayers().contains(player)) {
                 lobby.removePlayer(player);
-                //Objects.requireNonNull(MyGame.getPlayer(player.username)).setCurrentLobby(null);
             }
         }
     }
