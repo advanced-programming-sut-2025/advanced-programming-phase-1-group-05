@@ -1612,8 +1612,7 @@ public class GameScreen implements Screen {
                     }
                     else if (button == Input.Buttons.LEFT) {
                         if (npc.isDialogueReady()) {
-                            showNpcDialogue(npc);
-                            System.out.println("clicked");
+                            npc.getMessage();
                             return true;
                         }
                     }
@@ -1664,22 +1663,22 @@ public class GameScreen implements Screen {
         });
         uiStage.addActor(friendshipButton);
 
-//        Texture chatTex = GameAssetManager.getInstance().getOrLoadTexture("ui/chat.png");
-//        Drawable chatDrawable = new TextureRegionDrawable(new TextureRegion(chatTex));
-//        ImageButton chatButton = new ImageButton(chatDrawable);
-//        chatButton.setPosition(x, y - 250f);
-//        chatButton.getImageCell().size(72, 56);
-//        chatButton.setSize(72, 56);
-//
-//        chatButton.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                chatTable.setVisible(true);
-//                isChatOpen = true;
-//            }
-//        });
-//
-//        uiStage.addActor(chatButton);
+        Texture chatTex = GameAssetManager.getInstance().getOrLoadTexture("ui/chat.png");
+        Drawable chatDrawable = new TextureRegionDrawable(new TextureRegion(chatTex));
+        ImageButton chatButton = new ImageButton(chatDrawable);
+        chatButton.setPosition(x, y - 250f);
+        chatButton.getImageCell().size(72, 56);
+        chatButton.setSize(72, 56);
+
+        chatButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                chatTable.setVisible(true);
+                isChatOpen = true;
+            }
+        });
+
+        uiStage.addActor(chatButton);
 
 
         Texture tradingTexture = GameAssetManager.tradingButton;
@@ -1710,6 +1709,19 @@ public class GameScreen implements Screen {
             }
         });
 
+        Texture radioTex = GameAssetManager.getInstance().getOrLoadTexture("ui/radio.png");
+        Drawable radioDrawable = new TextureRegionDrawable(new TextureRegion(radioTex));
+        ImageButton radioButton = new ImageButton(radioDrawable);
+        radioButton.setPosition(x , y - 320);
+        radioButton.getImageCell().size(70, 70);
+        radioButton.setSize(70, 70);
+        radioButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                showRadioMenu();
+            }
+        });
+        uiStage.addActor(radioButton);
         Texture rejectTex = GameAssetManager.getInstance().getOrLoadTexture("closeButton.png");
         Texture acceptTex = GameAssetManager.getInstance().getOrLoadTexture("ui/checkMark.png");
         Drawable rejectDrawable = new TextureRegionDrawable(new TextureRegion(rejectTex));
@@ -1735,6 +1747,31 @@ public class GameScreen implements Screen {
 
     }
 
+    private void showRadioMenu() {
+        Table radioMenu = new Table();
+        radioMenu.setVisible(true);
+        radioMenu.setFillParent(true);
+        Table innerPanel = new Table(skin);
+        Texture menuTexture = GameAssetManager.getInstance().getOrLoadTexture("Animals/MenuBackground2.png");
+
+        Drawable menuDrawable = new TextureRegionDrawable(new TextureRegion(menuTexture));
+        innerPanel.setBackground(menuDrawable);
+        innerPanel.pad(30);
+
+        Texture closeTexture = new Texture(Gdx.files.internal("closeButton.png"));
+        Drawable closeDrawable = new TextureRegionDrawable(new TextureRegion(closeTexture));
+        ImageButton closeButton = new ImageButton(closeDrawable);
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                radioMenu.setVisible(false);
+            }
+        });
+        innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
+        closeButton.getImageCell().size(48, 48);
+        radioMenu.add(innerPanel).center();
+        uiStage.addActor(radioMenu);
+    }
     public void receivePrivateMessage(String sender, String message) {
         Label msgLabel = new Label(sender + ": " + message, skin);
         msgLabel.setColor(Color.GOLD);
@@ -2001,15 +2038,14 @@ public class GameScreen implements Screen {
         return true;
     }
 
-    private void showNpcDialogue(NpcActor npcActor) {
+    public void showNpcDialogue(String NpcName, String message) {
         Texture dialogueBoxTexture = GameAssetManager.getInstance().getOrLoadTexture("NPCs/dialogueTemplate.png");
         dialogueBoxTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         NinePatch ninePatch = new NinePatch(dialogueBoxTexture, 16, 16, 16, 16);
         NinePatchDrawable dialogueBackground = new NinePatchDrawable(ninePatch);
 
         Skin skin = GameAssetManager.getSkin();
-        String message = npcActor.getMessage();
-        if (message == null) return;
+
         dialogueTable.clear();
         dialogueTable.setVisible(true);
         dialogueTable.pad(20);
@@ -2018,9 +2054,8 @@ public class GameScreen implements Screen {
         dialogueText.setWrap(true);
         dialogueText.setFontScale(2f);
         dialogueText.setColor(86f / 225f, 22f / 225f, 12f / 225f, 1);
-        dialogueText.setWidth(8000);
+        dialogueText.setWidth(1500);
 
-        String NpcName = npcActor.getNpc().getName();
         Texture tex = GameAssetManager.getInstance().getOrLoadTexture("NPCs/" + NpcName + "/avatar.png");
         TextureRegionDrawable avatarDrawable = new TextureRegionDrawable(new TextureRegion(tex));
         Image npcAvatar = new Image(avatarDrawable);
@@ -2367,13 +2402,9 @@ public class GameScreen implements Screen {
                 playerMenuTable.setVisible(false);
             }
         });
-        TextButton giftButton = new TextButton("gift " + player.getName(), skin);
-        innerPanel.add(giftButton).fillX();
-        innerPanel.row();
         TextButton hugButton = new TextButton("hug " + player.getName(), skin);
         innerPanel.add(hugButton).fillX();
         innerPanel.row();
-        //hugButton.setDisabled(!MyGame.getCurrentPlayer().canHug(player));
         if (hugButton.isDisabled()) {
             hugButton.setTouchable(Touchable.disabled);
             hugButton.setColor(Color.DARK_GRAY);
@@ -2382,6 +2413,7 @@ public class GameScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (playersAreClose(currentPlayer, player)) {
+                    controller.hugPlayer(player);
                     hug(currentPlayer, player);
                     HugMessage msg = new HugMessage();
                     msg.player1 = playerA.getUsername();
@@ -2414,7 +2446,6 @@ public class GameScreen implements Screen {
     }
 
     public void hug(Player currentPlayer, Player player) {
-        // TODO controller hug
         hugMode = true;
         playerA = currentPlayer;
         playerB = player;
@@ -2465,6 +2496,7 @@ public class GameScreen implements Screen {
                 isInvenotryOpen = true;
                 lastNPC = null;
                 lastPlayer = player;
+                giftMenuTable.setVisible(false);
             }
         });
 
@@ -2487,7 +2519,7 @@ public class GameScreen implements Screen {
         closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                animalMenuTable.setVisible(false);
+                giftMenuTable.setVisible(false);
             }
         });
 
@@ -2945,7 +2977,7 @@ public class GameScreen implements Screen {
                                 draggedItem = slot.item;
                                 selectedSlot = slot;
                                 slot.item = null;
-                                MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
+                                if (!giftMode)MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
                                 return true;
                             } else if (draggedItem != null && slot.item == null) {
                                 slot.item = draggedItem;

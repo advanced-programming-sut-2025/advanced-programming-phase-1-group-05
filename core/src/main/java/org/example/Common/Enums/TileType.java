@@ -9,7 +9,7 @@ public enum TileType {
     Flat("Flat.png", false),
     FarmFlat("flat2.png", false),
     House("Building.png", true),
-    GreenHouse("GreenHouse.png", true),
+    GreenHouse("greenhouse.png", true),
     Tree("tree.png", true),
     CheatThor("default.png", false),
     Stone("Stone.png", false),

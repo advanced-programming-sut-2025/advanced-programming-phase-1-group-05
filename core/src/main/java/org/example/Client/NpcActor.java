@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import org.example.Server.Packets.NpcDialogueRequest;
 import org.example.Server.controllers.GameManager;
 import org.example.Common.Enums.Direction;
 import org.example.Server.models.MyGame;
@@ -87,14 +88,20 @@ public class NpcActor extends Actor {
         return dialogueReady;
     }
 
-    public String getMessage() {
+    public void getMessage() {
         String message = null;
          if (dialogueReady) {
-             message = DialogueManager.getNpcDialogue(npc.getName(), MyGame.getCurrentWeather().name());
+//             message = DialogueManager.(npc.getName(), MyGame.getCurrentWeather().name());
+             NpcDialogueRequest request = new NpcDialogueRequest();
+             request.NpcName = npc.getName();
+             request.username = MyGame.getCurrentPlayer().getUsername();
+             request.weather = MyGame.getCurrentWeather().name();
+             request.hour = GameManager.getCurrentHour();
+             GameClient.client.sendTCP(request);
              npc.dialogueForToday = true;
          }
          dialogueReady = false;
-         return message;
+
     }
 
 }

@@ -8,6 +8,7 @@ import org.example.Common.Enums.*;
 import org.example.Common.Network.*;
 import org.example.Common.Request.TradeMessage;
 import org.example.Main;
+import org.example.Server.Packets.GiftPacket;
 import org.example.Server.Packets.NotificationPacket;
 import org.example.Server.managers.LobbyManager;
 import org.example.Server.models.*;
@@ -223,6 +224,14 @@ public class GameMenuController extends MenuController {
         return new Result(true, "");
     }
 
+    public Result cheatAddFriendshipPoints(Matcher m) {
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        Player targetPlayer = MyGame.getPlayerByUsername(m.group("username"));
+        if (targetPlayer == null) return Result.error("");
+        int amount = Integer.parseInt(m.group("amount"));
+        currentPlayer.changeFriendshipXP(amount, targetPlayer);
+        return Result.success("added " + amount + " friendship points to " + targetPlayer.getName());
+    }
 
     public Result giftPlayer(Player targetPlayer, Item item, int amount) {
         Player currentPlayer = MyGame.getCurrentPlayer();
@@ -234,6 +243,12 @@ public class GameMenuController extends MenuController {
         if (currentPlayer.getFriendshipLevel(targetPlayer) < 1)
             return Result.error("Maybe get to know them a little better before tossing gifts their way?");
 
+        GiftPacket packet = new GiftPacket();
+        packet.amount = amount;
+        packet.itemName = item.getName();
+        packet.receiverUsername = targetPlayer.getUsername();
+        packet.senderUsername = currentPlayer.getUsername();
+        GameClient.client.sendTCP(packet);
         currentPlayer.getBackPack().getInventory().remove(item, amount);
         targetPlayer.getBackPack().getInventory().put(item, amount);
         MyGame.addGift(new Gift(currentPlayer, targetPlayer, item, amount));
@@ -281,6 +296,24 @@ public class GameMenuController extends MenuController {
         }
         return sentGifts;
     }
+
+    public Result hugPlayer(Player targetPlayer) {
+        Player currentPlayer = MyGame.getCurrentPlayer();
+        if (targetPlayer == null)
+            return new Result(false,
+                "You open your arms wide... but there's no one by that name to recieve it");
+        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 100 ||
+            Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 100)
+            return new Result(false, "They're not here to catch your hug. Maybe next time!");
+        if (!currentPlayer.canHug(targetPlayer))
+            return Result.error("They awkwardly sidestep the hug. Friendship takes time, pal.");
+        currentPlayer.changeFriendshipXP(60, targetPlayer);
+        if (currentPlayer.isMarriedTo(targetPlayer)) {
+            currentPlayer.increaseEnergy(50);
+        }
+        return new Result(true, "You hugged them tight. Even the cows felt the love.");
+    }
+
 
     public Result giveBouquet(Player targetPlayer){
         Player currentPlayer = MyGame.getCurrentPlayer();
@@ -722,6 +755,9 @@ public class GameMenuController extends MenuController {
         else if ((matcher = GameMenuCommands.CheatAddMoney.getMatcher(command)) != null) {
             int amount = Integer.parseInt(matcher.group("count"));
             return cheatAddMoney(amount);
+        }
+        else if ((matcher = GameMenuCommands.FriendshipPointsCC.getMatcher(command)) != null) {
+            return cheatAddFriendshipPoints(matcher);
         }
         return new Result(false, "Invalid command.");
     }

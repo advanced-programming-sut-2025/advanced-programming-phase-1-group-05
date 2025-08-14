@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import org.example.Client.DialogueManager;
 import org.example.Client.NpcActor;
 import org.example.Common.*;
 import org.example.Common.DataTransferObjects.ChatMessage;
@@ -21,6 +22,9 @@ import org.example.Server.Packets.MarriagePackets.MarriageProposalReceived;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalRequest;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
+import org.example.Server.Packets.RadioPackets.RadioAudioDataPacket;
+import org.example.Server.Packets.RadioPackets.RadioJoinPacket;
+import org.example.Server.Packets.RadioPackets.RadioStartPacket;
 import org.example.Server.Trade.TradePacket;
 import org.example.Server.controllers.NpcController;
 import org.example.Server.models.MyGame;
@@ -37,6 +41,8 @@ public class ServerMain {
     private static List<NpcController> npcControllers = new ArrayList<>();
     static boolean gameStarted = false;
     private static TimeAndDate timeAndDate;
+    private static RadioServerHandler radioHandler ;
+    private static DialogueManager dialogueManager;
     public static void main(String[] args) throws Exception {
         server = new Server();
         server.start();
@@ -115,9 +121,17 @@ public class ServerMain {
         kryo.register(PurchaseRequest.class);
         kryo.register(TimePacket.class);
         kryo.register(NotificationPacket.class);
+        kryo.register(RadioStartPacket.class);
+        kryo.register(RadioJoinPacket.class);
+        kryo.register(RadioAudioDataPacket.class);
+        kryo.register(NpcDialogueRequest.class);
+        kryo.register(NPCDialoguePacket.class);
 
+        radioHandler = new RadioServerHandler(server);
+        dialogueManager = new DialogueManager(playerConnections);
         server.addListener(new Listener() {
             public void received(Connection c, Object object) {
+                radioHandler.received(c, object);
                 if (object instanceof StartGamePacket) {
 
                     StartGamePacket msg = (StartGamePacket) object;
@@ -262,19 +276,20 @@ public class ServerMain {
                     ScoreboardUpdatePacket update = (ScoreboardUpdatePacket) object;
                     server.sendToAllTCP(update);
                 }
+                else if (object instanceof NpcDialogueRequest) {
+                    NpcDialogueRequest request = (NpcDialogueRequest) object;
+                    dialogueManager.handleNpcInteraction(request);
+                }
+                else if (object instanceof GiftPacket) {
+                    GiftPacket giftPacket = (GiftPacket) object;
+                    server.sendToTCP(playerConnections.get(giftPacket.receiverUsername).getID(), giftPacket);
+                }
             }
 
                 private Connection getConnectionByName(String playerName) {
                     return playerConnections.get(playerName);
                 }
-               private String getUsernameFromConnection(Connection connection) {
-                for(Map.Entry<String, Connection> entry : playerConnections.entrySet()) {
-                    if (entry.getValue() == connection) {
-                        return entry.getKey();
-                    }
-                }
-                return "";
-            }
+
             @Override
             public void disconnected(Connection connection) {
                 String username = getUsernameFromConnection(connection);
@@ -351,10 +366,18 @@ public class ServerMain {
 
         npcControllers.add(new NpcController(new ServerNPC("Sebastian", true, 10, 17, 3450, 4000, 6493.93f, 4108)));
         npcControllers.add(new NpcController(new ServerNPC("Abigail", true, 10, 16, 7100, 4050, 4470.5f, 4468.5f)));
-        npcControllers.add(new NpcController(new ServerNPC("Harvey", true, 10, 17, 4650, 3150, 6404.52f, 3929.28f)));
+        npcControllers.add(new NpcController(new ServerNPC("Harvey", true, 10, 17, 4650, 3150, 4470.5f, 4468.5f)));
         npcControllers.add(new NpcController(new ServerNPC("Leah", true, 10, 16, 2350, 4300, 1129.33f, 3902.43f)));
         npcControllers.add(new NpcController(new ServerNPC("Robin", true, 10, 20, 1120, 3950, 156.41f, 4823)));
 
 
+    }
+    public static String getUsernameFromConnection(Connection connection) {
+        for(Map.Entry<String, Connection> entry : playerConnections.entrySet()) {
+            if (entry.getValue() == connection) {
+                return entry.getKey();
+            }
+        }
+        return "";
     }
 }

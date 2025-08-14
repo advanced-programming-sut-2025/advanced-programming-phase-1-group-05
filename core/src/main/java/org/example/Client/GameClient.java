@@ -99,6 +99,7 @@ import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import org.example.Common.*;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.LoginPacket;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
@@ -106,11 +107,8 @@ import org.example.Common.Enums.Direction;
 import org.example.Common.Enums.Emote;
 import org.example.Common.Enums.Menu;
 import org.example.Common.Enums.MessageType;
-import org.example.Common.Lobby;
 import org.example.Common.Network.*;
-import org.example.Common.Player;
 import org.example.Common.Request.TradeMessage;
-import org.example.Common.Trade;
 import org.example.Main;
 import org.example.Server.Packets.*;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
@@ -122,6 +120,9 @@ import org.example.Server.Packets.MarriagePackets.MarriageProposalResult;
 import org.example.Server.Packets.MovePacket;
 import org.example.Server.Packets.OnlinePlayerPacket;
 import org.example.Server.Packets.PositionUpdate;
+import org.example.Server.Packets.RadioPackets.RadioAudioDataPacket;
+import org.example.Server.Packets.RadioPackets.RadioJoinPacket;
+import org.example.Server.Packets.RadioPackets.RadioStartPacket;
 import org.example.Server.Packets.ScoreboardUpdatePacket;
 import org.example.Server.Packets.StartGamePacket;
 import org.example.Server.Trade.TradePacket;
@@ -138,7 +139,7 @@ import java.util.List;
 
 public class GameClient {
     public static Client client;
-
+    private static RadioClientHandler radioClientHandler ;
 
     public void sendTradeRequest(org.example.Common.Request.TradeMessage msg) {
         if (client != null) {
@@ -165,11 +166,12 @@ public class GameClient {
 
         client.addListener(new Listener() {
             public void received(Connection c, Object object) {
+                if (radioClientHandler != null) radioClientHandler.received(c, object);
                 if (object instanceof StartGamePacket) {
                     StartGamePacket startGamePacket = (StartGamePacket) object;
                     Gdx.app.postRunnable(() -> {
-                        System.out.println(startGamePacket.lobbyId);
                         MenuNavigator.getLobbyMenu().startTheGame(startGamePacket.players);
+                        radioClientHandler = new RadioClientHandler(client, MyGame.getCurrentPlayer().getUsername());
                         GameScreen screen = new GameScreen(MyGame.getAllPlayers());
                         MenuNavigator.setGameScreen(screen);
                         Main.getMain().setScreen(screen);
@@ -334,7 +336,6 @@ public class GameClient {
                         GameScreen screen = MenuNavigator.getGameScreen();
                         if (screen!= null) {
                             screen.hug(playerA, playerB);
-                            System.out.println(playerA.getUsername() + " " + playerB.getUsername() + " hugging");
                         }
                     });
                 }
@@ -373,7 +374,22 @@ public class GameClient {
                         MyGame.getCurrentPlayer().addNotification(packet.message);
                     });
                 }
-
+                else if (object instanceof NPCDialoguePacket) {
+                    NPCDialoguePacket packet = (NPCDialoguePacket) object;
+                    Gdx.app.postRunnable(() -> {
+                        GameScreen screen = MyGame.getGameScreen();
+                        screen.showNpcDialogue(packet.npcName, packet.message);
+                    });
+                }
+                else if (object instanceof GiftPacket) {
+                    GiftPacket packet = (GiftPacket) object;
+                    Gdx.app.postRunnable(() -> {
+                        Player sender = MyGame.getPlayerByUsername(packet.senderUsername);
+                        Player receiver = MyGame.getPlayerByUsername(packet.receiverUsername);
+                        Item item =MyGame.getGameScreen().getController().getItemByName(packet.itemName);
+                        MyGame.addGift(new Gift(sender, receiver, item, packet.amount));
+                    });
+                }
             }
         });
     }
@@ -442,13 +458,18 @@ public class GameClient {
         kryo.register(ServerNPC.class);
         kryo.register(TradePacket.class);
         kryo.register(Trade.class);
-        kryo.register(TradeMessage.MessageType.class);
         kryo.register(TradeMessage.class);
+        kryo.register(TradeMessage.MessageType.class);
         kryo.register(PositionUpdate.class);
         kryo.register(HugMessage.class);
         kryo.register(PurchaseRequest.class);
         kryo.register(TimePacket.class);
         kryo.register(NotificationPacket.class);
+        kryo.register(RadioStartPacket.class);
+        kryo.register(RadioJoinPacket.class);
+        kryo.register(RadioAudioDataPacket.class);
+        kryo.register(NpcDialogueRequest.class);
+        kryo.register(NPCDialoguePacket.class);
 
     }
 }

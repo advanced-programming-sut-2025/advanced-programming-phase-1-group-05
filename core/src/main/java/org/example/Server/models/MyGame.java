@@ -26,7 +26,6 @@ public class MyGame implements Serializable {
     public static boolean canBuildGreenHouse = false;
     private static GameScreen gameScreen;
     private static ScoreboardView scoreboardView;
-//    public static boolean greenHouseBuilt = false;
     public static Map<Player, Item> soldItems = new HashMap<>();
     private static TradingController tradingController = new TradingController();
     private static ArrayList<NpcActor> npcActors = new ArrayList<>();
@@ -194,12 +193,7 @@ public class MyGame implements Serializable {
     public static void addGift(Gift gift) {
         gifts.add(gift);
     }
-    public static Gift getGiftById(int id){
-        for (Gift gift : gifts){
-            if (gift.Id == id) return gift;
-        }
-        return null;
-    }
+
     public static List<Gift> getAllGifts(){
         return gifts;
     }

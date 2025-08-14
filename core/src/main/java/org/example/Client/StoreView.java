@@ -63,12 +63,6 @@ public class StoreView implements Screen {
         rebuildItemList(storeItems);
         root.add(scrollPane).height(800).expandX().fillX().pad(20).row();
 
-//        for (Product item : storeItems) {
-//            if (item.getName().contains("Tool")) continue;
-//            itemTable.add(createItemRow(item)).padBottom(50).row();
-//        }
-
-
 
 
         Texture shoppingIcon = GameAssetManager.getInstance().getOrLoadTexture("stores/shoppingIcon.png");

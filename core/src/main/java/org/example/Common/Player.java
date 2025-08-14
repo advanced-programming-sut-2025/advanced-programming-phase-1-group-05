@@ -114,7 +114,8 @@ public class Player implements Serializable {
 
         initializeAnimations();
         backPack.addToInventory(CropType.HotPepper, 2);
-        backPack.addToInventory(FishType.Sardine, 2);
+        Product sardine = new Product("sardine", 10, -1, null, new ArrayList<>(), new HashMap<>(), "");
+        backPack.addToInventory(sardine, 2);
         backPack.addToInventory(CropType.Melon, 1);
         backPack.addToInventory(ForagingSeedType.CranberrySeeds,1);
         backPack.addToInventory(ForagingSeedType.StrawberrySeeds,1);
@@ -149,10 +150,11 @@ public class Player implements Serializable {
             npc.getMissions().get(0).claimedMission(this);
         }
 
-        notifications.add("Have fun playing this game i'm just trying to see how the notification panel looks hahahaha long text ");
+       // notifications.add("Have fun playing this game i'm just trying to see how the notification panel looks hahahaha long text ");
         font = new BitmapFont();
         font.setColor(Color.BLACK);
         font.getData().setScale(2);
+        getFishingSkill().setLevel(4);
 
     }
     public Player() {
