@@ -26,7 +26,7 @@ public class LobbyManager {
 
     public static synchronized Lobby createLobby(String name, boolean isPrivate, String password, boolean visible, SimplePlayer creator) {
         Lobby lobby = new Lobby(name, isPrivate, password, visible, creator);
-        Objects.requireNonNull(MyGame.getPlayer(name)).setCurrentLobby(lobby);
+        //Objects.requireNonNull(MyGame.getPlayer(name)).setCurrentLobby(lobby);
         activeLobbies.add(lobby);
         System.out.println("lobby added");
 
@@ -42,7 +42,7 @@ public class LobbyManager {
                 if (lobby.isPrivate() && (!lobby.getPassword().equals(password))) {
                     return false;
                 }
-                Objects.requireNonNull(MyGame.getPlayer(player.username)).setCurrentLobby(lobby);
+                //Objects.requireNonNull(MyGame.getPlayer(player.username)).setCurrentLobby(lobby);
                 return lobby.addPlayer(player);
             }
         }
@@ -53,7 +53,7 @@ public class LobbyManager {
         for (Lobby lobby : activeLobbies) {
             if (lobby.getPlayers().contains(player)) {
                 lobby.removePlayer(player);
-                Objects.requireNonNull(MyGame.getPlayer(player.username)).setCurrentLobby(null);
+                //Objects.requireNonNull(MyGame.getPlayer(player.username)).setCurrentLobby(null);
             }
         }
     }

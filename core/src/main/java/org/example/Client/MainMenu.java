@@ -13,6 +13,7 @@ import org.example.Common.Player;
 import org.example.Main;
 import org.example.Server.controllers.RegisterMenuController;
 import org.example.Common.User;
+import org.example.Server.models.MyGame;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -29,6 +30,7 @@ public class MainMenu implements Screen {
     private TextButton scoreboardButton;
 
     public MainMenu(Skin skin) {
+        MyGame.setMainMenu(this);
         this.skin = skin;
         this.stage = new Stage(new ScreenViewport());
         onlineButton = new TextButton("Online Players", skin);
@@ -197,9 +199,10 @@ public class MainMenu implements Screen {
         dialog.show(stage);
     }
 
-    public static void updateOnlinePlayers(List<Player> players) {
+    public void updateOnlinePlayers(List<Player> players) {
         onlinePlayers.clear();
         onlinePlayers.addAll(players);
+        showOnlinePlayers();
     }
 
 

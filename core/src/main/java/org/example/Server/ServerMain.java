@@ -108,8 +108,8 @@ public class ServerMain {
         kryo.register(ServerNPC.class);
         kryo.register(TradePacket.class);
         kryo.register(Trade.class);
-        kryo.register(TradeMessage.class);
         kryo.register(TradeMessage.MessageType.class);
+        kryo.register(TradeMessage.class);
         kryo.register(PositionUpdate.class);
         kryo.register(HugMessage.class);
         kryo.register(PurchaseRequest.class);
