@@ -8,6 +8,7 @@ import org.example.Common.Enums.*;
 import org.example.Common.Network.*;
 import org.example.Common.Request.TradeMessage;
 import org.example.Main;
+import org.example.Server.Packets.NotificationPacket;
 import org.example.Server.managers.LobbyManager;
 import org.example.Server.models.*;
 import org.example.Common.Tool.FishingPole;
@@ -214,7 +215,11 @@ public class GameMenuController extends MenuController {
         if (currentPlayer.isMarriedTo(targetPlayer)) {
             currentPlayer.increaseEnergy(50);
         }
-        targetPlayer.addNotification(currentPlayer.getName() + " says: \"" + message + "\" to you!");
+      //  targetPlayer.addNotification(currentPlayer.getName() + " says: \"" + message + "\" to you!");
+        NotificationPacket packet = new NotificationPacket();
+        packet.receiverUsername = targetPlayer.getUsername();
+        packet.message = currentPlayer.getName() + " says: \"" + message + "\" to you!";
+        GameClient.client.sendTCP(packet);
         return new Result(true, "");
     }
 
@@ -706,7 +711,7 @@ public class GameMenuController extends MenuController {
             return Result.success("advanced date!");
         } else if ((matcher = GameMenuCommands.AdvanceTime.getMatcher(command)) != null) {
             int time = Integer.parseInt(matcher.group("x"));
-            GameManager.getGameClock().advanceTime(time*60);
+            GameManager.getGameClock().advanceTime(time*42);
             return Result.success("advanced time!");
         } else if (command.startsWith("cheat weather set")) {
             return cheatWeatherSet(command);
@@ -723,9 +728,11 @@ public class GameMenuController extends MenuController {
 
 
     public Item getItemByName(String itemName) {
+        System.out.println(itemName);
         StringBuilder sb = new StringBuilder();
         sb.append(itemName.substring(0, 1).toUpperCase()).append(itemName.substring(1));
         String name = sb.toString();
+        System.out.println(name);
         Item item = null;
         if (MyGame.getDatabase().getItem(name) != null) item = MyGame.getDatabase().getItem(name);
         else if (CropType.fromString(name) != null) item = CropType.fromString(name);
@@ -734,11 +741,12 @@ public class GameMenuController extends MenuController {
         else if (ForagingSeedType.fromString(name) != null) item = ForagingSeedType.fromString(name);
         else if (FishType.fromString(name) != null) item = FishType.fromString(name);
         else if (MineralType.fromString(name) != null) item = MineralType.fromString(name);
+        System.out.println(item);
         return item;
     }
 
     public void startTrading(TradeMessage msg, boolean initiator) {
-        Main.getMain().setScreen(new TradeScreen(msg.fromPlayer,
-            msg.toPlayer, initiator, new TradingController()));
+        Main.getMain().setScreen(new TradeScreen(msg.toPlayer,
+            msg.fromPlayer, initiator, MyGame.getTradingController()));
     }
 }

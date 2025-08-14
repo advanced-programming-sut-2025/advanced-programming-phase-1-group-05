@@ -15,4 +15,8 @@ public class TradeMessage implements Message {
     public Trade trade;
     public boolean accepted;
 
+    public TradeMessage() {
+
+    }
+
 }

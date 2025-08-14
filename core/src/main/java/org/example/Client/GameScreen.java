@@ -30,6 +30,7 @@ import org.example.Server.Packets.HugMessage;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.Packets.MovePacket;
 import org.example.Server.Packets.PositionUpdate;
+import org.example.Server.Packets.TimePacket;
 import org.example.Server.controllers.*;
 import org.example.Server.models.*;
 import org.example.Server.models.Building.AnimalHouse;
@@ -315,14 +316,11 @@ public class GameScreen implements Screen {
         Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         if (!cheatCodeWindow.isVisible() && !messageMode) handleInput(delta);
 
-        timeAccumulator += delta;
-        if (timeAccumulator >= 42f) {
-            GameManager.getGameClock().advanceTime(60);
-            timeAccumulator = 0f;
-        }
-        if (Main.getMain().networkManager != null) {
-           // Main.networkManager.sendPlayerPosition(player.getUsername(), player.getXX(), player.getYY());
-        }
+//        timeAccumulator += delta;
+//        if (timeAccumulator >= 42f) {
+//            GameManager.getGameClock().advanceTime(60);
+//            timeAccumulator = 0f;
+//        }
         Season newSeason = GameManager.getSeason();
         if (!newSeason.equals(currentSeason)) {
             currentSeason = newSeason;
@@ -879,7 +877,7 @@ public class GameScreen implements Screen {
 
         Player player = MyGame.getCurrentPlayer();
         int hour = GameManager.getCurrentHour();
-        int minute = GameManager.getGameClock().getMinute();
+        int minute =0;
         int day = GameManager.getDay();
         String dayOfWeek = GameManager.getDayOfTheWeek();
 
@@ -2947,7 +2945,7 @@ public class GameScreen implements Screen {
                                 draggedItem = slot.item;
                                 selectedSlot = slot;
                                 slot.item = null;
-                                MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                                MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
                                 return true;
                             } else if (draggedItem != null && slot.item == null) {
                                 slot.item = draggedItem;
@@ -2960,11 +2958,11 @@ public class GameScreen implements Screen {
                                 slot.item = draggedItem;
                                 draggedItem = temp;
                                 selectedSlot = slot;
-                                MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                                if (!giftMode) MyGame.getCurrentPlayer().setCurrentItem(slot.item);
                                 syncBackPackFromSlots();
                                 return true;
                             }
-                        if (!giftMode) MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                       // if (!giftMode) MyGame.getCurrentPlayer().setCurrentItem(slot.item);
                     }
                 }
             } else if (isToolSelectionOpen) {
@@ -3088,7 +3086,7 @@ public class GameScreen implements Screen {
                                 artisanMode = true;
                                 MyGame.getCurrentPlayer().getBackPack().removeFromInventory(currentItem, 1);
                                 multiplexer.addProcessor(0, buildInputProcessor);
-                                String texturePath = "ArtisanMachines/" + lastArtisanType.name().toLowerCase() + "_ready.png";
+                                String texturePath = "ArtisanMachines/" + lastArtisanType.name().toLowerCase() + ".png";
                                 artisanPreviewTexture = GameAssetManager.getInstance().getOrLoadTexture(texturePath);
                             } else {
                                 GameAssetManager.playSfx("place item");
@@ -3098,6 +3096,7 @@ public class GameScreen implements Screen {
                             Player player = MyGame.getCurrentPlayer();
                             if (player.getBackPack().howManyOfItem(currentItem) == 0)
                                 MyGame.getCurrentPlayer().setCurrentItem(null);
+                            draggedItem = null;
                         }
                     }
                 }

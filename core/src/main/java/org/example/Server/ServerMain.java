@@ -5,18 +5,15 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import org.example.Client.NpcActor;
+import org.example.Common.*;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.DataTransferObjects.LoginPacket;
 import org.example.Common.DataTransferObjects.PrivateChatMessage;
 import org.example.Common.Enums.Direction;
 import org.example.Common.Enums.MessageType;
-import org.example.Common.Lobby;
 import org.example.Common.Network.*;
-import org.example.Common.Player;
-import org.example.Common.Product;
 import org.example.Common.Request.TradeMessage;
 import org.example.Common.Tool.BackPack;
-import org.example.Common.Trade;
 import org.example.Server.Packets.*;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
@@ -38,7 +35,8 @@ public class ServerMain {
     private static final Map<String, Connection> playerConnections = new HashMap<>();
     private static Server server;
     private static List<NpcController> npcControllers = new ArrayList<>();
-    static boolean updateNPCS = false;
+    static boolean gameStarted = false;
+    private static TimeAndDate timeAndDate;
     public static void main(String[] args) throws Exception {
         server = new Server();
         server.start();
@@ -54,7 +52,6 @@ public class ServerMain {
 
         kryo.register(ChatMessage.class);
         kryo.register(PrivateChatMessage.class);
-        kryo.register(TradeMessage.class);
         kryo.register(MessageType.class);
         kryo.register(LoginPacket.class);
         kryo.register(ResultResponse.class);
@@ -111,11 +108,13 @@ public class ServerMain {
         kryo.register(ServerNPC.class);
         kryo.register(TradePacket.class);
         kryo.register(Trade.class);
+        kryo.register(TradeMessage.class);
         kryo.register(TradeMessage.MessageType.class);
         kryo.register(PositionUpdate.class);
         kryo.register(HugMessage.class);
         kryo.register(PurchaseRequest.class);
-
+        kryo.register(TimePacket.class);
+        kryo.register(NotificationPacket.class);
 
         server.addListener(new Listener() {
             public void received(Connection c, Object object) {
@@ -132,7 +131,8 @@ public class ServerMain {
                             playerConn.sendTCP(packet);
                         }
                     }
-                    updateNPCS = true;
+                    gameStarted = true;
+                    timeAndDate = new TimeAndDate();
                 } else if (object instanceof MovePacket) {
                     MovePacket movePacket = (MovePacket) object;
                     server.sendToAllExceptTCP(c.getID(), movePacket);
@@ -180,6 +180,12 @@ public class ServerMain {
                             }
                             break;
                         }
+                        case UPDATE: {
+                            Connection target = getConnectionByName(msg.toPlayer);
+                            if (target != null) {
+                                target.sendTCP(msg);
+                            }
+                        }
                     }
                 }
                 else if (object instanceof PurchaseRequest) {
@@ -225,6 +231,10 @@ public class ServerMain {
                     for (Connection connection : server.getConnections()) {
                         connection.sendTCP(message);
                     }
+                }
+                else if (object instanceof  NotificationPacket) {
+                    NotificationPacket packet = (NotificationPacket) object;
+                    server.sendToTCP(playerConnections.get(packet.receiverUsername).getID(), packet);
                 }
                 else if (object instanceof  HugMessage) {
                     HugMessage msg = (HugMessage) object;
@@ -310,19 +320,24 @@ public class ServerMain {
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 {
-                    float delta = 0.05f;
+                    if (gameStarted){
+                        float delta = 0.05f;
+                        timeAndDate.advanceTime(delta);
+                        TimePacket packet = new TimePacket();
+                        packet.hour = timeAndDate.hour;
+                        server.sendToAllTCP(packet);
+                        for (NpcController controller : npcControllers) {
+                            controller.update(delta, timeAndDate.hour);
 
-                    for (NpcController controller : npcControllers) {
-                        controller.update(delta);
+                            NpcMovePacket pkt = new NpcMovePacket();
+                            pkt.npcName = controller.getNpc().name;
+                            pkt.x = controller.getNpc().x;
+                            pkt.y = controller.getNpc().y;
+                            pkt.direction = controller.getNpc().direction;
+                            pkt.delta = delta;
 
-                        NpcMovePacket pkt = new NpcMovePacket();
-                        pkt.npcName = controller.getNpc().name;
-                        pkt.x = controller.getNpc().x;
-                        pkt.y = controller.getNpc().y;
-                        pkt.direction = controller.getNpc().direction;
-                        pkt.delta = delta;
-
-                        server.sendToAllTCP(pkt);
+                            server.sendToAllTCP(pkt);
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -334,11 +349,11 @@ public class ServerMain {
 
     private static void initializeNPCs() {
 
-        npcControllers.add(new NpcController(new ServerNPC("Sebastian", true, 9, 17, 3450, 4000, 6493.93f, 4108)));
-        npcControllers.add(new NpcController(new ServerNPC("Abigail", true, 9, 16, 7100, 4050, 4470.5f, 4468.5f)));
-        npcControllers.add(new NpcController(new ServerNPC("Harvey", true, 9, 17, 4650, 7650, 6404.52f, 3929.28f)));
-        npcControllers.add(new NpcController(new ServerNPC("Leah", true, 9, 16, 2350, 4300, 1129.33f, 3902.43f)));
-        npcControllers.add(new NpcController(new ServerNPC("Robin", true, 9, 20, 1120, 3950, 156.41f, 4823)));
+        npcControllers.add(new NpcController(new ServerNPC("Sebastian", true, 10, 17, 3450, 4000, 6493.93f, 4108)));
+        npcControllers.add(new NpcController(new ServerNPC("Abigail", true, 10, 16, 7100, 4050, 4470.5f, 4468.5f)));
+        npcControllers.add(new NpcController(new ServerNPC("Harvey", true, 10, 17, 4650, 3150, 6404.52f, 3929.28f)));
+        npcControllers.add(new NpcController(new ServerNPC("Leah", true, 10, 16, 2350, 4300, 1129.33f, 3902.43f)));
+        npcControllers.add(new NpcController(new ServerNPC("Robin", true, 10, 20, 1120, 3950, 156.41f, 4823)));
 
 
     }

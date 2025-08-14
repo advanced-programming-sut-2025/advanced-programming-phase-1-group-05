@@ -90,7 +90,7 @@ public class TradeMenu extends Table {
                         }
                         msg.toPlayer = otherPlayer.getUsername();
 
-                        clientNetworkManager.sendTradeRequest(msg);
+                        GameClient.client.sendTCP(msg);
 
                     }
                 });

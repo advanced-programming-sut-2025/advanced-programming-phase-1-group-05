@@ -30,19 +30,21 @@ public class NpcController {
         return npc;
     }
 
-    public void update(float delta) {
+    public void update(float delta, int hour) {
        // System.out.println("Updating NPC " + npc.name + " moveTimer: " + moveTimer);
         if (!npc.walking) return;
         moveTimer -= delta;
         Vector2 target = new Vector2(npc.storeX, npc.storeY);
-        int hour = GameManager.getGameClock().hour;
+
         float biasStrength = 0f;
         if (hour >= npc.startHour - 2 && hour < npc.startHour - 1) {
             biasStrength = 0.5f;
         } else if (hour >= npc.startHour - 1 && hour < npc.endHour) {
             biasStrength = 1f;
         }
-
+        else if (hour >= npc.endHour && hour <= npc.endHour + 2) {
+            biasStrength = -1;
+        }
         if (moveTimer <= 0) {
             Vector2 randomDir = new Vector2(MathUtils.random(-1f, 1f), MathUtils.random(-1f, 1f));
 
@@ -69,6 +71,9 @@ public class NpcController {
             }
             npc.x = newX;
             npc.y = newY;
+        }
+        else{
+            moveTimer = 0;
         }
 
 

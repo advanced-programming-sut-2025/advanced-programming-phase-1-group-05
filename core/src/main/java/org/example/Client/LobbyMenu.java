@@ -188,7 +188,7 @@ public class LobbyMenu implements Screen {
             lobbyTable.add(playersBtn).pad(5);
             lobbyTable.add(outBtn).pad(5);
 
-            if (lobby.getPlayers().size() > 1 && isAdmin) {
+            if (lobby.getPlayers().size() > 0 && isAdmin) {
                 TextButton start = new TextButton("start the game", skin);
                 start.addListener(new ClickListener() {
                     @Override
