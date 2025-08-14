@@ -1,5 +1,6 @@
 package org.example.Common.Network;
 
+import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -24,13 +25,13 @@ public class LobbyServerHandler extends Listener {
 
         if (object instanceof CreateLobbyRequest) {
             CreateLobbyRequest req = (CreateLobbyRequest) object;
-            Lobby lobby = LobbyManager.createLobby(req.name, req.isPrivate, req.password, req.visible, req.creator);
-            lobbyCreationTimestamps.put(lobby.getId(), System.currentTimeMillis());
+                Lobby lobby = LobbyManager.createLobby(req.name, req.isPrivate, req.password, req.visible, req.creator);
+                lobbyCreationTimestamps.put(lobby.getId(), System.currentTimeMillis());
 
-            System.out.println("✅ Lobby created: " + lobby.getId());
-            c.sendTCP(new ResultResponse(true, "Lobby created with ID: " + lobby.getId()));
+                System.out.println("✅ Lobby created: " + lobby.getId());
+                c.sendTCP(new ResultResponse(true, "Lobby created with ID: " + lobby.getId()));
 
-            broadcastLobbyList();
+                broadcastLobbyList();
         }
 
         else if (object instanceof GetLobbiesRequest) {

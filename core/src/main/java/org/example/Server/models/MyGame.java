@@ -1,5 +1,6 @@
 package org.example.Server.models;
 
+import org.example.Client.MainMenu;
 import org.example.Client.NpcActor;
 import org.example.Client.ScoreboardView;
 import org.example.Common.*;
@@ -25,8 +26,8 @@ public class MyGame implements Serializable {
     public static int currentPlayerIndex = 0;
     public static boolean canBuildGreenHouse = false;
     private static GameScreen gameScreen;
+    private static MainMenu mainMenu;
     private static ScoreboardView scoreboardView;
-//    public static boolean greenHouseBuilt = false;
     public static Map<Player, Item> soldItems = new HashMap<>();
     private static TradingController tradingController = new TradingController();
     private static ArrayList<NpcActor> npcActors = new ArrayList<>();
@@ -39,6 +40,12 @@ public class MyGame implements Serializable {
         }
     }
 
+    public static MainMenu getMainMenu(){
+        return mainMenu;
+    }
+    public static void setMainMenu(MainMenu mainMenu){
+        MyGame.mainMenu = mainMenu;
+    }
     public static ArrayList<NpcActor> getNpcActors () {
         return npcActors;
     }
@@ -194,12 +201,7 @@ public class MyGame implements Serializable {
     public static void addGift(Gift gift) {
         gifts.add(gift);
     }
-    public static Gift getGiftById(int id){
-        for (Gift gift : gifts){
-            if (gift.Id == id) return gift;
-        }
-        return null;
-    }
+
     public static List<Gift> getAllGifts(){
         return gifts;
     }

@@ -13,6 +13,7 @@ import org.example.Common.Player;
 import org.example.Main;
 import org.example.Server.controllers.RegisterMenuController;
 import org.example.Common.User;
+import org.example.Server.models.MyGame;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -29,6 +30,7 @@ public class MainMenu implements Screen {
     private TextButton scoreboardButton;
 
     public MainMenu(Skin skin) {
+        MyGame.setMainMenu(this);
         this.skin = skin;
         this.stage = new Stage(new ScreenViewport());
         onlineButton = new TextButton("Online Players", skin);
@@ -175,12 +177,12 @@ public class MainMenu implements Screen {
                 avatar.setSize(32, 32);
 
                 Label nameLabel = new Label(player.getUsername(), skin);
-                 String lobbyName = (player.getCurrentLobby() != null) ? player.getCurrentLobby().getName() : "No Lobby";
-                 Label lobbyLabel = new Label("Lobby: " + lobbyName, skin);
+//                 String lobbyName = (player.getCurrentLobby() != null) ? player.getCurrentLobby().getName() : "No Lobby";
+//                 Label lobbyLabel = new Label("Lobby: " + lobbyName, skin);
 
                 row.add(avatar).size(32).padRight(10);
                 row.add(nameLabel).padRight(10);
-                 row.add(lobbyLabel).left();
+//                 row.add(lobbyLabel).left();
 
                 content.add(row).left().row();
             }
@@ -197,9 +199,10 @@ public class MainMenu implements Screen {
         dialog.show(stage);
     }
 
-    public static void updateOnlinePlayers(List<Player> players) {
+    public void updateOnlinePlayers(List<Player> players) {
         onlinePlayers.clear();
         onlinePlayers.addAll(players);
+        showOnlinePlayers();
     }
 
 

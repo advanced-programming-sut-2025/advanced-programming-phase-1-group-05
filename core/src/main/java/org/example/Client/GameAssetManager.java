@@ -102,7 +102,7 @@ public class GameAssetManager {
         Texture dinosaurTextureSheet = getOrLoadTexture("Animals/dinosaur/sheet.png");
         Texture cowTextureSheet = getOrLoadTexture("Animals/cow/sheet.png");
         Texture goatTextureSheet = getOrLoadTexture("Animals/goat/sheet.png");
-        Texture sheepTextureSheet = getOrLoadTexture("Animals/sheep/sheet.png");
+        Texture sheepTextureSheet = getOrLoadTexture("Animals/Sheep/sheet.png");
         Texture pigTextureSheet = getOrLoadTexture("Animals/pig/sheet.png");
 
         animalAnimations.put(AnimalType.DUCK, buildDuckAnimation(duckTextureSheet));
