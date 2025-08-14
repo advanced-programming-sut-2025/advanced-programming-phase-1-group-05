@@ -725,6 +725,8 @@ public class GameScreen implements Screen {
                 dialogueTable.setVisible(false);
             }
             else {
+                draggedItem = null;
+                selectedSlot = null;
                 GameAssetManager.playSfx("open page");
                 isInvenotryOpen = !isInvenotryOpen;
                 isCraftOpen = false;
@@ -2943,8 +2945,8 @@ public class GameScreen implements Screen {
                             }
                             if (draggedItem == null && slot.item != null) {
                                 draggedItem = slot.item;
-                                selectedSlot = slot;
                                 slot.item = null;
+                                selectedSlot = slot;
                                 MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
                                 return true;
                             } else if (draggedItem != null && slot.item == null) {
@@ -2965,6 +2967,7 @@ public class GameScreen implements Screen {
                        // if (!giftMode) MyGame.getCurrentPlayer().setCurrentItem(slot.item);
                     }
                 }
+
             } else if (isToolSelectionOpen) {
                 for (InventorySlot slot : toolSlots) {
                     if (world.x >= slot.x && world.x <= slot.x + SLOT_SIZE &&
