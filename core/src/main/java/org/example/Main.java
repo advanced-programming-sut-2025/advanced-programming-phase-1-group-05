@@ -112,8 +112,6 @@ public class Main extends Game {
                 }
             }).start();
 
-
-
         }
 
         // 🎮 UI and Game Setup

@@ -39,7 +39,7 @@ public class TradeScreen implements Screen {
     private TextField offerField, requestField;
 
     private final Image offerSlotBg, requestSlotBg;
-    private final Image offerItemImage, requestItemImage;
+    public final Image offerItemImage, requestItemImage;
 
     private final Label offerQuantityLabel, requestQuantityLabel;
     private Item selectedOfferItem = null;
@@ -93,8 +93,8 @@ public class TradeScreen implements Screen {
             offerField = new TextField("", skin);
             requestField = new TextField("", skin);
 
-            offerField.setMessageText("Offered item (e.g., apple x2)");
-            requestField.setMessageText("Requested item (e.g., sword x1)");
+            offerField.setMessageText("Offered item");
+            requestField.setMessageText("Requested item");
 
             root.add(requestField).padTop(10).fillX();
             root.add(offerField).padTop(10).fillX().row();
@@ -124,23 +124,34 @@ public class TradeScreen implements Screen {
 
     private void setupListeners() {
         if (isInitiator) {
+
+            offerField.setTextFieldListener((textField, c) -> updateSlotFromText(offerField.getText(), offerItemImage, true));
+            requestField.setTextFieldListener((textField, c) -> updateSlotFromText(requestField.getText(), requestItemImage, false));
+
             confirmOfferButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
+                    System.out.println(selectedOfferItem);
+                    System.out.println(selectedRequestItem);
                     if (selectedOfferItem != null && selectedRequestItem != null) {
                         TradeMessage msg = new TradeMessage();
                         msg.fromPlayer = fromPlayer;
                         msg.toPlayer = toPlayer;
-                        Trade trade = new Trade(msg.fromPlayer, msg.toPlayer, selectedOfferItem.getName(), amount, selectedRequestItem.getName(), targetAmount);
+                        msg.type = TradeMessage.MessageType.UPDATE;
+                        Trade trade = new Trade();
+                        trade.player = fromPlayer;
+                        trade.targetPlayer = toPlayer;
+                        trade.amount = amount;
+                        trade.targetAmount = targetAmount;
+                        trade.item = selectedOfferItem.getName();
+                        trade.targetItem = selectedRequestItem.getName();
                         msg.trade = trade;
-                        controller.sendTradeOffer(msg);
-
+                        System.out.println(msg);
+                        controller.sendUpdateMessage(msg);
                     }
                 }
             });
 
-            offerField.setTextFieldListener((textField, c) -> updateSlotFromText(offerField.getText(), offerItemImage, true));
-            requestField.setTextFieldListener((textField, c) -> updateSlotFromText(requestField.getText(), requestItemImage, false));
         } else {
             acceptButton.addListener(new ChangeListener() {
                 @Override
@@ -148,7 +159,13 @@ public class TradeScreen implements Screen {
                     TradeMessage msg = new TradeMessage();
                     msg.fromPlayer = fromPlayer;
                     msg.toPlayer = toPlayer;
-                    Trade trade = new Trade(msg.fromPlayer, msg.toPlayer, msg.trade.item, 1, msg.trade.targetItem, 1);
+                    Trade trade = new Trade();
+                    trade.player = fromPlayer;
+                    trade.targetPlayer = toPlayer;
+                    trade.amount = amount;
+                    trade.targetAmount = targetAmount;
+                    trade.item = selectedOfferItem.getName();
+                    trade.targetItem = selectedRequestItem.getName();
                     msg.trade = trade;
                     controller.acceptTradeOffer(msg);
                 }
@@ -208,6 +225,11 @@ public class TradeScreen implements Screen {
         }
 
         Item item = gameMenuController.getItemByName(itemName);
+        if(isOffer) {
+            selectedOfferItem = item;
+        } else {
+            selectedRequestItem = item;
+        }
         if (item == null || quantity <= 0) {
             itemImage.setDrawable(null);
             if (isOffer) {
@@ -217,15 +239,19 @@ public class TradeScreen implements Screen {
             }
             return;
         }
+        if(isOffer) selectedOfferItem = item;
+        else selectedRequestItem = item;
 
-        Texture texture = item.getTexture().getTexture();
+        TextureRegion texture = item.getTexture();
         if (texture != null) {
-            itemImage.setDrawable(new TextureRegionDrawable(new TextureRegion(texture)));
+            itemImage.setDrawable(new TextureRegionDrawable(texture));
         }
 
         if (isOffer) {
+            amount = quantity;
             offerQuantityLabel.setText("x" + quantity);
         } else {
+            targetAmount = quantity;
             requestQuantityLabel.setText("x" + quantity);
         }
     }
