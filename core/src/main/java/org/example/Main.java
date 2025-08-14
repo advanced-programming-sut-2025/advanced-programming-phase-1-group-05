@@ -93,7 +93,7 @@ public class Main extends Game {
                     updateThread.start();
 
                     // Connect (this blocks until connected or timeout)
-                    GameClient.client.connect(5000, "192.168.1.53", 54555, 54777);
+                    GameClient.client.connect(5000, "192.168.1.54", 54555, 54777);
 
                     // Wait for update thread to finish
                     updateThread.join();

@@ -142,7 +142,7 @@ public class MyGame implements Serializable {
             GameManager.getGameClock().setDay(1);
             GameManager.getGameClock().setSeason(Season.SPRING);
             GameManager.getGameClock().setHour(9);
-            GameManager.getGameClock().setMinute(0);
+            //GameManager.getGameClock().setMinute(0);
             if (!players.isEmpty()) {
                 currentPlayer = players.get(0);
             }

@@ -11,13 +11,13 @@ public class TimeAndDate implements Serializable {
     int day = 1;
     Season season;
     public int hour = 9;
-    int minute = 0;
+    //int minute = 0;
     float timeAccumulator = 0;
     public void nextDay() {}
 
     public TimeAndDate() {
         this.season = Season.SPRING;
-        this.minute = 0;
+        //this.minute = 0;
     }
 
     public void setDay(int day) {
@@ -33,7 +33,7 @@ public class TimeAndDate implements Serializable {
     }
 
     public void setMinute(int minute) {
-        this.minute = minute;
+       // this.minute = minute;
     }
 
     public Season getSeason() {
@@ -45,17 +45,14 @@ public class TimeAndDate implements Serializable {
         return day * 24 + hour;
     }
 
-    public void advanceTime(int seconds){
+    public void advanceTime(float seconds){
         timeAccumulator += seconds;
-        if (timeAccumulator >= 42f) {
-            minute += 60;
-            timeAccumulator = 0;
-        }
-        while (minute >= 60) {
-            minute -= 60;
+        while (timeAccumulator >= 42f) {
+            timeAccumulator -= 42f;
             hour ++;
+            System.out.println("advanced an hour");
         }
-        if (hour >= 23) {
+        if (hour >= 22) {
             advanceDay();
         }
     }
@@ -65,7 +62,7 @@ public class TimeAndDate implements Serializable {
         }
         day++;
         hour = 9;
-        minute = 0;
+        //minute = 0;
         if (day > 28) {
             day = 1;
             season = season.next();
@@ -81,7 +78,7 @@ public class TimeAndDate implements Serializable {
     public int getDay() { return day; }
     public int getHour() { return hour; }
 
-    public int getMinute() {
-        return minute;
-    }
+//   // public int getMinute() {
+//        return minute;
+//    }
 }

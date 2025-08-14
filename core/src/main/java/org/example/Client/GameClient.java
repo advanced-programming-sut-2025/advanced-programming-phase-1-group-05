@@ -125,6 +125,7 @@ import org.example.Server.Packets.PositionUpdate;
 import org.example.Server.Packets.ScoreboardUpdatePacket;
 import org.example.Server.Packets.StartGamePacket;
 import org.example.Server.Trade.TradePacket;
+import org.example.Server.controllers.GameManager;
 import org.example.Server.controllers.TradingController;
 import org.example.Server.models.MyGame;
 import org.example.Server.models.NPC;
@@ -201,8 +202,17 @@ public class GameClient {
                 }
                 else if (object instanceof PositionUpdate) {
                     PositionUpdate positionUpdate = (PositionUpdate) object;
-                    Player otherPlayer = MyGame.getPlayerByUsername(positionUpdate.playerUsername);
-                    otherPlayer.setPosition(positionUpdate.x, positionUpdate.y);
+                    Gdx.app.postRunnable(() -> {
+                        Player otherPlayer = MyGame.getPlayerByUsername(positionUpdate.playerUsername);
+                        otherPlayer.setPosition(positionUpdate.x, positionUpdate.y);
+                    });
+
+                }
+                else if (object instanceof TimePacket) {
+                    TimePacket packet = (TimePacket) object;
+                    Gdx.app.postRunnable(() -> {
+                        GameManager.getGameClock().setHour(packet.hour);
+                    });
                 }
                 else if (object instanceof ChatMessage) {
                     ChatMessage chat = (ChatMessage) object;
@@ -357,6 +367,12 @@ public class GameClient {
                         }
                     });
                 }
+                else if (object instanceof NotificationPacket) {
+                    NotificationPacket packet = (NotificationPacket) object;
+                    Gdx.app.postRunnable(() -> {
+                        MyGame.getCurrentPlayer().addNotification(packet.message);
+                    });
+                }
 
             }
         });
@@ -431,5 +447,8 @@ public class GameClient {
         kryo.register(PositionUpdate.class);
         kryo.register(HugMessage.class);
         kryo.register(PurchaseRequest.class);
+        kryo.register(TimePacket.class);
+        kryo.register(NotificationPacket.class);
+
     }
 }
