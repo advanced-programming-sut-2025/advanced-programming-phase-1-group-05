@@ -167,7 +167,9 @@ public class TradeScreen implements Screen {
                     trade.item = selectedOfferItem.getName();
                     trade.targetItem = selectedRequestItem.getName();
                     msg.trade = trade;
+                    msg.type = TradeMessage.MessageType.ACCEPT;
                     controller.acceptTradeOffer(msg);
+                    Main.getMain().setScreen(MenuNavigator.getGameScreen());
                 }
             });
 

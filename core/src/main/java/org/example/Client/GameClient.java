@@ -324,7 +324,7 @@ public class GameClient {
                         for (String playerUsername : packet.players) {
                             players.add(MyGame.getPlayerByUsername(playerUsername));
                         }
-                        MainMenu.updateOnlinePlayers(players);
+                        MyGame.getMainMenu().updateOnlinePlayers(players);
                     });
                 }
                 else if (object instanceof HugMessage) {
@@ -349,7 +349,9 @@ public class GameClient {
                     ScoreboardUpdatePacket packet = (ScoreboardUpdatePacket) object;
                     System.out.println("📊 Scoreboard update received: " + packet.username + " G:" + packet.gold);
                     Gdx.app.postRunnable(() -> {
-                        MyGame.getScoreboardView().updateUser(packet);
+                        if(MyGame.getScoreboardView() != null) {
+                            MyGame.getScoreboardView().updateUser(packet);
+                        }
                     });
                 }
                 else if (object instanceof  NpcMovePacket) {

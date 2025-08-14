@@ -69,10 +69,18 @@ public class CheatCodeWindow {
 
     public void render(float delta) {
         if (!visible) return;
-        inputField.setPosition(camera.position.x - 300f,camera.position.y - 20f);
+
+        float stageWidth = stage.getViewport().getWorldWidth();
+        float stageHeight = stage.getViewport().getWorldHeight();
+        inputField.setPosition(
+            (stageWidth - inputField.getWidth()) / 2f,
+            stageHeight - inputField.getHeight() - 10
+        );
+
         stage.act(delta);
         stage.draw();
     }
+
 
     public void toggle() {
         visible = !visible;

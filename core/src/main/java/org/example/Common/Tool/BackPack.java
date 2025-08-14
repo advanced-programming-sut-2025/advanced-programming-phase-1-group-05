@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BackPack implements Tool <BackPackType> , Serializable {
-    BackPackType level = BackPackType.Normal;
+    BackPackType level = BackPackType.Deluxe;
     private final HashMap<Item, Integer> inventory = new HashMap<>();
     private final HashMap<Item, Integer> foragingItems = new HashMap<>();
     private final ArrayList<CraftType> learntRecipes = new ArrayList<>();

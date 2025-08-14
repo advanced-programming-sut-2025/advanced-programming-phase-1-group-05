@@ -1,10 +1,7 @@
 package org.example.Server.controllers;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import org.example.Client.ClientNetworkManager;
-import org.example.Client.GameClient;
-import org.example.Client.TradeMenu;
-import org.example.Client.TradeScreen;
+import org.example.Client.*;
 import org.example.Common.Item;
 import org.example.Common.Player;
 import org.example.Common.Request.TradeMessage;
@@ -234,6 +231,7 @@ public class TradingController {
         Item selectedOfferItem = gameMenuController.getItemByName(trade.item);
         Item selectedRequestItem = gameMenuController.getItemByName(trade.targetItem);
         updateInventory(selectedOfferItem, trade.amount, selectedRequestItem, trade.targetAmount);
+        Main.getMain().setScreen(MenuNavigator.getGameScreen());
     }
 
     private void updateInventory(Item itemToRemove, int itemToRemoveAmount, Item itemToAdd, int itemToAddAmount) {
