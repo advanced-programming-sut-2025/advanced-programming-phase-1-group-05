@@ -3344,11 +3344,14 @@ public class GameScreen implements Screen {
                 resp.fromPlayer = MyGame.getCurrentPlayer().getUsername();
                 resp.toPlayer = fromPlayer.getUsername();
                 resp.accepted = accepted;
+                if (accepted) {
+                    MyGame.getCurrentPlayer().setSpouse(fromPlayer);
+                }
                 Main.getMain().getNetworkManager().getClient().sendTCP(resp);
             }
         };
 
-        dialog.text(fromPlayer + " wants to marry you 💍");
+        dialog.text(fromPlayer.getUsername() + " wants to marry you 💍");
         dialog.button("Accept", true);
         dialog.button("Reject", false);
         dialog.show(stage);

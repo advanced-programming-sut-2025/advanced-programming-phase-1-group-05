@@ -274,7 +274,7 @@ public class ServerMain {
                     dialogueManager.handleNpcInteraction(request);
                 } else if (object instanceof GiftPacket) {
                     GiftPacket giftPacket = (GiftPacket) object;
-                    System.out.println("sent");
+
                     server.sendToTCP(playerConnections.get(giftPacket.receiverUsername).getID(), giftPacket);
                 } else if (object instanceof SaveGamePacket) {
                     SaveGamePacket packet = (SaveGamePacket) object;

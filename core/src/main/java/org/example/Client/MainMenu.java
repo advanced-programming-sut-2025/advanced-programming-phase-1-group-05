@@ -171,6 +171,7 @@ public class MainMenu implements Screen {
             content.add(new Label("No players online.", skin));
         } else {
             for (Player player : onlinePlayers) {
+                if(player ==  null ) return;
                 Table row = new Table();
 
                 Image avatar = new Image(player.getUser().getAvatarTexture());
