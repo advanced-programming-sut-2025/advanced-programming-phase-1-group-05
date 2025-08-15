@@ -2407,11 +2407,13 @@ public class GameScreen implements Screen {
                 latestResult = controller.giveBouquet(player);
                 showResult = true;
                 playerMenuTable.setVisible(false);
-                playBouquetAnimation(currentPlayer, player);
-                BouquetSentPacket packet = new BouquetSentPacket();
-                packet.sender = currentPlayer.getUsername();
-                packet.receiver = player.getUsername();
-                GameClient.client.sendTCP(packet);
+                if (latestResult.isSuccess()){
+                    playBouquetAnimation(currentPlayer, player);
+                    BouquetSentPacket packet = new BouquetSentPacket();
+                    packet.sender = currentPlayer.getUsername();
+                    packet.receiver = player.getUsername();
+                    GameClient.client.sendTCP(packet);
+                }
             }
         });
         TextButton hugButton = new TextButton("hug " + player.getName(), skin);

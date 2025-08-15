@@ -42,8 +42,9 @@ public class ServerMain {
     private static List<NpcController> npcControllers = new ArrayList<>();
     static boolean gameStarted = false;
     private static TimeAndDate timeAndDate;
-    private static RadioServerHandler radioHandler ;
+    private static RadioServerHandler radioHandler;
     private static DialogueManager dialogueManager;
+
     public static void main(String[] args) throws Exception {
         server = new Server();
         server.start();
@@ -129,6 +130,7 @@ public class ServerMain {
         kryo.register(NPCDialoguePacket.class);
         kryo.register(GiftPacket.class);
         kryo.register(SaveGamePacket.class);
+        kryo.register(BouquetSentPacket.class);
         radioHandler = new RadioServerHandler(server);
         dialogueManager = new DialogueManager(playerConnections);
         server.addListener(new Listener() {
@@ -151,12 +153,10 @@ public class ServerMain {
                 } else if (object instanceof MovePacket) {
                     MovePacket movePacket = (MovePacket) object;
                     server.sendToAllExceptTCP(c.getID(), movePacket);
-                }
-                else if (object instanceof PositionUpdate) {
+                } else if (object instanceof PositionUpdate) {
                     PositionUpdate positionUpdate = (PositionUpdate) object;
                     server.sendToAllExceptTCP(c.getID(), positionUpdate);
-                }
-                else if (object instanceof TradeMessage){
+                } else if (object instanceof TradeMessage) {
                     TradeMessage msg = (TradeMessage) object;
                     System.out.println("Trade message recieved from client");
                     System.out.println(msg.type);
@@ -202,27 +202,15 @@ public class ServerMain {
                             }
                         }
                     }
-                }
-                else if (object instanceof PurchaseRequest) {
+                } else if (object instanceof PurchaseRequest) {
                     PurchaseRequest request = (PurchaseRequest) object;
-//                    synchronized (gameState) {
-//                        StoreUpdatePacket updatePacket = new StoreUpdatePacket();
-//                        updatePacket.products = new ArrayList<>();
-//                        for (Map.Entry<Product, Integer> entry : request.items.entrySet()) {
-//                            updatePacket.products.add(entry.getKey());
-//                        }
-//                        updatePacket.storeName = request.storeName;
-//
-//                        server.sendToAllTCP(updatePacket);
-//                    }
-                }
-                else if (object instanceof LoginPacket) {
+                    server.sendToAllTCP(request);
+                } else if (object instanceof LoginPacket) {
                     LoginPacket login = (LoginPacket) object;
                     System.out.println("Registered player connection: " + login.username);
                     registerPlayerConnection(login.username, c);
                     broadcastOnlinePlayers();
-                }
-                else if (object instanceof ChatMessage) {
+                } else if (object instanceof ChatMessage) {
                     ChatMessage chat = (ChatMessage) object;
                     if (chat.receiver != null && !chat.receiver.isBlank()) {
                         Connection target = getConnectionByUsername(chat.receiver);
@@ -234,38 +222,31 @@ public class ServerMain {
                     } else {
                         server.sendToAllTCP(chat);
                     }
-                }
-                else if (object instanceof EmoteMessage) {
+                } else if (object instanceof EmoteMessage) {
                     EmoteMessage msg = (EmoteMessage) object;
                     for (Connection connection : server.getConnections()) {
                         connection.sendTCP(msg);
                     }
-                }
-                else if (object instanceof TextMessage) {
+                } else if (object instanceof TextMessage) {
                     TextMessage message = (TextMessage) object;
                     for (Connection connection : server.getConnections()) {
                         connection.sendTCP(message);
                     }
-                }
-                else if (object instanceof  NotificationPacket) {
+                } else if (object instanceof NotificationPacket) {
                     NotificationPacket packet = (NotificationPacket) object;
                     server.sendToTCP(playerConnections.get(packet.receiverUsername).getID(), packet);
-                }
-                else if (object instanceof  HugMessage) {
+                } else if (object instanceof HugMessage) {
                     HugMessage msg = (HugMessage) object;
                     server.sendToAllExceptTCP(c.getID(), msg);
-                }
-                else if (object instanceof BouquetSentPacket) {
+                } else if (object instanceof BouquetSentPacket) {
                     BouquetSentPacket packet = (BouquetSentPacket) object;
                     server.sendToAllExceptTCP(c.getID(), packet);
-                }
-                else if (object instanceof MarriageProposalRequest) {
+                } else if (object instanceof MarriageProposalRequest) {
                     MarriageProposalRequest request = (MarriageProposalRequest) object;
                     MarriageProposalReceived msg = new MarriageProposalReceived();
                     msg.fromPlayer = request.fromPlayer;
                     server.sendToTCP(playerConnections.get(request.toPlayer).getID(), msg);
-                }
-                else if (object instanceof  MarriageProposalResponse) {
+                } else if (object instanceof MarriageProposalResponse) {
                     MarriageProposalResponse response = (MarriageProposalResponse) object;
                     Player from = MyGame.getPlayerByUsername(response.fromPlayer);
                     Player to = MyGame.getPlayerByUsername(response.toPlayer);
@@ -277,20 +258,17 @@ public class ServerMain {
                     if (response.accepted) {
                         from.setSpouse(to);
                     }
-                } else if(object instanceof ScoreboardUpdatePacket) {
+                } else if (object instanceof ScoreboardUpdatePacket) {
                     ScoreboardUpdatePacket update = (ScoreboardUpdatePacket) object;
                     server.sendToAllTCP(update);
-                }
-                else if (object instanceof NpcDialogueRequest) {
+                } else if (object instanceof NpcDialogueRequest) {
                     NpcDialogueRequest request = (NpcDialogueRequest) object;
                     dialogueManager.handleNpcInteraction(request);
-                }
-                else if (object instanceof GiftPacket) {
+                } else if (object instanceof GiftPacket) {
                     GiftPacket giftPacket = (GiftPacket) object;
                     System.out.println("sent");
                     server.sendToTCP(playerConnections.get(giftPacket.receiverUsername).getID(), giftPacket);
-                }
-                else if (object instanceof SaveGamePacket) {
+                } else if (object instanceof SaveGamePacket) {
                     SaveGamePacket packet = (SaveGamePacket) object;
                     for (String username : packet.playerUsernames) {
                         server.sendToTCP(playerConnections.get(username).getID(), packet);
@@ -298,9 +276,9 @@ public class ServerMain {
                 }
             }
 
-                private Connection getConnectionByName(String playerName) {
-                    return playerConnections.get(playerName);
-                }
+            private Connection getConnectionByName(String playerName) {
+                return playerConnections.get(playerName);
+            }
 
             @Override
             public void disconnected(Connection connection) {
@@ -310,7 +288,7 @@ public class ServerMain {
                     broadcastOnlinePlayers();
                 }
             }
-            });
+        });
         LobbyServerHandler lobbyHandler = new LobbyServerHandler(server);
         server.addListener(lobbyHandler);
         new java.util.Timer().schedule(new TimerTask() {
@@ -322,6 +300,7 @@ public class ServerMain {
 
         System.out.println("Server started on port 54555!");
     }
+
     public static void registerPlayerConnection(String username, Connection connection) {
         playerConnections.put(username, connection);
     }
@@ -338,7 +317,7 @@ public class ServerMain {
         }
     }
 
-    public static Server getServer(){
+    public static Server getServer() {
         return server;
     }
 
@@ -347,8 +326,8 @@ public class ServerMain {
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 {
-                    System.out.println(gameStarted);
-                    if (gameStarted){
+                    //System.out.println(gameStarted);
+                    if (gameStarted) {
                         float delta = 0.05f;
                         boolean advancedDay = timeAndDate.advanceTime(delta);
                         if (advancedDay) {
@@ -393,8 +372,9 @@ public class ServerMain {
 
 
     }
+
     public static String getUsernameFromConnection(Connection connection) {
-        for(Map.Entry<String, Connection> entry : playerConnections.entrySet()) {
+        for (Map.Entry<String, Connection> entry : playerConnections.entrySet()) {
             if (entry.getValue() == connection) {
                 return entry.getKey();
             }
