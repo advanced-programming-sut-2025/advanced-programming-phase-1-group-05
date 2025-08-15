@@ -94,6 +94,7 @@ public class StoreView implements Screen {
                     PurchaseRequest req = new PurchaseRequest();
                     req.playerUsername = MyGame.getCurrentPlayer().getUsername();
                     req.items = new HashMap<>();
+                    req.storeName = store.getStoreName();
                     for (Map.Entry<Product, Integer> entry : toPurchase.entrySet()) {
                         req.items.put(entry.getKey().getName(), entry.getValue());
                     }
@@ -239,6 +240,7 @@ public class StoreView implements Screen {
                     qty++;
                     if (item.getRemainingForToday() < qty && item.getRemainingForToday() > 0) {
                         banner.showMessage("No more of this item available.", Color.RED, 5f);
+                        return;
                     }
                     quantityLabel.setText(String.valueOf(qty));
                     quantities.put(item, qty);

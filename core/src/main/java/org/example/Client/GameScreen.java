@@ -27,6 +27,7 @@ import org.example.Main;
 import org.example.Server.Packets.*;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
+import org.example.Server.Packets.MarriagePackets.MarriageProposalRequest;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
 import org.example.Server.controllers.*;
 import org.example.Server.models.*;
@@ -2446,6 +2447,10 @@ public class GameScreen implements Screen {
                 latestResult = controller.askMarriage(player);
                 showResult = true;
                 playerMenuTable.setVisible(false);
+                MarriageProposalRequest request = new MarriageProposalRequest();
+                request.fromPlayer = currentPlayer.getUsername();
+                request.toPlayer = player.getUsername();
+                GameClient.client.sendTCP(request);
             }
         });
         closeButton.addListener(new ClickListener() {

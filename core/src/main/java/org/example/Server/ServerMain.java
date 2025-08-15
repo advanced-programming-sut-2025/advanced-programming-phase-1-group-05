@@ -1,5 +1,6 @@
 package org.example.Server;
 
+import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -150,6 +151,7 @@ public class ServerMain {
                     }
                     gameStarted = true;
                     timeAndDate = new TimeAndDate();
+
                 } else if (object instanceof MovePacket) {
                     MovePacket movePacket = (MovePacket) object;
                     server.sendToAllExceptTCP(c.getID(), movePacket);
@@ -255,9 +257,12 @@ public class ServerMain {
                     result.accepted = response.accepted;
                     result.byPlayer = from.getUsername();
                     server.sendToTCP(playerConnections.get(to.getUsername()).getID(), result);
-                    if (response.accepted) {
-                        from.setSpouse(to);
-                    }
+                    Gdx.app.postRunnable(() -> {
+                        if (response.accepted) {
+                            from.setSpouse(to);
+                        }
+                    });
+
                 } else if (object instanceof ScoreboardUpdatePacket) {
                     ScoreboardUpdatePacket update = (ScoreboardUpdatePacket) object;
                     server.sendToAllTCP(update);
