@@ -259,6 +259,14 @@ public class GameClient {
                         player.triggerReaction(msg.text);
                     }
                 }
+                else if (object instanceof MarriageProposalResult) {
+                    MarriageProposalResult result = (MarriageProposalResult) object;
+                    Gdx.app.postRunnable(() -> {
+                        if (result.accepted) {
+                            MyGame.getCurrentPlayer().setSpouse(MyGame.getPlayerByUsername(result.byPlayer));
+                        }
+                    });
+                }
                 else if (object instanceof TradeMessage) {
                     TradeMessage msg = (TradeMessage) object;
                     System.out.println("Trade message recieved from server");
@@ -301,6 +309,7 @@ public class GameClient {
                         case UPDATE:{
                             Gdx.app.postRunnable(() -> {
                                 TradingController controller = MyGame.getTradingController();
+                                controller.updateOfferSlot(msg.trade);
                                 controller.updateOfferSlot(msg.trade);
                                 controller.updateRequestSlot(msg.trade);
                             });
