@@ -2407,6 +2407,11 @@ public class GameScreen implements Screen {
                 latestResult = controller.giveBouquet(player);
                 showResult = true;
                 playerMenuTable.setVisible(false);
+                playBouquetAnimation(currentPlayer, player);
+                BouquetSentPacket packet = new BouquetSentPacket();
+                packet.sender = currentPlayer.getUsername();
+                packet.receiver = player.getUsername();
+                GameClient.client.sendTCP(packet);
             }
         });
         TextButton hugButton = new TextButton("hug " + player.getName(), skin);
@@ -2736,6 +2741,7 @@ public class GameScreen implements Screen {
         }) ;
 
         innerPanel.add(gift).fillX().row();
+        innerPanel.add(showMissions).fillX().row();
         innerPanel.add(closeButton).size(48, 48).padTop(20).colspan(2).center();
         closeButton.getImageCell().size(48, 48);
         npcMenuTable.add(innerPanel).center();
@@ -3271,6 +3277,24 @@ public class GameScreen implements Screen {
         return controller;
     }
 
+    public void playBouquetAnimation (Player sender, Player receiver) {
+        TextureRegionDrawable drawable = new TextureRegionDrawable(MyGame.getDatabase().getItem("bouquet").getTexture());
+        Image flyingGift = new Image(drawable);
+        Vector2 startPos = new Vector2(sender.getXX(), sender.getYY());
+        Vector2 endPos = new Vector2(receiver.getXX(), receiver.getYY());
+
+        flyingGift.setSize(32, 32);
+        flyingGift.setColor(Color.WHITE);
+        stage.addActor(flyingGift);
+        flyingGift.setPosition(startPos.x, startPos.y);
+        stage.addActor(flyingGift);
+
+        flyingGift.addAction(Actions.sequence(
+            Actions.moveTo(endPos.x, endPos.y, 1f, Interpolation.sine),
+            Actions.fadeOut(0.2f),
+            Actions.run(flyingGift::remove)
+        ));
+    }
     public void enterBuildMode(Texture buildingTexture, EnclosureType type, AnimalHouseLevel level) {
         isInBuildMode = true;
         buildingPreviewTexture = buildingTexture;

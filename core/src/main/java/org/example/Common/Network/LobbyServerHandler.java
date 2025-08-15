@@ -21,7 +21,7 @@ public class LobbyServerHandler extends Listener {
 
     @Override
     public void received(Connection c, Object object) {
-        System.out.println("📦 Received object: " + object.getClass().getSimpleName());
+        //System.out.println("📦 Received object: " + object.getClass().getSimpleName());
 
         if (object instanceof CreateLobbyRequest) {
             CreateLobbyRequest req = (CreateLobbyRequest) object;

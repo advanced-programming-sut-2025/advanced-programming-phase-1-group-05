@@ -57,7 +57,7 @@ public class MenuNavigator {
     }
 
     public static void showGameScreen(ArrayList<Player> players) {
-        gameScreen = new GameScreen(players);
+        gameScreen = new GameScreen(players, "");
         game.setScreen(gameScreen);
     }
 

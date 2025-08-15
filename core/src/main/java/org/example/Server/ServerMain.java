@@ -31,6 +31,7 @@ import org.example.Server.models.MyGame;
 import org.example.Server.models.ServerNPC;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -127,6 +128,7 @@ public class ServerMain {
         kryo.register(NpcDialogueRequest.class);
         kryo.register(NPCDialoguePacket.class);
         kryo.register(GiftPacket.class);
+        kryo.register(SaveGamePacket.class);
         radioHandler = new RadioServerHandler(server);
         dialogueManager = new DialogueManager(playerConnections);
         server.addListener(new Listener() {
@@ -253,6 +255,10 @@ public class ServerMain {
                     HugMessage msg = (HugMessage) object;
                     server.sendToAllExceptTCP(c.getID(), msg);
                 }
+                else if (object instanceof BouquetSentPacket) {
+                    BouquetSentPacket packet = (BouquetSentPacket) object;
+                    server.sendToAllExceptTCP(c.getID(), packet);
+                }
                 else if (object instanceof MarriageProposalRequest) {
                     MarriageProposalRequest request = (MarriageProposalRequest) object;
                     MarriageProposalReceived msg = new MarriageProposalReceived();
@@ -341,13 +347,21 @@ public class ServerMain {
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 {
+                    System.out.println(gameStarted);
                     if (gameStarted){
                         float delta = 0.05f;
-                        timeAndDate.advanceTime(delta);
+                        boolean advancedDay = timeAndDate.advanceTime(delta);
+                        if (advancedDay) {
+                            CompletableFuture.runAsync(() -> timeAndDate.advanceDay());
+                        }
                         TimePacket packet = new TimePacket();
                         packet.hour = timeAndDate.hour;
                         server.sendToAllTCP(packet);
                         for (NpcController controller : npcControllers) {
+                            if (advancedDay) {
+                                controller.npc.x = 4450;
+                                controller.npc.y = 7650;
+                            }
                             controller.update(delta, timeAndDate.hour);
 
                             NpcMovePacket pkt = new NpcMovePacket();
@@ -363,7 +377,7 @@ public class ServerMain {
 
                 }
             } catch (Exception e) {
-                System.err.println(e.getMessage());
+                e.printStackTrace();
             }
 
         }, 0, 50, TimeUnit.MILLISECONDS);

@@ -60,10 +60,10 @@ public class Fish extends Actor implements Serializable {
                 adjustedSpeed = speed * 0.5f;
                 break;
             case SINKER:
-                adjustedSpeed = direction > 0 ? speed : speed * 1.5f;
+                adjustedSpeed = direction < 0 ? speed : speed * 1.5f;
                 break;
             case FLOATER:
-                adjustedSpeed = direction < 0 ? speed : speed * 1.5f;
+                adjustedSpeed = direction > 0 ? speed : speed * 1.5f;
                 break;
             case DART:
                 adjustedSpeed = speed * MathUtils.random(1f, 1.6f);
