@@ -71,6 +71,7 @@ public class TradeMenu extends Table {
 
                 Label enterNameLabel = new Label("Enter other player's username:", getSkin());
                 TextField usernameField = new TextField("", getSkin());
+                TextButton cancelButton = new TextButton("Cancel", getSkin());
 
                 Label confirmButton = new Label("Send Trade Request", getSkin(), "subtitle");
                 confirmButton.addListener(new ClickListener() {
@@ -94,11 +95,19 @@ public class TradeMenu extends Table {
 
                     }
                 });
+
+                cancelButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        remove();
+                    }
+                });
                 addHoverEffect(confirmButton, Color.GREEN);
 
                 add(enterNameLabel).center().pad(10).row();
                 add(usernameField).center().width(200).pad(10).row();
                 add(confirmButton).center().pad(10).row();
+                add(cancelButton).center().pad(10).row();
             }
         });
 
