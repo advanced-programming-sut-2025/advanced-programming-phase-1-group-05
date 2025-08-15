@@ -24,13 +24,10 @@ import org.example.Common.*;
 import org.example.Common.DataTransferObjects.ChatMessage;
 import org.example.Common.Enums.*;
 import org.example.Main;
+import org.example.Server.Packets.*;
 import org.example.Server.Packets.EmotePackets.EmoteMessage;
 import org.example.Server.Packets.EmotePackets.TextMessage;
-import org.example.Server.Packets.HugMessage;
 import org.example.Server.Packets.MarriagePackets.MarriageProposalResponse;
-import org.example.Server.Packets.MovePacket;
-import org.example.Server.Packets.PositionUpdate;
-import org.example.Server.Packets.TimePacket;
 import org.example.Server.controllers.*;
 import org.example.Server.models.*;
 import org.example.Server.models.Building.AnimalHouse;
@@ -193,9 +190,9 @@ public class GameScreen implements Screen {
     private Table privateChatTable;
 
     Player player;
-
-
-    public GameScreen(ArrayList<Player> playerList) {
+    String lobbyId;
+    public GameScreen(ArrayList<Player> playerList, String lobbyId) {
+        this.lobbyId = lobbyId;
         player = MyGame.getCurrentPlayer();
         MyGame.setGameScreen(this);
         skin = GameAssetManager.getSkin();
@@ -204,6 +201,7 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
         players = playerList;
         controller = new GameMenuController();
+        controller.setView(this);
         homeMenuController = new HomeMenuController();
         cheatCodeWindow = new CheatCodeWindow(camera, Gdx.input.getInputProcessor());
         shapeRenderer = new ShapeRenderer();
@@ -795,6 +793,18 @@ public class GameScreen implements Screen {
         else if (Gdx.input.isKeyJustPressed(Input.Keys.Y)) {
             showEmoteMenu();
         }
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+            if (players.indexOf(player) == 0 && !lobbyId.isEmpty()) {
+                //GameState currentState ...;
+                SaveGamePacket packet = new SaveGamePacket();
+                packet.lobbyID = lobbyId;
+                packet.playerUsernames = new ArrayList<>();
+                for (Player playerr : players) {
+                    packet.playerUsernames.add(playerr.getUsername());
+                }
+                GameClient.client.sendTCP(packet);
+            }
+        }
         float px = player.getXX() + player.getWidth() / 2f;
         float py = player.getYY() + player.getHeight() / 2f;
         Store stoore = null;
@@ -817,11 +827,6 @@ public class GameScreen implements Screen {
             if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
                 toggleOverviewMode();
             }
-
-//            if (!overviewMode) {
-//                camera.position.set(player.getXX() + player.getWidth() / 2f,
-//                    player.getYY() + player.getHeight() / 2f, 0);
-//            }
             if (!overviewMode && !turnJustChanged) {
                 camera.position.set(
                     player.getXX() + player.getWidth() / 2f,

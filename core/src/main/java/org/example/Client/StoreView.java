@@ -81,7 +81,7 @@ public class StoreView implements Screen {
                     AnimalType animalType = AnimalType.fromString(product.getName());
                     if (animalType != null) {
                         showNameDialog(animalType, product);
-                        Main.getMain().setScreen(previousScreen);
+                       // Main.getMain().setScreen(previousScreen);
                         return;
                     }
                 }
@@ -132,6 +132,7 @@ public class StoreView implements Screen {
                         removeActor(this);
                         quantities.remove(product);
                         banner.showMessage(result.getMessage(), Color.GREEN, 2f);
+                        Main.getMain().setScreen(previousScreen);
                     } else {
                         banner.showMessage(result.getMessage(), Color.RED, 2f);
                     }
