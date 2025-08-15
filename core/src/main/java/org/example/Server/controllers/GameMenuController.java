@@ -329,10 +329,10 @@ public class GameMenuController extends MenuController {
         Item bouquet = MyGame.getDatabase().getItem("bouquet");
         if (targetPlayer == null)
             return Result.error("Bouquet in hand, heart full of hope... too bad that player doesn't even exist.");
-//        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 1 ||
-//                Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 1)
-//            return Result.error
-//                    ("You wave the bouquet around like a romantic maniac, but there's no one nearby to impress");
+        if (Math.abs(targetPlayer.getXX() - currentPlayer.getXX()) > 100 ||
+                Math.abs(targetPlayer.getYY() - currentPlayer.getYY()) > 100)
+            return Result.error
+                    ("You wave the bouquet around like a romantic maniac, but there's no one nearby to impress");
         if (!currentPlayer.canGiveBouquet(targetPlayer))
             return Result.error("You try to hand over the bouquet-they smile politely and change the subject");
         if (currentPlayer.getItemQuantity(bouquet) < 1)

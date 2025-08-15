@@ -123,10 +123,7 @@ public class ClientNetworkManager {
                         }
                     });
                 }
-                else if (object instanceof StoreUpdatePacket) {
-                    StoreUpdatePacket p = (StoreUpdatePacket) object;
-                    Gdx.app.postRunnable(() -> handleStoreUpdate(p));
-                }
+
 //                TradeMessage msg = (TradeMessage) object;
 
 //                switch (msg.type) {
@@ -164,14 +161,7 @@ public class ClientNetworkManager {
         });
     }
 
-    private void handleStoreUpdate(StoreUpdatePacket p) {
-        Store localStore = MyGame.getDatabase().getStoreByName(p.storeName);
 
-        Screen current = Main.getMain().getScreen();
-        if (current instanceof StoreView) {
-            ((StoreView) current).rebuildItemList(localStore.getProducts());
-        }
-    }
     public void sendTCP(Object object) {
         if (GameClient.client != null) {
             GameClient.client.sendTCP(object);

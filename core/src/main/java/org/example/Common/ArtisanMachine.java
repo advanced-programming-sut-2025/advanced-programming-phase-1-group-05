@@ -1,5 +1,6 @@
 package org.example.Common;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -25,7 +26,7 @@ public class ArtisanMachine extends Actor implements Serializable {
         this.textureNormal = new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("ArtisanMachines/" + type.name().toLowerCase() + ".png"));
         this.textureReady = new TextureRegion(GameAssetManager.getInstance().getOrLoadTexture("ArtisanMachines/" + type.name().toLowerCase() + "_ready.png"));
         setPosition(x, y);
-        if (textureNormal.getRegionWidth() < 15)
+        if (textureNormal.getRegionWidth() <= 15)
             setSize(textureNormal.getRegionWidth() *2, textureNormal.getRegionHeight() * 2);
         else setSize(textureNormal.getRegionWidth(), textureNormal.getRegionHeight());
         owner = player;
@@ -50,7 +51,7 @@ public class ArtisanMachine extends Actor implements Serializable {
         super.act(delta);
         if (product == null || ready) return;
         elapsedTime += delta;
-        if (elapsedTime / 42 >= processingTime) {
+        if (elapsedTime / 15 >= processingTime) {
             ready = true;
         }
     }
@@ -82,6 +83,10 @@ public class ArtisanMachine extends Actor implements Serializable {
         ready = true;
         elapsedTime = processingTime;
     }
+    public float getProgress() {
+        float hoursPassed = elapsedTime/15;
+        return hoursPassed / processingTime;
+    }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
@@ -92,6 +97,18 @@ public class ArtisanMachine extends Actor implements Serializable {
             getX(), getY(),
             getWidth(), getHeight()
         );
+
+        if (working) {
+            float barWidth = getWidth();
+            float barHeight = 6f;
+            float progressWidth = barWidth * getProgress();
+            batch.setColor(Color.DARK_GRAY);
+            batch.draw(GameAssetManager.whitePixel, getX(), getY() - barHeight - 2, barWidth, barHeight);
+
+            batch.setColor(Color.GREEN);
+            batch.draw(GameAssetManager.whitePixel, getX(), getY()- barHeight - 2, progressWidth, barHeight);
+            batch.setColor(Color.WHITE);
+        }
     }
 
     public boolean isWorking() {

@@ -59,6 +59,7 @@ public class NpcController {
         float newY = npc.y + directionVector.y * 30 * delta;
 
         if (newX < 100 || newX + 60 > 8500 || newY < 100 || newY + 104 > 8525) {
+            moveTimer = 0;
             return; // skip movement this frame
         }
         Rectangle nextBounds = new Rectangle(newX, newY, 60, 104);
@@ -74,6 +75,7 @@ public class NpcController {
         }
         else{
             moveTimer = 0;
+            directionVector = new Vector2(MathUtils.random(-1f, 1f), MathUtils.random(-1f, 1f)).nor();
         }
 
 

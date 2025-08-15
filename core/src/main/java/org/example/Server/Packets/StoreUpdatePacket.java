@@ -7,5 +7,5 @@ import java.util.List;
 
 public class StoreUpdatePacket {
     public String storeName;
-    public List<Product> products;
+    public List<String> products;
 }

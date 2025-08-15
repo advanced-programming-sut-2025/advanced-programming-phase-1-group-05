@@ -96,6 +96,7 @@
 package org.example.Client;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -128,14 +129,12 @@ import org.example.Server.Packets.StartGamePacket;
 import org.example.Server.Trade.TradePacket;
 import org.example.Server.controllers.GameManager;
 import org.example.Server.controllers.TradingController;
-import org.example.Server.models.MyGame;
-import org.example.Server.models.NPC;
-import org.example.Server.models.Result;
-import org.example.Server.models.ServerNPC;
+import org.example.Server.models.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GameClient {
     public static Client client;
@@ -414,8 +413,33 @@ public class GameClient {
                            receiver.getBackPack().addToInventory(item, packet.amount);
                     });
                 }
+                else if (object instanceof PurchaseRequest) {
+                    PurchaseRequest p = (PurchaseRequest) object;
+                    Gdx.app.postRunnable(() -> handleStoreUpdate(p));
+                }
             }
         });
+    }
+
+    private static void handleStoreUpdate(PurchaseRequest p) {
+        Store localStore = MyGame.getDatabase().getStoreByName(p.storeName);
+
+//        Screen current = Main.getMain().getScreen();
+//        if (current instanceof StoreView) {
+//            ((StoreView) current).rebuildItemList(localStore.getProducts());
+//        }
+        if (localStore!= null){
+            for (Map.Entry<String, Integer> entry : p.items.entrySet()) {
+                localStore.getProduct(entry.getKey()).addSold(entry.getValue());
+            }
+
+            Screen current = Main.getMain().getScreen();
+            if (current instanceof StoreView) {
+                ((StoreView) current).rebuildItemList(localStore.getProducts());
+            }
+        }
+
+
     }
 
     public static void registerClasses(com.esotericsoftware.kryo.Kryo kryo) {
@@ -496,5 +520,6 @@ public class GameClient {
         kryo.register(NPCDialoguePacket.class);
         kryo.register(GiftPacket.class);
         kryo.register(SaveGamePacket.class);
+        kryo.register(BouquetSentPacket.class);
     }
 }

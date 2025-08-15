@@ -3,6 +3,7 @@ package org.example.Client;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -45,7 +46,7 @@ public class GameAssetManager {
     public static final Texture backGround = new Texture("backgrounds/login_bg.png");
     private static final HashMap<Season, TextureRegion> seasonIcons = new HashMap<>();
     private static final HashMap<Weather, TextureRegion> weatherIcons = new HashMap<>();
-
+    public static Texture whitePixel;
     public Map<AnimalType, AnimalAnimations> animalAnimations = new HashMap<>();
     private GameAssetManager() {
         // Load skin from assets/skin/
@@ -61,6 +62,11 @@ public class GameAssetManager {
         loadNPCAvatars();
         loadAnimalAnimations();
         loadClockSheet();
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.fill();
+        whitePixel = new Texture(pixmap);
+        pixmap.dispose();
     }
 
 

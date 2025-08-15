@@ -9,6 +9,6 @@ import java.util.Map;
 
 public class PurchaseRequest {
     public String storeName;
-    public Player player;
-    public Map<Product, Integer> items;
+    public String playerUsername;
+    public Map<String, Integer> items;
 }
