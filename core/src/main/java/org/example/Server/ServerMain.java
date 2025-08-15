@@ -250,16 +250,19 @@ public class ServerMain {
                     server.sendToTCP(playerConnections.get(request.toPlayer).getID(), msg);
                 } else if (object instanceof MarriageProposalResponse) {
                     MarriageProposalResponse response = (MarriageProposalResponse) object;
-                    Player from = MyGame.getPlayerByUsername(response.fromPlayer);
-                    Player to = MyGame.getPlayerByUsername(response.toPlayer);
+
 
                     MarriageProposalResult result = new MarriageProposalResult();
                     result.accepted = response.accepted;
-                    result.byPlayer = from.getUsername();
-                    server.sendToTCP(playerConnections.get(to.getUsername()).getID(), result);
+                    result.byPlayer = response.fromPlayer;
+                    server.sendToTCP(playerConnections.get(response.toPlayer).getID(), result);
                     Gdx.app.postRunnable(() -> {
-                        if (response.accepted) {
-                            from.setSpouse(to);
+                        Player from = MyGame.getPlayerByUsername(response.fromPlayer);
+                        Player to = MyGame.getPlayerByUsername(response.toPlayer);
+                        if (from != null && to != null){
+                            if (response.accepted) {
+                                from.setSpouse(to);
+                            }
                         }
                     });
 
