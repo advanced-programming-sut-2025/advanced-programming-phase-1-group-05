@@ -77,7 +77,9 @@ public class StoreView implements Screen {
                     Product product = entry.getKey();
                     int quantity = entry.getValue();
                     if (quantity <= 0) continue;
-
+                    if (quantity < product.getRemainingForToday()) {
+                        banner.showMessage(entry.getKey().getName() + " not available anymore.", Color.RED, 5);
+                    }
                     AnimalType animalType = AnimalType.fromString(product.getName());
                     if (animalType != null) {
                         showNameDialog(animalType, product);
@@ -89,13 +91,13 @@ public class StoreView implements Screen {
                 if (result.isSuccess()) banner.showMessage(result.getMessage(), Color.GREEN, 5);
                 else banner.showMessage(result.getMessage(), Color.RED, 5);
                 if (result.isSuccess()){
-//                    PurchaseRequest req = new PurchaseRequest();
-//                    req.playerUsername = MyGame.getCurrentPlayer().getUsername();
-//                    req.items = new HashMap<>();
-//                    for (Map.Entry<Product, Integer> entry : toPurchase.entrySet()) {
-//                        req.items.put(entry.getKey().getName(), entry.getValue());
-//                    }
-//                    Main.getMain().getNetworkManager().getClient().sendTCP(req);
+                    PurchaseRequest req = new PurchaseRequest();
+                    req.playerUsername = MyGame.getCurrentPlayer().getUsername();
+                    req.items = new HashMap<>();
+                    for (Map.Entry<Product, Integer> entry : toPurchase.entrySet()) {
+                        req.items.put(entry.getKey().getName(), entry.getValue());
+                    }
+                    Main.getMain().getNetworkManager().getClient().sendTCP(req);
                 }
             }
         });
