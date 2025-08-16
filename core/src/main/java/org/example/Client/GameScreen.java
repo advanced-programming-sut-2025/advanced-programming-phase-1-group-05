@@ -3474,7 +3474,7 @@ public class GameScreen implements Screen {
             }
         };
 
-        dialog.text(fromPlayer + " wants to marry you 💍");
+        dialog.text(fromPlayer.getUsername() + " wants to marry you 💍");
         dialog.button("Accept", true);
         dialog.button("Reject", false);
         dialog.show(stage);

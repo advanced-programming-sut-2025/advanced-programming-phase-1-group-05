@@ -115,7 +115,7 @@ public class Player implements Serializable {
 
         initializeAnimations();
         backPack.addToInventory(CropType.HotPepper, 2);
-        Product sardine = new Product("sardine", 10, -1, null, new ArrayList<>(), new HashMap<>(), "");
+        Product sardine = new Product("Sardine", 10, -1, null, new ArrayList<>(), new HashMap<>(), "");
         backPack.addToInventory(sardine, 2);
         backPack.addToInventory(CropType.Melon, 1);
         backPack.addToInventory(ForagingSeedType.CranberrySeeds,1);

@@ -447,7 +447,9 @@ public class GameClient {
 //        if (current instanceof StoreView) {
 //            ((StoreView) current).rebuildItemList(localStore.getProducts());
 //        }
+        System.out.println(localStore == null);
         if (localStore!= null){
+            System.out.println("hello");
             for (Map.Entry<String, Integer> entry : p.items.entrySet()) {
                 localStore.getProduct(entry.getKey()).addSold(entry.getValue());
             }
