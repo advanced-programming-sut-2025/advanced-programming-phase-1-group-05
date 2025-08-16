@@ -97,6 +97,9 @@ public class Player implements Serializable {
     public Player(SimplePlayer simplePlayer) {
         this(UserDatabase.getUserByUsername(simplePlayer.username));
     }
+    public Player(SavePlayer savePlayer) {
+        this(UserDatabase.getUserByUsername(savePlayer.username));
+    }
 
     public Player(User user) {
         this.user = user;
@@ -588,7 +591,7 @@ public class Player implements Serializable {
     }
 
     public String getName() {
-        return user.nickName;
+        return getUsername();
     }
 
     public String getUsername() {

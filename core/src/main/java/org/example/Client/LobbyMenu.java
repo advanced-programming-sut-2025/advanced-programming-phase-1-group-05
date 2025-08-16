@@ -2,6 +2,7 @@ package org.example.Client;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -11,15 +12,28 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.example.Common.Network.*;
 import org.example.Common.Lobby;
 import org.example.Common.Player;
+import org.example.Common.SavePlayer;
 import org.example.Main;
+import org.example.Server.Packets.ContinueGamePacket;
 import org.example.Server.Packets.StartGamePacket;
 import org.example.Server.ServerMain;
 import org.example.Server.models.MyGame;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.example.Client.GameScreen.TILE_SIZE;
@@ -203,11 +217,43 @@ public class LobbyMenu implements Screen {
                 lobbyTable.add(start).pad(5);
             }
 
+            if (isAdmin && lobbySaveExists(lobby.getId())) {
+                TextButton continueButton = new TextButton("Continue Saved Game", skin);
+                continueButton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        ContinueGamePacket packet = new ContinueGamePacket();
+                        packet.players = new ArrayList<>();
+                        packet.players.addAll(loadLobbyState(lobby.getId()));
+                        packet.lobbyId = lobby.getId();
+                        GameClient.client.sendTCP(packet);
+                    }
+                });
+                lobbyTable.add(continueButton).pad(5);
+            }
             lobbyTable.row();
 
         }
     }
 
+    public static List<SavePlayer> loadLobbyState(String lobbyId) {
+        File saveFile = new File("saves/lobby_" + lobbyId + ".json");
+
+        if (!saveFile.exists()) {
+            System.out.println("[LOAD] No save file found for lobby: " + lobbyId);
+            return null;
+        }
+
+        try (FileReader reader = new FileReader(saveFile)) {
+            Gson gson = new Gson();
+            SavePlayer[] playerArray = gson.fromJson(reader, SavePlayer[].class);
+            System.out.println("[LOAD] Loaded " + playerArray.length + " players for lobby " + lobbyId);
+            return Arrays.asList(playerArray);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     private void showPasswordDialog(String lobbyId, SimplePlayer player) {
         Dialog passwordDialog = new Dialog("Enter Password", skin) {
             @Override
@@ -243,12 +289,40 @@ public class LobbyMenu implements Screen {
     @Override public void hide() {}
     @Override public void dispose() { stage.dispose(); }
 
+    public static boolean lobbySaveExists(String lobbyId) {
+        String workingDir = System.getProperty("user.dir"); // points to the directory where the app is running
+      //  File dir = new File(workingDir, "saves");
+        //File saveFile = new File(dir, "lobby_" + lobbyId + ".json");
+
+        Path projectRoot = Paths.get("").toAbsolutePath();
+        File dir = new File(projectRoot.toFile(), "saves");
+        if (!dir.exists()) dir.mkdirs();
+        File saveFile = new File(dir, "lobby_" + lobbyId + ".json");
+
+        System.out.println("Checking file at: " + saveFile.getAbsolutePath());
+        return saveFile.exists();
+    }
+
     public void startTheGame(List<SimplePlayer> simplePlayers) {
         List<Player> players = new ArrayList<>();
         for(SimplePlayer simplePlayer : simplePlayers) {
             players.add(new Player(simplePlayer));
         }
 
+        for (Player player : players) {
+            player.setMapNum(players.indexOf(player) + 1);
+            initializeFarm(player);
+        }
+        MyGame.addPlayers(players);
+    }
+    public void continueTheGame(List<SavePlayer> savedPlayers) {
+        List<Player> players = new ArrayList<>();
+        for (SavePlayer savePlayer : savedPlayers) {
+            Player player = new Player(savePlayer);
+            player.setX(savePlayer.x);
+            player.setY(savePlayer.y);
+            players.add(player);
+        }
         for (Player player : players) {
             player.setMapNum(players.indexOf(player) + 1);
             initializeFarm(player);

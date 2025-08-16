@@ -4,7 +4,7 @@ import org.example.Common.SavePlayer;
 
 import java.util.List;
 
-public class SaveGamePacket {
-    public String lobbyID;
-    public List<SavePlayer> playerUsernames;
+public class ContinueGamePacket {
+    public List<SavePlayer> players;
+    public String lobbyId;
 }

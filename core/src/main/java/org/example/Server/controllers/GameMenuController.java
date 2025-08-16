@@ -356,9 +356,9 @@ public class GameMenuController extends MenuController {
             return new Result(false, "You reach for the ring... but your pockets are full of nothing");
         if (!currentPlayer.canAskMarriage(targetPlayer))
             return new Result(false, "Slow down, lovebird-you're still just friendly acquaintances");
-        if (!currentPlayer.getGender().equalsIgnoreCase("male"))
-            return new Result(false,
-                    "Only the boys can propose... for now. Rules of the valley, not mine!");
+//        if (!currentPlayer.getGender().equalsIgnoreCase("male"))
+//            return new Result(false,
+//                    "Only the boys can propose... for now. Rules of the valley, not mine!");
 
         currentPlayer.proposed(targetPlayer);
         return new Result(true, "Now we wait...");

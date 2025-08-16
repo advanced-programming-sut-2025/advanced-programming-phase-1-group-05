@@ -178,6 +178,16 @@ public class GameClient {
 
                     });
                 }
+                else if (object instanceof ContinueGamePacket) {
+                    ContinueGamePacket packet = (ContinueGamePacket) object;
+                    Gdx.app.postRunnable(() -> {
+                        MenuNavigator.getLobbyMenu().continueTheGame(packet.players);
+                        MyGame.startTheGame();
+                        GameScreen screen = new GameScreen(MyGame.getAllPlayers(), packet.lobbyId, true);
+                        MenuNavigator.setGameScreen(screen);
+                        Main.getMain().setScreen(screen);
+                    });
+                }
                 else if (object instanceof SaveGamePacket) {
                     SaveGamePacket packet = (SaveGamePacket) object;
                     Gdx.app.postRunnable(() -> {
@@ -530,5 +540,7 @@ public class GameClient {
         kryo.register(GiftPacket.class);
         kryo.register(SaveGamePacket.class);
         kryo.register(BouquetSentPacket.class);
+        kryo.register(SavePlayer.class);
+        kryo.register(ContinueGamePacket.class);
     }
 }

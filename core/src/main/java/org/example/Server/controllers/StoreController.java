@@ -108,19 +108,16 @@ public class StoreController {
         return player;
     }
 
-    public Result sell(Matcher m) {
+    public static Result sell(Item item) {
         int count;
 
-        String productName = m.group("productName");
         Player currentPlayer = MyGame.getCurrentPlayer();
-        Item item = currentPlayer.getBackPack().getFromInventory(productName);
         if (item instanceof Tool<?>) {
             return Result.error("Nice try, but the shipping bin has standards. Tools not accepted.");
         }
-        if (MyGame.getDatabase().getItem(productName) == null) return Result.error("try selling something that exists!");
         if (currentPlayer.getItemQuantity(item) == 0 )
             return Result.error("You present your empty hands with confidence. Sadly, buyers prefer actual stuff");
-        if (m.group("count") != null) count = Integer.parseInt(m.group("count"));
+
         else count = currentPlayer.getItemQuantity(item);
         if (currentPlayer.getItemQuantity(item) < count) {
             return Result.error("You can't sell what you don't have. Unless you're secretly a magician");
@@ -128,7 +125,7 @@ public class StoreController {
 //
 //        if (!currentPlayer.getFarm().getShippingBin().isNear(currentPlayer.getX(), currentPlayer.getY()))
 //            return Result.error("You can't just toss things into air and hope for a sale. Find a shipping bin first.");
-
+        currentPlayer.getBackPack().removeFromInventory(item , 1);
         MyGame.soldItems.put(currentPlayer, item);
         return Result.success("You will receive the gold tomorrow morning!");
     }

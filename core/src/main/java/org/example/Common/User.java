@@ -31,6 +31,15 @@ public class User implements Serializable {
     }
     private List<String> friends = new ArrayList<>();
 
+    public User() {
+
+    }
+    public User(String username , String password, String securityQuestion, String securityAnswer) {
+        this.username = username;
+        this.password = password;
+        this.securityQuestion = securityQuestion;
+        this.securityAnswer =securityAnswer;
+    }
     public void addFriend(String username) {
         if (!friends.contains(username)) {
             friends.add(username);

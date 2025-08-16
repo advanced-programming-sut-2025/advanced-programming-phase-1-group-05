@@ -190,8 +190,56 @@ public class GameScreen implements Screen {
     private String currentPrivateTarget = null;
     private Table privateChatTable;
 
+    private boolean sellingMode;
     Player player;
     String lobbyId;
+    public GameScreen(ArrayList<Player> playerList, String lobbyId, boolean saved) {
+        this.lobbyId = lobbyId;
+        player = MyGame.getCurrentPlayer();
+        MyGame.setGameScreen(this);
+        skin = GameAssetManager.getSkin();
+        camera = new OrthographicCamera(VIEW_WIDTH * TILE_SIZE, VIEW_HEIGHT * TILE_SIZE);
+        camera.setToOrtho(false);
+        batch = new SpriteBatch();
+        players = playerList;
+        controller = new GameMenuController();
+        controller.setView(this);
+        homeMenuController = new HomeMenuController();
+        cheatCodeWindow = new CheatCodeWindow(camera, Gdx.input.getInputProcessor());
+        shapeRenderer = new ShapeRenderer();
+        currentSeason = GameManager.getSeason();
+        mapRenderer = new TileMapRenderer();
+        mapRenderer.setSeason(currentSeason);
+        viewport = new FitViewport(320, 180, camera);
+        viewport.apply();
+        stage = new Stage(viewport, batch);
+        Vector2 spawnPos = null;
+        System.out.println(MyGame.getCurrentPlayer().getUsername());
+        for (Player player : players) {
+            if (player.equals(MyGame.getCurrentPlayer())) {
+                MyGame.setCurrentPlayer(player);
+            }
+        }
+        for (NPC npc : MyGame.getAllNPCs()) {
+            npc.initializeFriendships();
+        }
+        initializeFarmArea();
+        Player player = MyGame.getCurrentPlayer();
+        camera.position.set(player.getXX() + player.getWidth() / 2f,
+            player.getYY() + player.getHeight() / 2f, 0);
+        camera.update();
+
+
+
+        energyBarBg = new Texture(Gdx.files.internal("ui/energy_bar_bg.png"));
+        energyBarFill = new Texture(Gdx.files.internal("ui/energy_bar_fill.png"));
+        overlay = new Texture("white.png");
+        blackOverlay = new Texture("black.png");
+
+        font = new BitmapFont();
+        font.setColor(Color.BLACK);
+        font.getData().setScale(2);
+    }
     public GameScreen(ArrayList<Player> playerList, String lobbyId) {
         this.lobbyId = lobbyId;
         player = MyGame.getCurrentPlayer();
@@ -463,6 +511,7 @@ public class GameScreen implements Screen {
         updateToolSelectionSlots();
         checkGifting();
         checkArtisanInput();
+        checkSelling();
         if (showResult) showResult(batch, latestResult, delta);
 //        stage.act(delta);
 //        stage.draw();
@@ -556,6 +605,43 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void checkSelling() {
+        if (!sellingMode) return;
+        if (isInvenotryOpen && sellingMode && Gdx.input.justTouched()) {
+            TextureRegion inventory = MyGame.getCurrentPlayer().getBackPack()
+                .getLevel().getInventoryTexture();
+            float scale = 0.5f;
+            float scaledWidth = inventory.getRegionWidth() * scale;
+            float scaledHeight = inventory.getRegionHeight() * scale;
+            INVENTORY_X = camera.position.x - scaledWidth / 2f;
+            INVENTORY_Y = camera.position.y - scaledHeight / 2f;
+
+            skillSetBounds.set(INVENTORY_X + 20f, INVENTORY_Y, 64, 64);
+
+            Vector3 mouse = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+            Player player = MyGame.getCurrentPlayer();
+            Vector3 playerPos = camera.project(new Vector3(player.getXX(), player.getYY(), 0));
+
+            for (InventorySlot slot : slots) {
+                if (mouse.x >= slot.x && mouse.x <= slot.x + SLOT_SIZE &&
+                    mouse.y >= slot.y && mouse.y <= slot.y + SLOT_SIZE) {
+
+                    if (slot.item != null) {
+                        Item item = slot.item;
+                        Vector3 receiverPos = null;
+
+
+                        sellingMode = false;
+                        isInvenotryOpen = false;
+                        latestResult = StoreController.sell(item);
+
+                        break;
+                    }
+                }
+            }
+        }
+    }
     private void checkArtisanInput() {
         if (!isInvenotryOpen || !artisanInputMode) return;
 
@@ -801,7 +887,11 @@ public class GameScreen implements Screen {
                 packet.lobbyID = lobbyId;
                 packet.playerUsernames = new ArrayList<>();
                 for (Player playerr : players) {
-                    packet.playerUsernames.add(playerr.getUsername());
+                    SavePlayer savePlayer = new SavePlayer();
+                    savePlayer.username = playerr.getUsername();
+                    savePlayer.x = playerr.getXX();
+                    savePlayer.y = playerr.getYY();
+                    packet.playerUsernames.add(savePlayer);
                 }
                 GameClient.client.sendTCP(packet);
             }
@@ -1634,6 +1724,18 @@ public class GameScreen implements Screen {
         }
         for (Player player : players) {
             stage.addActor(player.getFarm().getShippingBin());
+            player.getFarm().getShippingBin().addListener(new InputListener(){
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    if (button == Input.Buttons.RIGHT) {
+                        isInvenotryOpen = true;
+                        sellingMode = true;
+                        System.out.println("clicked");
+                        return true;
+                    }
+                    return false;
+                }
+            });
         }
 
         Texture mail = GameAssetManager.getInstance().getOrLoadTexture("ui/mailSign.png");
@@ -2134,6 +2236,10 @@ public class GameScreen implements Screen {
             }
         }
 
+        innerPanel.row();
+        for (NpcActor npcActor : NPCs) {
+            innerPanel.add(buildNPCRow(npcActor)).padBottom(50).row();
+        }
         ImageButton closeButton = new ImageButton(closeDrawable);
         closeButton.addListener(new ClickListener() {
             @Override
@@ -2147,6 +2253,23 @@ public class GameScreen implements Screen {
         friendshipMenuTable.add(innerPanel).center();
     }
 
+    private Table buildNPCRow(NpcActor npc) {
+        Table row = new Table();
+        Label name = new Label(npc.getNpc().getName(), skin);
+        name.setColor(86f / 255, 22f / 255, 12f / 255, 1);
+        name.setFontScale(1.5f);
+        row.add(name).padRight(10);
+
+        Texture fullHeartTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/heart.png");
+        Texture greyHeartTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/greyHeart.png");
+
+        for (int i = 0; i < 4; i++) {
+            Image heart = new Image(greyHeartTexture);
+            heart.setSize(30, 30);
+            row.add(heart).size(30).pad(10);
+        }
+        return row;
+    }
     private Table buildRow(Player player) {
         Table row = new Table();
         Label name = new Label(player.getName(), skin);
@@ -2997,7 +3120,7 @@ public class GameScreen implements Screen {
                                 draggedItem = slot.item;
                                 slot.item = null;
                                 selectedSlot = slot;
-                                if (!giftMode)MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
+                                if (!giftMode && !sellingMode)MyGame.getCurrentPlayer().setCurrentItem(draggedItem);
                                 return true;
                             } else if (draggedItem != null && slot.item == null) {
                                 slot.item = draggedItem;
@@ -3010,7 +3133,7 @@ public class GameScreen implements Screen {
                                 slot.item = draggedItem;
                                 draggedItem = temp;
                                 selectedSlot = slot;
-                                if (!giftMode) MyGame.getCurrentPlayer().setCurrentItem(slot.item);
+                                if (!giftMode && !sellingMode) MyGame.getCurrentPlayer().setCurrentItem(slot.item);
                                 syncBackPackFromSlots();
                                 return true;
                             }
@@ -3344,6 +3467,9 @@ public class GameScreen implements Screen {
                 resp.fromPlayer = MyGame.getCurrentPlayer().getUsername();
                 resp.toPlayer = fromPlayer.getUsername();
                 resp.accepted = accepted;
+                if (accepted) {
+                    MyGame.getCurrentPlayer().setSpouse(fromPlayer);
+                }
                 Main.getMain().getNetworkManager().getClient().sendTCP(resp);
             }
         };

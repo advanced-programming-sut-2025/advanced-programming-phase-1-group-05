@@ -23,7 +23,15 @@ public class AnimalActor extends Actor {
     private final float PETTING_DURATION = 5f;
     private boolean showHeart = false;
     Texture heartTexture = GameAssetManager.getInstance().getOrLoadTexture("ui/heart.png");
+    private final float homeX;
+    private final float homeY;
+    private final float MAX_DISTANCE = 320f;
 
+    private float speed = 50f; // units per second
+    private float targetX;
+    private float targetY;
+    private final float MOVE_INTERVAL = 2f; // seconds between choosing a new target
+    private float moveTimer = 0f;
     public AnimalActor(Animal animal) {
         this.animal = animal;
         System.out.println(animal.getX() + ", " + animal.getY());
@@ -32,6 +40,7 @@ public class AnimalActor extends Actor {
         animations = GameAssetManager.getInstance().animalAnimations.get(animal.getType());
         idleFrame = GameAssetManager.getInstance().getIdle(animal.getType());
         animal.setState(Animal.State.IDLE);
+        homeX = animal.getX(); homeY = animal.getY();
     }
 
     public void setState(Animal.State state) {
@@ -55,6 +64,8 @@ public class AnimalActor extends Actor {
     @Override
     public void act(float delta) {
         super.act(delta);
+//        if (animal.getState() == Animal.State.EATING)
+//            return;
         if (currentAnimation != null) {
             stateTime += delta;
         }
@@ -66,7 +77,50 @@ public class AnimalActor extends Actor {
                 currentAnimation = null;
                 animal.setState(Animal.State.IDLE);
             }
+           //return;
         }
+//        moveTimer -= delta;
+//        if (moveTimer <= 0) {
+//            pickRandomTarget();
+//            moveTimer = MOVE_INTERVAL;
+//        }
+
+//        float dx = targetX - getX();
+//        float dy = targetY - getY();
+//        float distance = (float) Math.sqrt(dx*dx + dy*dy);
+//
+//        if (distance > 1f) { // avoid jitter
+//            float moveX = dx / distance * speed * delta;
+//            float moveY = dy / distance * speed * delta;
+//
+//            setPosition(getX() + moveX, getY() + moveY);
+//
+//            // Set walking animation based on direction
+//            if (Math.abs(dx) > Math.abs(dy)) {
+//                if (dx > 0) {
+//                    setState(Animal.State.WALK_RIGHT);
+////                    currentAnimation = animations.walk_right;
+//                }
+//                else {
+//                    setState(Animal.State.WALK_LEFT);
+////                    currentAnimation = animations.walk_left;
+//                }
+//            } else {
+//                if (dy > 0) {
+//                    setState(Animal.State.WALK_UP);
+////                    currentAnimation = animations.walk_up;
+//                }
+//                else {
+//                    setState(Animal.State.WALK_DOWN);
+////                    currentAnimation = animations.walk_down;
+//                }
+//            }
+//        } else {
+//            setState(Animal.State.IDLE);
+//        }
+//
+//        // Clamp inside home area
+//        clampToHomeArea();
     }
     @Override
     public void draw(Batch batch, float parentAlpha) {
@@ -100,4 +154,25 @@ public class AnimalActor extends Actor {
         currentAnimation = animations.pet;
         animal.setState(Animal.State.EATING);
     }
+
+    private void pickRandomTarget() {
+        double angle = Math.random() * Math.PI * 2; // random direction
+        float distance = (float) (Math.random() * MAX_DISTANCE);
+        targetX = homeX + (float) Math.cos(angle) * distance;
+        targetY = homeY + (float) Math.sin(angle) * distance;
+    }
+
+    private void clampToHomeArea() {
+        float dx = getX() - homeX;
+        float dy = getY() - homeY;
+        float distance = (float) Math.sqrt(dx*dx + dy*dy);
+
+        if (distance > MAX_DISTANCE) {
+            float scale = MAX_DISTANCE / distance;
+            float clampedX = homeX + dx * scale;
+            float clampedY = homeY + dy * scale;
+            setPosition(clampedX, clampedY);
+        }
+    }
+
 }

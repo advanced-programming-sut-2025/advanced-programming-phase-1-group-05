@@ -195,7 +195,7 @@ public class LoginMenuController {
         this.currentUser = user;
         RegisterMenuController.currentUser = user;
         Main.currentUser = user;
-        Player currentPlayer = MyGame.getPlayerByUsername(user.getUsername());
+        Player currentPlayer = new Player(user);
         MyGame.setCurrentPlayer(currentPlayer);
         if (Main.currentUser != null) {
             System.out.println("kkkkk");

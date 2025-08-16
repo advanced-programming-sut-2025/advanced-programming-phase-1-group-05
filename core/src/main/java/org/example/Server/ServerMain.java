@@ -1,10 +1,13 @@
 package org.example.Server;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.example.Client.DialogueManager;
 import org.example.Client.NpcActor;
 import org.example.Common.*;
@@ -31,6 +34,9 @@ import org.example.Server.controllers.NpcController;
 import org.example.Server.models.MyGame;
 import org.example.Server.models.ServerNPC;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
@@ -132,6 +138,8 @@ public class ServerMain {
         kryo.register(GiftPacket.class);
         kryo.register(SaveGamePacket.class);
         kryo.register(BouquetSentPacket.class);
+        kryo.register(SavePlayer.class);
+        kryo.register(ContinueGamePacket.class);
         radioHandler = new RadioServerHandler(server);
         dialogueManager = new DialogueManager(playerConnections);
         server.addListener(new Listener() {
@@ -152,7 +160,17 @@ public class ServerMain {
                     gameStarted = true;
                     timeAndDate = new TimeAndDate();
 
-                } else if (object instanceof MovePacket) {
+                }
+                else if (object instanceof ContinueGamePacket) {
+                    ContinueGamePacket packet= (ContinueGamePacket) object;
+                    for (SavePlayer player : packet.players) {
+                        Connection playerCon = playerConnections.get(player.username);
+                        if (playerCon!= null) {
+                            playerCon.sendTCP(packet);
+                        }
+                    }
+                    gameStarted = true;
+                }else if (object instanceof MovePacket) {
                     MovePacket movePacket = (MovePacket) object;
                     server.sendToAllExceptTCP(c.getID(), movePacket);
                 } else if (object instanceof PositionUpdate) {
@@ -256,15 +274,7 @@ public class ServerMain {
                     result.accepted = response.accepted;
                     result.byPlayer = response.fromPlayer;
                     server.sendToTCP(playerConnections.get(response.toPlayer).getID(), result);
-                    Gdx.app.postRunnable(() -> {
-                        Player from = MyGame.getPlayerByUsername(response.fromPlayer);
-                        Player to = MyGame.getPlayerByUsername(response.toPlayer);
-                        if (from != null && to != null){
-                            if (response.accepted) {
-                                from.setSpouse(to);
-                            }
-                        }
-                    });
+
 
                 } else if (object instanceof ScoreboardUpdatePacket) {
                     ScoreboardUpdatePacket update = (ScoreboardUpdatePacket) object;
@@ -278,9 +288,12 @@ public class ServerMain {
                     server.sendToTCP(playerConnections.get(giftPacket.receiverUsername).getID(), giftPacket);
                 } else if (object instanceof SaveGamePacket) {
                     SaveGamePacket packet = (SaveGamePacket) object;
-                    for (String username : packet.playerUsernames) {
+                    saveLobbyState(packet.lobbyID, packet.playerUsernames);
+                    for (SavePlayer player : packet.playerUsernames) {
+                        String username = player.username;
                         server.sendToTCP(playerConnections.get(username).getID(), packet);
                     }
+                    gameStarted = false;
                 }
             }
 
@@ -322,6 +335,24 @@ public class ServerMain {
         packet.players = new ArrayList<>(playerConnections.keySet());
         for (Connection c : playerConnections.values()) {
             c.sendTCP(packet);
+        }
+    }
+
+    public static void saveLobbyState(String lobbyId, List<SavePlayer> players) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        // Save to the assets folder
+        String workingDir = System.getProperty("user.dir");
+        File dir = new File("../assets/saves");  // inside assets now
+        if (!dir.exists()) dir.mkdirs();
+
+        File saveFile = new File(dir, "lobby_" + lobbyId + ".json");
+
+        try (FileWriter writer = new FileWriter(saveFile)) {
+            gson.toJson(players, writer);
+            System.out.println("[SAVE] Saved to: " + saveFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
